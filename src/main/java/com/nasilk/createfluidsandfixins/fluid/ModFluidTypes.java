@@ -21,6 +21,7 @@ public class ModFluidTypes {
     public static final DeferredRegister<FluidType> FLUID_TYPES =
         DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreateFluidsAndFixins.MOD_ID);
 
+
     // DENSITE EMULSION
     public static final ResourceLocation DENSITE_STILL_RL =
         ResourceLocation.fromNamespaceAndPath(
@@ -48,6 +49,7 @@ public class ModFluidTypes {
                     .canSwim(false)
             )
         );
+
 
     // VOID SEA SLURRY
     public static final ResourceLocation VOID_SEA_SLURRY_STILL_RL =
@@ -80,6 +82,7 @@ public class ModFluidTypes {
     private static Supplier<FluidType> registerFluidType(String name, FluidType fluidType) {
         return FLUID_TYPES.register(name, () -> fluidType);
     }
+
 
     // NEXT FLUID ...
 

@@ -103,12 +103,12 @@ public class ModFluidTypes {
                 DRIFT_FLOWING_RL,
                 null,
                 null,
-                new Vector3f(0.95f, 0.78f, 0.68f),  // Fog color
+                    new Vector3f(0.72f, 0.84f, 0.82f),  // Fog color
                 FluidType.Properties.create()
                     .lightLevel(6) // Glow?
-                    .viscosity(400) // Physics related (higher = heavier)
-                    .density(-500) // Physics related (higher = heavier)
-                    .motionScale(0.002)
+                    .viscosity(120) // Physics related (higher = heavier)
+                    .density(-300) // Physics related (higher = heavier)
+                    .motionScale(0.02)
                     .temperature(250)
                     .canSwim(false)
             )

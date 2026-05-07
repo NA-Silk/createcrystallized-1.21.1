@@ -72,8 +72,8 @@ public class ModFluids {
         SOURCE_VOID_SEA_SLURRY,
         FLOWING_VOID_SEA_SLURRY
     )
-        .slopeFindDistance(1) // Horizontal searching rate (flow speed)
-        .levelDecreasePerBlock(1) // Spread distance
+        .slopeFindDistance(5) // Horizontal searching rate (flow speed)
+        .levelDecreasePerBlock(5) // Spread distance
         .tickRate(15) // Spread rate (water ~5, inverted scale)
         .block(ModFluids.VOID_SEA_SLURRY_BLOCK)
         .bucket(ModFluids.VOID_SEA_SLURRY_BUCKET);
@@ -98,8 +98,8 @@ public class ModFluids {
         SOURCE_DRIFT_CONDENSATE,
         FLOWING_DRIFT_CONDENSATE
     )
-        .slopeFindDistance(3) // Horizontal searching rate (flow speed)
-        .levelDecreasePerBlock(2) // Spread distance
+        .slopeFindDistance(1) // Horizontal searching rate (flow speed)
+        .levelDecreasePerBlock(1) // Spread distance
         .tickRate(10) // Spread rate (water ~5, inverted scale)
         .block(ModFluids.DRIFT_CONDENSATE_BLOCK)
         .bucket(ModFluids.DRIFT_CONDENSATE_BUCKET);

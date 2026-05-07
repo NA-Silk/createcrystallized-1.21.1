@@ -119,11 +119,11 @@ public class ModFluids {
     // DRIFT CONDENSATE
     public static final Supplier<FlowingFluid> SOURCE_DRIFT_CONDENSATE = FLUIDS.register(
         "source_drift_condensate",
-        () -> new BaseFlowingFluid.Source(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
+        () -> new UpwardBaseFlowingFluid.Source(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
     );
     public static final Supplier<FlowingFluid> FLOWING_DRIFT_CONDENSATE = FLUIDS.register(
         "flowing_drift_condensate",
-        () -> new BaseFlowingFluid.Flowing(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
+        () -> new UpwardBaseFlowingFluid.Flowing(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
     );
 
     public static final DeferredBlock<LiquidBlock> DRIFT_CONDENSATE_BLOCK = ModBlocks.BLOCKS.register(
@@ -135,14 +135,14 @@ public class ModFluids {
         properties -> new BucketItem(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
     );
 
-    public static final BaseFlowingFluid.Properties DRIFT_CONDENSATE_PROPERTIES = new BaseFlowingFluid.Properties(
+    public static final UpwardBaseFlowingFluid.Properties DRIFT_CONDENSATE_PROPERTIES = new UpwardBaseFlowingFluid.Properties(
         ModFluidTypes.DRIFT_CONDENSATE_FLUID_TYPE,
         SOURCE_DRIFT_CONDENSATE,
         FLOWING_DRIFT_CONDENSATE
     )
-        .slopeFindDistance(3) // Horizontal searching rate (flow speed)
-        .levelDecreasePerBlock(2) // Spread distance
-        .tickRate(10) // Spread rate (water ~5, inverted scale)
+        .slopeFindDistance(1) // Horizontal searching rate (flow speed)
+        .levelDecreasePerBlock(1) // Spread distance
+        .tickRate(15) // Spread rate (water ~5, inverted scale)
         .block(ModFluids.DRIFT_CONDENSATE_BLOCK)
         .bucket(ModFluids.DRIFT_CONDENSATE_BUCKET);
 

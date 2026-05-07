@@ -43,7 +43,7 @@ public class ModFluidTypes {
                 null,
                 new Vector3f(0.141f, 0.0f, 0.259f), // Fog color
                 FluidType.Properties.create()
-                    //.lightLevel(15) // Glow?
+                    .lightLevel(1) // Glow?
                     .viscosity(5000) // Physics related (higher = heavier)
                     .density(5000) // Physics related (higher = heavier)
                     .canSwim(false)
@@ -72,7 +72,7 @@ public class ModFluidTypes {
                 null,
                 new Vector3f(0.141f, 0.0f, 0.259f), // Fog color
                 FluidType.Properties.create()
-                    .lightLevel(15) // Glow?
+                    .lightLevel(2) // Glow?
                     .viscosity(1500) // Physics related (higher = heavier)
                     .density(1500) // Physics related (higher = heavier)
                     .canSwim(false)
@@ -106,8 +106,8 @@ public class ModFluidTypes {
                 new Vector3f(0.95f, 0.78f, 0.68f),  // Fog color
                 FluidType.Properties.create()
                     .lightLevel(6) // Glow?
-                    .viscosity(400) // Physics related (higher = heavier)
-                    .density(-500) // Physics related (higher = heavier)
+                    .viscosity(200) // Physics related (higher = heavier)
+                    .density(-1000) // Physics related (higher = heavier)
                     .motionScale(0.002)
                     .temperature(250)
                     .canSwim(false)

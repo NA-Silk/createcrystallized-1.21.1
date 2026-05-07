@@ -18,9 +18,7 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import java.util.function.Supplier;
 
 public abstract class ModBaseFlowingFluid extends BaseFlowingFluid {
-
     private final Supplier<Block> transformBlock;
-
     private final FluidTransformationSettings settings;
 
     protected ModBaseFlowingFluid(
@@ -29,7 +27,6 @@ public abstract class ModBaseFlowingFluid extends BaseFlowingFluid {
             FluidTransformationSettings settings
     ) {
         super(properties);
-
         this.transformBlock = transformBlock;
         this.settings = settings;
     }

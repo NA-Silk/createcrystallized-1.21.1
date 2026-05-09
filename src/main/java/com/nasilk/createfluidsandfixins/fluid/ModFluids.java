@@ -35,7 +35,7 @@ public class ModFluids {
 
     // DENSITE EMULSION
     public static final FluidTransformationSettings DENSITE_EMULSION_SETTINGS = new FluidTransformationSettings(
-        1.0f, // Transform chance
+        0.5f, // Transform rate
         15, // Max skylight
         -64, // min Y
         319, // max Y
@@ -43,7 +43,13 @@ public class ModFluids {
         false, // Require rain
         false, // Require thunder
         false, // Require night
-        true, // Require adjacent ice
+        Set.of( // Require adjacent blocks
+            () -> Blocks.ICE, // Vanilla blocks must be clearly supplied
+            () -> Blocks.PACKED_ICE,
+            () -> Blocks.BLUE_ICE,
+            () -> Blocks.FROSTED_ICE,
+            ModBlocks.DENSITE_BLOCK
+        ),
         false, // Transform flowing fluids
         false, // Vaporize in ultrawarm dimensions
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions

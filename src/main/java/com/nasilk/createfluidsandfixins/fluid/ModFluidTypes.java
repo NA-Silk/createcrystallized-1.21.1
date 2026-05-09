@@ -41,9 +41,9 @@ public class ModFluidTypes {
                 null, // 0xAARRGGBB (ARGB format)
                 new Vector3f(0.141f, 0.0f, 0.259f), // Fog color
                 FluidType.Properties.create()
-                    .lightLevel(1) // Glow?
+                    .lightLevel(2) // Glow?
                     .viscosity(5000) // Physics related (higher = heavier)
-                    .density(5000) // Physics related (higher = heavier)
+                    .density(5000) // Physics related (higher = heavier), upside down pipe flow
                     .canSwim(false)
             )
         );
@@ -67,19 +67,15 @@ public class ModFluidTypes {
                 VOID_SEA_SLURRY_STILL_RL,
                 VOID_SEA_SLURRY_FLOWING_RL,
                 null,
-                null, // 0xAARRGGBB (ARGB format)
+                0xAAFFFFFF, // 0xAARRGGBB (ARGB format)
                 new Vector3f(0.20f, 0.086f, 0.322f), // Fog color
                 FluidType.Properties.create()
                     .lightLevel(2) // Glow?
                     .viscosity(1500) // Physics related (higher = heavier)
-                    .density(1500) // Physics related (higher = heavier)
+                    .density(1500) // Physics related (higher = heavier), upside down pipe flow
                     .canSwim(false)
             )
         );
-
-    private static Supplier<FluidType> registerFluidType(String name, FluidType fluidType) {
-        return FLUID_TYPES.register(name, () -> fluidType);
-    }
 
 
     // DRIFT CONDENSATE
@@ -101,11 +97,11 @@ public class ModFluidTypes {
                 DRIFT_FLOWING_RL,
                 null,
                 0xAAFFFFFF, // 0xAARRGGBB (ARGB format)
-                new Vector3f(0.337f, 0.714f, 0.80f),  // Fog color
+                new Vector3f(1.0f, 0.867f, 0.729f),  // Fog color
                 FluidType.Properties.create()
                     .lightLevel(6) // Glow?
                     .viscosity(200) // Physics related (higher = heavier)
-                    .density(-1000) // Physics related (higher = heavier)
+                    .density(-1000) // Physics related (higher = heavier), upside down pipe flow
                     .motionScale(0.002)
                     .temperature(250)
                     .canSwim(false)
@@ -114,6 +110,11 @@ public class ModFluidTypes {
 
 
     // NEXT FLUID ...
+
+
+    private static Supplier<FluidType> registerFluidType(String name, FluidType fluidType) {
+        return FLUID_TYPES.register(name, () -> fluidType);
+    }
 
     public static void register(IEventBus eventBus) {
         FLUID_TYPES.register(eventBus);

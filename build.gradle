@@ -153,9 +153,15 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-
+}
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
 
 repositories {
     mavenCentral()
@@ -166,8 +172,7 @@ repositories {
     maven { url = 'https://maven.blamejared.com/' }
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate?
-
-
+    
     exclusiveContent {
         forRepository {
             maven {
@@ -179,27 +184,24 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+}
 
+dependencies {
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") { transitive = false }
 
-    dependencies {
-        implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-        implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
-        api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") { transitive = false
-        api("dev.eriksonn.aeronautics:aeronautics-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
+    api("dev.eriksonn.aeronautics:aeronautics-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
         exclude group: "cc.tweaked"
-        }
-
-        api("dev.simulated_team.simulated:simulated-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
-            exclude group: "cc.tweaked"
-        }
-
-        api("dev.ryanhcode.offroad:offroad-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
-            exclude group: "cc.tweaked"
-        }
-
-        compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-        runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-        implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     }
+    api("dev.simulated_team.simulated:simulated-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
+        exclude group: "cc.tweaked"
     }
-}}
+    api("dev.ryanhcode.offroad:offroad-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
+        exclude group: "cc.tweaked"
+    }
+
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+}

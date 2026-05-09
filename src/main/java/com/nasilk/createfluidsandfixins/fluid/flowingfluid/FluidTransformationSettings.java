@@ -3,6 +3,8 @@ package com.nasilk.createfluidsandfixins.fluid.flowingfluid;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -13,7 +15,7 @@ import java.util.function.Supplier;
  */
 public class FluidTransformationSettings {
     // Random transformation chance per tick
-    public final float transformChance;
+    public final float transformRate;
 
     // Maximum skylight level allowed
     public final int maxSkyLight;
@@ -29,7 +31,7 @@ public class FluidTransformationSettings {
     public final boolean requireNight;
 
     // Neighbor requirements
-    public final boolean requireAdjacentIce;
+    public final Set<Supplier<Block>> requireAdjacentBlocks;
 
     // Whether flowing fluid blocks may transform
     public final boolean transformFlowingFluids;
@@ -44,7 +46,7 @@ public class FluidTransformationSettings {
     public final Optional<Supplier<SoundEvent>> transformSound;
 
     public FluidTransformationSettings(
-            float transformChance,
+            float transformRate,
             int maxSkyLight,
             int minYLevel,
             int maxYLevel,
@@ -52,32 +54,24 @@ public class FluidTransformationSettings {
             boolean requireRaining,
             boolean requireThundering,
             boolean requireNight,
-            boolean requireAdjacentIce,
+            Set<Supplier<Block>> requireAdjacentBlocks,
             boolean transformFlowingFluids,
             boolean vaporizeInUltraWarmDimension,
             Set<ResourceKey<Level>> allowedDimensions,
             Optional<Supplier<SoundEvent>> transformSound
     ) {
-        this.transformChance = transformChance;
-
+        this.transformRate = transformRate;
         this.maxSkyLight = maxSkyLight;
-
         this.minYLevel = minYLevel;
         this.maxYLevel = maxYLevel;
-
         this.requireColdBiome = requireColdBiome;
         this.requireRaining = requireRaining;
         this.requireThundering = requireThundering;
         this.requireNight = requireNight;
-
-        this.requireAdjacentIce = requireAdjacentIce;
-
+        this.requireAdjacentBlocks = requireAdjacentBlocks;
         this.transformFlowingFluids = transformFlowingFluids;
-
         this.vaporizeInUltraWarmDimension = vaporizeInUltraWarmDimension;
-
         this.allowedDimensions = allowedDimensions;
-
         this.transformSound = transformSound;
     }
 }

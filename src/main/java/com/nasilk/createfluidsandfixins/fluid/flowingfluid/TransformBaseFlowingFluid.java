@@ -8,14 +8,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import java.util.function.Supplier;
 
-// TODO: Add hasAdjacentSelf
 public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     private final Supplier<Block> transformBlock;
     private final FluidTransformationSettings settings;
@@ -54,7 +52,7 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         }
 
         // Random chance
-        if (random.nextFloat() > settings.transformChance) {
+        if (random.nextFloat() > settings.transformRate) {
             return;
         }
 
@@ -99,8 +97,8 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
             return;
         }
 
-        // Adjacent ice requirement
-        if (settings.requireAdjacentIce && !hasAdjacentIce(serverLevel, pos)) {
+        // Adjacent blocks requirement
+        if (!settings.requireAdjacentBlocks.isEmpty() && !hasAdjacentBlocks(serverLevel, pos)) {
             return;
         }
 
@@ -123,17 +121,14 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         );
     }
 
-    private boolean hasAdjacentIce(ServerLevel level, BlockPos pos) {
+    private boolean hasAdjacentBlocks(ServerLevel level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             Block adjacentBlock = level.getBlockState(pos.relative(direction)).getBlock();
 
-            if (
-                adjacentBlock == Blocks.ICE
-                || adjacentBlock == Blocks.PACKED_ICE
-                || adjacentBlock == Blocks.BLUE_ICE
-                || adjacentBlock == Blocks.FROSTED_ICE
-            ) {
-                return true;
+            for (Supplier<Block> blockSupplier : settings.requireAdjacentBlocks) {
+                if (adjacentBlock == blockSupplier.get()) {
+                    return true;
+                }
             }
         }
         return false;

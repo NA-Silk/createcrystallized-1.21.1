@@ -26,14 +26,14 @@ public class HosePulleyMixin {
         if (world.dimension() == Level.END && rootPos.getY() < settings.yVoidSeaSlurry) {
             System.out.println("Void Sea Slurry extraction triggered at " + rootPos);
             // Return Void Sea Slurry as if it was extracted
-            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), 500));
+            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), 250));
         }
 
         // DRIFT CONDENSATE: check if in OVERWORLD and y > yDriftCondensate
         if (world.dimension() == Level.OVERWORLD && rootPos.getY() > settings.yDriftCondensate) {
             System.out.println("Drift Condensate extraction permitted at " + rootPos);
             // Pretend there is something to pull so HosePulleyFluidHandler proceeds
-            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), 500));
+            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), 1000));
         }
     }
 }

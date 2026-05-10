@@ -166,7 +166,7 @@ public class ModFluids {
         false, // Require thunder
         false, // Require night
         Set.of(), // Require adjacent blocks
-        new FluidTransformationSettings.VibrationSettings(true, 10, 16, 40), // Vibration requirements
+        new FluidTransformationSettings.VibrationSettings(true, 10, 6, 40), // Vibration requirements
         false, // Transform flowing fluids
         false, // Vaporize in ultrawarm dimensions
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions

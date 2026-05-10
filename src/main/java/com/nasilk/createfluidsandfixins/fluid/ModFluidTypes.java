@@ -109,7 +109,6 @@ public class ModFluidTypes {
         );
 
 
-    // Temporary placeholder (along with textures)
     // PROPULSITE FLURRY
     public static final ResourceLocation PROPULSITE_FLURRY_STILL_RL =
         ResourceLocation.fromNamespaceAndPath(
@@ -128,7 +127,7 @@ public class ModFluidTypes {
                 PROPULSITE_FLURRY_STILL_RL,
                 PROPULSITE_FLURRY_FLOWING_RL,
                 null,
-                0xAAFFFFFF, // 0xAARRGGBB (ARGB format)
+                0xDDFFFFFF, // 0xAARRGGBB (ARGB format)
                 new Vector3f(1.0f, 0.867f, 0.729f),  // Fog color
                 FluidType.Properties.create()
                     .lightLevel(8) // Glow?
@@ -141,7 +140,7 @@ public class ModFluidTypes {
         );
 
 
-    // NEXT FLUID ...
+    // NEXT FLUID ... dr pepper
 
 
     private static Supplier<FluidType> registerFluidType(String name, FluidType fluidType) {

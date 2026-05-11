@@ -31,64 +31,42 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         this.settings = settings;
     }
 
+    // BEHAVIOR OVERRIDES
     @Override
     protected boolean isRandomlyTicking() {
         return true;
     }
 
     @Override
-    public void randomTick(
-        Level level,
-        BlockPos pos,
-        FluidState state,
-        RandomSource random
-    ) {
+    public void randomTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
         super.randomTick(level, pos, state, random);
 
-        // Setup
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
+        // Confirm serverLevel instance
+        if (!(level instanceof ServerLevel serverLevel)) { return; }
 
         // Random chance
-        if (random.nextFloat() > settings.transformRate()) {
-            return;
-        }
+        if (random.nextFloat() > settings.transformRate()) { return; }
 
         // Skylight requirement
-        if (serverLevel.getBrightness(LightLayer.SKY, pos) > settings.maxSkyLight()) {
-            return;
-        }
+        if (serverLevel.getBrightness(LightLayer.SKY, pos) > settings.maxSkyLight()) { return; }
 
         // Height restrictions
-        if (pos.getY() < settings.yRange().minYLevel() || pos.getY() > settings.yRange().maxYLevel()) {
-            return;
-        }
+        if (pos.getY() < settings.yRange().minYLevel() || pos.getY() > settings.yRange().maxYLevel()) { return; }
 
         // Cold biome requirement
-        if (settings.requireColdBiome() && !serverLevel.getBiome(pos).value().coldEnoughToSnow(pos)) {
-            return;
-        }
+        if (settings.requireColdBiome() && !serverLevel.getBiome(pos).value().coldEnoughToSnow(pos)) { return; }
 
         // Rain requirement
-        if (settings.requireRaining() && !serverLevel.isRaining()) {
-            return;
-        }
+        if (settings.requireRaining() && !serverLevel.isRaining()) { return; }
 
         // Thunder requirement
-        if (settings.requireThundering() && !serverLevel.isThundering()) {
-            return;
-        }
+        if (settings.requireThundering() && !serverLevel.isThundering()) { return; }
 
         // Night requirement
-        if (settings.requireNight() && serverLevel.isDay()) {
-            return;
-        }
+        if (settings.requireNight() && serverLevel.isDay()) { return; }
 
         // Adjacent blocks requirement
-        if (!settings.requireAdjacentBlocks().isEmpty() && !hasAdjacentBlocks(serverLevel, pos)) {
-            return;
-        }
+        if (!settings.requireAdjacentBlocks().isEmpty() && !hasAdjacentBlocks(serverLevel, pos)) { return; }
 
         // Vibration requirement
         if (settings.vibrationSettings().requireVibration() && !NoiseTracker.wasLoudRecently(
@@ -97,14 +75,10 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
             settings.vibrationSettings().vibrationMinimumFrequency(),
             settings.vibrationSettings().vibrationRadius(),
             settings.vibrationSettings().vibrationMemoryTicks()
-        )) {
-            return;
-        }
+        )) { return; }
 
         // Source-only restriction
-        if (!settings.transformFlowingFluids() && !state.isSource()) {
-            return;
-        }
+        if (!settings.transformFlowingFluids() && !state.isSource()) { return; }
 
         // Vaporize in ultrawarm dimensions
         if (settings.vaporizeInUltraWarmDimension() && serverLevel.dimensionType().ultraWarm()) {
@@ -113,19 +87,14 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         }
 
         // Allowed dimensions
-        if (!settings.allowedDimensions().isEmpty() && !settings.allowedDimensions().contains(serverLevel.dimension())) {
-            return;
-        }
+        if (!settings.allowedDimensions().isEmpty() && !settings.allowedDimensions().contains(serverLevel.dimension())) { return; }
 
         // Transform block
-        serverLevel.setBlockAndUpdate(
-            pos,
-            transformBlock.get().defaultBlockState()
-        );
+        serverLevel.setBlockAndUpdate(pos, transformBlock.get().defaultBlockState());
 
-        // Optional sound
-        settings.transformSound().ifPresent(sound ->
-            serverLevel.playSound(
+        // Play optional sound
+        settings.transformSound().ifPresent(
+            sound -> serverLevel.playSound(
                 null,
                 pos,
                 sound.get(),
@@ -140,63 +109,28 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     private boolean hasAdjacentBlocks(ServerLevel level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             Block adjacentBlock = level.getBlockState(pos.relative(direction)).getBlock();
-
             for (Supplier<Block> blockSupplier : settings.requireAdjacentBlocks()) {
-                if (adjacentBlock == blockSupplier.get()) {
-                    return true;
-                }
+                if (adjacentBlock == blockSupplier.get()) { return true; }
             }
         }
         return false;
     }
 
 
+    // INNER CLASSES
     public static class Flowing extends TransformBaseFlowingFluid {
-        public Flowing(
-            Properties properties,
-            Supplier<Block> transformBlock,
-            FluidTransformationSettings settings
-        ) {
-            super(properties, transformBlock, settings);
-        }
-
-        @Override
-        public boolean isSource(FluidState state) {
-            return false;
-        }
-
-        @Override
-        public int getAmount(FluidState state) {
-            return state.getValue(LEVEL);
-        }
-
-        @Override
-        protected void createFluidStateDefinition(
-            StateDefinition.Builder<Fluid, FluidState> builder
-        ) {
+        public Flowing(Properties properties, Supplier<Block> transformBlock, FluidTransformationSettings settings) { super(properties, transformBlock, settings); }
+        @Override public boolean isSource(FluidState state) { return false; }
+        @Override public int getAmount(FluidState state) { return state.getValue(LEVEL); }
+        @Override protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }
     }
 
-
     public static class Source extends TransformBaseFlowingFluid {
-        public Source(
-            Properties properties,
-            Supplier<Block> transformBlock,
-            FluidTransformationSettings settings
-        ) {
-            super(properties, transformBlock, settings);
-        }
-
-        @Override
-        public boolean isSource(FluidState state) {
-            return true;
-        }
-
-        @Override
-        public int getAmount(FluidState state) {
-            return 8;
-        }
+        public Source(Properties properties, Supplier<Block> transformBlock, FluidTransformationSettings settings) { super(properties, transformBlock, settings); }
+        @Override public boolean isSource(FluidState state) { return true; }
+        @Override public int getAmount(FluidState state) { return 8; }
     }
 }

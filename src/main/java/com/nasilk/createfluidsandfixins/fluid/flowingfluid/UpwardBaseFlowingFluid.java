@@ -19,14 +19,17 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
         super(properties);
     }
 
+    // FLOW BEHAVIOR OVERRIDE
     /**
-     * THE KILL SWITCH: Overriding tick without calling super.tick()
-     * prevents the vanilla fluid engine from ever touching this fluid.
+     * Overriding tick without calling super.tick() prevents the vanilla fluid engine from ever touching this fluid.
+     * This allows fully custom behavior at the expense of complexity.
      */
     @Override
     public void tick(Level level, BlockPos pos, FluidState state) {
-        if (level.isClientSide) return;
+        // Confirm serverLevel instance
+        if (level.isClientSide) { return; }
 
+        // Get current FluidState amount
         int amount = state.getAmount();
 
         // 1. Cleanup & Height Limit
@@ -36,8 +39,8 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
             return;
         }
 
-        // 2. Tube Man Animation Logic
-        // We use (Time - Y) so the wave "travels" up the column like a real tube man.
+        // 2. Inflatable Tube Man Animation Logic
+        // Use (Time - Y) so the wave "travels" up the column.
         long time = level.getGameTime();
         double wave = (time * 0.2) - (pos.getY() * 0.3);
 
@@ -70,8 +73,7 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
         }
     }
 
-    // --- DISABLE ALL VANILLA FLOW MECHANICS ---
-
+    // DISABLE VANILLA FLOW BEHAVIOR
     @Override
     public Vec3 getFlow(BlockGetter level, BlockPos pos, FluidState state) {
         return Vec3.ZERO;
@@ -79,12 +81,12 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
 
     @Override
     protected boolean canSpreadTo(BlockGetter level, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fromFluid) {
-        return false; // Nuclear "No" to horizontal spreading
+        return false; // No horizontal spreading
     }
 
     @Override
     protected void spread(Level level, BlockPos pos, FluidState state) {
-        // Do nothing. We handled everything in tick().
+        // Do nothing, handle everything in tick()
     }
 
     @Override
@@ -101,7 +103,8 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
         return super.getSource(false);
     }
 
-    // Inner classes (Flowing/Source) remain identical to your previous working version
+
+    // INNER CLASSES
     public static class Flowing extends UpwardBaseFlowingFluid {
         public Flowing(Properties properties) { super(properties); }
         @Override public boolean isSource(FluidState state) { return false; }

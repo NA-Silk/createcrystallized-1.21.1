@@ -155,7 +155,6 @@ public class ModFluids {
         .bucket(ModFluids.DRIFT_CONDENSATE_BUCKET);
 
 
-    // Temporary placeholder (along with textures)
     // PROPULSITE FLURRY
     public static final FluidTransformationSettings PROPULSITE_FLURRY_SETTINGS = new FluidTransformationSettings(
         1.0f, // Transform rate [0.0f, 1,0f]

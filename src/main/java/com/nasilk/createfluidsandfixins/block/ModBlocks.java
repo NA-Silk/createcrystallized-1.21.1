@@ -42,7 +42,6 @@ public class ModBlocks {
         )
     );
 
-    // Temporary placeholder (along with textures)
     public static final DeferredBlock<Block> PROPULSITE_BLOCK = registerBlock(
         "propulsite_block",
         () -> new TransparentBlock(BlockBehaviour.Properties.of()

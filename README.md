@@ -5,7 +5,9 @@
 
 
 ## Mod Description:
-Adds new fluids and corresponding blocks to match the design and usability of *Create Aeronautics*' Levitite. *Create: Fluids and Fixins* extends Levitite into a family of unique fluids/blocks, including three planned additions to the block family and six planned fluids with unique acquisitions, interactions, and uses. 
+Adds new fluids and corresponding blocks to match the design and usability of *Create Aeronautics* /> Levitite. 
+
+*Create: Fluids and Fixins* extends Levitite into a family of unique fluids/blocks, including three planned additions to the block family and six planned fluids with unique acquisitions, interactions, and uses. 
 
 **Blocks**:
 1. Densite

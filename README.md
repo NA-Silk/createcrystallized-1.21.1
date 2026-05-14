@@ -48,4 +48,6 @@ Additional *Create* and *Create Aeronautics* compatible Contraptions are also pl
 6. Set "Settings... > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM" := Project SDK
 
 
+>NeoForge Note:
+>
 >If at any point you are missing libraries in your IDE, or you've run into problems you can run `gradlew --refresh-dependencies` to refresh the local cache or `gradlew clean` to reset everything {this does not affect your code} and then start the process again.

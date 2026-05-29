@@ -34,7 +34,7 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
         DeferredRegister.createBlocks(CreateFluidsAndFixins.MOD_ID);
 
-    public static final BlockEntry<Block> DENSITE_BLOCK = registerCTBlock(
+    public static final BlockEntry<Block> DENSITE_BLOCK = registerBlockCT(
         "densite_block",
         (properties) -> new DensiteBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
@@ -58,7 +58,7 @@ public class ModBlocks {
         DensiteCTBehavior::new
     );
 
-    public static final BlockEntry<Block> PROPULSITE_BLOCK = registerCTBlock(
+    public static final BlockEntry<Block> PROPULSITE_BLOCK = registerBlockCT(
         "propulsite_block",
         (properties) -> new PropulsiteBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
@@ -131,7 +131,7 @@ public class ModBlocks {
         )
     );
 
-    public static final DeferredBlock<Block> CHORA_CASING = registerBlockWithCustomItem(
+    public static final DeferredBlock<Block> CHORA_CASING = registerBlockCustomItem(
         "chora_casing",
         () -> new Block(BlockBehaviour.Properties.of() // TODO change properties
             .mapColor(MapColor.COLOR_GRAY)
@@ -151,7 +151,7 @@ public class ModBlocks {
         (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
     );
 
-    public static final DeferredBlock<Block> PEBBLE = registerBlockWithCustomItem(
+    public static final DeferredBlock<Block> PEBBLE = registerBlockCustomItem(
         "pebble",
         () -> new PebbleBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_GRAY)
@@ -171,27 +171,37 @@ public class ModBlocks {
         (block) -> new PebbleItem(block, new Item.Properties().stacksTo(1))
     );
 
-    private static <T extends Block> BlockEntry<T> registerCTBlock(String name, NonNullFunction<BlockBehaviour.Properties, T> factory, Supplier<ConnectedTextureBehaviour> behavior) {
-        BlockEntry<T> toReturn = CreateFluidsAndFixins.REGISTRATE.block(name, factory)
-            .onRegister(CreateRegistrate.connectedTextures(behavior))
-            .register();
-        registerBlockItem(name, toReturn);
-        return toReturn;
-    }
 
+    // REGISTRY HELPERS
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
+        setBlockItem(name, toReturn);
         return toReturn;
     }
 
-    private static <T extends Block> DeferredBlock<T> registerBlockWithCustomItem(String name, Supplier<T> block, Function<T, Item> itemFactory) {
+    private static <T extends Block> DeferredBlock<T> registerBlockCustomItem(String name, Supplier<T> block, Function<T, Item> itemFactory) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
         ModItems.ITEMS.register(name, () -> itemFactory.apply(toReturn.get()));
         return toReturn;
     }
 
-    private static <T extends Block> void registerBlockItem(String name, Supplier<T> block) {
+    private static <T extends Block> BlockEntry<T> registerBlockCT(String name, NonNullFunction<BlockBehaviour.Properties, T> factory, Supplier<ConnectedTextureBehaviour> behavior) {
+        BlockEntry<T> toReturn = CreateFluidsAndFixins.REGISTRATE.block(name, factory)
+            .onRegister(CreateRegistrate.connectedTextures(behavior))
+            .register();
+        setBlockItem(name, toReturn);
+        return toReturn;
+    }
+
+    private static <T extends Block> BlockEntry<T> registerBlockCTCustomItem(String name, NonNullFunction<BlockBehaviour.Properties, T> blockFactory, Supplier<ConnectedTextureBehaviour> behavior, Function<T, Item> itemFactory) {
+        BlockEntry<T> toReturn = CreateFluidsAndFixins.REGISTRATE.block(name, blockFactory)
+            .onRegister(CreateRegistrate.connectedTextures(behavior))
+            .register();
+        ModItems.ITEMS.register(name, () -> itemFactory.apply(toReturn.get()));
+        return toReturn;
+    }
+
+    private static <T extends Block> void setBlockItem(String name, Supplier<T> block) {
         ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 

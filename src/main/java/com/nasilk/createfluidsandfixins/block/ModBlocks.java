@@ -139,6 +139,7 @@ public class ModBlocks {
             .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
             .strength(0.9F)
+            .requiresCorrectToolForDrops()
             .sound(new SoundType(
                 1.0F, 1.0F,
                 SoundEvents.GLASS_BREAK,
@@ -161,6 +162,7 @@ public class ModBlocks {
             .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
             .strength(0.9F)
+            .requiresCorrectToolForDrops()
             .sound(new SoundType(
                 1.0F, 1.0F,
                 SoundEvents.GLASS_BREAK,

@@ -19,7 +19,7 @@ public class DensiteParticles extends TerrainParticle {
         this.friction = 0.6f; // Scatter speed (lower -> faster), default 0.98f
         this.gravity = 0.15f; // Drop speed (higher -> faster), default 0.06f
         this.lifetime = (int) (30.0f / (this.random.nextFloat() * 0.9f + 0.1f)); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
-        this.quadSize = 0.1f * (this.random.nextFloat() * 0.5f + 0.5f) * 2.0f; // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        this.quadSize = 0.2f * (this.random.nextFloat() * 0.5f + 0.5f); // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
         this.xd = xSpeed * 0.2; // x starting speed
         this.yd = ySpeed * 0.05; // y starting speed
         this.zd = zSpeed * 0.2; // z starting speed
@@ -60,6 +60,7 @@ public class DensiteParticles extends TerrainParticle {
             this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.2f);
         }
     }
+
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
         public Provider(SpriteSet ignoredSpriteSet) {}

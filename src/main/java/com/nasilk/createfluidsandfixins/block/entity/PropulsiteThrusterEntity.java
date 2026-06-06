@@ -19,7 +19,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -86,7 +85,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final double DAMAGE_MULTIPLIER = 5.0d; // Thruster damage multiplier
     private static final double SQR_MAX_PUSH_RADIUS = MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; // Precomputed radial distance squared
 
-    // Particle constants
+    // Charging particle constants
+    private static final int NUM_PARTICLES = 2; // Number of particles to spawn per tick
+    private static final double PARTICLE_RADIUS = 1.5; // Particle spawn range from the face, in blocks
+
+    // Firing particle constants
     private static final int MIN_PARTICLES = 3;
     private static final int MAX_PARTICLES = 11;
     private static final double PARTICLE_SPREAD = 0.10;
@@ -134,7 +137,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             thrusterPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
             thrusterFace.set(thrusterPosition).fma(0.6, thrusterDirection);
 
-            // Update amplitude
+            // Update amplitude every second (20 ticks)
             if (tickCounter % 20 == 0) {
                 updateAmplitude(serverLevel, worldPosition);
                 tickCounter = 1;
@@ -154,14 +157,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 charge++;
                 this.setChanged();
 
-                // TODO find a better particle for this guy, a vanilla one should be fine if not use one of the new ones for the block, i want them spawning aound the area and being pulled into the thrust face
-                serverLevel.sendParticles (
-                    ParticleTypes.VAULT_CONNECTION, // Charging particles
-                    thrusterFace.x() + (serverLevel.random.nextDouble() - 0.5) * 0.15,
-                    thrusterFace.y() + (serverLevel.random.nextDouble() - 0.5) * 0.15,
-                    thrusterFace.z() + (serverLevel.random.nextDouble() - 0.5) * 0.15,
-                    1,0.0,0.0,0.0,0.0
-                );
+                if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
+                    addChargingParticles(serverLevel, subLevel);
+                } else {
+                    addChargingParticles(serverLevel, null);
+                }
 
                 if (charge >= MAX_CHARGE) {
                     armed = true;
@@ -231,7 +231,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
                 // Effects
                 pushEntities(serverLevel, serverSubLevel);
-                addThrusterParticles(serverLevel, serverSubLevel);
+                addFiringParticles(serverLevel, serverSubLevel);
 
                 // Force packet update (for tooltips)
                 if (firingTick % 5 == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
@@ -385,7 +385,43 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
     }
 
-    private void addThrusterParticles(ServerLevel serverLevel, ServerSubLevel subLevel) {
+    private void addChargingParticles(ServerLevel level, ServerSubLevel subLevel) {
+        Cache cache = CACHE.get();
+
+        // Compute each particle
+        for(int i = 0; i < NUM_PARTICLES; i++) {
+            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
+            double xSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+            double ySpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+            double zSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+
+            // Get local/sublevel vectors
+            cache.spawnPosition.set(thrusterFace);
+            cache.spawnVelocity.set(xSpeed, ySpeed, zSpeed);
+
+            // Convert sublevel (local) vectors to global vectors
+            if (subLevel != null) {
+                cache.endPosition.set(cache.spawnPosition).add(cache.spawnVelocity);
+
+                // Local -> global conversion (call by reference)
+                subLevel.logicalPose().transformPosition(cache.spawnPosition);
+                subLevel.logicalPose().transformPosition(cache.endPosition);
+
+                cache.spawnVelocity.set(cache.endPosition).sub(cache.spawnPosition);
+            }
+
+            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            level.sendParticles(
+                ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
+                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
+                cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,
+                1.0 // Use above speed values
+            );
+        }
+    }
+
+    private void addFiringParticles(ServerLevel serverLevel, ServerSubLevel subLevel) {
         Cache cache = CACHE.get();
 
         double maxThrust = amplitude / NORM_DENOMINATOR;
@@ -418,7 +454,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
-                ModParticles.PROPULSITE_THRUSTER_PARTICLES.get(),
+                ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0,
                 cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,

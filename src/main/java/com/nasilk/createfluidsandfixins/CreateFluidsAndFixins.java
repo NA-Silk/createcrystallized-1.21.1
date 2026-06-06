@@ -9,7 +9,8 @@ import com.nasilk.createfluidsandfixins.behavior.ModDispenserBehavior;
 import com.nasilk.createfluidsandfixins.particle.custom.DensiteParticles;
 import com.nasilk.createfluidsandfixins.particle.ModParticles;
 import com.nasilk.createfluidsandfixins.particle.custom.PropulsiteParticles;
-import com.nasilk.createfluidsandfixins.particle.custom.PropulsiteThrusterParticles;
+import com.nasilk.createfluidsandfixins.particle.custom.PropulsiteThrusterChargingParticles;
+import com.nasilk.createfluidsandfixins.particle.custom.PropulsiteThrusterFiringParticles;
 import com.nasilk.createfluidsandfixins.util.ModCreativeModeTabs;
 import com.nasilk.createfluidsandfixins.util.ModSounds;
 import com.nasilk.createfluidsandfixins.util.ModSpriteShifts;
@@ -143,7 +144,8 @@ public class CreateFluidsAndFixins {
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(ModParticles.DENSITE_PARTICLES.get(), DensiteParticles.Provider::new);
             event.registerSpriteSet(ModParticles.PROPULSITE_PARTICLES.get(), PropulsiteParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_PARTICLES.get(), PropulsiteThrusterParticles.Provider::new);
+            event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticles.Provider::new);
+            event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticles.Provider::new);
         }
 
         @SubscribeEvent

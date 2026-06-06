@@ -5,8 +5,8 @@ import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import org.jetbrains.annotations.Nullable;
 
-public class PropulsiteThrusterParticles extends SimpleAnimatedParticle {
-    protected PropulsiteThrusterParticles(
+public class PropulsiteThrusterFiringParticles extends SimpleAnimatedParticle {
+    protected PropulsiteThrusterFiringParticles(
         ClientLevel level,
         SpriteSet spriteSet,
         double x, double y, double z,
@@ -26,21 +26,11 @@ public class PropulsiteThrusterParticles extends SimpleAnimatedParticle {
         this.zd = zSpeed; // z starting speed
         double speedMagnitude = Math.sqrt(xSpeed * xSpeed + ySpeed * ySpeed + zSpeed * zSpeed);
         this.quadSize = (float) (0.15f + speedMagnitude * 0.2f); // Speed dependent particle size
-       // this.quadSize *= 0.85f + random.nextFloat() * 0.3f; // Random particle size
-
-
-
-        /* Optional tint
-        this.setColor(0xFFFFFF);
-         */
     }
 
     @Override
-    public int getLightColor(float partialTick) {return 240; // Makes Particles Fullbrite
-    }
-
-    @Override
-    public ParticleRenderType getRenderType() {return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT; // Allows for better overlap
+    public int getLightColor(float partialTick) {
+        return 240; // Makes Particles full bright
     }
 
 
@@ -51,7 +41,6 @@ public class PropulsiteThrusterParticles extends SimpleAnimatedParticle {
             this.spriteSet = spriteSet;
         }
 
-
         @Nullable
         @Override
         public Particle createParticle(
@@ -60,7 +49,7 @@ public class PropulsiteThrusterParticles extends SimpleAnimatedParticle {
             double x, double y, double z,
             double xSpeed, double ySpeed, double zSpeed
         ) {
-            return new PropulsiteThrusterParticles(
+            return new PropulsiteThrusterFiringParticles(
                 clientLevel,
                 this.spriteSet,
                 x, y, z,

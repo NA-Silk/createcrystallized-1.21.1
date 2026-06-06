@@ -22,8 +22,13 @@ public class ModParticles {
         () -> new SimpleParticleType(true)
     );
 
-    public static final Supplier<SimpleParticleType> PROPULSITE_THRUSTER_PARTICLES = PARTICLE_TYPES.register(
-        "propulsite_thruster_particles",
+    public static final Supplier<SimpleParticleType> PROPULSITE_THRUSTER_FIRING_PARTICLES = PARTICLE_TYPES.register(
+        "propulsite_thruster_firing_particles",
+        () -> new SimpleParticleType(true)
+    );
+
+    public static final Supplier<SimpleParticleType> PROPULSITE_THRUSTER_CHARGING_PARTICLES = PARTICLE_TYPES.register(
+        "propulsite_thruster_charging_particles",
         () -> new SimpleParticleType(true)
     );
 

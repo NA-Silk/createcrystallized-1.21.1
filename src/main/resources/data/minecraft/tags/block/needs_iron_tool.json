@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "createfluidsandfixins:chora_casing",
-    "createfluidsandfixins:chora_casing_propulsite"
+    "createcrystallized:chora_casing",
+    "createcrystallized:chora_casing_propulsite"
   ]
 }

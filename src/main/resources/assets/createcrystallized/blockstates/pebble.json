@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "createcrystallized:block/pebble"
+    },
+
+    "facing=south": {
+      "model": "createcrystallized:block/pebble",
+      "y": 180
+    },
+
+    "facing=west": {
+      "model": "createcrystallized:block/pebble",
+      "y": 270
+    },
+
+    "facing=east": {
+      "model": "createcrystallized:block/pebble",
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "selector": "createcrystallized:pebble",
+  "properties": {
+    "sable:mass": 5000,
+    "sable:restitution": 0.0
+  }
+}

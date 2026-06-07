@@ -1,0 +1,48 @@
+{
+  "block.pebble_place": {
+    "subtitle": "subtitles.createcrystallized.block.pebble_place",
+    "sounds": [ {
+        "name": "createcrystallized:block/pebble_place",
+        "pitch": 1.2,
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.propulsite_break": {
+    "sounds": [
+      "createcrystallized:block/propulsite_break_1",
+      "createcrystallized:block/propulsite_break_2",
+      "createcrystallized:block/propulsite_break_3",
+      "createcrystallized:block/propulsite_break_4"
+    ]
+  },
+  "block.propulsite_place": {
+    "sounds": [
+      "createcrystallized:block/propulsite_place_1",
+      "createcrystallized:block/propulsite_place_2",
+      "createcrystallized:block/propulsite_place_3",
+      "createcrystallized:block/propulsite_place_4"
+    ]
+  },
+  "block.densite_break": {
+    "pitch": 1.2,
+    "volume": 1.0,
+    "sounds": [
+      "createcrystallized:block/densite_break_1",
+      "createcrystallized:block/densite_break_2",
+      "createcrystallized:block/densite_break_3",
+      "createcrystallized:block/densite_break_4"
+
+    ]
+  },
+  "block.densite_place": {
+    "pitch": 1.2,
+    "volume": 1.0,
+    "sounds": [
+      "createcrystallized:block/densite_place_1",
+      "createcrystallized:block/densite_place_2",
+      "createcrystallized:block/densite_place_3",
+      "createcrystallized:block/densite_place_4"
+    ]
+  }
+}

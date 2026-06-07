@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "createfluidsandfixins:item/drift_condensate_bucket"
-  }
-}

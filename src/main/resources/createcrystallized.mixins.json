@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.nasilk.createcrystallized.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ComparatorBlockMixin",
+    "FluidDrainingBehaviourMixin",
+    "HosePulleyMixin",
+    "OpenEndedPipeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

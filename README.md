@@ -1,4 +1,4 @@
-# Create: Fluids and Fixins
+# Create: Crystallized
 *Current Version: 0.0.1 (pre-release development)*
 
 *Last README Update: 5/13/2026*
@@ -7,7 +7,7 @@
 ## Mod Description:
 Adds new fluids and blocks inspired by *Create Aeronautics*' Levitite Blend and Levitite block.
 
-*Create: Fluids and Fixins* extends Levitite into a family of unique fluids/blocks, including three planned additions to the block family and six planned fluids with unique acquisitions, interactions, and uses.
+*Create: Crystallized* extends Levitite into a family of unique fluids/blocks, including three planned additions to the block family and six planned fluids with unique acquisitions, interactions, and uses.
 
 **Blocks**:
 1. Densite

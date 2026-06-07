@@ -42,8 +42,8 @@ authors="${mod_authors}"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Create: Fluids and Fixins
-- Adds new fluids to extend Create fluid varieties
+Create: Crystallized
+- Adds new crystal-themed blocks and fluids to extend Create features and recipes
 '''
 
 # The [[mixins]] block declares the mixin config to FML so that it gets loaded

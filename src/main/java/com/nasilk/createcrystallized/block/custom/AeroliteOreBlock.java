@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.custom;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import org.joml.Quaterniond;
 import org.joml.Vector3d;
 
 public class AeroliteOreBlock extends Block {
@@ -58,7 +56,7 @@ public class AeroliteOreBlock extends Block {
             .sub(player.getX(), player.getY(), player.getZ()) // Player position
             .normalize(); // Reduce to unit vector
 
-        // Adjust for recoil and scale magnitude
+        // Adjust for recoil and scale magnitude TODO: Make a better y-transition
         Direction collisionDirection = Direction.getNearest(thrust.x, thrust.y, thrust.z);
         BlockPos collisionPos = pos.relative(collisionDirection);
         if (serverLevel.getBlockState(collisionPos).isSolidRender(serverLevel, collisionPos)) {

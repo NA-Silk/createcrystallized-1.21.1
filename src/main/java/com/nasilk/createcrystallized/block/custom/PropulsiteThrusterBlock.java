@@ -30,8 +30,8 @@ public class PropulsiteThrusterBlock extends TransparentBlock  implements Entity
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new PropulsiteThrusterEntity(pos, state);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, POWERED);
     }
 
     @Override
@@ -40,11 +40,6 @@ public class PropulsiteThrusterBlock extends TransparentBlock  implements Entity
         if (player == null) return super.getStateForPlacement(context);
         if (player.isShiftKeyDown()) return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection());
         return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED);
     }
 
     // CLUSTERS
@@ -60,7 +55,6 @@ public class PropulsiteThrusterBlock extends TransparentBlock  implements Entity
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        // Make sure the new neighbor is not Densite (the new one will check for updates)
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
             if (powered != state.getValue(POWERED)) level.setBlockAndUpdate(pos, state.setValue(POWERED, powered));
@@ -69,6 +63,11 @@ public class PropulsiteThrusterBlock extends TransparentBlock  implements Entity
     }
 
     // ENTITIES
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new PropulsiteThrusterEntity(pos, state);
+    }
+
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
         return level.isClientSide ? null : (lvl, pos, st, be) -> {

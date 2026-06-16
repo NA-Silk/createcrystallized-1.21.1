@@ -199,6 +199,27 @@ public class ModBlocks {
             EncasedLevititeCTBehavior::new
     );
 
+    public static final DeferredBlock<Block> DENSITE_WELL = registerBlock(
+        "densite_well",
+        () -> new DensiteWellBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .isRedstoneConductor((state, level, pos) -> true)
+            .strength(1.0f, 9.0f)
+            .lightLevel(state -> 4)
+            .hasPostProcess((state, pos, level) -> true)
+            .emissiveRendering((state, pos, level) -> true)
+            .sound(
+                new SoundType(1.0f, 0.1f,
+                    ModSounds.DENSITE_BREAK.get(),
+                    SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.DENSITE_PLACE.get(),
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundEvents.AMETHYST_BLOCK_FALL
+                )
+            )
+        )
+    );
+
     public static final DeferredBlock<Block> PROPULSITE_THRUSTER = registerBlock(
         "propulsite_thruster",
         () -> new PropulsiteThrusterBlock(BlockBehaviour.Properties.of()

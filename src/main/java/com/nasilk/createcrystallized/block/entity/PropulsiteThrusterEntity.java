@@ -128,7 +128,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     // TICK BEHAVIOR
     public void tick() {
         if (level instanceof ServerLevel serverLevel) {
-            tickCounter++;
             BlockState state = getBlockState();
             boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
 
@@ -138,7 +137,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             thrusterFace.set(thrusterPosition).fma(0.6, thrusterDirection);
 
             // Update amplitude every second (20 ticks)
-            if (tickCounter % 20 == 0) {
+            if (tickCounter++ % 20 == 0) {
                 updateAmplitude(serverLevel, worldPosition);
                 tickCounter = 1;
             }

@@ -84,7 +84,7 @@ public class CreateCrystallized {
         event.enqueueWork(() -> {
             ModDispenser.register();
         });
-        LOGGER.info("Create: Crystalized Loaded");
+        LOGGER.info("Create: Crystallized Loaded");
     }
 
     // Add block items to creative tabs
@@ -105,7 +105,6 @@ public class CreateCrystallized {
             event.accept(ModBlocks.PEBBLE);
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
-            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
 
             // Chora Blocks
             event.accept(ModBlocks.CHORA_CASING);
@@ -117,13 +116,14 @@ public class CreateCrystallized {
             // Crystal Blocks
             event.accept(ModBlocks.DENSITE_BLOCK);
             event.accept(ModBlocks.ENCASED_DENSITE_BLOCK);
-            /* Crafted Densite */
+            event.accept(ModBlocks.DENSITE_WELL);
             event.accept(ModBlocks.PROPULSITE_BLOCK);
             event.accept(ModBlocks.ENCASED_PROPULSITE_BLOCK);
             event.accept(ModBlocks.PROPULSITE_THRUSTER);
             event.accept(ModBlocks.OSCILLITE_BLOCK);
             event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
             /* Crafted Oscillite */
+            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
         }
     }
 
@@ -172,8 +172,15 @@ public class CreateCrystallized {
             event.registerBlock(
                 noDefaultParticles,
                 ModBlocks.DENSITE_BLOCK.get(),
+                ModBlocks.ENCASED_DENSITE_BLOCK.get(),
+                ModBlocks.DENSITE_WELL.get(),
                 ModBlocks.PROPULSITE_BLOCK.get(),
-                ModBlocks.PROPULSITE_THRUSTER.get()
+                ModBlocks.ENCASED_PROPULSITE_BLOCK.get(),
+                ModBlocks.PROPULSITE_THRUSTER.get(),
+                ModBlocks.OSCILLITE_BLOCK.get(),
+                ModBlocks.ENCASED_OSCILLITE_BLOCK.get(),
+                /* Crafted Oscillite */
+                ModBlocks.ENCASED_LEVITITE_BLOCK.get()
             );
         }
     }

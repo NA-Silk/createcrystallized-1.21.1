@@ -30,12 +30,12 @@ public class DensiteBlock extends Block {
         this.registerDefaultState(this.stateDefinition.any().setValue(POWER, 0));
     }
 
-    // POWER LEVELS
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWER);
     }
 
+    // POWER LEVELS
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         // Make sure the block was not just updated (i.e. powered)

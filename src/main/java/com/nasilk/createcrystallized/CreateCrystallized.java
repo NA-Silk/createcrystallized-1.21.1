@@ -100,6 +100,9 @@ public class CreateCrystallized {
             // Uncategorized Items
             event.accept(ModItems.CREATIVE_FLUID_ERASER);
             event.accept(ModItems.CHORA_INGOT);
+            event.accept(ModItems.CRUSHED_RAW_AEROLITE);
+            event.accept(ModItems.RAW_AEROLITE);
+            event.accept(ModItems.AEROLITE_INGOT);
 
             // Uncategorized Blocks
             event.accept(ModBlocks.PEBBLE);

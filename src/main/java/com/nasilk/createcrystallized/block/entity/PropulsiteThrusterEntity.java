@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.FFLang;
+import com.nasilk.createcrystallized.util.CCLang;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
@@ -466,29 +466,29 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        FFLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+        CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
-        final MutableComponent currentThrust = FFLang
+        final MutableComponent currentThrust = CCLang
                 .pixelNewton(thrust)
                 .style(ChatFormatting.AQUA)
                 .component();
-        FFLang.translate("goggles.current_thrust", currentThrust)
+        CCLang.translate("goggles.current_thrust", currentThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent maximumThrust = FFLang
+        final MutableComponent maximumThrust = CCLang
                 .pixelNewton(amplitude / NORM_DENOMINATOR)
                 .style(ChatFormatting.AQUA)
                 .component();
-        FFLang.translate("goggles.maximum_thrust", maximumThrust)
+        CCLang.translate("goggles.maximum_thrust", maximumThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent totalThrust = FFLang
+        final MutableComponent totalThrust = CCLang
                 .pixelNewton(amplitude)
                 .style(ChatFormatting.AQUA)
                 .component();
-        FFLang.translate("goggles.total_thrust", totalThrust)
+        CCLang.translate("goggles.total_thrust", totalThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 

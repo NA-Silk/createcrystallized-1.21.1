@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class FFLang {
+public class CCLang {
 
     public static LangBuilder builder() {
         return Lang.builder(CreateCrystallized.MOD_ID);
@@ -43,7 +43,6 @@ public class FFLang {
     public static LangBuilder kilopixelGram(final double value) {
         return translate("unit.kpg", String.format("%,.2f", value));
     }
-
     public static LangBuilder kilopixelGram(final double value, final String format) {
         return getPrefixedUnit("pg", value, format,1);
     }
@@ -51,9 +50,15 @@ public class FFLang {
     public static LangBuilder pixelNewton(final double value) {
         return pixelNewton(value, "%,.2f");
     }
-
     public static LangBuilder pixelNewton(final double value, final String format) {
         return getPrefixedUnit("pn", value, format,0);
+    }
+
+    public static LangBuilder meter(final double value) {
+        return meter(value, "%,.2f");
+    }
+    public static LangBuilder meter(final double value, final String format) {
+        return getPrefixedUnit("m", value, format,0);
     }
 
     private static LangBuilder getPrefixedUnit(String unit, double value, final String format, final int offset) {

@@ -41,7 +41,7 @@
   "block.createcrystallized.encased_levitite_block": "Encased Levitite Block",
 
   "createcrystallized.goggles.field_strength": "Field Strength: %s",
-  "createcrystallized.goggles.field_radius": "Field Radius: %sm",
+  "createcrystallized.goggles.field_radius": "Field Radius: %s",
   "createcrystallized.goggles.current_thrust": "Current Thrust: %s",
   "createcrystallized.goggles.maximum_thrust": "Maximum Thrust: %s",
   "createcrystallized.goggles.total_thrust": "Total Thrust: %s",
@@ -54,6 +54,7 @@
   "createcrystallized.unit.mpg": "%s Mpg",
   "createcrystallized.unit.mpn": "%s MpN",
   "createcrystallized.unit.pn": "%s pN",
+  "createcrystallized.unit.m": "%s m",
 
   "subtitles.createcrystallized.block.pebble_place": "Hello there!",
   "death.attack.propulsite_thruster": "%1$s was killed combining biology and physics"

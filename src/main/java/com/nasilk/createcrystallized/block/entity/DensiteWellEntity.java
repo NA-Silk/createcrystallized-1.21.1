@@ -2,8 +2,9 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
-import com.nasilk.createcrystallized.util.FFLang;
+import com.nasilk.createcrystallized.util.CCLang;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -21,27 +22,50 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
-
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO Fix this entire thing, it's really inefficient and doesn't work on sublevels...
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
-    private int tickCounter = 0;
+    // Tick variables (saved)
     private double fieldStrength = 0.0d;
     private double fieldRadius = 0.0d;
+
+    // Tick variables (unsaved)
+    private int tickCounter = 0;
     private final List<SubLevel> targets = new ArrayList<>();
+
+    // Tick constants
     private static final int TICK_RATE = 20;
     private static final double MIN_RADIUS = 5.0d;
     private static final double RADIUS_SCALE = 2.0d;
     private static final double FIELD_CONSTANT = 1.0d;
 
+    // Physics constants
+    private static final double IMPACT_RADIUS = 0.25d;
+    private static final double DAMPEN_FACTOR = 0.2d;
+    private static final double RADIUS = 1.5d;
+    private static final double RADIUS_CUBED = RADIUS * RADIUS * RADIUS;
+
+    // Cache
+    private static class Cache {
+        final BoundingBox3d searchBox = new BoundingBox3d();
+        final Vector3d wellPosition = new Vector3d();
+        final Vector3d targetPosition = new Vector3d();
+        final Vector3d impulse = new Vector3d();
+        final Vector3d currentLinearVelocity = new Vector3d();
+        final Vector3d currentAngularVelocity = new Vector3d();
+        final Vector3d zeroVector = new Vector3d(0, 0, 0); // Read-only reference
+        double distance = 0.0d;
+        double force = 0.0d;
+    }
+    private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
+
+
     public DensiteWellEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DENSITE_WELL.get(), pos, state);
     }
+
 
     // TICK BEHAVIOR
     public void tick() {
@@ -51,51 +75,59 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             int power = state.getValue(DensiteWellBlock.POWER);
             if (power == 0) {
                 fieldStrength = 0.0d;
+                fieldRadius = 0.0d;
                 if (!targets.isEmpty()) targets.clear();
+                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 
+            // Get global position
+            Cache cache = CACHE.get();
+            cache.wellPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            ServerSubLevel wellSubLevel = null;
+            if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
+                wellSubLevel = subLevel;
+                subLevel.logicalPose().transformPosition(cache.wellPosition);
+            }
+
             // Run gravity effect
-            fieldRadius = MIN_RADIUS + power * RADIUS_SCALE;
             fieldStrength = FIELD_CONSTANT * power;
-            if (tickCounter++ % TICK_RATE == 0) updateTargets(serverLevel, worldPosition, fieldRadius);
-            applyGravity(worldPosition, fieldRadius, fieldStrength);
+            fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
+            if (tickCounter++ % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
+            applyGravity(cache);
 
             // Update tooltips
             serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
         }
     }
 
-    private void updateTargets(ServerLevel level, BlockPos pos, double radius) {
-        // Reset target list
+    private void updateTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        // Reset the target list
         targets.clear();
 
         // Get Sable's SubLevel container for this dimension
         ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
         if (container == null) return;
-        AABB searchArea = new AABB(pos).inflate(radius);
 
-        // Convert Minecraft AABB to Sable's BoundingBox3dc
-        BoundingBox3d sableBounds = new BoundingBox3d(
-            searchArea.minX, searchArea.minY, searchArea.minZ,
-            searchArea.maxX, searchArea.maxY, searchArea.maxZ
+        // Set the bounding box
+        cache.searchBox.setUnchecked(
+            cache.wellPosition.x - fieldRadius, cache.wellPosition.y - fieldRadius, cache.wellPosition.z - fieldRadius,
+            cache.wellPosition.x + fieldRadius, cache.wellPosition.y + fieldRadius, cache.wellPosition.z + fieldRadius
         );
 
-        // Populate target list
-        container.queryIntersecting(sableBounds).forEach(targets::add);
+        // Populate the target list
+        container.queryIntersecting(cache.searchBox).forEach(targetSubLevel -> {
+            if (targetSubLevel != wellSubLevel) targets.add(targetSubLevel);
+        });
     }
 
-    private void applyGravity(BlockPos pos, double radius, double fieldStrength) {
-        // Get current block center position
-        Vec3 magnetCenter = pos.getCenter();
-
+    private void applyGravity(Cache cache) {
         // Iterate backwards for safe removals
         for (int i = targets.size() - 1; i >= 0; i--) {
             SubLevel targetSubLevel = targets.get(i);
-            if (!(targetSubLevel instanceof ServerSubLevel subLevel)) continue;
 
-            // If the sublevel was destroyed or unloaded, remove it from cache
-            if (targetSubLevel.isRemoved()) {
+            // If the sublevel was destroyed or unloaded, remove it from the list
+            if (!(targetSubLevel instanceof ServerSubLevel subLevel) || targetSubLevel.isRemoved()) {
                 targets.remove(i);
                 continue;
             }
@@ -104,61 +136,71 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) continue;
 
-            // Get sublevel position and current distance to block center
-            Vector3d subLevelPos3d = targetSubLevel.logicalPose().position();
-            double distance = subLevelPos3d.distance(magnetCenter.x, magnetCenter.y, magnetCenter.z);
+            // Get sublevel position, current distance to block center, and impulse direction
+            cache.targetPosition.set(targetSubLevel.logicalPose().position());
+            cache.distance = cache.targetPosition.distance(cache.wellPosition);
+            cache.impulse.set(cache.wellPosition).sub(cache.targetPosition).normalize();
 
             // Handle out of range entities
-            if (distance > radius) {
+            if (cache.distance > fieldRadius) {
                 targets.remove(i);
                 continue;
             }
 
-            // Snap very close motion
-            if (distance < 0.25) {
-                handle.addLinearAndAngularVelocity(
-                    new Vector3d(0,0,0).sub(handle.getLinearVelocity(new Vector3d())),
-                    new Vector3d(0,0,0).sub(handle.getAngularVelocity(new Vector3d()))
-                );
-                subLevel.logicalPose().position().set(magnetCenter.x, magnetCenter.y, magnetCenter.z);
+            // Handle impact when very close
+            if (cache.distance < IMPACT_RADIUS) {
+                // Get current linear and angular velocity
+                handle.getLinearVelocity(cache.currentLinearVelocity);
+                handle.getAngularVelocity(cache.currentAngularVelocity);
+
+                // Apply opposite vectors to negate current motion
+                cache.currentLinearVelocity.negate();
+                cache.currentAngularVelocity.negate();
+                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
+                subLevel.logicalPose().position().set(cache.wellPosition);
                 continue;
             }
 
-            // Dampen close motion
-            if (distance < 1.5) {
-                // "Dampen": Reduce current velocity
-                Vector3d currentVel = handle.getLinearVelocity(new Vector3d());
-                handle.addLinearAndAngularVelocity(currentVel.mul(-0.5), new Vector3d(0,0,0));
-                Vec3 direction = magnetCenter.subtract(new Vec3(subLevelPos3d.x(), subLevelPos3d.y(), subLevelPos3d.z())).normalize();
-                handle.applyLinearImpulse(new Vector3d(direction.x * 0.01, direction.y * 0.01, direction.z * 0.01));
+            // Handle dampening when within well radius: F = fieldStrength * distance / RADIUS^3
+            if (cache.distance < RADIUS) {
+                // Apply velocity dampening / drag
+                handle.getLinearVelocity(cache.currentLinearVelocity);
+                cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
+                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
+
+                // Apply reduced pull impulse
+                cache.force = fieldStrength * cache.distance / RADIUS_CUBED;
+                cache.impulse.mul(cache.force);
+                handle.applyLinearImpulse(cache.impulse);
                 continue;
             }
 
-            // Standard pull Logic
-            Vec3 direction = magnetCenter.subtract(new Vec3(subLevelPos3d.x(), subLevelPos3d.y(), subLevelPos3d.z())).normalize();
-            double force = fieldStrength / (distance * distance);
-            handle.applyLinearImpulse(new Vector3d(direction.x * force, direction.y * force, direction.z * force));
+            // Handle standard pull impulse: F = fieldStrength / distance^2
+            cache.force = fieldStrength / (cache.distance * cache.distance);
+            cache.impulse.mul(cache.force);
+            handle.applyLinearImpulse(cache.impulse);
         }
     }
+
 
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        FFLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+        CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
-        final MutableComponent currentFieldStrength = FFLang
+        final MutableComponent currentFieldStrength = CCLang
                 .pixelNewton(fieldStrength)
                 .style(ChatFormatting.AQUA)
                 .component();
-        FFLang.translate("goggles.field_strength", currentFieldStrength)
+        CCLang.translate("goggles.field_strength", currentFieldStrength)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent currentFieldRadius = FFLang
-                .number(fieldRadius)
+        final MutableComponent currentFieldRadius = CCLang
+                .meter(fieldRadius)
                 .style(ChatFormatting.AQUA)
                 .component();
-        FFLang.translate("goggles.field_radius", currentFieldRadius)
+        CCLang.translate("goggles.field_radius", currentFieldRadius)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
@@ -187,6 +229,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Wrap the tag into the standard vanilla packet
         return ClientboundBlockEntityDataPacket.create(this);
     }
+
 
     // DATA PERSISTENCE
     @Override

@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
+import com.nasilk.createcrystallized.block.entity.OscilliteEntity;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -29,7 +30,16 @@ public class ModBlockEntities {
             PropulsiteThrusterEntity::new,
             ModBlocks.PROPULSITE_THRUSTER.get()
         )
-            .build(null)
+        .build(null)
+    );
+
+    public static final Supplier<BlockEntityType<OscilliteEntity>> OSCILLITE_BLOCK = BLOCK_ENTITIES.register(
+        "oscillite_block",
+        () -> BlockEntityType.Builder.of(
+            OscilliteEntity::new,
+            ModBlocks.OSCILLITE_BLOCK.get()
+        )
+        .build(null)
     );
 
     public static void register(IEventBus modEventBus) {

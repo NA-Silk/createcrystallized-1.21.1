@@ -83,7 +83,7 @@ public class ModBlocks {
 
     public static final BlockEntry<Block> OSCILLITE_BLOCK = registerBlockCT(
         "oscillite_block",
-        (properties) -> new Block(properties
+        (properties) -> new OscilliteBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)

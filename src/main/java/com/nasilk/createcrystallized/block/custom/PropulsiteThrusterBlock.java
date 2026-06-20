@@ -46,8 +46,7 @@ public class PropulsiteThrusterBlock extends TransparentBlock  implements Entity
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         // Make sure the block was not just updated (i.e. powered)
-        if (
-            !level.isClientSide
+        if (!level.isClientSide
             && !state.is(oldState.getBlock())
             && level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster
         ) thruster.updateAmplitude(level, pos);

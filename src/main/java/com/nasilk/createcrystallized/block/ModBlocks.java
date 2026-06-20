@@ -30,6 +30,9 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
         DeferredRegister.createBlocks(CreateCrystallized.MOD_ID);
 
+
+    // BLOCK REGISTRATIONS
+    /** RAW FORMS */
     public static final BlockEntry<Block> DENSITE_BLOCK = registerBlockCT(
         "densite_block",
         (properties) -> new DensiteBlock(properties
@@ -103,6 +106,8 @@ public class ModBlocks {
         OscilliteCTBehavior::new
     );
 
+
+    /** ENCASED FORMS */
     public static final BlockEntry<Block> ENCASED_DENSITE_BLOCK = registerBlockCT(
         "encased_densite_block",
         (properties) -> new Block(properties
@@ -175,30 +180,32 @@ public class ModBlocks {
     );
 
     public static final BlockEntry<Block> ENCASED_LEVITITE_BLOCK = registerBlockCT(
-            "encased_levitite_block",
-            (properties) -> new Block(properties
-                    .mapColor(MapColor.COLOR_BLUE)
-                    .instrument(NoteBlockInstrument.HAT)
-                    .strength(0.3F)
-                    .lightLevel(state -> 4)
-                    .noOcclusion()
-                    .isValidSpawn((state, level, pos, value) -> false)
-                    .isRedstoneConductor((state, level, pos) -> false)
-                    .isSuffocating((state, level, pos) -> false)
-                    .isViewBlocking((state, level, pos) -> false)
-                    .sound(
-                            new SoundType(1.0f, 1.0f,
-                                    SoundEvents.AMETHYST_BLOCK_BREAK,
-                                    SoundEvents.AMETHYST_BLOCK_STEP,
-                                    SoundEvents.AMETHYST_BLOCK_PLACE,
-                                    SoundEvents.AMETHYST_BLOCK_HIT,
-                                    SoundEvents.AMETHYST_CLUSTER_FALL
-                            )
-                    )
-            ),
-            EncasedLevititeCTBehavior::new
+        "encased_levitite_block",
+        (properties) -> new Block(properties
+            .mapColor(MapColor.COLOR_BLUE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(0.3F)
+            .lightLevel(state -> 4)
+            .noOcclusion()
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new SoundType(1.0f, 1.0f,
+                    SoundEvents.AMETHYST_BLOCK_BREAK,
+                    SoundEvents.AMETHYST_BLOCK_STEP,
+                    SoundEvents.AMETHYST_BLOCK_PLACE,
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundEvents.AMETHYST_CLUSTER_FALL
+                )
+            )
+        ),
+        EncasedLevititeCTBehavior::new
     );
 
+
+    /** CRAFTED FORMS */
     public static final DeferredBlock<Block> DENSITE_WELL = registerBlock(
         "densite_well",
         () -> new DensiteWellBlock(BlockBehaviour.Properties.of()
@@ -244,6 +251,8 @@ public class ModBlocks {
         )
     );
 
+
+    /** CASINGS */
     public static final BlockEntry<Block> CHORA_CASING = registerBlockCTCustomItem(
         "chora_casing",
             (properties) -> new ChoraCasingBlock(properties
@@ -264,6 +273,29 @@ public class ModBlocks {
             ))
         ),
         ChoraCasingCTBehavior::new,
+        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+    );
+
+    public static final BlockEntry<Block> DENSE_CHORA_CASING = registerBlockCTCustomItem(
+        "chora_casing_densite",
+        (properties) -> new ChoraCasingBlock(properties
+            .mapColor(MapColor.COLOR_PURPLE)
+            .instrument(NoteBlockInstrument.BANJO)
+            .noOcclusion()
+            .strength(1.0F, 1.0F)
+            .isViewBlocking((s,l,p) -> false)
+            .strength(0.9F)
+            .requiresCorrectToolForDrops()
+            .sound(new SoundType(
+                1.0F, 1.0F,
+                SoundEvents.GLASS_BREAK,
+                SoundEvents.GLASS_STEP,
+                SoundEvents.GLASS_PLACE,
+                SoundEvents.GLASS_HIT,
+                SoundEvents.GLASS_FALL
+            ))
+        ),
+        DenseChoraCasingCTBehavior::new,
         (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
     );
 
@@ -291,74 +323,53 @@ public class ModBlocks {
     );
 
     public static final BlockEntry<Block> OSCILLATING_CHORA_CASING = registerBlockCTCustomItem(
-            "chora_casing_oscillite",
-            (properties) -> new ChoraCasingBlock(properties
-                    .mapColor(MapColor.COLOR_RED)
-                    .instrument(NoteBlockInstrument.BANJO)
-                    .noOcclusion()
-                    .strength(1.0F, 1.0F)
-                    .isViewBlocking((s,l,p) -> false)
-                    .strength(0.9F)
-                    .requiresCorrectToolForDrops()
-                    .sound(new SoundType(
-                            1.0F, 1.0F,
-                            SoundEvents.GLASS_BREAK,
-                            SoundEvents.GLASS_STEP,
-                            SoundEvents.GLASS_PLACE,
-                            SoundEvents.GLASS_HIT,
-                            SoundEvents.GLASS_FALL
-                    ))
-            ),
-            OscillatingChoraCasingCTBehavior::new,
-            (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
-    );
-
-    public static final BlockEntry<Block> DENSE_CHORA_CASING = registerBlockCTCustomItem(
-            "chora_casing_densite",
-            (properties) -> new ChoraCasingBlock(properties
-                    .mapColor(MapColor.COLOR_PURPLE)
-                    .instrument(NoteBlockInstrument.BANJO)
-                    .noOcclusion()
-                    .strength(1.0F, 1.0F)
-                    .isViewBlocking((s,l,p) -> false)
-                    .strength(0.9F)
-                    .requiresCorrectToolForDrops()
-                    .sound(new SoundType(
-                            1.0F, 1.0F,
-                            SoundEvents.GLASS_BREAK,
-                            SoundEvents.GLASS_STEP,
-                            SoundEvents.GLASS_PLACE,
-                            SoundEvents.GLASS_HIT,
-                            SoundEvents.GLASS_FALL
-                    ))
-            ),
-            DenseChoraCasingCTBehavior::new,
-            (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        "chora_casing_oscillite",
+        (properties) -> new ChoraCasingBlock(properties
+            .mapColor(MapColor.COLOR_RED)
+            .instrument(NoteBlockInstrument.BANJO)
+            .noOcclusion()
+            .strength(1.0F, 1.0F)
+            .isViewBlocking((s,l,p) -> false)
+            .strength(0.9F)
+            .requiresCorrectToolForDrops()
+            .sound(new SoundType(
+                1.0F, 1.0F,
+                SoundEvents.GLASS_BREAK,
+                SoundEvents.GLASS_STEP,
+                SoundEvents.GLASS_PLACE,
+                SoundEvents.GLASS_HIT,
+                SoundEvents.GLASS_FALL
+            ))
+        ),
+        OscillatingChoraCasingCTBehavior::new,
+        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
     );
 
     public static final BlockEntry<Block> LEVITATING_CHORA_CASING = registerBlockCTCustomItem(
-            "chora_casing_levitite",
-            (properties) -> new ChoraCasingBlock(properties
-                    .mapColor(MapColor.COLOR_PURPLE)
-                    .instrument(NoteBlockInstrument.BANJO)
-                    .noOcclusion()
-                    .strength(1.0F, 1.0F)
-                    .isViewBlocking((s,l,p) -> false)
-                    .strength(0.9F)
-                    .requiresCorrectToolForDrops()
-                    .sound(new SoundType(
-                            1.0F, 1.0F,
-                            SoundEvents.GLASS_BREAK,
-                            SoundEvents.GLASS_STEP,
-                            SoundEvents.GLASS_PLACE,
-                            SoundEvents.GLASS_HIT,
-                            SoundEvents.GLASS_FALL
-                    ))
-            ),
-            LevitatingChoraCasingCTBehavior::new,
-            (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        "chora_casing_levitite",
+        (properties) -> new ChoraCasingBlock(properties
+            .mapColor(MapColor.COLOR_PURPLE)
+            .instrument(NoteBlockInstrument.BANJO)
+            .noOcclusion()
+            .strength(1.0F, 1.0F)
+            .isViewBlocking((s,l,p) -> false)
+            .strength(0.9F)
+            .requiresCorrectToolForDrops()
+            .sound(new SoundType(
+                1.0F, 1.0F,
+                SoundEvents.GLASS_BREAK,
+                SoundEvents.GLASS_STEP,
+                SoundEvents.GLASS_PLACE,
+                SoundEvents.GLASS_HIT,
+                SoundEvents.GLASS_FALL
+            ))
+        ),
+        LevitatingChoraCasingCTBehavior::new,
+        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
     );
 
+
+    /** ADDITIONAL BLOCKS */
     public static final DeferredBlock<Block> PEBBLE = registerBlockCustomItem(
         "pebble",
         () -> new PebbleBlock(BlockBehaviour.Properties.of()

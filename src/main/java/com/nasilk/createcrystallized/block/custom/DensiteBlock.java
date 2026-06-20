@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 public class DensiteBlock extends Block {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
     public static final int MAX_CLUSTER_SIZE = 512;
+    private static final Direction[] DIRECTIONS = Direction.values();
 
     // BFS cache
     private static class Cache {
@@ -71,29 +72,30 @@ public class DensiteBlock extends Block {
         // Start fill
         long startLong = pos.asLong();
         cluster.add(startLong);
-        queue[tail++] = (startLong); // Enqueue
+        queue[tail++] = startLong; // Enqueue
 
         // Perform breadth-first search (BFS) on cluster blocks for maximum power
         int maxPower = 0;
-        BFS:
         while (head < tail) {
             // Dequeue a block position
             BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
 
-            // Search each direction around currentPos for other Densite blocks
-            for (Direction direction : Direction.values()) {
-                // Exit loop if queue is filled
-                if (tail >= MAX_CLUSTER_SIZE) break BFS;
+            // Update maxPower
+            if (maxPower < 15) maxPower = Math.max(maxPower, getExternalPower(level, currentPos));
 
-                // Get position and skip if unloaded || already counted || not Densite
-                BlockPos neighborPos = currentPos.relative(direction);
-                long neighborLong = neighborPos.asLong();
-                if (cluster.contains(neighborLong) || !level.isLoaded(neighborPos) || !level.getBlockState(neighborPos).is(this)) continue;
+            // Search each direction around currentPos for other Densite blocks if queue has space available
+            if (tail < MAX_CLUSTER_SIZE) {
+                for (Direction direction : DIRECTIONS) {
+                    // Get position and skip if unloaded || already counted || not Densite
+                    BlockPos neighborPos = currentPos.relative(direction);
+                    long neighborLong = neighborPos.asLong();
+                    if (cluster.contains(neighborLong) || !level.isLoaded(neighborPos) || !level.getBlockState(neighborPos).is(this)) continue;
 
-                // Update maxPower, cluster, and queue
-                if (maxPower < 15) maxPower = Math.max(maxPower, getExternalPower(level, currentPos));
-                cluster.add(neighborLong);
-                queue[tail++] = neighborLong; // Enqueue
+                    // Update cluster and queue
+                    cluster.add(neighborLong);
+                    queue[tail++] = neighborLong; // Enqueue
+                    if (tail >= MAX_CLUSTER_SIZE) break;
+                }
             }
         }
 

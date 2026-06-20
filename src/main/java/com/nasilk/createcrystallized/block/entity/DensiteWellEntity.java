@@ -28,8 +28,10 @@ import java.util.List;
 
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick variables (saved)
+    private int power = 0;
     private double fieldStrength = 0.0d;
     private double fieldRadius = 0.0d;
+    private double fieldRadiusSquared = 0.0d;
 
     // Tick variables (unsaved)
     private int tickCounter = 0;
@@ -42,22 +44,24 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double FIELD_CONSTANT = 1.0d;
 
     // Physics constants
-    private static final double IMPACT_RADIUS = 0.25d;
-    private static final double DAMPEN_FACTOR = 0.2d;
+    private static final double IMPACT_RADIUS = 0.5d;
+    private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
     private static final double RADIUS = 1.5d;
+    private static final double RADIUS_SQUARED = RADIUS * RADIUS;
     private static final double RADIUS_CUBED = RADIUS * RADIUS * RADIUS;
+    private static final double DAMPEN_FACTOR = 0.2d;
 
     // Cache
     private static class Cache {
         final BoundingBox3d searchBox = new BoundingBox3d();
         final Vector3d wellPosition = new Vector3d();
         final Vector3d targetPosition = new Vector3d();
-        final Vector3d impulse = new Vector3d();
+        final Vector3d impulseVelocity = new Vector3d();
         final Vector3d currentLinearVelocity = new Vector3d();
         final Vector3d currentAngularVelocity = new Vector3d();
         final Vector3d zeroVector = new Vector3d(0, 0, 0); // Read-only reference
         double distance = 0.0d;
-        double force = 0.0d;
+        double distanceSquared = 0.0d;
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -72,13 +76,24 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         if (level instanceof ServerLevel serverLevel) {
             // Get block power
             BlockState state = getBlockState();
-            int power = state.getValue(DensiteWellBlock.POWER);
-            if (power == 0) {
-                fieldStrength = 0.0d;
-                fieldRadius = 0.0d;
-                if (!targets.isEmpty()) targets.clear();
-                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-                return;
+            int newPower = state.getValue(DensiteWellBlock.POWER);
+            if (power != newPower) {
+                power = newPower;
+                if (power == 0) {
+                    fieldStrength = 0.0d;
+                    fieldRadius = 0.0d;
+                    fieldRadiusSquared = 0.0d;
+                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                    this.setChanged();
+                    if (!targets.isEmpty()) targets.clear();
+                    return;
+                } else {
+                    fieldStrength = FIELD_CONSTANT * power;
+                    fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
+                    fieldRadiusSquared = fieldRadius * fieldRadius;
+                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                    this.setChanged();
+                }
             }
 
             // Get global position
@@ -91,13 +106,8 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run gravity effect
-            fieldStrength = FIELD_CONSTANT * power;
-            fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
             if (tickCounter++ % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
             applyGravity(cache);
-
-            // Update tooltips
-            serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
         }
     }
 
@@ -136,19 +146,19 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) continue;
 
-            // Get sublevel position, current distance to block center, and impulse direction
+            // Get sublevel position, impulse velocity, and current distance^2
             cache.targetPosition.set(targetSubLevel.logicalPose().position());
-            cache.distance = cache.targetPosition.distance(cache.wellPosition);
-            cache.impulse.set(cache.wellPosition).sub(cache.targetPosition).normalize();
+            cache.impulseVelocity.set(cache.wellPosition).sub(cache.targetPosition);
+            cache.distanceSquared = cache.impulseVelocity.lengthSquared();
 
             // Handle out of range entities
-            if (cache.distance > fieldRadius) {
+            if (cache.distanceSquared > fieldRadiusSquared) {
                 targets.remove(i);
                 continue;
             }
 
             // Handle impact when very close
-            if (cache.distance < IMPACT_RADIUS) {
+            if (cache.distanceSquared < IMPACT_RADIUS_SQUARED) {
                 // Get current linear and angular velocity
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 handle.getAngularVelocity(cache.currentAngularVelocity);
@@ -157,28 +167,27 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 cache.currentLinearVelocity.negate();
                 cache.currentAngularVelocity.negate();
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
-                subLevel.logicalPose().position().set(cache.wellPosition);
+                handle.teleport(cache.wellPosition, subLevel.logicalPose().orientation());
                 continue;
             }
 
             // Handle dampening when within well radius: F = fieldStrength * distance / RADIUS^3
-            if (cache.distance < RADIUS) {
+            cache.distance = Math.sqrt(cache.distanceSquared);
+            if (cache.distanceSquared < RADIUS_SQUARED) {
                 // Apply velocity dampening / drag
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
 
                 // Apply reduced pull impulse
-                cache.force = fieldStrength * cache.distance / RADIUS_CUBED;
-                cache.impulse.mul(cache.force);
-                handle.applyLinearImpulse(cache.impulse);
+                cache.impulseVelocity.mul(fieldStrength / RADIUS_CUBED);
+                handle.applyLinearImpulse(cache.impulseVelocity);
                 continue;
             }
 
             // Handle standard pull impulse: F = fieldStrength / distance^2
-            cache.force = fieldStrength / (cache.distance * cache.distance);
-            cache.impulse.mul(cache.force);
-            handle.applyLinearImpulse(cache.impulse);
+            cache.impulseVelocity.mul(fieldStrength / (cache.distanceSquared * cache.distance));
+            handle.applyLinearImpulse(cache.impulseVelocity);
         }
     }
 
@@ -211,6 +220,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         // Save data to the network sync packet
         CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("Power", this.power);
         tag.putDouble("FieldStrength", this.fieldStrength);
         tag.putDouble("FieldRadius", this.fieldRadius);
         return tag;
@@ -220,8 +230,10 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         // Handle receiving the packet on the Client side
         CompoundTag tag = pkt.getTag();
+        this.power = tag.getInt("Power");
         this.fieldStrength = tag.getDouble("FieldStrength");
         this.fieldRadius = tag.getDouble("FieldRadius");
+        this.fieldRadiusSquared = fieldRadius * fieldRadius;
     }
 
     @Override
@@ -235,6 +247,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putInt("Power", this.power);
         tag.putDouble("FieldStrength", this.fieldStrength);
         tag.putDouble("FieldRadius", this.fieldRadius);
     }
@@ -242,7 +255,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.power = tag.getInt("Power");
         this.fieldStrength = tag.getDouble("FieldStrength");
         this.fieldRadius = tag.getDouble("FieldRadius");
+        this.fieldRadiusSquared = fieldRadius * fieldRadius;
     }
 }

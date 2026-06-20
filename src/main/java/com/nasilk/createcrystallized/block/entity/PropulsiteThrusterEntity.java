@@ -74,6 +74,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     // BFS constants
     private static final int MAX_CLUSTER_SIZE = 16; // 15 Propulsite + 1 Thruster
     private static final double CLUSTER_SCALE = 2.0d;
+    private static final Direction[] DIRECTIONS = Direction.values();
 
     // Entity pushing constants
     private static final double MAX_ACCELERATION = 6.0d; // Maximum acceleration allowed in blocks per tick
@@ -263,7 +264,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
 
             // Search each direction around currentPos for Propulsite and other Propulsite Thruster blocks
-            for (Direction direction : Direction.values()) {
+            for (Direction direction : DIRECTIONS) {
                 // Exit loop if queue is filled
                 if (tail >= MAX_CLUSTER_SIZE) break BFS;
 

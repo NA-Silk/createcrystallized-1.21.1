@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
-        "textures": {
-          "all": "createcrystallized:block/encased_propulsite_block"
-        }
+  "textures": {
+    "all": "createcrystallized:block/encased_propulsite_block"
+  }
 }

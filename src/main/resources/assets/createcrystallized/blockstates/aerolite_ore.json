@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "createcrystallized:block/aerolite_ore" }
+    "": {
+      "model": "createcrystallized:block/aerolite_ore"
+    }
   }
 }

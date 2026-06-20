@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "createcrystallized:block/chora_casing_levitite" }
+    "": {
+      "model": "createcrystallized:block/chora_casing_levitite"
+    }
   }
 }

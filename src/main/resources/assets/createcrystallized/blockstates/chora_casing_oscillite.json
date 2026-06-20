@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "createcrystallized:block/chora_casing_oscillite" }
+    "": {
+      "model": "createcrystallized:block/chora_casing_oscillite"
+    }
   }
 }

@@ -46,9 +46,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Physics constants
     private static final double IMPACT_RADIUS = 0.5d;
     private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
-    private static final double RADIUS = 1.5d;
-    private static final double RADIUS_SQUARED = RADIUS * RADIUS;
-    private static final double RADIUS_CUBED = RADIUS * RADIUS * RADIUS;
+    private static final double DAMPEN_RADIUS = 1.5d;
+    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
+    private static final double DAMPEN_RADIUS_CUBED = DAMPEN_RADIUS * DAMPEN_RADIUS * DAMPEN_RADIUS;
     private static final double DAMPEN_FACTOR = 0.2d;
 
     // Cache
@@ -173,14 +173,14 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
             // Handle dampening when within well radius: F = fieldStrength * distance / RADIUS^3
             cache.distance = Math.sqrt(cache.distanceSquared);
-            if (cache.distanceSquared < RADIUS_SQUARED) {
+            if (cache.distanceSquared < DAMPEN_RADIUS_SQUARED) {
                 // Apply velocity dampening / drag
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
 
                 // Apply reduced pull impulse
-                cache.impulseVelocity.mul(fieldStrength / RADIUS_CUBED);
+                cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_CUBED);
                 handle.applyLinearImpulse(cache.impulseVelocity);
                 continue;
             }

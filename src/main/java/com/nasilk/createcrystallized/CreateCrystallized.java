@@ -90,6 +90,7 @@ public class CreateCrystallized {
     // Add block items to creative tabs
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTab() == ModCreativeModeTabs.FLUIDSANDFIXINS_TAB.get()) {
+
             // Buckets
             event.accept(ModFluids.VOID_SEA_SLURRY_BUCKET);
             event.accept(ModFluids.DENSITE_EMULSION_BUCKET);
@@ -125,8 +126,8 @@ public class CreateCrystallized {
             event.accept(ModBlocks.PROPULSITE_THRUSTER);
             event.accept(ModBlocks.OSCILLITE_BLOCK);
             event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
-            /* Crafted Oscillite */
             event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
+            event.accept(ModBlocks.OSCILLITE_CANNON);
         }
     }
 

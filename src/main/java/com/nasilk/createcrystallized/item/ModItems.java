@@ -20,6 +20,21 @@ public class ModItems {
         (properties) -> new ChoraIngotItem(properties.stacksTo(64))
     );
 
+    public static final DeferredItem<ChoraIngotItem> AEROLITE_INGOT = ITEMS.registerItem(
+            "aerolite_ingot",
+            (properties) -> new ChoraIngotItem(properties.stacksTo(64))
+    );
+
+    public static final DeferredItem<ChoraIngotItem> RAW_AEROLITE = ITEMS.registerItem(
+            "raw_aerolite",
+            (properties) -> new ChoraIngotItem(properties.stacksTo(64))
+    );
+
+    public static final DeferredItem<ChoraIngotItem> CRUSHED_RAW_AEROLITE = ITEMS.registerItem(
+            "crushed_raw_aerolite",
+            (properties) -> new ChoraIngotItem(properties.stacksTo(64))
+    );
+
     public static void register(IEventBus eventbus) {
       ITEMS.register(eventbus);
     }

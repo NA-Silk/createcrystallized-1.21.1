@@ -404,7 +404,7 @@ public class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DEEPSLATE_AEROLITE_ORE = registerBlock(
-        "deeplslate_aerolite_ore",
+        "deepslate_aerolite_ore",
         () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_LIGHT_BLUE)
             .instrument(NoteBlockInstrument.HAT)

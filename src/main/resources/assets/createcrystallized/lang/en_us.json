@@ -19,10 +19,13 @@
 
   "item.createcrystallized.creative_fluid_eraser": "Creative Fluid Eraser™",
   "item.createcrystallized.chora_ingot": "Chora Ingot",
+  "item.createcrystallized.aerolite_ingot": "Aerolite Ingot",
+  "item.createcrystallized.raw_aerolite": "Raw Aerolite",
+  "item.createcrystallized.crushed_raw_aerolite": "Crushed Raw Aerolite",
 
   "block.createcrystallized.pebble": "Pebbles",
   "block.createcrystallized.aerolite_ore": "Aerolite Ore",
-  "block.createcrystallized.deeplslate_aerolite_ore": "Deepslate Aerolite Ore",
+  "block.createcrystallized.deepslate_aerolite_ore": "Deepslate Aerolite Ore",
 
   "block.createcrystallized.chora_casing": "Chora Casing",
   "block.createcrystallized.chora_casing_propulsite": "Propulsed Chora Casing",

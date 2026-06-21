@@ -253,7 +253,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> OSCILLITE_CANNON = registerBlock(
             "oscillite_cannon",
-            () -> new Block(BlockBehaviour.Properties.of()
+            () -> new OscilliteCannonBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_YELLOW)
                     .instrument(NoteBlockInstrument.HAT)
                     .strength(0.3F)

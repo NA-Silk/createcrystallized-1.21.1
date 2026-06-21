@@ -1,7 +1,18 @@
 {
   "variants": {
-    "": {
-      "model": "createcrystallized:block/oscillite_cannon"
+    "facing=north": { "model": "createcrystallized:block/oscillite_cannon" },
+    "facing=south": { "model": "createcrystallized:block/oscillite_cannon", "y": 180 },
+    "facing=west":  { "model": "createcrystallized:block/oscillite_cannon", "y": 270 },
+    "facing=east":  { "model": "createcrystallized:block/oscillite_cannon", "y": 90 },
+
+    "facing=up": {
+      "model": "createcrystallized:block/oscillite_cannon",
+      "x": 270
+    },
+
+    "facing=down": {
+      "model": "createcrystallized:block/oscillite_cannon",
+      "x": 90
     }
   }
 }

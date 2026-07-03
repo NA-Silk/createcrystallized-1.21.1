@@ -41,6 +41,7 @@
   "block.createcrystallized.propulsite_thruster": "Propulsite Thruster",
   "block.createcrystallized.oscillite_block": "Oscillite Block",
   "block.createcrystallized.encased_oscillite_block": "Encased Oscillite Block",
+  "block.createcrystallized.oscillite_cannon": "Oscillite Cannon",
   "block.createcrystallized.encased_levitite_block": "Encased Levitite Block",
 
   "createcrystallized.goggles.field_strength": "Field Strength: %s",

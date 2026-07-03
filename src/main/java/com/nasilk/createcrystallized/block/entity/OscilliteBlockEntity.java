@@ -1,7 +1,6 @@
 package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -11,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 
-public class OscilliteEntity extends BlockEntity implements IHaveGoggleInformation {
+public class OscilliteBlockEntity extends BlockEntity {
     // Variables
     private int tickCounter = 0;
 
@@ -33,7 +32,7 @@ public class OscilliteEntity extends BlockEntity implements IHaveGoggleInformati
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
-    public OscilliteEntity(BlockPos pos, BlockState state) {
+    public OscilliteBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.OSCILLITE_BLOCK.get(), pos, state);
     }
 

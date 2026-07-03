@@ -252,27 +252,27 @@ public class ModBlocks {
     );
 
     public static final DeferredBlock<Block> OSCILLITE_CANNON = registerBlock(
-            "oscillite_cannon",
-            () -> new OscilliteCannonBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_YELLOW)
-                    .instrument(NoteBlockInstrument.HAT)
-                    .strength(0.3F)
-                    .noOcclusion()
-                    .lightLevel(state -> 6)
-                    .isValidSpawn((state, level, pos, value) -> false)
-                    .isRedstoneConductor((state, level, pos) -> false)
-                    .isSuffocating((state, level, pos) -> false)
-                    .isViewBlocking((state, level, pos) -> false)
-                    .sound(
-                            new SoundType(1.0f, 1.0f,
-                                    ModSounds.PROPULSITE_BREAK.get(),
-                                    SoundEvents.AMETHYST_BLOCK_STEP,
-                                    ModSounds.PROPULSITE_PLACE.get(),
-                                    SoundEvents.AMETHYST_BLOCK_HIT,
-                                    SoundEvents.AMETHYST_BLOCK_FALL
-                            )
-                    )
+        "oscillite_cannon",
+        () -> new OscilliteCannonBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_YELLOW)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(0.3F)
+            .noOcclusion()
+            .lightLevel(state -> 6)
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new SoundType(1.0f, 1.0f,
+                    ModSounds.PROPULSITE_BREAK.get(),
+                    SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.PROPULSITE_PLACE.get(),
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundEvents.AMETHYST_BLOCK_FALL
+                )
             )
+        )
     );
 
     /** CASINGS */

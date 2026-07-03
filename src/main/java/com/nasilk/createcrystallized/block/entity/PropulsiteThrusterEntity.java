@@ -133,7 +133,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
 
             facing = state.getValue(PropulsiteThrusterBlock.FACING);
-            thrusterDirection.set(facing.step());
+            thrusterDirection.set(facing.step()); // TODO Cache these and pass cache to methods
             thrusterPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
             thrusterFace.set(thrusterPosition).fma(0.6, thrusterDirection);
 
@@ -389,7 +389,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         Cache cache = CACHE.get();
 
         // Compute each particle
-        for(int i = 0; i < NUM_PARTICLES; i++) {
+        for (int i = 0; i < NUM_PARTICLES; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
             double xSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
             double ySpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;

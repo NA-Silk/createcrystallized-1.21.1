@@ -126,8 +126,8 @@ public class CreateCrystallized {
             event.accept(ModBlocks.PROPULSITE_THRUSTER);
             event.accept(ModBlocks.OSCILLITE_BLOCK);
             event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
-            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
             event.accept(ModBlocks.OSCILLITE_CANNON);
+            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
         }
     }
 
@@ -183,7 +183,7 @@ public class CreateCrystallized {
                 ModBlocks.PROPULSITE_THRUSTER.get(),
                 ModBlocks.OSCILLITE_BLOCK.get(),
                 ModBlocks.ENCASED_OSCILLITE_BLOCK.get(),
-                /* Crafted Oscillite */
+                ModBlocks.OSCILLITE_CANNON.get(),
                 ModBlocks.ENCASED_LEVITITE_BLOCK.get()
             );
         }

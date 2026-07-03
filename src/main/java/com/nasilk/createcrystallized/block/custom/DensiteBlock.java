@@ -136,9 +136,7 @@ public class DensiteBlock extends Block {
     // PARTICLES
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !isMoving) {
-            addParticles(level, pos);
-        }
+        if (!state.is(newState.getBlock()) && !isMoving) addParticles(level, pos);
         super.onRemove(state, level, pos, newState, isMoving);
     }
 

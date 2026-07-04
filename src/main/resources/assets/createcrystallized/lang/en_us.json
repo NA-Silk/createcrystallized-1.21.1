@@ -49,6 +49,8 @@
   "createcrystallized.goggles.current_thrust": "Current Thrust: %s",
   "createcrystallized.goggles.maximum_thrust": "Maximum Thrust: %s",
   "createcrystallized.goggles.total_thrust": "Total Thrust: %s",
+  "createcrystallized.goggles.current_charge": "Current Charge: %s",
+  "createcrystallized.goggles.armed_state": "Armed State: %s",
   "createcrystallized.unit.gpg": "%s Gpg",
   "createcrystallized.unit.gpn": "%s GpN",
   "createcrystallized.unit.kpg": "%s kpg",

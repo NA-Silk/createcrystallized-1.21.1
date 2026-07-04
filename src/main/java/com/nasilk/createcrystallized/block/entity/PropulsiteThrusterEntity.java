@@ -155,7 +155,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             // Charging TODO custom charging sound
             if (powered && !armed && charge < MAX_CHARGE) {
                 charge++;
-                this.setChanged();
 
                 if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
                     addChargingParticles(serverLevel, subLevel);
@@ -165,7 +164,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
                 if (charge >= MAX_CHARGE) {
                     armed = true;
-                    this.setChanged();
 
                     // TODO custom arming sound, or something that fits
                     serverLevel.playSound(
@@ -176,6 +174,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                         1.5F,1.2F
                     );
                 }
+                this.setChanged();
             }
 
             // Discharging TODO make some sort of visual/audio queue that discharging is happening

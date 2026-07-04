@@ -91,19 +91,19 @@ public class AeroliteOreBlock extends Block {
         ));
 
         // Play effects
-        serverLevel.playSound(
-            null,
-            pos,
-            SoundEvents.ENDERMAN_TELEPORT,
-            SoundSource.BLOCKS,
-            1.0F,1.0F
-        );
         serverLevel.sendParticles(
             ParticleTypes.PORTAL,
             pos.getX() + 0.5,
             pos.getY() + 0.5,
             pos.getZ() + 0.5,
             8,0.5,0.5,0.5,1.0
+        );
+        serverLevel.playSound(
+            null,
+            pos,
+            SoundEvents.ENDERMAN_TELEPORT,
+            SoundSource.BLOCKS,
+            1.0F,1.0F
         );
     }
 }

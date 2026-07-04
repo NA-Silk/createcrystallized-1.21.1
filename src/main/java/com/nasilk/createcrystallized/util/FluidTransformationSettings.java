@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.util;
 
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
@@ -19,13 +20,14 @@ import java.util.function.Supplier;
  * @param requireRaining
  * @param requireThundering
  * @param requireNight
+ * @param requireSourceBlock
  * @param requireAdjacentBlocks         Neighbor requirements
  * @param lightningSettings             Lightning requirements
  * @param vibrationSettings             Vibration requirements
- * @param transformFlowingFluids        Whether flowing fluid blocks may transform
- * @param vaporizeInUltraWarmDimension  Nether-style vaporization support
  * @param allowedDimensions             Allowed transformation dimensions
+ * @param transformParticle             Optional transformation particle
  * @param transformSound                Optional transformation sound
+ * @param chainCatalyzes                Transforms adjacent same-fluid blocks
 
  * Frequency Table
  * Event:                               Frequency:
@@ -46,13 +48,14 @@ public record FluidTransformationSettings(
     boolean requireRaining,
     boolean requireThundering,
     boolean requireNight,
+    boolean requireSourceBlock,
     Set<Supplier<Block>> requireAdjacentBlocks,
     LightningSettings lightningSettings,
     VibrationSettings vibrationSettings,
-    boolean transformFlowingFluids,
-    boolean vaporizeInUltraWarmDimension,
     Set<ResourceKey<Level>> allowedDimensions,
-    Optional<Supplier<SoundEvent>> transformSound
+    Optional<Supplier<SimpleParticleType>> transformParticle,
+    Optional<Supplier<SoundEvent>> transformSound,
+    boolean chainCatalyzes
 ) {
     public record YRange(
         int minYLevel,

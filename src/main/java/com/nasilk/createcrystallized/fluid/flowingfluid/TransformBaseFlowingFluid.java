@@ -4,6 +4,8 @@ import com.nasilk.createcrystallized.util.FluidTransformationSettings;
 import com.nasilk.createcrystallized.util.FluidTransformationTriggerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+
 import java.util.function.Supplier;
 
 public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
@@ -63,18 +66,14 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         if (settings.requireThundering() && !serverLevel.isThundering()) return;
         // Night requirement
         if (settings.requireNight() && serverLevel.isDay()) return;
+        // Source-only restriction
+        if (settings.requireSourceBlock() && !state.isSource()) return;
+
         // Adjacent blocks requirement
         if (!settings.requireAdjacentBlocks().isEmpty() && !hasAdjacentBlocks(serverLevel, pos)) return;
         // Trigger Constraints
         if (settings.lightningSettings().requireLightning() && trigger != FluidTransformationTriggerType.LIGHTNING) return;
         if (settings.vibrationSettings().requireVibration() && trigger != FluidTransformationTriggerType.VIBRATION && trigger != FluidTransformationTriggerType.LIGHTNING) return;
-        // Source-only restriction
-        if (!settings.transformFlowingFluids() && !state.isSource()) return;
-        // Vaporize in ultrawarm dimensions
-        if (settings.vaporizeInUltraWarmDimension() && serverLevel.dimensionType().ultraWarm()) {
-            serverLevel.removeBlock(pos, false);
-            return;
-        }
         // Allowed dimensions
         if (!settings.allowedDimensions().isEmpty() && !settings.allowedDimensions().contains(serverLevel.dimension())) return;
 
@@ -93,13 +92,26 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         return false;
     }
 
-    private void performTransformation(Level serverLevel, BlockPos pos) {
-        // Transform block
-        serverLevel.setBlockAndUpdate(pos, transformBlock.get().defaultBlockState());
+    private void performTransformation(ServerLevel level, BlockPos pos) {
+        // Verify current state
+        FluidState currentState = level.getFluidState(pos);
+        if (!currentState.is(this) || !currentState.isSource()) return;
 
-        // Play sound
+        // Transform block
+        level.setBlockAndUpdate(pos, transformBlock.get().defaultBlockState());
+
+        // Play effects
+        settings.transformParticle().ifPresent(
+            particle -> level.sendParticles(
+                particle.get(),
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5,
+                8,0.5,0.5,0.5,0.5
+            )
+        );
         settings.transformSound().ifPresent(
-            sound -> serverLevel.playSound(
+            sound -> level.playSound(
                 null,
                 pos,
                 sound.get(),
@@ -108,8 +120,28 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
                 1.0f
             )
         );
-    }
 
+        /*/ Tell nearby same-type fluids to begin catalyzing
+        if (settings.chainCatalyzes()) {
+            for (Direction direction : Direction.values()) {
+                BlockPos targetPos = pos.relative(direction);
+                FluidState targetState = level.getFluidState(targetPos);
+
+                // Check if the nearby fluid is valid
+                if (!targetState.isEmpty()
+                    && targetState.isSource()
+                    && targetState.is(this)
+                ) {
+                    // Apply catalysis on a later tick
+                    MinecraftServer server = level.getServer();
+                    server.tell(new TickTask(
+                        server.getTickCount() + level.random.nextInt(20,200),
+                        () -> performTransformation(level, targetPos)
+                    ));
+                }
+            }
+        }*/
+    }
 
     // INNER CLASSES
     public static class Flowing extends TransformBaseFlowingFluid {

@@ -2,10 +2,12 @@ package com.nasilk.createcrystallized.fluid;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.FluidTransformationSettings;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
 import com.nasilk.createcrystallized.fluid.flowingfluid.UpwardBaseFlowingFluid;
 import com.nasilk.createcrystallized.item.ModItems;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BucketItem;
@@ -64,26 +66,26 @@ public class ModFluids {
 
     // DENSITE EMULSION
     public static final FluidTransformationSettings DENSITE_EMULSION_SETTINGS = new FluidTransformationSettings(
-        0.5f, // Transform rate [0.0f, 1,0f]
+        0.8f, // Transform rate [0.0f, 1,0f]
         15, // Max skylight
         new FluidTransformationSettings.YRange(-64, 319), // y level range
         false, // Require cold biome
         false, // Require rain
         false, // Require thunder
         false, // Require night
+        true, // Require source block
         Set.of( // Require adjacent blocks
             () -> Blocks.ICE, // Vanilla blocks must be clearly supplied
             () -> Blocks.PACKED_ICE,
             () -> Blocks.BLUE_ICE,
-            () -> Blocks.FROSTED_ICE,
-            ModBlocks.DENSITE_BLOCK
+            () -> Blocks.FROSTED_ICE
         ),
         new FluidTransformationSettings.LightningSettings(false, null), // Lightning requirements
         new FluidTransformationSettings.VibrationSettings(false, null, null), // Vibration requirements
-        false, // Transform flowing fluids
-        false, // Vaporize in ultrawarm dimensions
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
-        Optional.of(() -> SoundEvents.ENDER_EYE_DEATH) // Sound effect
+        Optional.of(ModParticles.DENSITE_PARTICLES), // Particle effect
+        Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), // Sound effect
+        true // Chain catalyzes
     );
     public static final Supplier<FlowingFluid> SOURCE_DENSITE_EMULSION = FLUIDS.register(
         "source_densite_emulsion",
@@ -162,13 +164,14 @@ public class ModFluids {
         false, // Require rain
         false, // Require thunder
         false, // Require night
+        true, // Require source block
         Set.of(), // Require adjacent blocks
         new FluidTransformationSettings.LightningSettings(true, 6), // Lightning requirements
         new FluidTransformationSettings.VibrationSettings(false, null, null), // Vibration requirements
-        false, // Transform flowing fluids
-        false, // Vaporize in ultrawarm dimensions
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
-        Optional.of(() -> SoundEvents.GLASS_PLACE) // Sound effect
+        Optional.of(ModParticles.PROPULSITE_PARTICLES), // Particle effect
+        Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
+        true // Chain catalyzes
     );
     public static final Supplier<FlowingFluid> SOURCE_PROPULSITE_FLURRY = FLUIDS.register(
         "source_propulsite_flurry",
@@ -217,13 +220,14 @@ public class ModFluids {
         false, // Require rain
         false, // Require thunder
         false, // Require night
+        true, // Require source block
         Set.of(), // Require adjacent blocks
         new FluidTransformationSettings.LightningSettings(false, null), // Lightning requirements
         new FluidTransformationSettings.VibrationSettings(true, 6, 10), // Vibration requirements
-        false, // Transform flowing fluids
-        false, // Vaporize in ultrawarm dimensions
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
-        Optional.of(() -> SoundEvents.GLASS_PLACE) // Sound effect
+        Optional.of(() -> ParticleTypes.SCULK_SOUL), // Particle effect
+        Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
+        true // Chain catalyzes
     );
     public static final Supplier<FlowingFluid> SOURCE_OSCILLITE_SUSPENSION = FLUIDS.register(
         "source_oscillite_suspension",

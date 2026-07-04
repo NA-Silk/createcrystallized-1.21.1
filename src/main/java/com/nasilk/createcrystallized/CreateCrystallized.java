@@ -112,8 +112,8 @@ public class CreateCrystallized {
 
             // Chora Blocks
             event.accept(ModBlocks.CHORA_CASING);
-            event.accept(ModBlocks.PROPULSED_CHORA_CASING);
             event.accept(ModBlocks.DENSE_CHORA_CASING);
+            event.accept(ModBlocks.PROPULSED_CHORA_CASING);
             event.accept(ModBlocks.OSCILLATING_CHORA_CASING);
             event.accept(ModBlocks.LEVITATING_CHORA_CASING);
 

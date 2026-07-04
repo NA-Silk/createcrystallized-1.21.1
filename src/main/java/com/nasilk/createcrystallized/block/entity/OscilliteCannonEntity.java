@@ -79,9 +79,11 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
+
     public OscilliteCannonEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.OSCILLITE_CANNON.get(), pos, state);
     }
+
 
     // TICK BEHAVIOR
     public void tick() {
@@ -257,6 +259,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             );
         }
     }
+
 
     // GOGGLE TOOLTIPS
     @Override

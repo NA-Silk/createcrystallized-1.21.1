@@ -37,6 +37,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import java.util.List;
+import java.util.function.Predicate;
 
 @SuppressWarnings({"SpellCheckingInspection", "GrazieInspectionRunner"})
 public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggleInformation {
@@ -57,9 +58,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private final Vector3d thrusterFace =  new Vector3d();
 
     // Entity pushing variables (unsaved)
-    private Direction facingValidation = null;
-    private final Vector3d localMin = new Vector3d();
-    private final Vector3d localMax = new Vector3d();
     private DamageSource thrusterDamageSource = null;
 
     // Tick constants TODO consider JSONifying these for fast /reload testing
@@ -70,6 +68,13 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final double STANDARD_DEVIATION = 5.0d; // Curve spread
     private static final double MEAN = 20.0d; // Curve middle
     private static final double NORM_DENOMINATOR = STANDARD_DEVIATION * Math.sqrt(2.0 * Math.PI); // Precomputed denominator
+    private static final double[] BURST_CURVE = new double[BURST_DURATION];
+    static {
+        for (int i = 0; i < BURST_DURATION; i++) {
+            double diff = (i - MEAN) / STANDARD_DEVIATION;
+            BURST_CURVE[i] = Math.exp(-0.5 * diff * diff);
+        }
+    }
 
     // BFS constants
     private static final int MAX_CLUSTER_SIZE = 16; // 15 Propulsite + 1 Thruster
@@ -80,11 +85,15 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final double MAX_ACCELERATION = 6.0d; // Maximum acceleration allowed in blocks per tick
     private static final double MAX_PUSH_RANGE = 8.0d; // Length effectiveness distance
     private static final double MAX_PUSH_RADIUS = 0.75d; // Radial effectiveness distance
-    private static final double PUSH_DECAY_RATE = 3.0d; // Acceleration distance dropoff rate
     private static final double PUSH_FACTOR = 0.1d; // Acceleration multiplier
     private static final double PUSH_SHIFT_FACTOR = 0.125d; // Acceleration multiplier while holding shift
     private static final double DAMAGE_MULTIPLIER = 5.0d; // Thruster damage multiplier
     private static final double SQR_MAX_PUSH_RADIUS = MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; // Precomputed radial distance squared
+    private static final Predicate<Entity> PUSH_PREDICATE = entity ->
+        !entity.isSpectator()
+            && !(entity instanceof AbstractContraptionEntity)
+            && !AirCurrent.isPlayerCreativeFlying(entity)
+            && !DivingBootsItem.isWornBy(entity);
 
     // Charging particle constants
     private static final int NUM_PARTICLES = 2; // Number of particles to spawn per tick
@@ -203,7 +212,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 // The curve that determines the total thrust of the burst
                 thrust =
                     (amplitude / NORM_DENOMINATOR) // Maximum
-                    * Math.exp(-0.5 * Math.pow((firingTick - MEAN) / STANDARD_DEVIATION, 2)); // Curve computation
+                    * BURST_CURVE[firingTick]; // Curve computation
 
                 // Hande subLevel effects
                 ServerSubLevel serverSubLevel = null; // Assigned for external use
@@ -283,45 +292,24 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
 
         // Set updated amplitude
+        double oldAmplitude = amplitude;
         amplitude = (1.0d + (CLUSTER_SCALE * propulsiteCount) / thrusterCount) * AMPLITUDE;
 
-        // Tell the game this block needs to be saved to disk
-        this.setChanged();
-
-        // Tell the server to send the new amplitude to the client for the Goggle tooltips
-        if (!level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        // Only trigger saves and network packets if the cluster actually changed
+        if (oldAmplitude != amplitude) {
+            this.setChanged();
+            if (!level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        }
     }
 
     private void pushEntities(ServerLevel serverLevel, ServerSubLevel subLevel) {
         if (thrust < 0.1) return;
         Cache cache = CACHE.get();
 
-        // Recompute localMin and localMax if facing has changed (from level shifting)
-        if (facingValidation != facing) {
-            facingValidation = facing;
-
-            // Reset localMin and localMax
-            localMin.set(-MAX_PUSH_RADIUS);
-            localMax.set(MAX_PUSH_RADIUS);
-
-            // Get step variations
-            int stepX = facing.getStepX(); // 1 if East,  -1 if West,  0 otherwise
-            int stepY = facing.getStepY(); // 1 if Up,    -1 if Down,  0 otherwise
-            int stepZ = facing.getStepZ(); // 1 if South, -1 if North, 0 otherwise
-
-            // Translate step values into bounding box direction
-            if      (stepX == 1)  { localMin.x = 0.5d;                      localMax.x = 0.5d + MAX_PUSH_RANGE; } // East
-            else if (stepX == -1) { localMin.x = -0.5d - MAX_PUSH_RANGE;    localMax.x = -0.5d;                 } // West
-            else if (stepY == 1)  { localMin.y = 0.5d;                      localMax.y = 0.5d + MAX_PUSH_RANGE; } // Up
-            else if (stepY == -1) { localMin.y = -0.5d - MAX_PUSH_RANGE;    localMax.y = -0.5d;                 } // Down
-            else if (stepZ == 1)  { localMin.z = 0.5d;                      localMax.z = 0.5d + MAX_PUSH_RANGE; } // South
-            else if (stepZ == -1) { localMin.z = -0.5d - MAX_PUSH_RANGE;    localMax.z = -0.5d;                 } // North
-        }
-
-        // Getting bounding box
+        // Set bounding box
         cache.aabb.setUnchecked(
-            localMin.x + thrusterPosition.x, localMin.y + thrusterPosition.y, localMin.z + thrusterPosition.z,
-            localMax.x + thrusterPosition.x, localMax.y + thrusterPosition.y, localMax.z + thrusterPosition.z
+            thrusterPosition.x - MAX_PUSH_RANGE, thrusterPosition.y - MAX_PUSH_RANGE, thrusterPosition.z - MAX_PUSH_RANGE,
+            thrusterPosition.x + MAX_PUSH_RANGE, thrusterPosition.y + MAX_PUSH_RANGE, thrusterPosition.z + MAX_PUSH_RANGE
         );
 
         // Convert sublevel (local) vectors to global vectors (call by reference)
@@ -334,13 +322,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
 
         // Get entities within the bounding box
-        List<Entity> entities = serverLevel.getEntities(null, cache.aabb.toMojang()); // toMojang() Allocates a new Mojang AABB...
+        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.aabb.toMojang(), PUSH_PREDICATE); // toMojang() Allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities to apply acceleration
         for (Entity entity : entities) {
-            if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) continue;
-
             // Get entity position relative to the thruster
             AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
             double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
@@ -357,8 +343,9 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             if (cache.relEntityRadialDistance.lengthSquared() > SQR_MAX_PUSH_RADIUS) continue;
 
             // Acceleration scalar
-            double distanceRatio = (relEntityLengthScalar - 0.5d) / MAX_PUSH_RANGE; // [0.0 to 1.0] distanct ratio
-            double accelerationScalar = thrust * PUSH_FACTOR * Math.exp(-PUSH_DECAY_RATE * distanceRatio);
+            double inverseDistanceRatio = 1.0d - (relEntityLengthScalar - 0.5d) / MAX_PUSH_RANGE; // 1.0 - [0.0 to 1.0] distanct ratio
+            double decay = inverseDistanceRatio * inverseDistanceRatio * inverseDistanceRatio; // (1 - x)^3 approximates e^(-3x) from [0.0 to 1.0] and is cheaper on CPU
+            double accelerationScalar = thrust * PUSH_FACTOR * decay;
             if (entity.isShiftKeyDown()) accelerationScalar *= PUSH_SHIFT_FACTOR;
             if (accelerationScalar < 0.1d) continue;
 

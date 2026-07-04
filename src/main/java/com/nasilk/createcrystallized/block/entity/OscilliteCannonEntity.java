@@ -185,7 +185,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private void fireCannon(ServerLevel level, Cache cache) {
-        // Getting bounding box
+        // Set bounding box
         cache.aabb.setUnchecked(
             cannonPosition.x - MAX_RANGE, cannonPosition.y - MAX_RANGE, cannonPosition.z - MAX_RANGE,
             cannonPosition.x + MAX_RANGE, cannonPosition.y + MAX_RANGE, cannonPosition.z + MAX_RANGE

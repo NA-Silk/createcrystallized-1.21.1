@@ -1,7 +1,6 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
-import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;

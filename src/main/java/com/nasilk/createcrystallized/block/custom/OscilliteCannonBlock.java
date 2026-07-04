@@ -26,10 +26,10 @@ public class OscilliteCannonBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
+    private static final VoxelShape NORTH_SHAPE = Block.box(0.0d, 0.0d, -15.0d, 16.0d, 16.0d, 16.0d);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 31.0d);
     private static final VoxelShape EAST_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 31.0d, 16.0d, 16.0d);
     private static final VoxelShape WEST_SHAPE = Block.box(-15.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
-    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 31.0d);
-    private static final VoxelShape NORTH_SHAPE = Block.box(0.0d, 0.0d, -15.0d, 16.0d, 16.0d, 16.0d);
     private static final VoxelShape UP_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 31.0d, 16.0d);
     private static final VoxelShape DOWN_SHAPE = Block.box(0.0d, -15.0d, 0.0d, 16.0d, 16.0d, 16.0d);
 

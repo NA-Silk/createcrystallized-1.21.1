@@ -1,11 +1,10 @@
 package com.nasilk.createcrystallized.fluid.flowingfluid;
 
+import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import com.nasilk.createcrystallized.util.FluidTransformationSettings;
 import com.nasilk.createcrystallized.util.FluidTransformationTriggerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-
 import java.util.function.Supplier;
 
 public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
@@ -121,26 +119,24 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
             )
         );
 
-        /*/ Tell nearby same-type fluids to begin catalyzing
+        // Tell nearby same-type fluids to begin catalyzing
         if (settings.chainCatalyzes()) {
             for (Direction direction : Direction.values()) {
                 BlockPos targetPos = pos.relative(direction);
                 FluidState targetState = level.getFluidState(targetPos);
 
-                // Check if the nearby fluid is valid
-                if (!targetState.isEmpty()
-                    && targetState.isSource()
-                    && targetState.is(this)
-                ) {
-                    // Apply catalysis on a later tick
-                    MinecraftServer server = level.getServer();
-                    server.tell(new TickTask(
-                        server.getTickCount() + level.random.nextInt(20,200),
-                        () -> performTransformation(level, targetPos)
-                    ));
+                // Check if the nearby fluid is valid and apply catalysis on a later tick
+                if (!targetState.isEmpty() && targetState.isSource() && targetState.is(this)) {
+                    TaskEventScheduler.schedule(
+                        level.getServer(),
+                        level.random.nextInt(20,200),
+                        () -> {
+                            if (level.isLoaded(targetPos)) performTransformation(level, targetPos);
+                        }
+                    );
                 }
             }
-        }*/
+        }
     }
 
     // INNER CLASSES

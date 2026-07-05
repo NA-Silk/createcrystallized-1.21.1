@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.custom;
 
+import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
@@ -8,8 +9,6 @@ import dev.simulated_team.simulated.util.SimAssemblyHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +24,7 @@ import org.joml.Vector3d;
 public class AeroliteOreBlock extends Block {
     public static final BooleanProperty DISARMED = BlockStateProperties.DISARMED;
     private static final double THRUST = 10.0d;
-    private static final int THRUST_DELAY = 10;
+    private static final int THRUST_DELAY = 2;
 
     public AeroliteOreBlock(Properties properties) {
         super(properties);
@@ -59,14 +58,14 @@ public class AeroliteOreBlock extends Block {
         // Adjust for recoil and scale magnitude TODO: Make a better y-transition
         Direction collisionDirection = Direction.getNearest(thrust.x, thrust.y, thrust.z);
         BlockPos collisionPos = pos.relative(collisionDirection);
-        if (serverLevel.getBlockState(collisionPos).isSolidRender(serverLevel, collisionPos)) {
+        if (!serverLevel.getBlockState(collisionPos).getCollisionShape(serverLevel, collisionPos).isEmpty()) {
             switch (collisionDirection.getAxis()) {
                 case X -> thrust.x = -thrust.x;
                 case Y -> thrust.y = -thrust.y;
                 case Z -> thrust.z = -thrust.z;
             }
         }
-        if (serverLevel.getBlockState(pos.below()).isSolidRender(serverLevel, pos.below()) && thrust.y < 0.0d) {
+        if (!serverLevel.getBlockState(pos.below()).getCollisionShape(serverLevel, pos.below()).isEmpty() && thrust.y < 0.0d) {
             thrust.set(0.0d, 1.0d, 0.0d);
         }
         thrust.mul(THRUST);
@@ -81,14 +80,14 @@ public class AeroliteOreBlock extends Block {
         if (!(result.subLevel() instanceof  ServerSubLevel subLevel)) return;
 
         // Apply thrust on a later tick
-        MinecraftServer server = serverLevel.getServer();
-        server.tell(new TickTask(
-            server.getTickCount() + THRUST_DELAY,
+        TaskEventScheduler.schedule(
+            serverLevel.getServer(),
+            THRUST_DELAY,
             () -> {
                 RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
                 if (handle.isValid()) handle.addLinearAndAngularVelocity(thrust, new Vector3d());
             }
-        ));
+        );
 
         // Play effects
         serverLevel.sendParticles(

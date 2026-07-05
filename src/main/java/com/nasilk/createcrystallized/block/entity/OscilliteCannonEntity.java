@@ -105,8 +105,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             subLevel.logicalPose().transformPosition(cache.cannonPositionCurrent);
 
             // Get linear velocitySquared component
-            if (cannonPosition.distanceSquared(cache.cannonPositionCurrent) > 1e-4) {
-                cache.velocitySquared = LINEAR_SCALE*cannonPosition.distanceSquared(cache.cannonPositionCurrent); // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
+            cache.velocitySquared = cannonPosition.distanceSquared(cache.cannonPositionCurrent);
+            if (cache.velocitySquared > 1e-3d) {
+                cache.velocitySquared *= LINEAR_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
                 cannonPosition.set(cache.cannonPositionCurrent); // Set cannonPosition = cannonPositionCurrent
             } else {
                 cache.velocitySquared = 0.0d;

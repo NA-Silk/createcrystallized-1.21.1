@@ -7,7 +7,6 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -49,26 +48,33 @@ public class AeroliteOreBlock extends Block {
     }
 
     private void move(ServerLevel serverLevel, BlockPos pos, Player player) {
-        // Compute thrust
+        // Compute thrust (unnormalized)
         Vector3d thrust =
-            new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) // Block position
-            .sub(player.getX(), player.getY(), player.getZ()) // Player position
-            .normalize(); // Reduce to unit vector
+            new Vector3d(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d) // Block position
+            .sub(player.getX(), player.getY(), player.getZ()); // Player position
 
-        // Adjust for recoil and scale magnitude TODO: Make a better y-transition
-        Direction collisionDirection = Direction.getNearest(thrust.x, thrust.y, thrust.z);
-        BlockPos collisionPos = pos.relative(collisionDirection);
-        if (!serverLevel.getBlockState(collisionPos).getCollisionShape(serverLevel, collisionPos).isEmpty()) {
-            switch (collisionDirection.getAxis()) {
-                case X -> thrust.x = -thrust.x;
-                case Y -> thrust.y = -thrust.y;
-                case Z -> thrust.z = -thrust.z;
-            }
-        }
-        if (!serverLevel.getBlockState(pos.below()).getCollisionShape(serverLevel, pos.below()).isEmpty() && thrust.y < 0.0d) {
-            thrust.set(0.0d, 1.0d, 0.0d);
-        }
-        thrust.mul(THRUST);
+        // Handle reflections for each axis
+        if (isColliding(serverLevel, pos.east()) && isColliding(serverLevel, pos.west())) {
+            thrust.x = 0.0d;
+        } else if ((thrust.x > 0.0d && isColliding(serverLevel, pos.east()))
+            || (thrust.x < 0.0d && isColliding(serverLevel, pos.west()))
+        ) thrust.x = -thrust.x;
+
+        if (isColliding(serverLevel, pos.above()) && isColliding(serverLevel, pos.below())) {
+            thrust.y = 0.0d;
+        } else if ((thrust.y > 0.0d && isColliding(serverLevel, pos.above()))
+            || (thrust.y < 0.0d && isColliding(serverLevel, pos.below()))
+        ) thrust.y = -thrust.y;
+
+        if (isColliding(serverLevel, pos.south()) && isColliding(serverLevel, pos.north())) {
+            thrust.z = 0.0d;
+        } else if ((thrust.z > 0.0d && isColliding(serverLevel, pos.south()))
+            || (thrust.z < 0.0d && isColliding(serverLevel, pos.north()))
+        ) thrust.z = -thrust.z;
+
+        // Safely normalize and scale thrust
+        if (thrust.lengthSquared() < 1e-3d) thrust.set(0.0d, 1.0d, 0.0d);
+        thrust.normalize().mul(THRUST);
 
         // Convert to sublevel
         SimAssemblyHelper.AssemblyResult result;
@@ -102,7 +108,11 @@ public class AeroliteOreBlock extends Block {
             pos,
             SoundEvents.ENDERMAN_TELEPORT,
             SoundSource.BLOCKS,
-            1.0F,1.0F
+            1.0f,1.0f
         );
+    }
+
+    private boolean isColliding(ServerLevel serverLevel, BlockPos pos) {
+        return !serverLevel.getBlockState(pos).getCollisionShape(serverLevel, pos).isEmpty();
     }
 }

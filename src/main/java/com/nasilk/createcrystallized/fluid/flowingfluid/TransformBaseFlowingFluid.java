@@ -3,6 +3,8 @@ package com.nasilk.createcrystallized.fluid.flowingfluid;
 import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import com.nasilk.createcrystallized.util.FluidTransformationSettings;
 import com.nasilk.createcrystallized.util.FluidTransformationTriggerType;
+import com.simibubi.create.foundation.utility.BlockHelper;
+import dev.eriksonn.aeronautics.index.AeroTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -97,6 +99,22 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
 
         // Transform block
         level.setBlockAndUpdate(pos, transformBlock.get().defaultBlockState());
+
+        // Break cast blocks (Levitite consistency)
+        CAST:
+        for (Direction castDirection : Direction.values()) {
+            // Get cast block and validate tag
+            BlockPos castPos = pos.relative(castDirection);
+            if (!level.getBlockState(castPos).is(AeroTags.BlockTags.LEVITITE_BREAKABLE)) continue;
+
+            // Skip current iteration if fluid would flow
+            for (Direction freeFluidPos : Direction.values()) {
+                if (level.getFluidState(castPos.relative(freeFluidPos)).is(this)) continue CAST;
+            }
+
+            // Break cast block
+            BlockHelper.destroyBlock(level, castPos, 1.0f);
+        }
 
         // Play effects
         settings.transformParticle().ifPresent(

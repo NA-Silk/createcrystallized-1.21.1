@@ -95,9 +95,9 @@ public class ModBlocks {
             .isViewBlocking((state, level, pos) -> false)
             .sound(
                 new SoundType(1.0f, 1.0f,
-                    SoundEvents.AMETHYST_BLOCK_BREAK,
+                    ModSounds.OSCILLITE_BREAK.get(),
                     SoundEvents.AMETHYST_BLOCK_STEP,
-                    SoundEvents.AMETHYST_BLOCK_PLACE,
+                    ModSounds.OSCILLITE_PLACE.get(),
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_CLUSTER_FALL
                 )

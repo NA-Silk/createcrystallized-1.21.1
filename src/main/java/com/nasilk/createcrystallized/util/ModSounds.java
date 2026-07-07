@@ -52,6 +52,21 @@ public class ModSounds {
         )
     );
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSCILLITE_PLACE = SOUND_EVENTS.register(
+            "block.oscillite_place",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
+                            CreateCrystallized.MOD_ID, "block.oscillite_place"
+                    )
+            )
+    );
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSCILLITE_BREAK = SOUND_EVENTS.register(
+            "block.oscillite_break",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
+                            CreateCrystallized.MOD_ID, "block.oscillite_break"
+                    )
+            )
+    );
 
     public static void register(IEventBus eventBus) {
         SOUND_EVENTS.register(eventBus);

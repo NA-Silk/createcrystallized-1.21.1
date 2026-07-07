@@ -1,7 +1,8 @@
 {
   "block.pebble_place": {
     "subtitle": "subtitles.createcrystallized.block.pebble_place",
-    "sounds": [ {
+    "sounds": [
+      {
         "name": "createcrystallized:block/pebble_place",
         "pitch": 1.2,
         "volume": 1.0
@@ -32,7 +33,6 @@
       "createcrystallized:block/densite_break_2",
       "createcrystallized:block/densite_break_3",
       "createcrystallized:block/densite_break_4"
-
     ]
   },
   "block.densite_place": {
@@ -43,6 +43,22 @@
       "createcrystallized:block/densite_place_2",
       "createcrystallized:block/densite_place_3",
       "createcrystallized:block/densite_place_4"
+    ]
+  },
+  "block.oscillite_place": {
+    "sounds": [
+      "createcrystallized:block/oscillite_place_1",
+      "createcrystallized:block/oscillite_place_2",
+      "createcrystallized:block/oscillite_place_3",
+      "createcrystallized:block/oscillite_place_4"
+    ]
+  },
+  "block.oscillite_break": {
+    "sounds": [
+      "createcrystallized:block/oscillite_break_1",
+      "createcrystallized:block/oscillite_break_2",
+      "createcrystallized:block/oscillite_break_3",
+      "createcrystallized:block/oscillite_break_4"
     ]
   }
 }

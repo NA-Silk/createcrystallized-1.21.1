@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createcrystallized:block/small_echo_crystal_bud",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createcrystallized:block/small_echo_crystal_bud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createcrystallized:block/small_echo_crystal_bud",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createcrystallized:block/small_echo_crystal_bud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createcrystallized:block/small_echo_crystal_bud"
+    },
+    "facing=west": {
+      "model": "createcrystallized:block/small_echo_crystal_bud",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "createcrystallized:block/echo_crystal_block"
+  }
+}

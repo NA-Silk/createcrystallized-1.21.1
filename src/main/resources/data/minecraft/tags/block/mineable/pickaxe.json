@@ -5,6 +5,13 @@
     "createcrystallized:chora_casing_densite",
     "createcrystallized:chora_casing_propulsite",
     "createcrystallized:chora_casing_oscillite",
-    "createcrystallized:chora_casing_levitite"
+    "createcrystallized:chora_casing_levitite",
+
+    "createcrystallized:echo_crystal_block",
+    "createcrystallized:budding_echo_crystal",
+    "createcrystallized:echo_crystal_cluster",
+    "createcrystallized:large_echo_crystal_bud",
+    "createcrystallized:medium_echo_crystal_bud",
+    "createcrystallized:small_echo_crystal_bud"
   ]
 }

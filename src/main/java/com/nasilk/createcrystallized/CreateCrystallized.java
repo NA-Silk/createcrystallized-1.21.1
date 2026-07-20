@@ -110,6 +110,14 @@ public class CreateCrystallized {
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
 
+            // Echo Shard Blocks
+            event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);
+            event.accept(ModBlocks.BUDDING_ECHO_CRYSTAL);
+            event.accept(ModBlocks.ECHO_CRYSTAL_CLUSTER);
+            event.accept(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
+            event.accept(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
+            event.accept(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
+
             // Chora Blocks
             event.accept(ModBlocks.CHORA_CASING);
             event.accept(ModBlocks.DENSE_CHORA_CASING);

@@ -13,11 +13,11 @@ import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -392,6 +392,67 @@ public class ModBlocks {
     );
 
 
+    /** ECHO BLOCKS - Copied Amethyst registries in Blocks.class */
+    public static final DeferredBlock<Block> ECHO_CRYSTAL_BLOCK = registerBlock(
+        "echo_crystal_block",
+        () -> new AmethystBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .strength(1.5F)
+            .sound(SoundType.AMETHYST)
+            .requiresCorrectToolForDrops()
+        )
+    );
+
+    public static final DeferredBlock<Block> BUDDING_ECHO_CRYSTAL = registerBlock(
+        "budding_echo_crystal",
+        () -> new BuddingEchoCrystalBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .randomTicks()
+            .strength(1.5F)
+            .sound(SoundType.AMETHYST)
+            .requiresCorrectToolForDrops()
+            .pushReaction(PushReaction.DESTROY)
+        )
+    );
+
+    public static final DeferredBlock<Block> ECHO_CRYSTAL_CLUSTER = registerBlock(
+        "echo_crystal_cluster",
+        () -> new AmethystClusterBlock(7.0F, 3.0F, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .forceSolidOn()
+            .noOcclusion()
+            .sound(SoundType.AMETHYST_CLUSTER)
+            .strength(1.5F)
+            .lightLevel((l) -> 5)
+            .pushReaction(PushReaction.DESTROY)
+        )
+    );
+
+    public static final DeferredBlock<Block> LARGE_ECHO_CRYSTAL_BUD = registerBlock(
+        "large_echo_crystal_bud",
+        () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+            .sound(SoundType.LARGE_AMETHYST_BUD)
+            .lightLevel((l) -> 4)
+        )
+    );
+
+    public static final DeferredBlock<Block> MEDIUM_ECHO_CRYSTAL_BUD = registerBlock(
+        "medium_echo_crystal_bud",
+        () -> new AmethystClusterBlock(4.0F, 3.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+            .sound(SoundType.MEDIUM_AMETHYST_BUD)
+            .lightLevel((l) -> 2)
+        )
+    );
+
+    public static final DeferredBlock<Block> SMALL_ECHO_CRYSTAL_BUD = registerBlock(
+        "small_echo_crystal_bud",
+        () -> new AmethystClusterBlock(3.0F, 4.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+            .sound(SoundType.SMALL_AMETHYST_BUD)
+            .lightLevel((l) -> 1)
+        )
+    );
+
+
     /** ADDITIONAL BLOCKS */
     public static final DeferredBlock<Block> PEBBLE = registerBlockCustomItem(
         "pebble",
@@ -453,7 +514,7 @@ public class ModBlocks {
                 new SoundType(1.0f, 0.8f,
                     SoundEvents.STONE_BREAK,
                     SoundEvents.STONE_STEP,
-                    SoundEvents.ENDERMAN_TELEPORT,
+                    SoundEvents.STONE_PLACE,
                     SoundEvents.STONE_HIT,
                     SoundEvents.STONE_FALL
                 )

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "createcrystallized:block/echo_crystal_block"
+    }
+  }
+}

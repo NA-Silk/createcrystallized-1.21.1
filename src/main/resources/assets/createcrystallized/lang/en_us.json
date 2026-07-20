@@ -27,6 +27,13 @@
   "block.createcrystallized.aerolite_ore": "Aerolite Ore",
   "block.createcrystallized.deepslate_aerolite_ore": "Deepslate Aerolite Ore",
 
+  "block.createcrystallized.echo_crystal_block": "Block of Echo Crystal",
+  "block.createcrystallized.budding_echo_crystal": "Budding Echo Crystal",
+  "block.createcrystallized.echo_crystal_cluster": "Echo Crystal Cluster",
+  "block.createcrystallized.large_echo_crystal_bud": "Large Echo Crystal Bud",
+  "block.createcrystallized.medium_echo_crystal_bud": "Medium Echo Crystal Bud",
+  "block.createcrystallized.small_echo_crystal_bud": "Small Echo Crystal Bud",
+
   "block.createcrystallized.chora_casing": "Chora Casing",
   "block.createcrystallized.chora_casing_propulsite": "Propulsed Chora Casing",
   "block.createcrystallized.chora_casing_densite": "Dense Chora Casing",

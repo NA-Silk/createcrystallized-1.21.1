@@ -109,6 +109,7 @@ public class CreateCrystallized {
             event.accept(ModBlocks.PEBBLE);
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
+            event.accept(ModBlocks.AEROLITE_BLOCK);
 
             // Echo Shard Blocks
             event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);
@@ -119,11 +120,13 @@ public class CreateCrystallized {
             event.accept(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
 
             // Chora Blocks
+            event.accept(ModBlocks.CHORA_BLOCK);
             event.accept(ModBlocks.CHORA_CASING);
             event.accept(ModBlocks.DENSE_CHORA_CASING);
             event.accept(ModBlocks.PROPULSED_CHORA_CASING);
             event.accept(ModBlocks.OSCILLATING_CHORA_CASING);
             event.accept(ModBlocks.LEVITATING_CHORA_CASING);
+
 
             // Crystal Blocks
             event.accept(ModBlocks.DENSITE_BLOCK);

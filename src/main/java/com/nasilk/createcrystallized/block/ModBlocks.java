@@ -480,8 +480,6 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_LIGHT_GRAY)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
-            .noOcclusion()
-            .lightLevel(state -> 2)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
@@ -504,8 +502,6 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_LIGHT_BLUE)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
-            .noOcclusion()
-            .lightLevel(state -> 1)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
@@ -520,6 +516,43 @@ public class ModBlocks {
                 )
             )
         )
+    );
+
+    public static final DeferredBlock<Block> AEROLITE_BLOCK = registerBlock(
+            "aerolite_block",
+            () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .instrument(NoteBlockInstrument.HAT)
+                    .strength(5.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(
+                            new SoundType(1.0f, 1.2f,
+                                    SoundEvents.METAL_BREAK,
+                                    SoundEvents.METAL_STEP,
+                                    SoundEvents.METAL_PLACE,
+                                    SoundEvents.METAL_HIT,
+                                    SoundEvents.METAL_FALL
+                            )
+                    )
+            )
+    );
+
+    public static final DeferredBlock<Block> CHORA_BLOCK = registerBlock(
+            "chora_block",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(5.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(
+                            new SoundType(1.0f, 1.0f,
+                                    SoundEvents.METAL_BREAK,
+                                    SoundEvents.METAL_STEP,
+                                    SoundEvents.METAL_PLACE,
+                                    SoundEvents.METAL_HIT,
+                                    SoundEvents.METAL_FALL
+                            )
+                    )
+            )
     );
 
 

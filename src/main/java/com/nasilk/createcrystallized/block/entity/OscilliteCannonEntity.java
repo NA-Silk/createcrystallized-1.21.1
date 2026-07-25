@@ -59,7 +59,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
 
     // Charging particle constants
-    private static final int NUM_PARTICLES = 2;
+    private static final int NUM_PARTICLES = 1;
     private static final double PARTICLE_RADIUS = 1.5;
 
     // Cache
@@ -126,9 +126,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                     cooldown--;
                     this.setChanged();
                 }
-                if (tickCounter++ % 40 == 0) {
+                if (tickCounter++ % 80 == 0) {
                     serverLevel.sendParticles(
-                        ParticleTypes.ANGRY_VILLAGER,
+                        ParticleTypes.ANGRY_VILLAGER, // TODO Make this less... heavy
                         cannonPosition.x, cannonPosition.y, cannonPosition.z,
                         1, 0.5, 0.5, 0.5, 0.1
                     );
@@ -255,7 +255,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             level.sendParticles(
-                ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), // TODO Custom charging particles
+                ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), // TODO Custom charging particles
                 cache.cannonFace.x, cache.cannonFace.y, cache.cannonFace.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,

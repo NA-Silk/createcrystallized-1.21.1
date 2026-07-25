@@ -32,6 +32,11 @@ public class ModParticles {
         () -> new SimpleParticleType(true)
     );
 
+    public static final Supplier<SimpleParticleType> OSCILLITE_CANNON_CHARGING_PARTICLES = PARTICLE_TYPES.register(
+        "oscillite_cannon_charging_particles",
+        () -> new SimpleParticleType(true)
+    );
+
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);
     }

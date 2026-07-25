@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.entity;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -9,6 +8,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
@@ -40,7 +40,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private boolean armed = false;
 
     // Variables (unsaved)
-    private int tickCounter = 0; // TODO Remove logger variable
+    private int tickCounter = 0;
     private final Vector3d cannonPosition = new Vector3d();
 
     // Tick constants
@@ -49,7 +49,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private static final double LINEAR_SCALE = 15.0d;
     private static final double ANGULAR_SCALE = 0.75d;
     private static final double THRESHOLD = 1.0d;
-    private static final double FACE_OFFSET = 1.6d;
+    private static final double FACE_OFFSET = 1.4d;
 
     // Firing constants
     private static final float DAMAGE_AMOUNT = 10.0f;
@@ -74,8 +74,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Firing
         final BoundingBox3d aabb = new BoundingBox3d();
+        final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final Vector3d relEntityPosition = new Vector3d();
-        final Vector3d spawnPosition = new Vector3d();
+        final Vector3d beamPosition = new Vector3d();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -90,9 +91,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (level instanceof ServerLevel serverLevel
             && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel
         ) {
-            // TODO Remove logger controller
-            boolean print = tickCounter++ % 40 == 0;
-
             // Get the physics handle and tick data
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) return;
@@ -113,16 +111,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 cache.velocitySquared = 0.0d;
             }
 
-            // TODO Remove logger
-            if (print) CreateCrystallized.LOGGER.info("Linear Component: {}", cache.velocitySquared);
-
             // Get angular velocitySquared component
             handle.getAngularVelocity(cache.angularVelocity); // Get angularVelocity
             cache.velocitySquared += ANGULAR_SCALE*cache.angularVelocity.lengthSquared(); // Set velocitySquared += ANGULAR_SCALE*||angularVelocity||^2
-
-            // TODO Remove logger
-            if (print) CreateCrystallized.LOGGER.info("Angular Component: {}", ANGULAR_SCALE*cache.angularVelocity.lengthSquared());
-            if (print) CreateCrystallized.LOGGER.info("Total Velocity^2: {}", cache.velocitySquared);
 
             // Get facing data
             cache.cannonDirection.set(state.getValue(OscilliteCannonBlock.FACING).step());
@@ -134,6 +125,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 if (!cache.powered) {
                     cooldown--;
                     this.setChanged();
+                }
+                if (tickCounter++ % 40 == 0) {
+                    serverLevel.sendParticles(
+                        ParticleTypes.ANGRY_VILLAGER,
+                        cannonPosition.x, cannonPosition.y, cannonPosition.z,
+                        1, 0.5, 0.5, 0.5, 0.1
+                    );
+                    tickCounter = 0;
                 }
                 return;
             }
@@ -151,21 +150,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         SoundSource.BLOCKS,
                         1.5F,1.2F
                     );
-
-                    // TODO Remove logger
-                    CreateCrystallized.LOGGER.info("CHARGED!");
                 }
                 this.setChanged();
                 if (charge % 10 == 0 || armed) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-            }
-
-            // TODO Remove loggers
-            if (print) {
-                if (cache.velocitySquared >= THRESHOLD) {
-                    CreateCrystallized.LOGGER.info("Exceeding Threshold: True");
-                } else {
-                    CreateCrystallized.LOGGER.info("Exceeding Threshold: False");
-                }
             }
 
             // Firing
@@ -187,20 +174,41 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void fireCannon(ServerLevel level, Cache cache) {
+        double range = MAX_RANGE;
+
+        // Move along beam path and find nearest block
+        for (double i = 0; i < range; i += 0.5) {
+            cache.beamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+            cache.mutablePos.set(cache.beamPosition.x, cache.beamPosition.y, cache.beamPosition.z);
+            BlockState blockState = level.getBlockState(cache.mutablePos);
+            if (blockState.isAir() || blockState.canBeReplaced()) continue;
+
+            float resistance = blockState.getBlock().getExplosionResistance();
+            if (resistance <= 5.0f) {
+                BlockHelper.destroyBlock(level, cache.mutablePos, 1.0f);
+            } else if (resistance <= 6.0f) {
+                BlockHelper.destroyBlock(level, cache.mutablePos, 1.0f);
+                range = i;
+                break;
+            } else {
+                range = i;
+                break;
+            }
+        }
+
         // Set bounding box
         cache.aabb.setUnchecked(
-            cannonPosition.x - MAX_RANGE, cannonPosition.y - MAX_RANGE, cannonPosition.z - MAX_RANGE,
-            cannonPosition.x + MAX_RANGE, cannonPosition.y + MAX_RANGE, cannonPosition.z + MAX_RANGE
+            cannonPosition.x - range, cannonPosition.y - range, cannonPosition.z - range,
+            cannonPosition.x + range, cannonPosition.y + range, cannonPosition.z + range
         );
 
         // Get entities within the bounding box
         List<Entity> entities = level.getEntities(null, cache.aabb.toMojang()); // toMojang() Allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
-        // Iterate through entities to find closest
-        Entity minEntity = null;
-        double minDistance = MAX_RANGE;
+        // Iterate through entities
         for (Entity entity : entities) {
             if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) continue;
 
@@ -213,32 +221,27 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             // Linear distance
             double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
-            if (entityLinearDistance < 0.0d || entityLinearDistance > MAX_RANGE) continue;
+            if (entityLinearDistance < 0.0d || entityLinearDistance > range) continue;
 
             // Radial distance
             double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance*entityLinearDistance;
             if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) continue;
 
-            if (entityLinearDistance < minDistance) {
-                minDistance = entityLinearDistance;
-                minEntity = entity;
-            }
+            // Apply damage and knockback
+            entity.hurt(level.damageSources().magic(), DAMAGE_AMOUNT);
+            cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
+            entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
+            if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
         }
 
-        // Fire at closest entity or just straight outward
-        for (double i = 0; i <= minDistance; i+=0.5) {
-            cache.spawnPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+        // Fire straight outward
+        for (double i = 0; i <= range; i+=0.5) {
+            cache.beamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
             level.sendParticles(
                 ParticleTypes.SONIC_BOOM,
-                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
+                cache.beamPosition.x, cache.beamPosition.y, cache.beamPosition.z,
                 1, 0.0, 0.0, 0.0, 0.0
             );
-        }
-        if (minEntity != null) {
-            minEntity.hurt(level.damageSources().magic(), DAMAGE_AMOUNT);
-            cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
-            minEntity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
-            if (minEntity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
         }
     }
 
@@ -268,20 +271,20 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentCharge = CCLang
-                .number(charge).text("%")
-                .style(ChatFormatting.AQUA)
-                .component();
+            .number(charge).text("%")
+            .style(ChatFormatting.AQUA)
+            .component();
         CCLang.translate("goggles.current_charge", currentCharge)
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
 
         final MutableComponent armedState = CCLang
-                .text(armed ? "Armed" : "Disarmed")
-                .style(ChatFormatting.AQUA)
-                .component();
+            .text(armed ? "Armed" : "Disarmed")
+            .style(ChatFormatting.AQUA)
+            .component();
         CCLang.translate("goggles.armed_state", armedState)
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
 
         return true;
     }

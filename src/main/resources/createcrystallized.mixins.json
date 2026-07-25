@@ -6,7 +6,8 @@
     "ComparatorBlockMixin",
     "FluidDrainingBehaviourMixin",
     "HosePulleyMixin",
-    "OpenEndedPipeMixin"
+    "OpenEndedPipeMixin",
+    "SculkVeinBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -52,10 +52,10 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private static final double FACE_OFFSET = 1.4d;
 
     // Firing constants
-    private static final float DAMAGE_AMOUNT = 10.0f;
+    private static final float DAMAGE_AMOUNT = 50.0f;
     private static final double KNOCKBACK_AMOUNT = 3.0d;
     private static final double MAX_RANGE = 20.0d; // Length effectiveness distance
-    private static final double MAX_RADIUS = 1.0d; // Radial effectiveness distance
+    private static final double MAX_RADIUS = 3.0d; // Radial effectiveness distance
     private static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
 
     // Charging particle constants
@@ -148,7 +148,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         worldPosition,
                         SoundEvents.WARDEN_SONIC_CHARGE,
                         SoundSource.BLOCKS,
-                        1.5F,1.2F
+                        1.5F,0.7F
                     );
                 }
                 this.setChanged();

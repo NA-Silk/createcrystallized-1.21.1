@@ -85,7 +85,7 @@ public class OscilliteCannonBlock extends Block implements EntityBlock {
         };
     }
 
-    // PARTICLES TODO Make custom effects
+    // PARTICLES
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock()) && !isMoving) addParticles(level, pos);

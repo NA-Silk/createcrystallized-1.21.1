@@ -101,6 +101,7 @@ public class CreateCrystallized {
             event.accept(ModItems.CRUSHED_RAW_AEROLITE);
             event.accept(ModItems.RAW_AEROLITE);
             event.accept(ModItems.AEROLITE_INGOT);
+            event.accept(ModItems.AEROLITE_SHEET);
 
             // Uncategorized Blocks
             event.accept(ModBlocks.PEBBLE);

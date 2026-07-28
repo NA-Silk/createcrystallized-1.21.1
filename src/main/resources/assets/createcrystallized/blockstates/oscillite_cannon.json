@@ -1,18 +1,17 @@
 {
   "variants": {
-    "facing=north": { "model": "createcrystallized:block/oscillite_cannon" },
-    "facing=south": { "model": "createcrystallized:block/oscillite_cannon", "y": 180 },
-    "facing=west":  { "model": "createcrystallized:block/oscillite_cannon", "y": 270 },
-    "facing=east":  { "model": "createcrystallized:block/oscillite_cannon", "y": 90 },
+    "facing=north,is_barrel=false": { "model": "createcrystallized:block/oscillite_cannon_base"            },
+    "facing=south,is_barrel=false": { "model": "createcrystallized:block/oscillite_cannon_base", "y": 180  },
+    "facing=west,is_barrel=false":  { "model": "createcrystallized:block/oscillite_cannon_base", "y": 270  },
+    "facing=east,is_barrel=false":  { "model": "createcrystallized:block/oscillite_cannon_base", "y": 90   },
+    "facing=up,is_barrel=false":    { "model": "createcrystallized:block/oscillite_cannon_base", "x": 270  },
+    "facing=down,is_barrel=false":  { "model": "createcrystallized:block/oscillite_cannon_base", "x": 90   },
 
-    "facing=up": {
-      "model": "createcrystallized:block/oscillite_cannon",
-      "x": 270
-    },
-
-    "facing=down": {
-      "model": "createcrystallized:block/oscillite_cannon",
-      "x": 90
-    }
+    "facing=north,is_barrel=true":  { "model": "createcrystallized:block/oscillite_cannon_barrel"           },
+    "facing=south,is_barrel=true":  { "model": "createcrystallized:block/oscillite_cannon_barrel", "y": 180 },
+    "facing=west,is_barrel=true":   { "model": "createcrystallized:block/oscillite_cannon_barrel", "y": 270 },
+    "facing=east,is_barrel=true":   { "model": "createcrystallized:block/oscillite_cannon_barrel", "y": 90  },
+    "facing=up,is_barrel=true":     { "model": "createcrystallized:block/oscillite_cannon_barrel", "x": 270 },
+    "facing=down,is_barrel=true":   { "model": "createcrystallized:block/oscillite_cannon_barrel", "x": 90  }
   }
 }

@@ -9,7 +9,7 @@
           "children": [
             {
               "type": "minecraft:item",
-              "name": "createcrystallized:aerolite_ore",
+              "name": "createcrystallized:deepslate_aerolite_ore",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",
@@ -47,5 +47,5 @@
       ]
     }
   ],
-  "random_sequence": "createcrystallized:blocks/aerolite_ore"
+  "random_sequence": "createcrystallized:blocks/deepslate_aerolite_ore"
 }

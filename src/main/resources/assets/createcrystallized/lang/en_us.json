@@ -34,6 +34,9 @@
   "block.createcrystallized.medium_echo_crystal_bud": "Medium Echo Crystal Bud",
   "block.createcrystallized.small_echo_crystal_bud": "Small Echo Crystal Bud",
 
+  "block.createcrystallized.aerolite_block": "Block of Aerolite",
+  "block.createcrystallized.chora_block": "Block of Chora",
+
   "block.createcrystallized.chora_casing": "Chora Casing",
   "block.createcrystallized.chora_casing_propulsite": "Propulsed Chora Casing",
   "block.createcrystallized.chora_casing_densite": "Dense Chora Casing",

@@ -60,7 +60,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     // Firing constants
     private static final float DAMAGE_AMOUNT = 50.0f;
     private static final double KNOCKBACK_AMOUNT = 3.0d;
-    private static final double MAX_RANGE = 20.0d; // Length effectiveness distance
+    private static final double MAX_RANGE = 80.0d; // Length effectiveness distance
     private static final double MAX_RADIUS = 2.12d; // Radial effectiveness distance
     private static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
 

@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "createcrystallized:chora_casing",
+    "createcrystallized:chora_block",
     "createcrystallized:chora_casing_densite",
     "createcrystallized:chora_casing_propulsite",
     "createcrystallized:chora_casing_oscillite",
@@ -12,6 +13,14 @@
     "createcrystallized:echo_crystal_cluster",
     "createcrystallized:large_echo_crystal_bud",
     "createcrystallized:medium_echo_crystal_bud",
-    "createcrystallized:small_echo_crystal_bud"
+    "createcrystallized:small_echo_crystal_bud",
+
+    "createcrystalized:aerolite_ore",
+    "createcrystalized:aerolite_block",
+    "createcrystalized:deepslate_aerolite_ore"
+
+
+
+
   ]
 }

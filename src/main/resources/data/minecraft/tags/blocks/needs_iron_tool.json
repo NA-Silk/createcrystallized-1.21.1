@@ -5,6 +5,10 @@
     "createcrystallized:chora_casing_densite",
     "createcrystallized:chora_casing_propulsite",
     "createcrystallized:chora_casing_oscillite",
-    "createcrystallized:chora_casing_levitite"
+    "createcrystallized:chora_casing_levitite",
+
+    "createcrystalized:aerolite_ore",
+    "createcrystalized:aerolite_block",
+    "createcrystalized:deepslate_aerolite_ore"
   ]
 }

@@ -37,7 +37,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
     public static final BooleanProperty IS_BARREL = BooleanProperty.create("is_barrel"); // Sure hope this doesn't break anything
 
     private static final VoxelShape BASE_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
-    private static final VoxelShape BARREL_SHAPE = Block.box(2.0d, 2.0d, 0.0d, 14.0d, 14.0d, 14.0d);
+    private static final VoxelShape BARREL_SHAPE = Block.box(1.0d, 1.0d, 0.0d, 15.0d, 15.0d, 16.0d);
 
     public OscilliteCannonBlock(Properties properties) {
         super(properties);

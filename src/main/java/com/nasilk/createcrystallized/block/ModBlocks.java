@@ -256,7 +256,7 @@ public class ModBlocks {
     public static final DeferredBlock<Block> OSCILLITE_CANNON = registerBlock(
         "oscillite_cannon",
         () -> new OscilliteCannonBlock(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.COLOR_YELLOW)
+            .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
             .noOcclusion()
@@ -267,9 +267,9 @@ public class ModBlocks {
             .isViewBlocking((state, level, pos) -> false)
             .sound(
                 new SoundType(1.0f, 1.0f,
-                    ModSounds.PROPULSITE_BREAK.get(),
+                    ModSounds.OSCILLITE_BREAK.get(),
                     SoundEvents.AMETHYST_BLOCK_STEP,
-                    ModSounds.PROPULSITE_PLACE.get(),
+                    ModSounds.OSCILLITE_PLACE.get(),
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_BLOCK_FALL
                 )

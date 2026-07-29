@@ -2,6 +2,9 @@ package com.nasilk.createcrystallized.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
+import dev.simulated_team.simulated.index.SimBlockMovementChecks;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,6 +41,19 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
 
     private static final VoxelShape BASE_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
     private static final VoxelShape BARREL_SHAPE = Block.box(1.0d, 1.0d, 0.0d, 15.0d, 15.0d, 16.0d);
+
+    // Simulated Assembly Integration
+    private static final ObjectList<BlockPos> BARREL_POSITIONS = new ObjectArrayList<>();
+    static {
+        SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
+            BARREL_POSITIONS.clear();
+            if (state.getBlock() instanceof OscilliteCannonBlock) {
+                BlockPos connectedPos = pos.relative(getNeighbourDirection(state));
+                if (!visited.contains(connectedPos)) BARREL_POSITIONS.addFirst(connectedPos);
+            }
+            return BARREL_POSITIONS;
+        });
+    }
 
     public OscilliteCannonBlock(Properties properties) {
         super(properties);

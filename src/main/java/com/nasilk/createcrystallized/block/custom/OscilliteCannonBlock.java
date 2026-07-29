@@ -30,6 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class OscilliteCannonBlock extends DirectionalBlock implements EntityBlock {
+    // TODO Add part-checking into loot table... once we have a loot table
     public static final MapCodec<OscilliteCannonBlock> CODEC = simpleCodec(OscilliteCannonBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -121,7 +122,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         // Set non-player placement state to BARREL
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level instanceof ServerLevel serverLevel) serverLevel.setBlockAndUpdate(pos.relative(state.getValue(FACING)), state.setValue(IS_BARREL, true));
+        level.setBlockAndUpdate(pos.relative(state.getValue(FACING)), state.setValue(IS_BARREL, true));
     }
 
     // ENTITIES

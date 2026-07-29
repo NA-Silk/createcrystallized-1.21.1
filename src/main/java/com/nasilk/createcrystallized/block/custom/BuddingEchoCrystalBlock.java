@@ -20,9 +20,9 @@ public class BuddingEchoCrystalBlock extends BuddingAmethystBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        int randInt = random.nextInt(6);
+        int randInt = random.nextInt(26);
         if (randInt % 5 == 0) {
-            Direction direction = DIRECTIONS[randInt];
+            Direction direction = DIRECTIONS[randInt/5];
             BlockPos blockPos = pos.relative(direction);
             BlockState blockState = level.getBlockState(blockPos);
 

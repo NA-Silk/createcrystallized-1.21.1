@@ -11,8 +11,11 @@ import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -27,10 +30,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.joml.Vector3d;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInformation {
@@ -55,7 +61,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private static final float DAMAGE_AMOUNT = 50.0f;
     private static final double KNOCKBACK_AMOUNT = 3.0d;
     private static final double MAX_RANGE = 20.0d; // Length effectiveness distance
-    private static final double MAX_RADIUS = 3.0d; // Radial effectiveness distance
+    private static final double MAX_RADIUS = 2.12d; // Radial effectiveness distance
     private static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
 
     // Charging particle constants
@@ -73,10 +79,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         final Vector3d angularVelocity = new Vector3d();
 
         // Firing
-        final BoundingBox3d aabb = new BoundingBox3d();
+        final BoundingBox3d searchBox = new BoundingBox3d();
+        final List<SubLevel> targets = new ArrayList<>();
         final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final Vector3d relEntityPosition = new Vector3d();
-        final Vector3d beamPosition = new Vector3d();
+        final Vector3d globalBeamPosition = new Vector3d();
+        final Vector3d localBeamPosition = new Vector3d();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -104,12 +112,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             // Get linear velocitySquared component
             cache.velocitySquared = cannonPosition.distanceSquared(cache.cannonPositionCurrent);
-            if (cache.velocitySquared > 1e-3d) {
-                cache.velocitySquared *= LINEAR_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
-                cannonPosition.set(cache.cannonPositionCurrent); // Set cannonPosition = cannonPositionCurrent
-            } else {
-                cache.velocitySquared = 0.0d;
-            }
+            cannonPosition.set(cache.cannonPositionCurrent); // Set cannonPosition = cannonPositionCurrent
+            if (cache.velocitySquared > 1e-3d) cache.velocitySquared *= LINEAR_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
+            else cache.velocitySquared = 0.0d;
 
             // Get angular velocitySquared component
             handle.getAngularVelocity(cache.angularVelocity); // Get angularVelocity
@@ -128,7 +133,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 }
                 if (tickCounter++ % 80 == 0) {
                     serverLevel.sendParticles(
-                        ParticleTypes.ANGRY_VILLAGER, // TODO Make this less... heavy
+                        ParticleTypes.SMOKE,
                         cannonPosition.x, cannonPosition.y, cannonPosition.z,
                         1, 0.5, 0.5, 0.5, 0.1
                     );
@@ -174,38 +179,62 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private void fireCannon(ServerLevel level, Cache cache) {
+    private void fireCannon(ServerLevel serverLevel, Cache cache) {
+        cache.targets.clear();
         double range = MAX_RANGE;
 
-        // Move along beam path and find nearest block
-        for (double i = 0; i < range; i += 0.5) {
-            cache.beamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
-            cache.mutablePos.set(cache.beamPosition.x, cache.beamPosition.y, cache.beamPosition.z);
-            BlockState blockState = level.getBlockState(cache.mutablePos);
-            if (blockState.isAir() || blockState.canBeReplaced()) continue;
+        // Set bounding box to query subLevels
+        cache.searchBox.setUnchecked(
+            cannonPosition.x - range, cannonPosition.y - range, cannonPosition.z - range,
+            cannonPosition.x + range, cannonPosition.y + range, cannonPosition.z + range
+        );
 
-            float resistance = blockState.getBlock().getExplosionResistance();
-            if (resistance <= 5.0f) {
-                BlockHelper.destroyBlock(level, cache.mutablePos, 1.0f);
-            } else if (resistance <= 6.0f) {
-                BlockHelper.destroyBlock(level, cache.mutablePos, 1.0f);
-                range = i;
-                break;
-            } else {
+        // Populate the target sublevel list
+        ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
+        if (container != null) {
+            container.queryIntersecting(cache.searchBox).forEach(targetSubLevel -> {
+                if (targetSubLevel != Sable.HELPER.getContaining(serverLevel, worldPosition)) cache.targets.add(targetSubLevel);
+            });
+        }
+
+        // Move along beam path and find nearest block
+        NEAR:
+        for (double i = 0; i < range; i += 0.5) {
+            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+
+            // Check non-sublevel blocks
+            cache.mutablePos.set(cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z);
+            BlockState blockState = serverLevel.getBlockState(cache.mutablePos);
+            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, blockState)) {
                 range = i;
                 break;
             }
+
+            // Check sublevel blocks
+            for (SubLevel subLevel : cache.targets) {
+                if (!(subLevel instanceof ServerSubLevel targetSubLevel) || subLevel.isRemoved()) continue;
+                // Convert to sublevel coordinates
+                cache.localBeamPosition.set(cache.globalBeamPosition);
+                targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
+
+                // Check states
+                cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
+                BlockState subLevelBlockState = serverLevel.getBlockState(cache.mutablePos);
+                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, subLevelBlockState)) {
+                    range = i;
+                    break NEAR;
+                }
+            }
         }
 
-        // Set bounding box
-        cache.aabb.setUnchecked(
+        // Set bounding box to query entities
+        cache.searchBox.setUnchecked(
             cannonPosition.x - range, cannonPosition.y - range, cannonPosition.z - range,
             cannonPosition.x + range, cannonPosition.y + range, cannonPosition.z + range
         );
 
         // Get entities within the bounding box
-        List<Entity> entities = level.getEntities(null, cache.aabb.toMojang()); // toMojang() Allocates a new Mojang AABB...
+        List<Entity> entities = serverLevel.getEntities(null, cache.searchBox.toMojang()); // toMojang() Allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities
@@ -228,21 +257,32 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) continue;
 
             // Apply damage and knockback
-            entity.hurt(level.damageSources().magic(), DAMAGE_AMOUNT);
-            cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
+            entity.hurt(serverLevel.damageSources().magic(), DAMAGE_AMOUNT);
+            if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
+            else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(KNOCKBACK_AMOUNT);
             entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
             if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
         }
 
         // Fire straight outward
         for (double i = 0; i <= range; i+=0.5) {
-            cache.beamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
-            level.sendParticles(
-                ParticleTypes.SONIC_BOOM,
-                cache.beamPosition.x, cache.beamPosition.y, cache.beamPosition.z,
+            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+            serverLevel.sendParticles(
+                ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(),
+                cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z,
                 1, 0.0, 0.0, 0.0, 0.0
             );
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean tryPierceBlock(Level level, BlockPos blockPos, BlockState blockState) {
+        float resistance = blockState.getBlock().getExplosionResistance();
+        if (resistance <= 5.0f) {
+            BlockHelper.destroyBlock(level, blockPos, 1.0f);
+            return false;
+        } else if (resistance <= 6.0f) BlockHelper.destroyBlock(level, blockPos, 1.0f);
+        return true;
     }
 
     private void addChargingParticles(ServerLevel level, Cache cache) {
@@ -255,7 +295,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             level.sendParticles(
-                ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), // TODO Custom charging particles
+                ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
                 cache.cannonFace.x, cache.cannonFace.y, cache.cannonFace.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,

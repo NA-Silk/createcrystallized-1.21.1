@@ -172,6 +172,7 @@ public class CreateCrystallized {
             event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticles.Provider::new);
             event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticles.Provider::new);
             event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), OscilliteCannonChargingParticles.Provider::new);
+            event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(), OscilliteCannonFiringParticles.Provider::new);
         }
 
         @SubscribeEvent

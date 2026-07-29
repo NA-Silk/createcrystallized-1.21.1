@@ -167,7 +167,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 cache.currentLinearVelocity.negate();
                 cache.currentAngularVelocity.negate();
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
-                handle.teleport(cache.wellPosition, subLevel.logicalPose().orientation());
+                // handle.teleport(cache.wellPosition, subLevel.logicalPose().orientation()); TODO Check this
                 continue;
             }
 

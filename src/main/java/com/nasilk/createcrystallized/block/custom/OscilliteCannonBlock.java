@@ -1,7 +1,11 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import com.nasilk.createcrystallized.block.ModBlockEntities;
+import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -9,17 +13,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -32,7 +38,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class OscilliteCannonBlock extends DirectionalBlock implements EntityBlock {
+public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IWrenchable {
     // TODO Add part-checking into loot table... once we have a loot table
     public static final MapCodec<OscilliteCannonBlock> CODEC = simpleCodec(OscilliteCannonBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -48,7 +54,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
         SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
             BARREL_POSITIONS.clear();
             if (state.getBlock() instanceof OscilliteCannonBlock) {
-                BlockPos connectedPos = pos.relative(getNeighbourDirection(state));
+                BlockPos connectedPos = pos.relative(getNeighborDirection(state));
                 if (!visited.contains(connectedPos)) BARREL_POSITIONS.addFirst(connectedPos);
             }
             return BARREL_POSITIONS;
@@ -91,11 +97,11 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         // Handle non-player breaking
-        if (getNeighbourDirection(state) == direction && !neighborState.is(this)) return Blocks.AIR.defaultBlockState();
+        if (getNeighborDirection(state) == direction && !neighborState.is(this)) return Blocks.AIR.defaultBlockState();
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
-    private static Direction getNeighbourDirection(BlockState state) {
+    private static Direction getNeighborDirection(BlockState state) {
         // Return attached direction
         Direction facing = state.getValue(FACING);
         return state.getValue(IS_BARREL) ? facing.getOpposite() : facing;
@@ -105,7 +111,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         // Handle Creative breaking (no drops)
         if (level instanceof ServerLevel serverLevel && player.isCreative()) {
-            BlockPos neighborPos = pos.relative(getNeighbourDirection(state));
+            BlockPos neighborPos = pos.relative(getNeighborDirection(state));
             BlockState neighborState = serverLevel.getBlockState(neighborPos);
 
             // Remove the connected portion if it is a different state (BASE vs BARREL)
@@ -143,15 +149,43 @@ public class OscilliteCannonBlock extends DirectionalBlock implements EntityBloc
 
     // ENTITIES
     @Override
+    public Class<OscilliteCannonEntity> getBlockEntityClass() {
+        return OscilliteCannonEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends OscilliteCannonEntity> getBlockEntityType() {
+        return ModBlockEntities.OSCILLITE_CANNON.get();
+    }
+
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return state.getValue(IS_BARREL) ? null : new OscilliteCannonEntity(pos, state);
+        if (state.getValue(IS_BARREL)) return null;
+        return IBE.super.newBlockEntity(pos, state);
     }
 
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
-        return level.isClientSide() || state.getValue(IS_BARREL) ? null : (lvl, pos, st, be) -> {
+        if (level.isClientSide() || state.getValue(IS_BARREL) || type != getBlockEntityType()) return null;
+        return (lvl, bp, bs, be) -> {
             if (be instanceof OscilliteCannonEntity cannon) cannon.tick();
         };
+    }
+
+    // WRENCH
+    @Override
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        Level level = context.getLevel();
+        if (level.isClientSide() || state.getValue(IS_BARREL)) return InteractionResult.PASS;
+        BlockPos pos = context.getClickedPos();
+        Block.popResource(level, pos, Items.STICK.getDefaultInstance());
+        level.setBlockAndUpdate(pos, ModBlocks.ENCASED_OSCILLITE_BLOCK.get().defaultBlockState());
+        return InteractionResult.SUCCESS;
     }
 
     // PARTICLES

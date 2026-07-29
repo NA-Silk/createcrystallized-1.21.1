@@ -183,7 +183,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         Level level = context.getLevel();
         if (level.isClientSide() || state.getValue(IS_BARREL)) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, Items.STICK.getDefaultInstance());
+        Block.popResource(level, pos, Items.STICK.getDefaultInstance()); // TODO Replace with correct item
         level.setBlockAndUpdate(pos, ModBlocks.ENCASED_OSCILLITE_BLOCK.get().defaultBlockState());
         return InteractionResult.SUCCESS;
     }

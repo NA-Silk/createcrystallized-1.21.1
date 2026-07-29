@@ -1,15 +1,21 @@
 package com.nasilk.createcrystallized.block.custom;
 
+import com.nasilk.createcrystallized.block.ModBlockEntities;
+import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import com.nasilk.createcrystallized.particle.ModParticles;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,7 +25,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
-public class PropulsiteThrusterBlock extends Block  implements EntityBlock {
+public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThrusterEntity>, IWrenchable {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -62,15 +68,42 @@ public class PropulsiteThrusterBlock extends Block  implements EntityBlock {
 
     // ENTITIES
     @Override
+    public Class<PropulsiteThrusterEntity> getBlockEntityClass() {
+        return PropulsiteThrusterEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends PropulsiteThrusterEntity> getBlockEntityType() {
+        return ModBlockEntities.PROPULSITE_THRUSTER.get();
+    }
+
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new PropulsiteThrusterEntity(pos, state);
+        return IBE.super.newBlockEntity(pos, state);
     }
 
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
-        return level.isClientSide ? null : (lvl, pos, st, be) -> {
+        if (level.isClientSide() || type != getBlockEntityType()) return null;
+        return (lvl, bp, bs, be) -> {
             if (be instanceof PropulsiteThrusterEntity thruster) thruster.tick();
         };
+    }
+
+    // WRENCH
+    @Override
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        Level level = context.getLevel();
+        if (level.isClientSide()) return InteractionResult.PASS;
+        BlockPos pos = context.getClickedPos();
+        Block.popResource(level, pos, Items.STICK.getDefaultInstance()); // TODO Replace with correct item
+        level.setBlockAndUpdate(pos, ModBlocks.ENCASED_PROPULSITE_BLOCK.get().defaultBlockState());
+        return InteractionResult.SUCCESS;
     }
 
     // PARTICLES

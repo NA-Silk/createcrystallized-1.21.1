@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.mixin;
 
-import com.nasilk.createcrystallized.util.SculkVeinBlockMixinHelper;
+import com.nasilk.createcrystallized.util.helper.SculkVeinBlockMixinHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;

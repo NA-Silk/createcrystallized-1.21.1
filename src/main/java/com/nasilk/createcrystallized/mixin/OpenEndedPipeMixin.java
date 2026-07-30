@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.mixin;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
-import com.nasilk.createcrystallized.util.MixinSettings;
+import com.nasilk.createcrystallized.util.setting.MixinSettings;
 import com.simibubi.create.content.fluids.OpenEndedPipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;

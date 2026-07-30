@@ -1,6 +1,6 @@
-package com.nasilk.createcrystallized.behavior;
+package com.nasilk.createcrystallized.ctbehavior;
 
-import com.nasilk.createcrystallized.util.ModSpriteShifts;
+import com.nasilk.createcrystallized.common.ModSpriteShifts;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -8,11 +8,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class ChoraCasingCTBehavior extends ConnectedTextureBehaviour.Base {
+public class DenseChoraCasingCTBehavior extends ConnectedTextureBehaviour.Base {
     @Nullable
     @Override
     public CTSpriteShiftEntry getShift (BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {
-        return ModSpriteShifts.CHORA_CASING;
+        return ModSpriteShifts.DENSE_CHORA_CASING;
     }
 }
 
+//you like krabby patties dont you squidward

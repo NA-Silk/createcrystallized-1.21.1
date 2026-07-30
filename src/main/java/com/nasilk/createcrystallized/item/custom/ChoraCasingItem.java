@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.item.custom;
 
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.util.TransformItemUtil;
+import com.nasilk.createcrystallized.util.helper.TransformItemHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.UseOnContext;
@@ -18,6 +18,6 @@ public class ChoraCasingItem extends BlockItem {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        return TransformItemUtil.tryTransform(context, BLOCK_MAP).orElseGet(() -> super.useOn(context));
+        return TransformItemHelper.tryTransform(context, BLOCK_MAP).orElseGet(() -> super.useOn(context));
     }
 }

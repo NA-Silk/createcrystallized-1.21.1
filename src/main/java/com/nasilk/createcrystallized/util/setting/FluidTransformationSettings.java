@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.util.setting;
 
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceKey;

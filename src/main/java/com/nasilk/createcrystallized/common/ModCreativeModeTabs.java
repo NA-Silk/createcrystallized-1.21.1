@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.common;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;

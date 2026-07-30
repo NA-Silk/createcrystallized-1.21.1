@@ -1,12 +1,12 @@
 package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.behavior.*;
+import com.nasilk.createcrystallized.ctbehavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.custom.ChoraCasingItem;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
-import com.nasilk.createcrystallized.util.ModSounds;
+import com.nasilk.createcrystallized.common.ModSounds;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullFunction;

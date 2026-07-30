@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
-import com.nasilk.createcrystallized.util.CCLang;
+import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
@@ -195,21 +195,21 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+        CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
-        final MutableComponent currentFieldStrength = CCLang
+        final MutableComponent currentFieldStrength = CCLangHelper
                 .pixelNewton(fieldStrength)
                 .style(ChatFormatting.AQUA)
                 .component();
-        CCLang.translate("goggles.field_strength", currentFieldStrength)
+        CCLangHelper.translate("goggles.field_strength", currentFieldStrength)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent currentFieldRadius = CCLang
+        final MutableComponent currentFieldRadius = CCLangHelper
                 .meter(fieldRadius)
                 .style(ChatFormatting.AQUA)
                 .component();
-        CCLang.translate("goggles.field_radius", currentFieldRadius)
+        CCLangHelper.translate("goggles.field_radius", currentFieldRadius)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 

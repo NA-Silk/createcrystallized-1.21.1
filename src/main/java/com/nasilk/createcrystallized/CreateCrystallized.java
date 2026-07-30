@@ -6,11 +6,11 @@ import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.custom.*;
-import com.nasilk.createcrystallized.util.ModDispenser;
+import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.ModCreativeModeTabs;
-import com.nasilk.createcrystallized.util.ModSounds;
-import com.nasilk.createcrystallized.util.ModSpriteShifts;
+import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
+import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.common.ModSpriteShifts;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -79,7 +79,7 @@ public class CreateCrystallized {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            ModDispenser.register();
+            ModDispenserBehavior.register();
         });
         LOGGER.info("Create: Crystallized Loaded");
     }
@@ -94,6 +94,11 @@ public class CreateCrystallized {
             event.accept(ModFluids.DRIFT_CONDENSATE_BUCKET);
             event.accept(ModFluids.PROPULSITE_FLURRY_BUCKET);
             event.accept(ModFluids.OSCILLITE_SUSPENSION_BUCKET);
+
+            // Transformation Items
+            event.accept(ModItems.ENCASED_DENSITE_TRANSFORM_ITEM);
+            event.accept(ModItems.ENCASED_PROPULSITE_TRANSFORM_ITEM);
+            event.accept(ModItems.ENCASED_OSCILLITE_TRANSFORM_ITEM);
 
             // Uncategorized Items
             event.accept(ModItems.CREATIVE_FLUID_ERASER);
@@ -124,7 +129,6 @@ public class CreateCrystallized {
             event.accept(ModBlocks.PROPULSED_CHORA_CASING);
             event.accept(ModBlocks.OSCILLATING_CHORA_CASING);
             event.accept(ModBlocks.LEVITATING_CHORA_CASING);
-
 
             // Crystal Blocks
             event.accept(ModBlocks.DENSITE_BLOCK);

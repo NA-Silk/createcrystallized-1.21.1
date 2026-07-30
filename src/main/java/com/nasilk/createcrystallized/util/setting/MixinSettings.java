@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.util.setting;
 
 /**
  * Mixin Settings

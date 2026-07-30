@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.CCLang;
+import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
@@ -453,29 +453,29 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+        CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
-        final MutableComponent currentThrust = CCLang
+        final MutableComponent currentThrust = CCLangHelper
                 .pixelNewton(thrust)
                 .style(ChatFormatting.AQUA)
                 .component();
-        CCLang.translate("goggles.current_thrust", currentThrust)
+        CCLangHelper.translate("goggles.current_thrust", currentThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent maximumThrust = CCLang
+        final MutableComponent maximumThrust = CCLangHelper
                 .pixelNewton(amplitude / NORM_DENOMINATOR)
                 .style(ChatFormatting.AQUA)
                 .component();
-        CCLang.translate("goggles.maximum_thrust", maximumThrust)
+        CCLangHelper.translate("goggles.maximum_thrust", maximumThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 
-        final MutableComponent totalThrust = CCLang
+        final MutableComponent totalThrust = CCLangHelper
                 .pixelNewton(amplitude)
                 .style(ChatFormatting.AQUA)
                 .component();
-        CCLang.translate("goggles.total_thrust", totalThrust)
+        CCLangHelper.translate("goggles.total_thrust", totalThrust)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
 

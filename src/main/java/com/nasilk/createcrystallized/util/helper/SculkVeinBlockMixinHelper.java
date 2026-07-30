@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.util.helper;
 
 import com.nasilk.createcrystallized.block.ModBlocks;
 import net.minecraft.core.BlockPos;

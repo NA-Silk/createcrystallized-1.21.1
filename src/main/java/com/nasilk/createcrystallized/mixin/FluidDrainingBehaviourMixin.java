@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.mixin;
 
-import com.nasilk.createcrystallized.util.MixinSettings;
+import com.nasilk.createcrystallized.util.setting.MixinSettings;
 import com.simibubi.create.content.fluids.transfer.FluidDrainingBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;

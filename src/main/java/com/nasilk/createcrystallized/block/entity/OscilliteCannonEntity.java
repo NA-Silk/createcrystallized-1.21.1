@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.CCLang;
+import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
@@ -308,21 +308,21 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        CCLang.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+        CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
-        final MutableComponent currentCharge = CCLang
+        final MutableComponent currentCharge = CCLangHelper
             .number(charge).text("%")
             .style(ChatFormatting.AQUA)
             .component();
-        CCLang.translate("goggles.current_charge", currentCharge)
+        CCLangHelper.translate("goggles.current_charge", currentCharge)
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 
-        final MutableComponent armedState = CCLang
+        final MutableComponent armedState = CCLangHelper
             .text(armed ? "Armed" : "Disarmed")
             .style(ChatFormatting.AQUA)
             .component();
-        CCLang.translate("goggles.armed_state", armedState)
+        CCLangHelper.translate("goggles.armed_state", armedState)
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 

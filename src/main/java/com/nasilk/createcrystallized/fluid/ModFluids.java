@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.fluid;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.FluidTransformationSettings;
+import com.nasilk.createcrystallized.util.setting.FluidTransformationSettings;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
 import com.nasilk.createcrystallized.fluid.flowingfluid.UpwardBaseFlowingFluid;
 import com.nasilk.createcrystallized.item.ModItems;

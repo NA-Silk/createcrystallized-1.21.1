@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.util.helper;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import net.createmod.catnip.lang.Lang;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class CCLang {
+public class CCLangHelper {
 
     public static LangBuilder builder() {
         return Lang.builder(CreateCrystallized.MOD_ID);

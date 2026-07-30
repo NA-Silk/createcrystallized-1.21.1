@@ -1,8 +1,7 @@
-package com.nasilk.createcrystallized.util;
+package com.nasilk.createcrystallized.behavior;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -13,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 
 @SuppressWarnings("deprecation")
-public class ModDispenser {
+public class ModDispenserBehavior {
     private static void registerFluidBucket(BucketItem bucketItem) {
         DispenserBlock.registerBehavior(
             bucketItem,
@@ -22,10 +21,8 @@ public class ModDispenser {
 
                 @Override
                 public ItemStack dispense(BlockSource source, ItemStack stack) {
-                    Direction direction = source.state().getValue(DispenserBlock.FACING);
-                    BlockPos targetPos = source.pos().relative(direction);
                     Level level = source.level();
-
+                    BlockPos targetPos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
                     if (bucketItem.emptyContents(null, level, targetPos, null)) {
                         bucketItem.checkExtraContent(null, level, stack, targetPos);
                         return new ItemStack(Items.BUCKET);

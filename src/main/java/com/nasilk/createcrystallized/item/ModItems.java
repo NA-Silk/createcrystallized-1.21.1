@@ -1,26 +1,61 @@
 package com.nasilk.createcrystallized.item;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.item.custom.ChoraIngotItem;
-import com.nasilk.createcrystallized.item.custom.CreativeFluidEraserItem;
+import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.item.custom.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreateCrystallized.MOD_ID);
 
+    /** ADVANCED ITEMS */
     public static final DeferredItem<CreativeFluidEraserItem> CREATIVE_FLUID_ERASER = ITEMS.registerItem(
         "creative_fluid_eraser",
         (properties) -> new CreativeFluidEraserItem(properties.stacksTo(1))
     );
 
-    public static final DeferredItem<ChoraIngotItem> CHORA_INGOT = ITEMS.registerItem(
+    /** TRANSFORMATION ITEMS */
+    public static final DeferredItem<TransformItem> CHORA_INGOT = ITEMS.registerItem(
         "chora_ingot",
-        (properties) -> new ChoraIngotItem(properties.stacksTo(64))
+        (properties) -> new TransformItem(
+            properties.stacksTo(64),
+            new HashMap<>(Map.of(Blocks.GLASS, ModBlocks.CHORA_CASING.get()))
+        )
     );
 
+    // TODO Rename and texture these
+    public static final DeferredItem<TransformItem> ENCASED_DENSITE_TRANSFORM_ITEM = ITEMS.registerItem(
+        "encased_densite_transform_item",
+        (properties) -> new TransformItem(
+            properties.stacksTo(64),
+            new HashMap<>(Map.of(ModBlocks.ENCASED_DENSITE_BLOCK.get(), ModBlocks.DENSITE_WELL.get()))
+        )
+    );
+
+    public static final DeferredItem<TransformItem> ENCASED_PROPULSITE_TRANSFORM_ITEM = ITEMS.registerItem(
+        "encased_propulsite_transform_item",
+        (properties) -> new TransformItem(
+            properties.stacksTo(64),
+            new HashMap<>(Map.of(ModBlocks.ENCASED_PROPULSITE_BLOCK.get(), ModBlocks.PROPULSITE_THRUSTER.get()))
+        )
+    );
+
+    public static final DeferredItem<TransformItem> ENCASED_OSCILLITE_TRANSFORM_ITEM = ITEMS.registerItem(
+        "encased_oscillite_transform_item",
+        (properties) -> new TransformItem(
+            properties.stacksTo(64),
+            new HashMap<>(Map.of(ModBlocks.ENCASED_OSCILLITE_BLOCK.get(), ModBlocks.OSCILLITE_CANNON.get()))
+        )
+    );
+
+    /** CRAFTING ITEMS */
     public static final DeferredItem<Item> AEROLITE_INGOT = ITEMS.register(
             "aerolite_ingot",
             () -> new Item(new Item.Properties().stacksTo(64))

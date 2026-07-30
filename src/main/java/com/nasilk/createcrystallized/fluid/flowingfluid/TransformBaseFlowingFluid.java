@@ -1,8 +1,8 @@
 package com.nasilk.createcrystallized.fluid.flowingfluid;
 
 import com.nasilk.createcrystallized.event.TaskEventScheduler;
-import com.nasilk.createcrystallized.util.FluidTransformationSettings;
-import com.nasilk.createcrystallized.util.FluidTransformationTriggerType;
+import com.nasilk.createcrystallized.util.setting.FluidTransformationSettings;
+import com.nasilk.createcrystallized.util.type.FluidTransformationTriggerType;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.eriksonn.aeronautics.index.AeroTags;
 import net.minecraft.core.BlockPos;

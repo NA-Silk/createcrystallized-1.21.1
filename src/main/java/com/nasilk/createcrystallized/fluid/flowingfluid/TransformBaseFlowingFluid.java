@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.fluid.flowingfluid;
 
 import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
-import com.nasilk.createcrystallized.util.type.FluidTransformationTriggerType;
+import com.nasilk.createcrystallized.util.type.FluidTransformTriggerType;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.eriksonn.aeronautics.index.AeroTags;
 import net.minecraft.core.BlockPos;
@@ -11,21 +11,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-
 import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     private final List<FluidTransformSettings> settingsList;
 
     protected TransformBaseFlowingFluid(
         Properties properties,
-        Supplier<Block> ignoredTransformBlock,
         List<FluidTransformSettings> settingsList
     ) {
         super(properties);
@@ -45,18 +41,27 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     @Override
     public void randomTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
         super.randomTick(level, pos, state, random);
-        tryTransform(level, pos, state, FluidTransformationTriggerType.RANDOM_TICK);
+        if (level instanceof ServerLevel serverLevel) {
+            tryTransform(serverLevel, pos, state, FluidTransformTriggerType.RANDOM_TICK);
+        }
     }
 
     // TOOLS
-    public void tryTransform(Level level, BlockPos pos, FluidState state, FluidTransformationTriggerType trigger) {
-        if (!(level instanceof ServerLevel serverLevel)) return;
+    public void tryTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
         // Loop through settings
         for (FluidTransformSettings settings : this.settingsList) {
             // Check transformation conditions
             if (settings.canTransform(serverLevel, pos, state, trigger)) {
                 performTransformation(serverLevel, pos, settings);
+                return;
             }
+        }
+    }
+
+    public void tryEventTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger, FluidTransformSettings settings) {
+        // Check transformation conditions
+        if (settings.canTransform(serverLevel, pos, state, trigger)) {
+            performTransformation(serverLevel, pos, settings);
         }
     }
 
@@ -122,7 +127,7 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
 
     // INNER CLASSES
     public static class Flowing extends TransformBaseFlowingFluid {
-        public Flowing(Properties properties, Supplier<Block> transformBlock, List<FluidTransformSettings> settingsList) { super(properties, transformBlock, settingsList); }
+        public Flowing(Properties properties, List<FluidTransformSettings> settingsList) { super(properties, settingsList); }
         @Override public boolean isSource(FluidState state) { return false; }
         @Override public int getAmount(FluidState state) { return state.getValue(LEVEL); }
         @Override protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
@@ -132,7 +137,7 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     }
 
     public static class Source extends TransformBaseFlowingFluid {
-        public Source(Properties properties, Supplier<Block> transformBlock, List<FluidTransformSettings> settingsList) { super(properties, transformBlock, settingsList); }
+        public Source(Properties properties, List<FluidTransformSettings> settingsList) { super(properties, settingsList); }
         @Override public boolean isSource(FluidState state) { return true; }
         @Override public int getAmount(FluidState state) { return 8; }
     }

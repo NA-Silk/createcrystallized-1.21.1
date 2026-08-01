@@ -82,9 +82,9 @@ public class ModFluids {
             () -> Blocks.PACKED_ICE,
             () -> Blocks.FROSTED_ICE
         ),
+        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
         new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
-        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(ModParticles.DENSITE_PARTICLES), // Particle effect
         Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), // Sound effect
         true // Chain catalyzes
@@ -102,9 +102,9 @@ public class ModFluids {
         Set.of( // Require adjacent blocks
             () -> Blocks.BLUE_ICE // Vanilla blocks must be clearly supplied
         ),
+        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
         new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
-        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(ModParticles.DENSITE_PARTICLES), // Particle effect
         Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), // Sound effect
         true // Chain catalyzes
@@ -113,7 +113,6 @@ public class ModFluids {
         "source_densite_emulsion",
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
-            ModBlocks.DENSITE_BLOCK,
             List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
@@ -121,7 +120,6 @@ public class ModFluids {
         "flowing_densite_emulsion",
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
-            ModBlocks.DENSITE_BLOCK,
             List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
@@ -189,9 +187,9 @@ public class ModFluids {
         false, // Require night
         true, // Require source block
         Set.of(), // Require adjacent blocks
+        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         new FluidTransformSettings.LightningSettings(true, 6), // Lightning requirements
         new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
-        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(ModParticles.PROPULSITE_PARTICLES), // Particle effect
         Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
         true // Chain catalyzes
@@ -200,7 +198,6 @@ public class ModFluids {
         "source_propulsite_flurry",
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.PROPULSITE_FLURRY_PROPERTIES,
-            ModBlocks.PROPULSITE_BLOCK, //had to slightly change this because propulsite is no longer a deferred block -pebb // Now it is lol -na
             List.of(PROPULSITE_FLURRY_SETTINGS)
         )
     );
@@ -208,7 +205,6 @@ public class ModFluids {
         "flowing_propulsite_flurry",
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.PROPULSITE_FLURRY_PROPERTIES,
-            ModBlocks.PROPULSITE_BLOCK, //had to slightly change this because propulsite is no longer a deferred block -pebb // Now it is lol -na
             List.of(PROPULSITE_FLURRY_SETTINGS)
         )
     );
@@ -246,9 +242,9 @@ public class ModFluids {
         false, // Require night
         true, // Require source block
         Set.of(), // Require adjacent blocks
+        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
         new FluidTransformSettings.VibrationSettings(true, 6, 10), // Vibration requirements
-        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(() -> ParticleTypes.SCULK_SOUL), // Particle effect
         Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
         true // Chain catalyzes
@@ -257,7 +253,6 @@ public class ModFluids {
         "source_oscillite_suspension",
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.OSCILLITE_SUSPENSION_PROPERTIES,
-            ModBlocks.OSCILLITE_BLOCK,
             List.of(OSCILLITE_SUSPENSION_SETTINGS)
         )
     );
@@ -265,7 +260,6 @@ public class ModFluids {
         "flowing_oscillite_suspension",
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.OSCILLITE_SUSPENSION_PROPERTIES,
-            ModBlocks.OSCILLITE_BLOCK,
             List.of(OSCILLITE_SUSPENSION_SETTINGS)
         )
     );

@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.util.type;
 
-public enum FluidTransformationTriggerType {
+public enum FluidTransformTriggerType {
     RANDOM_TICK,
     LIGHTNING,
     VIBRATION

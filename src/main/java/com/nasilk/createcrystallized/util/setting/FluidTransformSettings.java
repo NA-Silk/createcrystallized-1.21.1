@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.util.setting;
 
-import com.nasilk.createcrystallized.util.type.FluidTransformationTriggerType;
+import com.nasilk.createcrystallized.util.type.FluidTransformTriggerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -22,23 +22,23 @@ import java.util.function.Supplier;
  * @param transformRate                 Random transformation chance per tick
  * @param maxSkyLight                   Maximum skylight level allowed
  * @param yRange                        Height restrictions
- * @param requireColdBiome              Environmental requirements
- * @param requireRaining
- * @param requireThundering
- * @param requireNight
- * @param requireSourceBlock
+ * @param requireColdBiome              Biome requirements
+ * @param requireRaining                Weather requirements
+ * @param requireThundering             Weather requirements
+ * @param requireNight                  Time requirements
+ * @param requireSourceBlock            State requirements
  * @param requireAdjacentBlocks         Neighbor requirements
+ * @param allowedDimensions             Allowed transformation dimensions
  * @param lightningSettings             Lightning requirements
  * @param vibrationSettings             Vibration requirements
- * @param allowedDimensions             Allowed transformation dimensions
  * @param transformParticle             Optional transformation particle
  * @param transformSound                Optional transformation sound
  * @param chainCatalyzes                Transforms adjacent same-fluid blocks
 
  * Frequency Table
  * Event:                               Frequency:
- * Walking	                            1
- * Projectile impact	                2
+ * Walking	                            1 (Not supported)
+ * Projectile impact	                2 (Not supported)
  * Elytra	                            4
  * Damage	                            7
  * Doors	                            10
@@ -57,9 +57,9 @@ public record FluidTransformSettings(
     boolean requireNight,
     boolean requireSourceBlock,
     Set<Supplier<Block>> requireAdjacentBlocks,
+    Set<ResourceKey<Level>> allowedDimensions,
     LightningSettings lightningSettings,
     VibrationSettings vibrationSettings,
-    Set<ResourceKey<Level>> allowedDimensions,
     Optional<Supplier<SimpleParticleType>> transformParticle,
     Optional<Supplier<SoundEvent>> transformSound,
     boolean chainCatalyzes
@@ -80,43 +80,36 @@ public record FluidTransformSettings(
         Integer minimumFrequency
     ) {}
 
-    public boolean canTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformationTriggerType trigger) {
-        // Random rate
-        if (serverLevel.getRandom().nextFloat() > transformRate) return false;
+    public boolean canTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
+        return passesRandomCheck(serverLevel)
+            && passesEnvironmentChecks(serverLevel, pos)
+            && passesContextChecks(serverLevel, pos, state)
+            && passesTriggerChecks(trigger);
+    }
 
-        // Skylight requirement
-        if (serverLevel.getBrightness(LightLayer.SKY, pos) > maxSkyLight) return false;
+    private boolean passesRandomCheck(ServerLevel serverLevel) {
+        return serverLevel.getRandom().nextFloat() <= transformRate;
+    }
 
-        // Height restrictions
-        if (pos.getY() < yRange.minYLevel() || pos.getY() > yRange.maxYLevel()) return false;
+    private boolean passesEnvironmentChecks(ServerLevel serverLevel, BlockPos pos) {
+        return (!requireColdBiome || serverLevel.getBiome(pos).value().coldEnoughToSnow(pos))
+            && (!requireRaining || serverLevel.isRaining())
+            && (!requireThundering || serverLevel.isThundering())
+            && (!requireNight || serverLevel.isNight())
+            && (allowedDimensions.isEmpty() || allowedDimensions.contains(serverLevel.dimension()));
+    }
 
-        // Cold biome requirement
-        if (requireColdBiome && !serverLevel.getBiome(pos).value().coldEnoughToSnow(pos)) return false;
+    private boolean passesContextChecks(ServerLevel serverLevel, BlockPos pos, FluidState state) {
+        return (serverLevel.getBrightness(LightLayer.SKY, pos) <= maxSkyLight)
+            && (pos.getY() >= yRange.minYLevel() && pos.getY() <= yRange.maxYLevel())
+            && (!requireSourceBlock || state.isSource())
+            && (requireAdjacentBlocks.isEmpty() || hasAdjacentBlocks(serverLevel, pos));
 
-        // Rain requirement
-        if (requireRaining && !serverLevel.isRaining()) return false;
+    }
 
-        // Thunder requirement
-        if (requireThundering && !serverLevel.isThundering()) return false;
-
-        // Night requirement
-        if (requireNight && serverLevel.isDay()) return false;
-
-        // Source-only restriction
-        if (requireSourceBlock && !state.isSource()) return false;
-
-        // Adjacent blocks requirement
-        if (!requireAdjacentBlocks.isEmpty() && !hasAdjacentBlocks(serverLevel, pos)) return false;
-
-        // Trigger Constraints
-        if (lightningSettings.requireLightning() && trigger != FluidTransformationTriggerType.LIGHTNING) return false;
-        if (vibrationSettings.requireVibration() && trigger != FluidTransformationTriggerType.VIBRATION && trigger != FluidTransformationTriggerType.LIGHTNING) return false;
-
-        // Allowed dimensions
-        if (!allowedDimensions.isEmpty() && !allowedDimensions.contains(serverLevel.dimension())) return false;
-
-        // Validate transformation
-        return true;
+    private boolean passesTriggerChecks(FluidTransformTriggerType trigger) {
+        return (!lightningSettings.requireLightning() || trigger == FluidTransformTriggerType.LIGHTNING)
+            && (!vibrationSettings.requireVibration() || trigger == FluidTransformTriggerType.VIBRATION || trigger == FluidTransformTriggerType.LIGHTNING);
     }
 
     private boolean hasAdjacentBlocks(ServerLevel level, BlockPos pos) {

@@ -51,18 +51,18 @@ public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThr
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         // Make sure the block was not just updated (i.e. powered)
-        if (!level.isClientSide
+        if (level instanceof ServerLevel serverLevel
             && !state.is(oldState.getBlock())
             && level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster
-        ) thruster.updateAmplitude(level, pos);
+        ) thruster.updateAmplitude(serverLevel, pos);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        if (!level.isClientSide) {
+        if (level instanceof ServerLevel serverLevel) {
             boolean powered = level.hasNeighborSignal(pos);
             if (powered != state.getValue(POWERED)) level.setBlockAndUpdate(pos, state.setValue(POWERED, powered));
-            if (level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster) thruster.updateAmplitude(level, pos);
+            if (level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster) thruster.updateAmplitude(serverLevel, pos);
         }
     }
 

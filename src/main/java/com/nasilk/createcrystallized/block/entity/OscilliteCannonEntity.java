@@ -45,8 +45,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private boolean armed = false;
 
     // Variables (unsaved)
-    private boolean initialized = false;
     private int tickCounter = 0;
+    private boolean initialized = false;
     private final Vector3d cannonPosition = new Vector3d();
 
     // Tick constants
@@ -107,6 +107,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             Cache cache = CACHE.get();
             BlockState state = getBlockState();
             boolean powered = state.getValue(OscilliteCannonBlock.POWERED);
+            tickCounter++;
+            if (tickCounter > 400) tickCounter = 1;
 
             // Get global position
             cache.cannonPositionCurrent.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
@@ -147,14 +149,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 if (!powered) {
                     cooldown--;
                     this.setChanged();
+                    if (cooldown % 10 == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 }
-                if (tickCounter++ % 80 == 0) {
+                if (tickCounter % 20 == 0) {
                     serverLevel.sendParticles(
                         ParticleTypes.SMOKE,
                         cannonPosition.x, cannonPosition.y, cannonPosition.z,
-                        1, 0.5, 0.5, 0.5, 0.1
+                        5, 0.5, 0.5, 0.5, 0.1
                     );
-                    tickCounter = 0;
                 }
                 return;
             }
@@ -162,7 +164,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             // Charging
             if (!armed && charge < MAX_CHARGE && velocitySquared >= THRESHOLD) {
                 charge++;
-                addChargingParticles(serverLevel, cache);
+                if (tickCounter % 2 == 0) addChargingParticles(serverLevel, cache);
                 if (charge >= MAX_CHARGE) {
                     armed = true;
                     serverLevel.playSound(
@@ -372,6 +374,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 
+        if (cooldown > 0) {
+            CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0).text("s").component())
+                .style(ChatFormatting.RED)
+                .forGoggles(tooltip, 1);
+        }
+
         return true;
     }
 
@@ -380,6 +388,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Save data to the network sync packet
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Charge", this.charge);
+        tag.putInt("Cooldown", this.cooldown);
         tag.putBoolean("Armed", this.armed);
         return tag;
     }
@@ -389,6 +398,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Handle receiving the packet on the Client side
         CompoundTag tag = pkt.getTag();
         this.charge = tag.getInt("Charge");
+        this.cooldown = tag.getInt("Cooldown");
         this.armed = tag.getBoolean("Armed");
     }
 

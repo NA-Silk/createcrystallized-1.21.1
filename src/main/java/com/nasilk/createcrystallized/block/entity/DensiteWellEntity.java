@@ -59,9 +59,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         final Vector3d impulseVelocity = new Vector3d();
         final Vector3d currentLinearVelocity = new Vector3d();
         final Vector3d currentAngularVelocity = new Vector3d();
-        final Vector3d zeroVector = new Vector3d(0, 0, 0); // Read-only reference
-        double distance = 0.0d;
-        double distanceSquared = 0.0d;
+        final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -95,6 +93,8 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                     this.setChanged();
                 }
             }
+            tickCounter++;
+            if (tickCounter > 400) tickCounter = 1;
 
             // Get global position
             Cache cache = CACHE.get();
@@ -106,7 +106,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run gravity effect
-            if (tickCounter++ % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
+            if (tickCounter % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
             applyGravity(cache);
         }
     }
@@ -149,16 +149,16 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             // Get sublevel position, impulse velocity, and current distance^2
             cache.targetPosition.set(targetSubLevel.logicalPose().position());
             cache.impulseVelocity.set(cache.wellPosition).sub(cache.targetPosition);
-            cache.distanceSquared = cache.impulseVelocity.lengthSquared();
+            double distanceSquared = cache.impulseVelocity.lengthSquared();
 
             // Handle out of range entities
-            if (cache.distanceSquared > fieldRadiusSquared) {
+            if (distanceSquared > fieldRadiusSquared) {
                 targets.remove(i);
                 continue;
             }
 
             // Handle impact when very close
-            if (cache.distanceSquared < IMPACT_RADIUS_SQUARED) {
+            if (distanceSquared < IMPACT_RADIUS_SQUARED) {
                 // Get current linear and angular velocity
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 handle.getAngularVelocity(cache.currentAngularVelocity);
@@ -167,13 +167,12 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 cache.currentLinearVelocity.negate();
                 cache.currentAngularVelocity.negate();
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
-                // handle.teleport(cache.wellPosition, subLevel.logicalPose().orientation()); TODO Check this
                 continue;
             }
 
             // Handle dampening when within well radius: F = fieldStrength * distance / RADIUS^3
-            cache.distance = Math.sqrt(cache.distanceSquared);
-            if (cache.distanceSquared < DAMPEN_RADIUS_SQUARED) {
+            double distance = Math.sqrt(distanceSquared);
+            if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
                 // Apply velocity dampening / drag
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
@@ -186,7 +185,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Handle standard pull impulse: F = fieldStrength / distance^2
-            cache.impulseVelocity.mul(fieldStrength / (cache.distanceSquared * cache.distance));
+            cache.impulseVelocity.mul(fieldStrength / (distanceSquared * distance));
             handle.applyLinearImpulse(cache.impulseVelocity);
         }
     }

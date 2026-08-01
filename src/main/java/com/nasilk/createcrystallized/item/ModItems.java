@@ -47,7 +47,7 @@ public class ModItems {
         )
     );
 
-    //Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
+    // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
     public static final DeferredItem<TransformItem> OSCILLITE_RESONATOR = ITEMS.registerItem(
         "oscillite_resonator",
         (properties) -> new TransformItem(

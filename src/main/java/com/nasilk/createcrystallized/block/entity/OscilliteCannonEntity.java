@@ -8,7 +8,6 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
-import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
@@ -18,6 +17,7 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.joml.Vector3d;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +45,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private boolean armed = false;
 
     // Variables (unsaved)
+    private boolean initialized = false;
     private int tickCounter = 0;
     private final Vector3d cannonPosition = new Vector3d();
 
@@ -63,16 +63,15 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     private static final double MAX_RANGE = 80.0d; // Length effectiveness distance
     private static final double MAX_RADIUS = 2.12d; // Radial effectiveness distance
     private static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
+    private static final double RECOIL = 25.0;
 
     // Charging particle constants
-    private static final int NUM_PARTICLES = 1;
     private static final double PARTICLE_RADIUS = 1.5;
 
     // Cache
     private static class Cache {
         // Tick
-        double velocitySquared = 0;
-        boolean powered = false;
+        Direction facing = Direction.NORTH;
         final Vector3d cannonPositionCurrent = new Vector3d();
         final Vector3d cannonDirection = new Vector3d();
         final Vector3d cannonFace =  new Vector3d();
@@ -81,10 +80,15 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Firing
         final BoundingBox3d searchBox = new BoundingBox3d();
         final List<SubLevel> targets = new ArrayList<>();
-        final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final Vector3d relEntityPosition = new Vector3d();
         final Vector3d globalBeamPosition = new Vector3d();
         final Vector3d localBeamPosition = new Vector3d();
+
+        // 3x3 Firing
+        final Vector3d tempVector = new Vector3d();
+        final Vector3d cannonI = new Vector3d();
+        final Vector3d cannonJ = new Vector3d();
+        //             cannonK = cannonDirection
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -96,38 +100,51 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
     // TICK BEHAVIOR
     public void tick() {
-        if (level instanceof ServerLevel serverLevel
-            && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel
-        ) {
+        if (level instanceof ServerLevel serverLevel && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
             // Get the physics handle and tick data
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) return;
             Cache cache = CACHE.get();
             BlockState state = getBlockState();
-            cache.powered = state.getValue(OscilliteCannonBlock.POWERED);
+            boolean powered = state.getValue(OscilliteCannonBlock.POWERED);
 
             // Get global position
             cache.cannonPositionCurrent.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
             subLevel.logicalPose().transformPosition(cache.cannonPositionCurrent);
 
+            // Prevent server load jump from (0, 0, 0) to cache.cannonPositionCurrent
+            if (!initialized) {
+                cannonPosition.set(cache.cannonPositionCurrent);
+                initialized = true;
+            }
+
             // Get linear velocitySquared component
-            cache.velocitySquared = cannonPosition.distanceSquared(cache.cannonPositionCurrent);
+            double velocitySquared = cannonPosition.distanceSquared(cache.cannonPositionCurrent);
             cannonPosition.set(cache.cannonPositionCurrent); // Set cannonPosition = cannonPositionCurrent
-            if (cache.velocitySquared > 1e-3d) cache.velocitySquared *= LINEAR_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
-            else cache.velocitySquared = 0.0d;
+            if (velocitySquared > 1e-3d) velocitySquared *= LINEAR_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
+            else velocitySquared = 0.0d;
 
             // Get angular velocitySquared component
             handle.getAngularVelocity(cache.angularVelocity); // Get angularVelocity
-            cache.velocitySquared += ANGULAR_SCALE*cache.angularVelocity.lengthSquared(); // Set velocitySquared += ANGULAR_SCALE*||angularVelocity||^2
+            velocitySquared += ANGULAR_SCALE*cache.angularVelocity.lengthSquared(); // Set velocitySquared += ANGULAR_SCALE*||angularVelocity||^2
 
-            // Get facing data
-            cache.cannonDirection.set(state.getValue(OscilliteCannonBlock.FACING).step());
+            // Get I, J, K vectors
+            cache.facing = state.getValue(OscilliteCannonBlock.FACING);
+            cache.cannonDirection.set(cache.facing.step()); // K
+            if (cache.facing.getAxis() == Direction.Axis.Y) cache.tempVector.set(0, 0, -1); // North
+            else cache.tempVector.set(0, 1, 0); // Up
+            cache.cannonI.set(cache.cannonDirection).cross(cache.tempVector).normalize();
+            cache.cannonJ.set(cache.cannonI).cross(cache.cannonDirection).normalize();
+
+            // Transform local to global vectors and get face position
             subLevel.logicalPose().transformNormal(cache.cannonDirection);
+            subLevel.logicalPose().transformNormal(cache.cannonI);
+            subLevel.logicalPose().transformNormal(cache.cannonJ);
             cache.cannonFace.set(cannonPosition).fma(FACE_OFFSET, cache.cannonDirection);
 
-            // Cooldown TODO custom cooling down effect
+            // Cooldown
             if (cooldown > 0) {
-                if (!cache.powered) {
+                if (!powered) {
                     cooldown--;
                     this.setChanged();
                 }
@@ -143,16 +160,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             }
 
             // Charging
-            if (!armed && charge < MAX_CHARGE && cache.velocitySquared >= THRESHOLD) {
+            if (!armed && charge < MAX_CHARGE && velocitySquared >= THRESHOLD) {
                 charge++;
                 addChargingParticles(serverLevel, cache);
                 if (charge >= MAX_CHARGE) {
                     armed = true;
                     serverLevel.playSound(
-                        null,
-                        worldPosition,
-                        SoundEvents.WARDEN_SONIC_CHARGE,
-                        SoundSource.BLOCKS,
+                        null, worldPosition,
+                        SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
                         1.5F,0.7F
                     );
                 }
@@ -161,17 +176,15 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             }
 
             // Firing
-            if (armed && cache.powered) {
+            if (armed && powered) {
                 charge = 0;
                 armed = false;
                 cooldown = MAX_COOLDOWN;
                 this.setChanged();
                 serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 serverLevel.playSound(
-                    null,
-                    worldPosition,
-                    SoundEvents.WARDEN_SONIC_BOOM,
-                    SoundSource.BLOCKS,
+                    null, worldPosition,
+                    SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
                     1.5F,1.0F
                 );
                 fireCannon(serverLevel, cache);
@@ -180,50 +193,52 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private void fireCannon(ServerLevel serverLevel, Cache cache) {
-        cache.targets.clear();
-        double range = MAX_RANGE;
-
         // Set bounding box to query subLevels
+        cache.targets.clear();
         cache.searchBox.setUnchecked(
-            cannonPosition.x - range, cannonPosition.y - range, cannonPosition.z - range,
-            cannonPosition.x + range, cannonPosition.y + range, cannonPosition.z + range
+            cannonPosition.x - MAX_RANGE, cannonPosition.y - MAX_RANGE, cannonPosition.z - MAX_RANGE,
+            cannonPosition.x + MAX_RANGE, cannonPosition.y + MAX_RANGE, cannonPosition.z + MAX_RANGE
         );
 
         // Populate the target sublevel list
+        SubLevel cannonSubLevel = Sable.HELPER.getContaining(serverLevel, worldPosition);
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(targetSubLevel -> {
-                if (targetSubLevel != Sable.HELPER.getContaining(serverLevel, worldPosition)) cache.targets.add(targetSubLevel);
+                if (targetSubLevel != cannonSubLevel) cache.targets.add(targetSubLevel);
             });
         }
 
-        // Move along beam path and find nearest block
-        NEAR:
-        for (double i = 0; i < range; i += 0.5) {
-            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+        // Move along beam paths and find nearest block
+        double range = 0.0;
+        for (int u = -1; u <= 1; u++) {
+            for (int v = -1; v <= 1; v++) {
+                // Set starting position
+                cache.tempVector.set(cache.cannonFace).fma(u, cache.cannonI).fma(v, cache.cannonJ);
 
-            // Check non-sublevel blocks
-            cache.mutablePos.set(cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z);
-            BlockState blockState = serverLevel.getBlockState(cache.mutablePos);
-            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, blockState)) {
-                range = i;
-                break;
+                // Destroy blocks and update total range
+                double currentRange = destroyBlocksAndGetRange(serverLevel, cache);
+                if (range < currentRange) range = currentRange;
             }
+        }
 
-            // Check sublevel blocks
-            for (SubLevel subLevel : cache.targets) {
-                if (!(subLevel instanceof ServerSubLevel targetSubLevel) || subLevel.isRemoved()) continue;
-                // Convert to sublevel coordinates
-                cache.localBeamPosition.set(cache.globalBeamPosition);
-                targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
+        // Fire particles straight outward
+        for (double i = 0; i <= range; i+=0.5) {
+            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
+            serverLevel.sendParticles(
+                ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(),
+                cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z,
+                1, 0.0, 0.0, 0.0, 0.0
+            );
+        }
 
-                // Check states
-                cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
-                BlockState subLevelBlockState = serverLevel.getBlockState(cache.mutablePos);
-                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, subLevelBlockState)) {
-                    range = i;
-                    break NEAR;
-                }
+        // Apply knockback
+        if (cannonSubLevel instanceof ServerSubLevel cannonServerSubLevel) {
+            RigidBodyHandle handle = RigidBodyHandle.of(cannonServerSubLevel);
+            if (handle.isValid()) {
+                cache.localBeamPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+                cache.tempVector.set(cache.facing.step()).mul(-RECOIL);
+                handle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
             }
         }
 
@@ -239,69 +254,100 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Iterate through entities
         for (Entity entity : entities) {
-            if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) continue;
+            damageEntity(entity, range, serverLevel, cache);
+        }
+    }
 
-            // Get entity position relative to the thruster
-            AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
-            double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
-            double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
-            double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-            cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cannonPosition);
+    private double destroyBlocksAndGetRange(ServerLevel serverLevel, Cache cache) {
+        // Begin single beam loop
+        double currentRange = MAX_RANGE;
+        NEAR:
+        for (double i = 0; i < MAX_RANGE; i += 0.5) {
+            cache.globalBeamPosition.set(cache.tempVector).fma(i, cache.cannonDirection);
 
-            // Linear distance
-            double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
-            if (entityLinearDistance < 0.0d || entityLinearDistance > range) continue;
+            // Check non-sublevel blocks
+            BlockPos globalPos = BlockPos.containing(cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z);
+            BlockState blockState = serverLevel.getBlockState(globalPos);
+            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, globalPos, blockState)) {
+                currentRange = i;
+                break;
+            }
 
-            // Radial distance
-            double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance*entityLinearDistance;
-            if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) continue;
+            // Check sublevel blocks
+            for (SubLevel subLevel : cache.targets) {
+                if (!(subLevel instanceof ServerSubLevel targetSubLevel) || subLevel.isRemoved()) continue;
+                // Convert to sublevel coordinates
+                cache.localBeamPosition.set(cache.globalBeamPosition);
+                targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
 
-            // Apply damage and knockback
-            entity.hurt(serverLevel.damageSources().magic(), DAMAGE_AMOUNT);
-            if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
-            else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(KNOCKBACK_AMOUNT);
-            entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
-            if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
+                // Check states
+                BlockPos localPos = BlockPos.containing(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
+                BlockState subLevelBlockState = serverLevel.getBlockState(localPos);
+                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, localPos, subLevelBlockState)) {
+                    currentRange = i;
+                    break NEAR;
+                }
+            }
         }
 
-        // Fire straight outward
-        for (double i = 0; i <= range; i+=0.5) {
-            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
-            serverLevel.sendParticles(
-                ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(),
-                cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z,
-                1, 0.0, 0.0, 0.0, 0.0
-            );
-        }
+        // Return range
+        return currentRange;
     }
 
     @SuppressWarnings("deprecation")
     private boolean tryPierceBlock(Level level, BlockPos blockPos, BlockState blockState) {
         float resistance = blockState.getBlock().getExplosionResistance();
         if (resistance <= 5.0f) {
-            BlockHelper.destroyBlock(level, blockPos, 1.0f);
+            level.destroyBlock(blockPos, true);
             return false;
-        } else if (resistance <= 6.0f) BlockHelper.destroyBlock(level, blockPos, 1.0f);
+        } else if (resistance <= 6.0f) {
+            level.destroyBlock(blockPos, true);
+            return true;
+        }
         return true;
     }
 
-    private void addChargingParticles(ServerLevel level, Cache cache) {
-        // Compute each particle
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double ySpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double zSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+    private void damageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
+        // Skip invalid entities
+        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) return;
 
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
-            level.sendParticles(
-                ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
-                cache.cannonFace.x, cache.cannonFace.y, cache.cannonFace.z,
-                0, // Count = 0 (Crucial for passing custom payloads)
-                xSpeed, ySpeed, zSpeed,
-                1.0 // Use above speed values
-            );
-        }
+        // Get entity position relative to the thruster
+        AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
+        double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
+        double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
+        double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
+        cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cannonPosition);
+
+        // Linear distance
+        double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
+        if (entityLinearDistance < 0.0d || entityLinearDistance > range) return;
+
+        // Radial distance
+        double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance*entityLinearDistance;
+        if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
+
+        // Apply damage and knockback
+        entity.hurt(serverLevel.damageSources().magic(), DAMAGE_AMOUNT);
+        if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
+        else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(KNOCKBACK_AMOUNT);
+        entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
+        if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
+    }
+
+    private void addChargingParticles(ServerLevel level, Cache cache) {
+        // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
+        double xSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+        double ySpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+        double zSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+
+        // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+        level.sendParticles(
+            ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
+            cache.cannonFace.x, cache.cannonFace.y, cache.cannonFace.z,
+            0, // Count = 0 (Crucial for passing custom payloads)
+            xSpeed, ySpeed, zSpeed,
+            1.0 // Use above speed values
+        );
     }
 
 

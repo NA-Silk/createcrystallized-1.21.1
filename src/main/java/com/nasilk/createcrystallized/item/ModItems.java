@@ -47,10 +47,11 @@ public class ModItems {
         )
     );
 
-    public static final DeferredItem<TransformItem> ENCASED_OSCILLITE_TRANSFORM_ITEM = ITEMS.registerItem(
-        "encased_oscillite_transform_item",
+    //Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
+    public static final DeferredItem<TransformItem> OSCILLITE_RESONATOR = ITEMS.registerItem(
+        "oscillite_resonator",
         (properties) -> new TransformItem(
-            properties.stacksTo(64),
+            properties.stacksTo(1),
             new HashMap<>(Map.of(ModBlocks.ENCASED_OSCILLITE_BLOCK.get(), ModBlocks.OSCILLITE_CANNON.get()))
         )
     );

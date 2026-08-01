@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.event;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
-import com.nasilk.createcrystallized.util.setting.FluidTransformationSettings;
+import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.util.type.FluidTransformationTriggerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LightningBolt;
@@ -34,14 +34,14 @@ public class LightningEventListener {
             if (state.getType() instanceof TransformBaseFlowingFluid fluid) {
 
                 // Get settings for current TransformBaseFlowingFluid fluid
-                FluidTransformationSettings.LightningSettings settings = fluid.getSettings().lightningSettings();
+                for (FluidTransformSettings settings : fluid.getSettingsList()) {
+                    // Skip if lightning is not required for this fluid
+                    if (!settings.lightningSettings().requireLightning()) continue;
 
-                // Skip if lightning is not required for this fluid
-                if (!settings.requireLightning()) continue;
-
-                // Check if the lightning is in the fluid radius
-                if (pos.closerThan(lightningPos, settings.radius() + 0.5)) {
-                    fluid.tryTransform(level, pos, state, FluidTransformationTriggerType.LIGHTNING);
+                    // Check if the lightning is in the fluid radius
+                    if (pos.closerThan(lightningPos, settings.lightningSettings().radius() + 0.5)) {
+                        fluid.tryTransform(level, pos, state, FluidTransformationTriggerType.LIGHTNING);
+                    }
                 }
             }
         }

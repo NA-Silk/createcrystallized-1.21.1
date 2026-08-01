@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.event;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
-import com.nasilk.createcrystallized.util.setting.FluidTransformationSettings;
+import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.util.type.FluidTransformationTriggerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -26,9 +26,7 @@ public class VibrationEventListener {
     public static void onVanillaGameEvent(VanillaGameEvent event) {
         // Skip off-thread worldgen events
         Level level = event.getLevel();
-        if (level instanceof ServerLevel serverLevel
-            && !serverLevel.getServer().isSameThread()
-        ) return;
+        if (level instanceof ServerLevel serverLevel && !serverLevel.getServer().isSameThread()) return;
 
         // Get the frequency from the Holder<GameEvent>
         int frequency = VibrationSystem.getGameEventFrequency(event.getVanillaEvent());
@@ -56,14 +54,16 @@ public class VibrationEventListener {
                 ) continue;
 
                 // Get settings for current TransformBaseFlowingFluid fluid
-                FluidTransformationSettings.VibrationSettings settings = fluid.getSettings().vibrationSettings();
+                for (FluidTransformSettings settings : fluid.getSettingsList()) {
+                    // Skip if vibration is not required for this fluid
+                    if (!settings.vibrationSettings().requireVibration()) continue;
 
-                // Skip if vibration is not required for this fluid
-                if (!settings.requireVibration()) continue;
-
-                // Check if the vibration is in the fluid radius and if the frequency matches
-                if (pos.closerThan(vibrationPos, settings.radius() + 0.5) && frequency >= settings.minimumFrequency()) {
-                    fluid.tryTransform(level, pos, state, FluidTransformationTriggerType.VIBRATION);
+                    // Check if the vibration is in the fluid radius and if the frequency matches
+                    if (pos.closerThan(vibrationPos, settings.vibrationSettings().radius() + 0.5)
+                        && frequency >= settings.vibrationSettings().minimumFrequency()
+                    ) {
+                        fluid.tryTransform(level, pos, state, FluidTransformationTriggerType.VIBRATION);
+                    }
                 }
             }
         }

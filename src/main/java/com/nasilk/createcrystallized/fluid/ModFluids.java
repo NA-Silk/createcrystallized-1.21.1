@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.fluid;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.util.setting.FluidTransformationSettings;
+import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
 import com.nasilk.createcrystallized.fluid.flowingfluid.UpwardBaseFlowingFluid;
 import com.nasilk.createcrystallized.item.ModItems;
@@ -24,6 +24,8 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -65,10 +67,11 @@ public class ModFluids {
 
 
     // DENSITE EMULSION
-    public static final FluidTransformationSettings DENSITE_EMULSION_SETTINGS = new FluidTransformationSettings(
+    public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_1 = new FluidTransformSettings(
+        ModBlocks.DENSITE_BLOCK, // Transform block
         0.8f, // Transform rate [0.0f, 1,0f]
         15, // Max skylight
-        new FluidTransformationSettings.YRange(-64, 319), // y level range
+        new FluidTransformSettings.YRange(-64, 319), // y level range
         false, // Require cold biome
         false, // Require rain
         false, // Require thunder
@@ -77,11 +80,30 @@ public class ModFluids {
         Set.of( // Require adjacent blocks
             () -> Blocks.ICE, // Vanilla blocks must be clearly supplied
             () -> Blocks.PACKED_ICE,
-            () -> Blocks.BLUE_ICE,
             () -> Blocks.FROSTED_ICE
         ),
-        new FluidTransformationSettings.LightningSettings(false, null), // Lightning requirements
-        new FluidTransformationSettings.VibrationSettings(false, null, null), // Vibration requirements
+        new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
+        new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
+        Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
+        Optional.of(ModParticles.DENSITE_PARTICLES), // Particle effect
+        Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), // Sound effect
+        true // Chain catalyzes
+    );
+    public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_2 = new FluidTransformSettings(
+        () -> Blocks.BELL, // Transform block
+        0.8f, // Transform rate [0.0f, 1,0f]
+        15, // Max skylight
+        new FluidTransformSettings.YRange(-64, 319), // y level range
+        false, // Require cold biome
+        false, // Require rain
+        false, // Require thunder
+        false, // Require night
+        true, // Require source block
+        Set.of( // Require adjacent blocks
+            () -> Blocks.BLUE_ICE // Vanilla blocks must be clearly supplied
+        ),
+        new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
+        new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(ModParticles.DENSITE_PARTICLES), // Particle effect
         Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), // Sound effect
@@ -92,7 +114,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
             ModBlocks.DENSITE_BLOCK,
-            DENSITE_EMULSION_SETTINGS
+            List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
     public static final Supplier<FlowingFluid> FLOWING_DENSITE_EMULSION = FLUIDS.register(
@@ -100,7 +122,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
             ModBlocks.DENSITE_BLOCK,
-            DENSITE_EMULSION_SETTINGS
+            List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
 
@@ -156,18 +178,19 @@ public class ModFluids {
 
 
     // PROPULSITE FLURRY
-    public static final FluidTransformationSettings PROPULSITE_FLURRY_SETTINGS = new FluidTransformationSettings(
+    public static final FluidTransformSettings PROPULSITE_FLURRY_SETTINGS = new FluidTransformSettings(
+        ModBlocks.PROPULSITE_BLOCK, // Transform block
         1.0f, // Transform rate [0.0f, 1,0f]
         15, // Max skylight
-        new FluidTransformationSettings.YRange(-64, 319), // y level range
+        new FluidTransformSettings.YRange(-64, 319), // y level range
         false, // Require cold biome
         false, // Require rain
         false, // Require thunder
         false, // Require night
         true, // Require source block
         Set.of(), // Require adjacent blocks
-        new FluidTransformationSettings.LightningSettings(true, 6), // Lightning requirements
-        new FluidTransformationSettings.VibrationSettings(false, null, null), // Vibration requirements
+        new FluidTransformSettings.LightningSettings(true, 6), // Lightning requirements
+        new FluidTransformSettings.VibrationSettings(false, null, null), // Vibration requirements
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(ModParticles.PROPULSITE_PARTICLES), // Particle effect
         Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
@@ -178,7 +201,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.PROPULSITE_FLURRY_PROPERTIES,
             ModBlocks.PROPULSITE_BLOCK, //had to slightly change this because propulsite is no longer a deferred block -pebb // Now it is lol -na
-            PROPULSITE_FLURRY_SETTINGS
+            List.of(PROPULSITE_FLURRY_SETTINGS)
         )
     );
     public static final Supplier<FlowingFluid> FLOWING_PROPULSITE_FLURRY = FLUIDS.register(
@@ -186,7 +209,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.PROPULSITE_FLURRY_PROPERTIES,
             ModBlocks.PROPULSITE_BLOCK, //had to slightly change this because propulsite is no longer a deferred block -pebb // Now it is lol -na
-            PROPULSITE_FLURRY_SETTINGS
+            List.of(PROPULSITE_FLURRY_SETTINGS)
         )
     );
 
@@ -212,18 +235,19 @@ public class ModFluids {
 
 
     // OSCILLITE SUSPENSION
-    public static final FluidTransformationSettings OSCILLITE_SUSPENSION_SETTINGS = new FluidTransformationSettings(
+    public static final FluidTransformSettings OSCILLITE_SUSPENSION_SETTINGS = new FluidTransformSettings(
+        ModBlocks.OSCILLITE_BLOCK, // Transform block
         0.01f, // Transform rate [0.0f, 1,0f]
         15, // Max skylight
-        new FluidTransformationSettings.YRange(-64, 319), // y level range
+        new FluidTransformSettings.YRange(-64, 319), // y level range
         false, // Require cold biome
         false, // Require rain
         false, // Require thunder
         false, // Require night
         true, // Require source block
         Set.of(), // Require adjacent blocks
-        new FluidTransformationSettings.LightningSettings(false, null), // Lightning requirements
-        new FluidTransformationSettings.VibrationSettings(true, 6, 10), // Vibration requirements
+        new FluidTransformSettings.LightningSettings(false, null), // Lightning requirements
+        new FluidTransformSettings.VibrationSettings(true, 6, 10), // Vibration requirements
         Set.of(Level.OVERWORLD, Level.NETHER, Level.END), // Allowed dimensions
         Optional.of(() -> ParticleTypes.SCULK_SOUL), // Particle effect
         Optional.of(() -> SoundEvents.GLASS_PLACE), // Sound effect
@@ -234,7 +258,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.OSCILLITE_SUSPENSION_PROPERTIES,
             ModBlocks.OSCILLITE_BLOCK,
-            OSCILLITE_SUSPENSION_SETTINGS
+            List.of(OSCILLITE_SUSPENSION_SETTINGS)
         )
     );
     public static final Supplier<FlowingFluid> FLOWING_OSCILLITE_SUSPENSION = FLUIDS.register(
@@ -242,7 +266,7 @@ public class ModFluids {
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.OSCILLITE_SUSPENSION_PROPERTIES,
             ModBlocks.OSCILLITE_BLOCK,
-            OSCILLITE_SUSPENSION_SETTINGS
+            List.of(OSCILLITE_SUSPENSION_SETTINGS)
         )
     );
 

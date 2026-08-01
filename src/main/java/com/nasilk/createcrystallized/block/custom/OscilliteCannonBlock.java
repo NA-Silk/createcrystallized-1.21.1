@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
+import com.nasilk.createcrystallized.item.ModItems;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
@@ -17,7 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
@@ -183,7 +183,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         Level level = context.getLevel();
         if (level.isClientSide() || state.getValue(IS_BARREL)) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, Items.STICK.getDefaultInstance()); // TODO Replace with correct item
+        Block.popResource(level, pos, ModItems.OSCILLITE_RESONATOR.toStack());
         level.setBlockAndUpdate(pos, ModBlocks.ENCASED_OSCILLITE_BLOCK.get().defaultBlockState());
         return InteractionResult.SUCCESS;
     }

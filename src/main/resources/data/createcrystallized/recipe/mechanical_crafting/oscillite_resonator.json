@@ -1,0 +1,31 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:bone"
+    },
+    "B": {
+      "item": "createcrystallized:chora_ingot"
+    },
+    "C": {
+      "item": "minecraft:echo_shard"
+    },
+    "S": {
+      "item": "minecraft:sculk_shrieker"
+    }
+  },
+  "pattern": [
+    " AAA ",
+    "BBBCC",
+    "S    ",
+    "BBBCC",
+    " AAA "
+  ],
+  "result": {
+    "count": 1,
+    "id": "createcrystallized:oscillite_resonator"
+  },
+  "show_notification": false
+}

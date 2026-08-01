@@ -202,7 +202,7 @@ public class ModBlocks {
     );
 
 
-    /** CRAFTED FORMS */
+    /** MACHINED FORMS */
     public static final DeferredBlock<Block> DENSITE_WELL = registerBlock(
         "densite_well",
         () -> new DensiteWellBlock(BlockBehaviour.Properties.of()

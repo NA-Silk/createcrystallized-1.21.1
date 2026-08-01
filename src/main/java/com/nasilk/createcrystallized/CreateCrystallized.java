@@ -98,7 +98,7 @@ public class CreateCrystallized {
             // Transformation Items
             event.accept(ModItems.ENCASED_DENSITE_TRANSFORM_ITEM);
             event.accept(ModItems.ENCASED_PROPULSITE_TRANSFORM_ITEM);
-            event.accept(ModItems.ENCASED_OSCILLITE_TRANSFORM_ITEM);
+            event.accept(ModItems.OSCILLITE_RESONATOR);
 
             // Uncategorized Items
             event.accept(ModItems.CREATIVE_FLUID_ERASER);

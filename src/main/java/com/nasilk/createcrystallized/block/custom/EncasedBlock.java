@@ -37,12 +37,11 @@ public class EncasedBlock extends Block implements IWrenchable {
 
     // WRENCH
     @Override
-    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        return InteractionResult.PASS;
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {return InteractionResult.PASS;
     }
 
     @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Level level = context.getLevel();
         if (level.isClientSide()) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();

@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-
+// TODO Mild Remodel, possibly spicy remodel, update 2 moment.
 public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThrusterEntity>, IWrenchable {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;

@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aeronautics:end_stone_powder"
+    },
+    "B": {
+      "item": "createcrystallized:chora_block"
+    },
+    "C": {
+      "item": "create:sturdy_sheet"
+    }
+  },
+  "pattern": [
+    " CAC ",
+    "CB BC",
+    "A   A",
+    "CB BC",
+    " CAC "
+  ],
+  "result": {
+    "count": 1,
+    "id": "createcrystallized:densite_containment_bracket"
+  },
+  "show_notification": false
+}

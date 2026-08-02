@@ -31,16 +31,16 @@ public class ModItems {
     );
 
     // TODO Rename and texture these
-    public static final DeferredItem<TransformItem> ENCASED_DENSITE_TRANSFORM_ITEM = ITEMS.registerItem(
-        "encased_densite_transform_item",
+    public static final DeferredItem<TransformItem> DENSITE_CONTAINMENT_BRACKET = ITEMS.registerItem(
+        "densite_containment_bracket",
         (properties) -> new TransformItem(
             properties.stacksTo(64),
             new HashMap<>(Map.of(ModBlocks.ENCASED_DENSITE_BLOCK.get(), ModBlocks.DENSITE_WELL.get()))
         )
     );
 
-    public static final DeferredItem<TransformItem> ENCASED_PROPULSITE_TRANSFORM_ITEM = ITEMS.registerItem(
-        "encased_propulsite_transform_item",
+    public static final DeferredItem<TransformItem> PROPULSITE_NOZZLE = ITEMS.registerItem(
+        "propulsite_nozzle",
         (properties) -> new TransformItem(
             properties.stacksTo(64),
             new HashMap<>(Map.of(ModBlocks.ENCASED_PROPULSITE_BLOCK.get(), ModBlocks.PROPULSITE_THRUSTER.get()))

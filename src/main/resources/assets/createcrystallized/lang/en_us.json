@@ -22,6 +22,7 @@
   "item.createcrystallized.aerolite_ingot": "Aerolite Ingot",
   "item.createcrystallized.raw_aerolite": "Raw Aerolite",
   "item.createcrystallized.crushed_raw_aerolite": "Crushed Raw Aerolite",
+  "item.createcrystallized.aerolite_sheet": "UNUSED Aerolite Sheet",
 
   "item.createcrystallized.oscillite_resonator": "Oscillite Cannon Resonator",
 
@@ -75,5 +76,7 @@
   "createcrystallized.unit.m": "%s m",
 
   "subtitles.createcrystallized.block.pebble_place": "Hello there!",
-  "death.attack.propulsite_thruster": "%1$s was killed combining biology and physics"
+
+  "death.attack.propulsite_thruster": "%1$s was killed combining biology and physics",
+  "death.attack.oscillite_cannon": "%1$s exceeded their resonant frequency"
 }

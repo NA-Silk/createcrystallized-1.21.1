@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "key": {
+    "W": {
+      "item": "minecraft:wind_charge"
+    },
+    "A": {
+      "item": "createcrystallized:aerolite_ingot"
+    },
+    "C": {
+      "item": "createcrystallized:chora_ingot"
+    }
+  },
+  "pattern": [
+    "  C  ",
+    " CAC ",
+    "CAWAC",
+    " CAC ",
+    "  C  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "createcrystallized:propulsite_nozzle"
+  },
+  "show_notification": false
+}

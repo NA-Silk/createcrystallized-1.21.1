@@ -46,7 +46,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
     public static final BooleanProperty IS_BARREL = BooleanProperty.create("is_barrel"); // Sure hope this doesn't break anything
 
     private static final VoxelShape BASE_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
-    private static final VoxelShape BARREL_SHAPE = Block.box(1.0d, 1.0d, 0.0d, 15.0d, 15.0d, 16.0d);
+    private static final VoxelShape BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d); //i know it doesn't match the barrel right IT WOULD TIP OVER WEIRDLY
 
     // Simulated Assembly Integration
     private static final ObjectList<BlockPos> BARREL_POSITIONS = new ObjectArrayList<>();

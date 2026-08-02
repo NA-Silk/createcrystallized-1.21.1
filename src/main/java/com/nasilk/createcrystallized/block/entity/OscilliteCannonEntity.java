@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
+import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
@@ -362,7 +363,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
 
         // Apply damage and knockback
-        entity.hurt(serverLevel.damageSources().magic(), DAMAGE_AMOUNT);
+        entity.hurt(ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON), DAMAGE_AMOUNT); //you wouldnt down load a MODDAMAGE TYPES: OSCILLITE CANNON
         if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
         else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(KNOCKBACK_AMOUNT);
         entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);

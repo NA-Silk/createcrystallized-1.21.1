@@ -31,6 +31,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -52,6 +53,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     // Variables (unsaved)
     private boolean initialized = false;
     private final Vector3d cannonPosition = new Vector3d();
+    private DamageSource cannonDamageSource = null;
 
     // Tick constants
     private static final int PACKET_UPDATE_RATE = 10;
@@ -363,7 +365,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
 
         // Apply damage and knockback
-        entity.hurt(ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON), DAMAGE_AMOUNT); //you wouldnt down load a MODDAMAGE TYPES: OSCILLITE CANNON
+        if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
+        entity.hurt(cannonDamageSource, DAMAGE_AMOUNT); //you wouldn't download a MODDAMAGETYPES.OSCILLITE_CANNON
         if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(KNOCKBACK_AMOUNT);
         else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(KNOCKBACK_AMOUNT);
         entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);

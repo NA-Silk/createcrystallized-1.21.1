@@ -102,11 +102,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 this.setChanged();
             }
+
+            // Have a little ambiance
             if (serverLevel.getRandom().nextFloat() < AMBIENT_RATE) serverLevel.playSound(
                 null, worldPosition,
                 SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS, SoundSource.BLOCKS,
                 1.0F,0.8F
             );
+
+            // Exit if unpowered
             if (power == 0) return;
 
             // Get global position

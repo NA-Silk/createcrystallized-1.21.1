@@ -89,6 +89,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         final Vector3d angularVelocity = new Vector3d();
 
         // Firing
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final BoundingBox3d searchBox = new BoundingBox3d();
         final List<SubLevel> targets = new ArrayList<>();
         final Vector3d relEntityPosition = new Vector3d();
@@ -288,21 +289,62 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private double destroyBlocksAndGetRange(ServerLevel serverLevel, Cache cache) {
-        // Begin single beam loop
-        double currentRange = MAX_RANGE;
-        NEAR:
-        for (double i = 0; i < MAX_RANGE; i += 0.5) {
-            cache.globalBeamPosition.set(cache.beamOrigin).fma(i, cache.cannonDirection);
+        // Get initial voxel (block) coordinates
+        int currentX = (int) Math.floor(cache.beamOrigin.x);
+        int currentY = (int) Math.floor(cache.beamOrigin.y);
+        int currentZ = (int) Math.floor(cache.beamOrigin.z);
 
+        // Get direction step values (increment/decrement amount)
+        int stepX = (cache.cannonDirection.x > 0) ? 1  :
+                    (cache.cannonDirection.x < 0) ? -1 :
+                    0;
+        int stepY = (cache.cannonDirection.y > 0) ? 1  :
+                    (cache.cannonDirection.y < 0) ? -1 :
+                    0;
+        int stepZ = (cache.cannonDirection.z > 0) ? 1  :
+                    (cache.cannonDirection.z < 0) ? -1 :
+                    0;
+
+        // Get parametric distance per axis
+        // - These are scale values to translate 1 x/y/z steps into equivalent beam distances,
+        //   that way the 3 possible beam lengths (tMaxX/Y/Z) can be compared and
+        //   the shortest can be chosen by comparison.
+        // - 2D comparison for tDeltaX:
+        //      tDeltaX = sqrt(1 + dy^2/dx^2) = sqrt((dx^2 + dy^2)/dx^2) = sqrt(1/dx^2 = |1/dx|
+        // - Double.POSITIVE_INFINITY prevents null errors for unreachable directions
+        double tDeltaX = (stepX != 0) ? Math.abs(1.0 / cache.cannonDirection.x) :
+                         Double.POSITIVE_INFINITY;
+        double tDeltaY = (stepY != 0) ? Math.abs(1.0 / cache.cannonDirection.y) :
+                         Double.POSITIVE_INFINITY;
+        double tDeltaZ = (stepZ != 0) ? Math.abs(1.0 / cache.cannonDirection.z) :
+                         Double.POSITIVE_INFINITY;
+
+        // Get projected ray lengths after following each possible step for comparison
+        // - Add step and subtract origin for 1D distance in positive directions
+        // - Subtract current from origin in negative directions
+        // - Double.POSITIVE_INFINITY prevents null errors for unreachable directions
+        double tMaxX = (stepX > 0) ? (currentX + 1.0 - cache.beamOrigin.x) * tDeltaX :
+                       (stepX < 0) ? (cache.beamOrigin.x - currentX) * tDeltaX :
+                       Double.POSITIVE_INFINITY;
+        double tMaxY = (stepY > 0) ? (currentY + 1.0 - cache.beamOrigin.y) * tDeltaY :
+                       (stepY < 0) ? (cache.beamOrigin.y - currentY) * tDeltaY :
+                       Double.POSITIVE_INFINITY;
+        double tMaxZ = (stepZ > 0) ? (currentZ + 1.0 - cache.beamOrigin.z) * tDeltaZ :
+                       (stepZ < 0) ? (cache.beamOrigin.z - currentZ) * tDeltaZ :
+                       Double.POSITIVE_INFINITY;
+
+        // Initialize current range
+        double t = 0.0;
+
+        // DDA traversal
+        while (t < MAX_RANGE) {
             // Check non-sublevel blocks
-            BlockPos globalPos = BlockPos.containing(cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z);
-            BlockState blockState = serverLevel.getBlockState(globalPos);
-            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, globalPos, blockState)) {
-                currentRange = i;
-                break;
-            }
+            cache.mutablePos.set(currentX, currentY, currentZ);
+            BlockState blockState = serverLevel.getBlockState(cache.mutablePos);
+            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, blockState)) return t;
 
             // Check sublevel blocks
+            if (!cache.targets.isEmpty()) cache.globalBeamPosition.set(cache.beamOrigin).fma(t, cache.cannonDirection);
             for (SubLevel targetSubLevel : cache.targets) {
                 if (!(targetSubLevel instanceof ServerSubLevel targetServerSubLevel) || targetSubLevel.isRemoved()) continue;
                 // Convert to sublevel coordinates
@@ -310,9 +352,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 targetServerSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
 
                 // Check states
-                BlockPos localPos = BlockPos.containing(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
-                BlockState subLevelBlockState = serverLevel.getBlockState(localPos);
-                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, localPos, subLevelBlockState)) {
+                cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
+                BlockState subLevelBlockState = serverLevel.getBlockState(cache.mutablePos);
+                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, subLevelBlockState)) {
                     RigidBodyHandle targetHandle = RigidBodyHandle.of(targetServerSubLevel);
                     if (targetHandle.isValid()) {
                         // Get local direction
@@ -322,14 +364,36 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         cache.tempVector.mul(IMPACT);
                         targetHandle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
                     }
-                    currentRange = i;
-                    break NEAR;
+                    return t;
+                }
+            }
+
+            // Update DDA variables
+            if (tMaxX < tMaxY) {
+                if (tMaxX < tMaxZ) {
+                    t = tMaxX;
+                    tMaxX += tDeltaX;
+                    currentX += stepX;
+                } else {
+                    t = tMaxZ;
+                    tMaxZ += tDeltaZ;
+                    currentZ += stepZ;
+                }
+            } else {
+                if (tMaxY < tMaxZ) {
+                    t = tMaxY;
+                    tMaxY += tDeltaY;
+                    currentY += stepY;
+                } else {
+                    t = tMaxZ;
+                    tMaxZ += tDeltaZ;
+                    currentZ += stepZ;
                 }
             }
         }
 
-        // Return range
-        return currentRange;
+        // Default return
+        return MAX_RANGE;
     }
 
     @SuppressWarnings("deprecation")

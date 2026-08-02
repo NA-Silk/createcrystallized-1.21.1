@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public class ModNetworkRegistry {
+public class ModPayloads {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(CreateCrystallized.MOD_ID);

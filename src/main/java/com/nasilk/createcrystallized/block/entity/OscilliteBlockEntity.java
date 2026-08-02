@@ -11,24 +11,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 
 public class OscilliteBlockEntity extends BlockEntity {
-    // Variables
-    private int tickCounter = 0;
-
     // Constants
     private static final int TICK_RATE = 5;
-    /* LEVELING
-    private static final double LEVELING_ANGLE = 0.1d;
-    private static final double LEVELING_RATE = 0.2d;
-     */
 
     // Cache
     private static class Cache {
         final Vector3d blockPosition = new Vector3d();
         final Vector3d angularVelocity = new Vector3d();
-        /* LEVELING
-        final Vector3d orientation = new Vector3d();
-         */
-        final Vector3d zeroVector = new Vector3d(0, 0, 0); // Read-only reference
+        final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -47,7 +37,7 @@ public class OscilliteBlockEntity extends BlockEntity {
             subLevel.logicalPose().transformPosition(cache.blockPosition);
 
             // Run gyroscope effect
-            if (tickCounter++ % TICK_RATE == 0) gyroscope(subLevel, cache);
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) gyroscope(subLevel, cache);
         }
     }
 
@@ -60,17 +50,5 @@ public class OscilliteBlockEntity extends BlockEntity {
         handle.getAngularVelocity(cache.angularVelocity);
         cache.angularVelocity.set(-cache.angularVelocity.x, 0, -cache.angularVelocity.z);
         handle.addLinearAndAngularVelocity(cache.zeroVector, cache.angularVelocity);
-
-        /* LEVELING
-        // Get present orientation and apply small correction force to level out the sublevel
-        subLevel.logicalPose().orientation().getEulerAnglesXYZ(cache.orientation);
-        if (cache.orientation.x > LEVELING_ANGLE || cache.orientation.x < -LEVELING_ANGLE
-            || cache.orientation.z > LEVELING_ANGLE || cache.orientation.z < -LEVELING_ANGLE
-        ) {
-            cache.orientation.mul(-LEVELING_RATE);
-            cache.orientation.y = 0;
-            handle.addLinearAndAngularVelocity(cache.zeroVector, cache.orientation);
-        }
-         */
     }
 }

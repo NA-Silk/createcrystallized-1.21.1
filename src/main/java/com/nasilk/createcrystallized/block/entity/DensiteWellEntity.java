@@ -20,6 +20,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
@@ -34,14 +36,24 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private double fieldRadiusSquared = 0.0d;
 
     // Tick variables (unsaved)
-    private int tickCounter = 0;
     private final List<SubLevel> targets = new ArrayList<>();
 
     // Tick constants
     private static final int TICK_RATE = 20;
+    private static final double AMBIENT_RATE = 8e-5d;
     private static final double MIN_RADIUS = 5.0d;
     private static final double RADIUS_SCALE = 2.0d;
     private static final double FIELD_CONSTANT = 1.0d;
+    private static final double[] FIELD_STRENGTH_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
+    static {
+        for (int i = 0; i < 16; i++) {
+            FIELD_STRENGTH_CURVE[i] = FIELD_CONSTANT * i;
+            FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
+            FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
+        }
+    }
 
     // Physics constants
     private static final double IMPACT_RADIUS = 0.5d;
@@ -81,20 +93,21 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                     fieldStrength = 0.0d;
                     fieldRadius = 0.0d;
                     fieldRadiusSquared = 0.0d;
-                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-                    this.setChanged();
                     if (!targets.isEmpty()) targets.clear();
-                    return;
                 } else {
-                    fieldStrength = FIELD_CONSTANT * power;
-                    fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
-                    fieldRadiusSquared = fieldRadius * fieldRadius;
-                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-                    this.setChanged();
+                    fieldStrength = FIELD_STRENGTH_CURVE[power];
+                    fieldRadius = FIELD_RADIUS_CURVE[power];
+                    fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
                 }
+                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                this.setChanged();
             }
-            tickCounter++;
-            if (tickCounter > 400) tickCounter = 1;
+            if (serverLevel.getRandom().nextFloat() < AMBIENT_RATE) serverLevel.playSound(
+                null, worldPosition,
+                SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS, SoundSource.BLOCKS,
+                1.0F,0.8F
+            );
+            if (power == 0) return;
 
             // Get global position
             Cache cache = CACHE.get();
@@ -106,8 +119,8 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run gravity effect
-            if (tickCounter % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
-            applyGravity(cache);
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
+            if (!targets.isEmpty()) applyGravity(cache);
         }
     }
 
@@ -220,8 +233,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Save data to the network sync packet
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Power", this.power);
-        tag.putDouble("FieldStrength", this.fieldStrength);
-        tag.putDouble("FieldRadius", this.fieldRadius);
         return tag;
     }
 
@@ -230,9 +241,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Handle receiving the packet on the Client side
         CompoundTag tag = pkt.getTag();
         this.power = tag.getInt("Power");
-        this.fieldStrength = tag.getDouble("FieldStrength");
-        this.fieldRadius = tag.getDouble("FieldRadius");
-        this.fieldRadiusSquared = fieldRadius * fieldRadius;
+        if (power == 0) {
+            this.fieldStrength = 0.0d;
+            this.fieldRadius = 0.0d;
+            this.fieldRadiusSquared = 0.0d;
+        } else {
+            this.fieldStrength = FIELD_CONSTANT * power;
+            this.fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
+            this.fieldRadiusSquared = fieldRadius * fieldRadius;
+        }
     }
 
     @Override
@@ -247,16 +264,20 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Power", this.power);
-        tag.putDouble("FieldStrength", this.fieldStrength);
-        tag.putDouble("FieldRadius", this.fieldRadius);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.power = tag.getInt("Power");
-        this.fieldStrength = tag.getDouble("FieldStrength");
-        this.fieldRadius = tag.getDouble("FieldRadius");
-        this.fieldRadiusSquared = fieldRadius * fieldRadius;
+        if (power == 0) {
+            this.fieldStrength = 0.0d;
+            this.fieldRadius = 0.0d;
+            this.fieldRadiusSquared = 0.0d;
+        } else {
+            this.fieldStrength = FIELD_CONSTANT * power;
+            this.fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
+            this.fieldRadiusSquared = fieldRadius * fieldRadius;
+        }
     }
 }

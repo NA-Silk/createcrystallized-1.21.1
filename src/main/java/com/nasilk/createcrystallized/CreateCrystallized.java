@@ -199,8 +199,8 @@ public class CreateCrystallized {
                 ModBlocks.PROPULSITE_THRUSTER.get(),
                 ModBlocks.OSCILLITE_BLOCK.get(),
                 ModBlocks.ENCASED_OSCILLITE_BLOCK.get(),
-                ModBlocks.OSCILLITE_CANNON.get(),
-                ModBlocks.ENCASED_LEVITITE_BLOCK.get()
+                ModBlocks.OSCILLITE_CANNON.get()
+                //ModBlocks.ENCASED_LEVITITE_BLOCK.get()
             );
         }
     }

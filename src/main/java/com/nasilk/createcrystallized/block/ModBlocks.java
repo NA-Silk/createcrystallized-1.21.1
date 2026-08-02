@@ -7,9 +7,13 @@ import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.custom.ChoraCasingItem;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
 import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.particle.ModParticles;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
+import dev.eriksonn.aeronautics.index.AeroBlocks;
+import dev.eriksonn.aeronautics.index.AeroSoundEvents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -109,7 +113,7 @@ public class ModBlocks {
     /** ENCASED FORMS */
     public static final BlockEntry<Block> ENCASED_DENSITE_BLOCK = registerBlockCT(
         "encased_densite_block",
-        (properties) -> new Block(properties
+        (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
             .isRedstoneConductor((state, level, pos) -> true)
             .strength(1.0f, 9.0f)
@@ -124,14 +128,18 @@ public class ModBlocks {
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_BLOCK_FALL
                 )
-            )
+            ),
+            ModBlocks.DENSE_CHORA_CASING::asItem,
+            ModBlocks.DENSITE_BLOCK,
+            ModParticles.DENSITE_PARTICLES,
+            8,0.3,0.2,0.3,0.05
         ),
         EncasedDensiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_PROPULSITE_BLOCK = registerBlockCT(
         "encased_propulsite_block",
-        (properties) -> new Block(properties
+        (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
@@ -148,14 +156,18 @@ public class ModBlocks {
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_BLOCK_FALL
                 )
-            )
+            ),
+            ModBlocks.PROPULSED_CHORA_CASING::asItem,
+            ModBlocks.PROPULSITE_BLOCK,
+            ModParticles.PROPULSITE_PARTICLES,
+            16,0.5,0.5,0.5,0.25
         ),
         EncasedPropulsiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_OSCILLITE_BLOCK = registerBlockCT(
         "encased_oscillite_block",
-        (properties) -> new Block(properties
+        (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
@@ -166,20 +178,24 @@ public class ModBlocks {
             .isViewBlocking((state, level, pos) -> false)
             .sound(
                 new SoundType(1.0f, 1.0f,
-                    SoundEvents.AMETHYST_BLOCK_BREAK,
+                    ModSounds.OSCILLITE_BREAK.get(),
                     SoundEvents.AMETHYST_BLOCK_STEP,
-                    SoundEvents.AMETHYST_BLOCK_PLACE,
+                    ModSounds.OSCILLITE_PLACE.get(),
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_CLUSTER_FALL
                 )
-            )
+            ),
+            ModBlocks.OSCILLATING_CHORA_CASING::asItem,
+            ModBlocks.OSCILLITE_BLOCK,
+            () -> ParticleTypes.SCULK_SOUL,
+            8,0.5,0.5,0.5,0.5
         ),
         EncasedOscilliteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_LEVITITE_BLOCK = registerBlockCT(
         "encased_levitite_block",
-        (properties) -> new Block(properties
+        (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
             .strength(0.3F)
@@ -190,13 +206,17 @@ public class ModBlocks {
             .isViewBlocking((state, level, pos) -> false)
             .sound(
                 new SoundType(1.0f, 1.0f,
-                    SoundEvents.AMETHYST_BLOCK_BREAK,
+                    AeroSoundEvents.LEVITITE_BREAK.event(),
                     SoundEvents.AMETHYST_BLOCK_STEP,
-                    SoundEvents.AMETHYST_BLOCK_PLACE,
+                    AeroSoundEvents.LEVITITE_PLACE.event(),
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundEvents.AMETHYST_CLUSTER_FALL
                 )
-            )
+            ),
+            ModBlocks.LEVITATING_CHORA_CASING::asItem,
+            AeroBlocks.LEVITITE,
+            null, // TODO Ask Erik how his particles work
+            8,0.5,0.5,0.5,0.5
         ),
         EncasedLevititeCTBehavior::new
     );

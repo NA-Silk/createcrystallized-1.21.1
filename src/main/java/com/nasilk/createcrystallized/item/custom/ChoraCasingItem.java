@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.item.custom;
 
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.util.helper.TransformItemHelper;
+import dev.eriksonn.aeronautics.index.AeroBlocks;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.UseOnContext;
@@ -13,7 +14,10 @@ public class ChoraCasingItem extends BlockItem {
 
     public ChoraCasingItem(Block block, Properties properties) {
         super(block, properties);
-        BLOCK_MAP.put(ModBlocks.PROPULSITE_BLOCK.get(), ModBlocks.PROPULSITE_THRUSTER.get());
+        BLOCK_MAP.put(ModBlocks.DENSITE_BLOCK.get(), ModBlocks.ENCASED_DENSITE_BLOCK.get());
+        BLOCK_MAP.put(ModBlocks.PROPULSITE_BLOCK.get(), ModBlocks.ENCASED_PROPULSITE_BLOCK.get());
+        BLOCK_MAP.put(ModBlocks.OSCILLITE_BLOCK.get(), ModBlocks.ENCASED_OSCILLITE_BLOCK.get());
+        BLOCK_MAP.put(AeroBlocks.LEVITITE.get(), ModBlocks.ENCASED_LEVITITE_BLOCK.get());
     }
 
     @Override

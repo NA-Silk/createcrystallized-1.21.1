@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
+import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -30,11 +31,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,15 +228,17 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             }
         }
 
-        // Fire particles straight outward
-        for (double i = 0; i <= range; i+=0.5) {
-            cache.globalBeamPosition.set(cache.cannonFace).fma(i, cache.cannonDirection);
-            serverLevel.sendParticles(
-                ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(),
-                cache.globalBeamPosition.x, cache.globalBeamPosition.y, cache.globalBeamPosition.z,
-                1, 0.0, 0.0, 0.0, 0.0
-            );
-        }
+        // Fire particles (sadly, nothing I can do about the allocations...)
+        OscilliteCannonBeamPayload payload = new OscilliteCannonBeamPayload(
+            new Vector3f().set(cache.cannonFace),
+            new Vector3f().set(cache.cannonDirection),
+            range
+        );
+        PacketDistributor.sendToPlayersTrackingChunk(
+            serverLevel,
+            new ChunkPos(worldPosition),
+            payload
+        );
 
         // Apply knockback
         if (cannonSubLevel instanceof ServerSubLevel cannonServerSubLevel) {

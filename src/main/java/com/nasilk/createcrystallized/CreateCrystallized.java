@@ -77,6 +77,7 @@ public class CreateCrystallized {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
+    @SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             ModDispenserBehavior.register();

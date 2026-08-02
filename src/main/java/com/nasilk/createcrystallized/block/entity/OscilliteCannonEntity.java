@@ -206,7 +206,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             }
 
             // Idling; ambiance is nice
-            if (serverLevel.getRandom().nextFloat() < AMBIENT_RATE) {
+            if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
                 if (charge == 0) serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.WARDEN_LISTENING, SoundSource.BLOCKS,

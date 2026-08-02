@@ -104,7 +104,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Have a little ambiance
-            if (serverLevel.getRandom().nextFloat() < AMBIENT_RATE) serverLevel.playSound(
+            if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
                 null, worldPosition,
                 SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS, SoundSource.BLOCKS,
                 1.0F,0.8F

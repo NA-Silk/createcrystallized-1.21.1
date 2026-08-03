@@ -24,8 +24,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-// TODO Mild Remodel, possibly spicy remodel, update 2 moment.
+
 public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThrusterEntity>, IWrenchable {
+    // TODO Mild Remodel, possibly spicy remodel, update 2 moment.
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -51,10 +52,9 @@ public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThr
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         // Make sure the block was not just updated (i.e. powered)
-        if (level instanceof ServerLevel serverLevel
-            && !state.is(oldState.getBlock())
-            && level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster
-        ) thruster.updateAmplitude(serverLevel, pos);
+        if (level instanceof ServerLevel serverLevel && !state.is(oldState.getBlock())) {
+            withBlockEntityDo(serverLevel, pos, be -> be.updateAmplitude(serverLevel, pos));
+        }
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThr
         if (level instanceof ServerLevel serverLevel) {
             boolean powered = level.hasNeighborSignal(pos);
             if (powered != state.getValue(POWERED)) level.setBlockAndUpdate(pos, state.setValue(POWERED, powered));
-            if (level.getBlockEntity(pos) instanceof PropulsiteThrusterEntity thruster) thruster.updateAmplitude(serverLevel, pos);
+            withBlockEntityDo(serverLevel, pos, be -> be.updateAmplitude(serverLevel, pos));
         }
     }
 

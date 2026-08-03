@@ -52,13 +52,16 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private boolean firing = false;
 
     // Variables (unsaved)
-    private int tickCounter = 0;
     private DamageSource thrusterDamageSource = null;
 
     // Tick constants
+    private static final int PACKET_UPDATE_RATE = 10;
+    private static final int SIMPLE_PARTICLE_RATE = 20;
+    private static final int CHARGING_PARTICLE_RATE = 2;
     private static final int MAX_CHARGE = 60; // How long it takes for the burst to be ready after receiving redstone power in ticks
     private static final int MAX_COOLDOWN = 100; // How long it takes for the block to be able to be charged again in ticks
     private static final int BURST_DURATION = 40; // How long it takes for the full burst to go though in ticks
+    private static final double AMBIENT_RATE = 8e-5d;
     private static final double AMPLITUDE = 100.0d; // How much total thrust is output over the length of the burst
     private static final double STANDARD_DEVIATION = 5.0d; // Curve spread
     private static final double MEAN = 20.0d; // Curve middle
@@ -141,13 +144,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             Cache cache = CACHE.get();
             BlockState state = getBlockState();
             boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
-            tickCounter++;
-            if (tickCounter > 400) tickCounter = 1;
 
             // Update intial variables
             ServerSubLevel subLevel = null;
             if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel serverSubLevel) subLevel = serverSubLevel;
-            if (tickCounter % 20 == 0) updateAmplitude(serverLevel, worldPosition);
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0) updateAmplitude(serverLevel, worldPosition);
             cache.facing = state.getValue(PropulsiteThrusterBlock.FACING);
             cache.thrusterDirection.set(cache.facing.step());
             cache.thrusterPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
@@ -155,19 +156,19 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // Cooldown
             if (cooldown > 0) {
+                if (cooldown % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.SMOKE, 5, cache);
                 if (!powered) {
                     cooldown--;
                     this.setChanged();
-                    if (cooldown % 10 == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                    if (cooldown % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 }
-                if (tickCounter % 20 == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.SMOKE, 5, cache);
                 return;
             }
 
             // Charging
             if (powered && !armed && charge < MAX_CHARGE) {
                 charge++;
-                if (tickCounter % 2 == 0) addChargingParticles(serverLevel, subLevel, cache);
+                if (charge % CHARGING_PARTICLE_RATE == 0) addChargingParticles(serverLevel, subLevel, cache);
                 if (charge >= MAX_CHARGE) {
                     armed = true;
                     serverLevel.playSound(
@@ -177,27 +178,30 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                     );
                 }
                 this.setChanged();
-                if (charge % 10 == 0 || armed) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                if (charge % PACKET_UPDATE_RATE == 0 || armed) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                return;
             }
 
             // Discharging
             if (!powered && !armed && charge > 0) {
                 charge = Math.max(charge - 2, 0);
-                if (tickCounter % 20 == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.WHITE_SMOKE, 10, cache);
+                if (charge % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.WHITE_SMOKE, 10, cache);
                 this.setChanged();
-                if (charge % 10 == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                if (charge % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                return;
             }
 
             // Firing initialization
             if (armed && !powered && !firing) {
                 firing = true;
                 firingTick = 0;
-                this.setChanged();
                 serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
                     1.5F,1.0F
                 );
+                this.setChanged();
+                return; // Wait a tick, don't be too hasty with sending packets
             }
 
             // Firing sequence
@@ -224,18 +228,33 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                     cooldown = MAX_COOLDOWN;
                 }
                 this.setChanged();
-                if (firingTick % 10 == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                if (firingTick % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
 
                 // Effects
-                pushEntities(serverLevel, subLevel, cache);
                 addFiringParticles(serverLevel, subLevel, cache);
+                pushEntities(serverLevel, subLevel, cache);
+                return;
+            }
+
+            // Idling; ambiance is nice
+            if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
+                if (charge == 0) serverLevel.playSound(
+                    null, worldPosition,
+                    SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
+                    1.0F,0.8F
+                );
+                else if (charge == MAX_CHARGE) serverLevel.playSound(
+                    null, worldPosition,
+                    SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
+                    1.0F,0.8F
+                );
             }
         }
     }
 
     public void updateAmplitude(ServerLevel serverLevel, BlockPos pos) {
         // Cache setup
-        Cache cache = CACHE.get();
+        Cache cache = CACHE.get(); // Get fresh cache since this method may be called from outside this class
         cache.cluster.clear(); // cluster must be manually emptied, queue will be overwritten
         int head = 0; // Front of the queue, increment to dequeue
         int tail = 0; // Back of the queue, increment to enqueue

@@ -13,6 +13,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
 import dev.eriksonn.aeronautics.index.AeroSoundEvents;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
@@ -215,8 +216,11 @@ public class ModBlocks {
             ),
             ModBlocks.LEVITATING_CHORA_CASING::asItem,
             AeroBlocks.LEVITITE,
-            null, // TODO Ask Erik how his particles work
-            8,0.5,0.5,0.5,0.5
+            () -> new BlockParticleOption(
+                ParticleTypes.BLOCK,
+                AeroBlocks.LEVITITE.get().defaultBlockState()
+            ),
+            0,0.0,0.0,0.0,0.0
         ),
         EncasedLevititeCTBehavior::new
     );

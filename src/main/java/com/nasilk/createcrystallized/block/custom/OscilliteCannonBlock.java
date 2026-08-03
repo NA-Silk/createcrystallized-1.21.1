@@ -44,9 +44,13 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty IS_BARREL = BooleanProperty.create("is_barrel"); // Sure hope this doesn't break anything
-
     private static final VoxelShape BASE_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
-    private static final VoxelShape BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d); //i know it doesn't match the barrel right IT WOULD TIP OVER WEIRDLY
+    private static final VoxelShape NORTH_BARREL_SHAPE = Block.box(0.0d, 0.0d, 1.0d, 16.0d, 16.0d, 16.0d);
+    private static final VoxelShape SOUTH_BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 16.0d, 15.0d);
+    private static final VoxelShape EAST_BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 15.0d, 16.0d, 16.0d);
+    private static final VoxelShape WEST_BARREL_SHAPE = Block.box(1.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
+    private static final VoxelShape UP_BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 15.0d, 16.0d);
+    private static final VoxelShape DOWN_BARREL_SHAPE = Block.box(0.0d, 1.0d, 0.0d, 16.0d, 16.0d, 16.0d);
 
     // Simulated Assembly Integration
     private static final ObjectList<BlockPos> BARREL_POSITIONS = new ObjectArrayList<>();
@@ -137,7 +141,16 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(IS_BARREL) ? BARREL_SHAPE : BASE_SHAPE;
+        Direction direction = state.getValue(FACING);
+        if (!state.getValue(IS_BARREL)) return BASE_SHAPE;
+        return switch (direction) {
+            case NORTH -> NORTH_BARREL_SHAPE;
+            case SOUTH -> SOUTH_BARREL_SHAPE;
+            case EAST -> EAST_BARREL_SHAPE;
+            case WEST -> WEST_BARREL_SHAPE;
+            case UP -> UP_BARREL_SHAPE;
+            case DOWN -> DOWN_BARREL_SHAPE;
+        };
     }
 
     @Override

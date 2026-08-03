@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block.custom;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -58,6 +59,11 @@ public class EncasedBlock extends Block implements IWrenchable {
 
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel && particle != null && particle.get() instanceof ParticleOptions particleOptions) {
+            if (particleOptions instanceof BlockParticleOption blockParticle) {
+                level.levelEvent(2001, pos, Block.getId(blockParticle.getState()));
+                return;
+            }
+
             serverLevel.sendParticles(
                 particleOptions,
                 pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,

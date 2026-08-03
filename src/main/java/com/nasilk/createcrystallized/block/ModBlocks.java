@@ -12,9 +12,8 @@ import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
-import dev.eriksonn.aeronautics.index.AeroParticleTypes;
 import dev.eriksonn.aeronautics.index.AeroSoundEvents;
-import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
@@ -195,7 +194,6 @@ public class ModBlocks {
         EncasedOscilliteCTBehavior::new
     );
 
-    @SuppressWarnings("unchecked")
     public static final BlockEntry<Block> ENCASED_LEVITITE_BLOCK = registerBlockCT(
         "encased_levitite_block",
         (properties) -> new EncasedBlock(properties
@@ -218,8 +216,11 @@ public class ModBlocks {
             ),
             ModBlocks.LEVITATING_CHORA_CASING::asItem,
             AeroBlocks.LEVITITE,
-            (Supplier<? extends ParticleOptions>) AeroParticleTypes.LEVITITE_SPARKLE.entry.getTypeFactory(), // Don't worry about it
-            8,0.5,0.5,0.5,0.5
+            () -> new BlockParticleOption(
+                ParticleTypes.BLOCK,
+                AeroBlocks.LEVITITE.get().defaultBlockState()
+            ),
+            0,0.0,0.0,0.0,0.0
         ),
         EncasedLevititeCTBehavior::new
     );

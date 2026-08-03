@@ -41,9 +41,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Tick constants
     private static final int TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final double MIN_RADIUS = 5.0d;
+    private static final double MIN_RADIUS = 0.0d;
     private static final double RADIUS_SCALE = 2.0d;
-    private static final double FIELD_CONSTANT = 1.0d;
+    private static final double FIELD_CONSTANT = 0.5d;
     private static final double[] FIELD_STRENGTH_CURVE = new double[16];
     private static final double[] FIELD_RADIUS_CURVE = new double[16];
     private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
@@ -60,7 +60,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
     private static final double DAMPEN_RADIUS = 1.5d;
     private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-    private static final double DAMPEN_RADIUS_CUBED = DAMPEN_RADIUS * DAMPEN_RADIUS * DAMPEN_RADIUS;
+    // private static final double DAMPEN_RADIUS_CUBED = DAMPEN_RADIUS * DAMPEN_RADIUS * DAMPEN_RADIUS;
     private static final double DAMPEN_FACTOR = 0.2d;
 
     // Cache
@@ -187,22 +187,24 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 continue;
             }
 
-            // Handle dampening when within well radius: F = fieldStrength * distance / RADIUS^3
-            double distance = Math.sqrt(distanceSquared);
+            // double distance = Math.sqrt(distanceSquared);
             if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
-                // Apply velocity dampening / drag
+                // Handle dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
 
-                // Apply reduced pull impulse
-                cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_CUBED);
-                handle.applyLinearImpulse(cache.impulseVelocity);
-                continue;
+                // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^3
+                // cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_CUBED);
+                cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_SQUARED);
+            } else {
+                // Handle standard pull impulse: F = fieldStrength / distance^2
+                // cache.impulseVelocity.mul(fieldStrength / (distanceSquared * distance));
+                cache.impulseVelocity.mul(fieldStrength / distanceSquared);
             }
 
-            // Handle standard pull impulse: F = fieldStrength / distance^2
-            cache.impulseVelocity.mul(fieldStrength / (distanceSquared * distance));
+            // Apply rotation transformed impulse
+            targetSubLevel.logicalPose().orientation().transformInverse(cache.impulseVelocity);
             handle.applyLinearImpulse(cache.impulseVelocity);
         }
     }
@@ -214,20 +216,20 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentFieldStrength = CCLangHelper
-                .pixelNewton(fieldStrength)
-                .style(ChatFormatting.AQUA)
-                .component();
+            .pixelNewton(fieldStrength)
+            .style(ChatFormatting.AQUA)
+            .component();
         CCLangHelper.translate("goggles.field_strength", currentFieldStrength)
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
 
         final MutableComponent currentFieldRadius = CCLangHelper
-                .meter(fieldRadius)
-                .style(ChatFormatting.AQUA)
-                .component();
+            .meter(fieldRadius)
+            .style(ChatFormatting.AQUA)
+            .component();
         CCLangHelper.translate("goggles.field_radius", currentFieldRadius)
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
 
         return true;
     }

@@ -82,7 +82,7 @@ public class CreateCrystallized {
         event.enqueueWork(() -> {
             ModDispenserBehavior.register();
         });
-        LOGGER.info("Create: Crystallized Loaded");
+        LOGGER.info("Create:Crystallized Loaded");
     }
 
     // Add block items to creative tabs

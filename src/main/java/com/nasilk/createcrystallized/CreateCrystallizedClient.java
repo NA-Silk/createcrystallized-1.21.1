@@ -2,7 +2,6 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
-import com.nasilk.createcrystallized.client.models.DensiteWellBracketModel;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -32,12 +31,6 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
         event.registerLayerDefinition(
                 DensiteWellCubeModel.LAYER_LOCATION,
                 DensiteWellCubeModel::createBodyLayer
-        );
-
-
-        event.registerLayerDefinition(
-                DensiteWellBracketModel.LAYER_LOCATION,
-                DensiteWellBracketModel::createBodyLayer
         );
     }
 

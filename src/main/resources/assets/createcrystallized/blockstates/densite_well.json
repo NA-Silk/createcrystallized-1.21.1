@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "createcrystallized:block/densite_well_frame"
+      "model": "createcrystallized:block/densite_well"
     }
   }
 }

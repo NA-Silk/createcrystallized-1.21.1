@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
-import com.nasilk.createcrystallized.client.models.DensiteWellBracketModel;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -15,30 +14,31 @@ import net.minecraft.resources.ResourceLocation;
 
 public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWellEntity> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
 
     private final DensiteWellCubeModel cube;
-    private final DensiteWellBracketModel bracket;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {
 
         cube = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
-        bracket = new DensiteWellBracketModel(context.bakeLayer(DensiteWellBracketModel.LAYER_LOCATION));
     }
 
     @Override
     public void render(DensiteWellEntity densiteWellEntity, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 
         if (densiteWellEntity.getLevel() == null) return;
-        float spinny = (densiteWellEntity.getLevel().getGameTime() + partialTick) * 2;
+        float spinny = (densiteWellEntity.getLevel().getGameTime() + partialTick) * 1.5f;
+        int power = densiteWellEntity.getLevel().getBestNeighborSignal(densiteWellEntity.getBlockPos());
 
         //CUBE
         stack.pushPose(); //starts the chain
 
-        stack.translate(0.5, 0.08, 0.2); //moves cube to center
+        stack.translate(0.5, 0.5, 0.5); //moves cube to center
 
-        stack.mulPose(Axis.XP.rotationDegrees(30)); //tilts before spin
-        stack.mulPose(Axis.YP.rotationDegrees(spinny)); //spins the cube
+        stack.mulPose(Axis.XP.rotationDegrees(30)); //tilts the child
+        stack.mulPose(Axis.YP.rotationDegrees(spinny * (power + 1 ))); //rotates the child, faster if powered
+        stack.mulPose(Axis.ZP.rotationDegrees(spinny * 0.37F * (power + 1 ))); //also rotates the child, but with gusto and pizzaz
+
 
         cube.renderToBuffer( //unspeakable violence
                 stack,
@@ -48,23 +48,5 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
                 0xFFFFFFFF); //color tinting
 
         stack.popPose(); //ends the chain
-
-        //BRACKETS
-        stack.pushPose();
-
-        stack.translate(0.5, -0.7, 0.5); //translate before spin alters Origin point
-
-        stack.mulPose(Axis.YP.rotationDegrees(-spinny * 0.5f));
-
-        stack.translate(0., 0.0, -0.1); //translate after spin alters actual model location
-
-        bracket.renderToBuffer(
-                stack,
-                bufferSource.getBuffer(bracket.renderType(TEXTURE)),
-                packedLight,
-                packedOverlay,
-                0xFFFFFFFF);
-
-        stack.popPose();
     }
 }

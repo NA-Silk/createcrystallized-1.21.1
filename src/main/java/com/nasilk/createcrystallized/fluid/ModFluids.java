@@ -147,7 +147,7 @@ public class ModFluids {
 
     // DRIFT CONDENSATE
     public static final Supplier<FlowingFluid> SOURCE_DRIFT_CONDENSATE = FLUIDS.register(
-        "source_drift_condensate",
+        "source_drift_condensate", //putting "source" at the front of our fluid registries took 3 hours from my spicy Thursday, we may wanna change that
         () -> new UpwardBaseFlowingFluid.Source(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
             .setFlowAnimationOptions(10,3,0.2,0.4,0.5,1.0f)
     );

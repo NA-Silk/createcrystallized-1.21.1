@@ -66,6 +66,11 @@ public class ModItems {
     public static final DeferredItem<Item> AEROLITE_INGOT = ITEMS.register(
             "aerolite_ingot",
             () -> new Item(new Item.Properties().stacksTo(64))
+
+    );
+    public static final DeferredItem<Item> DENSITE_CORE = ITEMS.register(
+            "densite_core",
+            () -> new DensiteCoreItem(new Item.Properties().stacksTo(16))
     );
 
     public static final DeferredItem<Item> RAW_AEROLITE = ITEMS.register(

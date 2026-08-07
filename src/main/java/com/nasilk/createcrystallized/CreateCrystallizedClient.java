@@ -3,6 +3,9 @@ package com.nasilk.createcrystallized;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
+import com.nasilk.createcrystallized.entity.ModEntities;
+
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,10 +24,13 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
     }
 
         @SubscribeEvent
-        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Registers any BER i pull out of my redbull can at 4am
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Registers any RENDERER i pull out of my redbull can at 4am
             event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new
             );
+
+            event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
         }
+
 
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

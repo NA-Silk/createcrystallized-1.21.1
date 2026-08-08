@@ -35,8 +35,10 @@ public class DensiteCoreItem extends Item {
 
         if (!level.isClientSide) {
             ThrownDensiteCoreEntity entity = new ThrownDensiteCoreEntity(level, player);
+
+            entity.setPos(player.getX() + player.getLookAngle().x * 0.6, player.getEyeY() - 0.1, player.getZ() + player.getLookAngle().z * 0.6);
             entity.setItem(stack);
-            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 0.5F);
             level.addFreshEntity(entity);
         }
 

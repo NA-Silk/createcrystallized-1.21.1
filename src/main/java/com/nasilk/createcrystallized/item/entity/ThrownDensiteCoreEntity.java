@@ -23,10 +23,6 @@ public class ThrownDensiteCoreEntity extends ThrowableItemProjectile {
         super(ModEntities.THROWN_DENSITE_CORE.get(), shooter, level);
     }
 
-    public ThrownDensiteCoreEntity(Level level, double x, double y, double z) {
-        super(ModEntities.THROWN_DENSITE_CORE.get(), x, y, z, level);
-    }
-
     @Override
     protected Item getDefaultItem() {
         return ModItems.DENSITE_CORE.get();

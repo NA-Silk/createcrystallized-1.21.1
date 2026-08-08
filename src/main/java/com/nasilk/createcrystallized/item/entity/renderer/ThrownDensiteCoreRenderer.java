@@ -26,11 +26,9 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<ThrownDensiteCoreE
 
         poseStack.translate(0.0D, 0.15D, 0.0D); //uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh  he go
 
-        //all temp mulPoses
-        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getViewYRot(partialTicks) - 90.0F)); //spin
-        poseStack.mulPose(Axis.ZP.rotationDegrees(entity.getViewXRot(partialTicks))); // s p i n
+        poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTicks) * 20.0F)); //s  p  i  n
+        poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTicks) * 10.0F)); //s  p  i  n but sauced
 
-        poseStack.mulPose(Axis.XP.rotationDegrees(entity.tickCount + partialTicks * 20.0F)); //s  p  i  n
 
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(getTextureLocation(entity)));
 
@@ -43,7 +41,6 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<ThrownDensiteCoreE
 
         poseStack.popPose();
 
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
     @Override

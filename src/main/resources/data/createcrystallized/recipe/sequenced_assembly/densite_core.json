@@ -1,0 +1,94 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "createcrystallized:encased_densite_block"
+  },
+  "sequence": [
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "createcrystallized:encased_densite_block"
+  },
+  "results": [
+    {
+      "id": "createcrystallized:densite_core"
+    }
+  ]
+}

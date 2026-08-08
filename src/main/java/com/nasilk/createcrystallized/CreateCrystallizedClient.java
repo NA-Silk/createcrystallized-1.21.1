@@ -25,8 +25,7 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Registers any RENDERER i pull out of my redbull can at 4am
-            event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new
-            );
+            event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
 
             event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
         }

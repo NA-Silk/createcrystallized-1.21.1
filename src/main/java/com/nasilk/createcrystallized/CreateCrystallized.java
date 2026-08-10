@@ -99,7 +99,6 @@ public class CreateCrystallized {
             event.accept(ModFluids.OSCILLITE_SUSPENSION_BUCKET);
 
             // Transformation Items
-            event.accept(ModItems.DENSITE_CONTAINMENT_BRACKET);
             event.accept(ModItems.PROPULSITE_NOZZLE);
             event.accept(ModItems.OSCILLITE_RESONATOR);
 

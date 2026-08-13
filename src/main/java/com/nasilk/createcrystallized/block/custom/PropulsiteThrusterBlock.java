@@ -3,6 +3,7 @@ package com.nasilk.createcrystallized.block.custom;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
+import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -101,7 +102,7 @@ public class PropulsiteThrusterBlock extends Block  implements IBE<PropulsiteThr
         Level level = context.getLevel();
         if (level.isClientSide()) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, Items.STICK.getDefaultInstance()); // TODO Replace with correct item
+        Block.popResource(level, pos, ModBlocks.PROPULSITE_CRYSTAL.get().asItem().getDefaultInstance());
         level.setBlockAndUpdate(pos, ModBlocks.ENCASED_PROPULSITE_BLOCK.get().defaultBlockState());
         return InteractionResult.SUCCESS;
     }

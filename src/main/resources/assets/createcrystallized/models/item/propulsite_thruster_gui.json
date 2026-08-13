@@ -1,7 +1,6 @@
 {
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
-	"render_type": "minecraft:cutout",
 	"textures": {
 		"0": "createcrystallized:block/propulsite_thruster",
 		"2": "createcrystallized:block/propulsite_crystal",
@@ -334,11 +333,10 @@
 		},
 		"gui": {
 			"rotation": [30, -135, 0],
-			"translation": [-0.25, 0, 0],
-			"scale": [0.55, 0.55, 0.55]
+			"scale": [0.625, 0.625, 0.625]
 		},
 		"head": {
-			"rotation": [0, 180, 0]
+			"rotation": [0, -180, 0]
 		},
 		"fixed": {
 			"scale": [0.5, 0.5, 0.5]

@@ -99,7 +99,6 @@ public class CreateCrystallized {
             event.accept(ModFluids.OSCILLITE_SUSPENSION_BUCKET);
 
             // Transformation Items
-            event.accept(ModItems.PROPULSITE_NOZZLE);
             event.accept(ModItems.OSCILLITE_RESONATOR);
 
             // Uncategorized Items
@@ -117,6 +116,7 @@ public class CreateCrystallized {
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
             event.accept(ModBlocks.AEROLITE_BLOCK);
+            event.accept(ModBlocks.PROPULSITE_CRYSTAL);
 
             // Echo Shard Blocks
             event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);

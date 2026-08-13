@@ -36,15 +36,7 @@ public class ModItems {
         )
     );
 
-    // TODO Rename and texture these
-
-    public static final DeferredItem<TransformItem> PROPULSITE_NOZZLE = ITEMS.registerItem(
-        "propulsite_nozzle",
-        (properties) -> new TransformItem(
-            properties.stacksTo(1),
-            new HashMap<>(Map.of(ModBlocks.ENCASED_PROPULSITE_BLOCK.get(), ModBlocks.PROPULSITE_THRUSTER.get()))
-        )
-    );
+    // TODO move transformation related things to recipies using creates own system
 
     // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
     public static final DeferredItem<TransformItem> OSCILLITE_RESONATOR = ITEMS.registerItem(

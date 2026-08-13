@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createcrystallized:encased_propulsite_block"
+    },
+    {
+      "item": "createcrystallized:propulsite_crystal"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:propulsite_thruster"
+    }
+  ]
+}

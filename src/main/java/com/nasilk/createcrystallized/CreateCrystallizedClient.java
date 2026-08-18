@@ -24,12 +24,11 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
     }
 
         @SubscribeEvent
-        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Registers any RENDERER i pull out of my redbull can at 4am
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // spinspinspinspinspinspinspinspinspinspinspinspinspin
             event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
 
             event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
         }
-
 
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -38,8 +37,6 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
                 DensiteWellCubeModel::createBodyLayer
         );
     }
-
-
 
 
 

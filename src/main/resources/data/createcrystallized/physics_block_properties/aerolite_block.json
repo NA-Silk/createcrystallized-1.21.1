@@ -1,0 +1,7 @@
+{
+  "selector": "createcrystallized:aerolite_block",
+
+  "properties": {
+    "sable:mass": 4.00
+  }
+}

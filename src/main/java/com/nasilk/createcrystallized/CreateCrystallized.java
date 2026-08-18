@@ -110,6 +110,7 @@ public class CreateCrystallized {
             event.accept(ModItems.AEROLITE_INGOT);
             event.accept(ModItems.AEROLITE_SHEET);
             event.accept(ModItems.DENSITE_CORE);
+            event.accept(ModItems.AEROLITE_SHOVEL);
 
             // Uncategorized Blocks
             event.accept(ModBlocks.PEBBLE);

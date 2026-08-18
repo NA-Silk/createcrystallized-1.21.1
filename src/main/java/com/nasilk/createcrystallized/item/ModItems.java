@@ -12,22 +12,28 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.nasilk.createcrystallized.item.custom.AeroliteShovelItem.AEROLITE_TIER;
+
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreateCrystallized.MOD_ID);
 
-    /** ADVANCED ITEMS */
+    /**  ̶S̶T̶U̶P̶I̶D̶ ADVANCED ITEMS */
     public static final DeferredItem<CreativeFluidEraserItem> CREATIVE_FLUID_ERASER = ITEMS.registerItem(
         "creative_fluid_eraser",
         (properties) -> new CreativeFluidEraserItem(properties.stacksTo(1))
     );
 
-    // TODO Make this do something
+    public static final DeferredItem<Item> AEROLITE_SHOVEL = ITEMS.register(
+        "aerolite_shovel",
+        () -> new AeroliteShovelItem(AEROLITE_TIER, new Item.Properties())
+    );
+
+    // TODO Make this do something - does it really need to?..
     public static final DeferredItem<Item> CREATIVE_BAG_OF_LONGS = ITEMS.register(
         "creative_bag_of_longs",
         () -> new Item(new Item.Properties().stacksTo(1))
     );
 
-    /** TRANSFORMATION ITEMS */
     public static final DeferredItem<TransformItem> CHORA_INGOT = ITEMS.registerItem(
         "chora_ingot",
         (properties) -> new TransformItem(
@@ -36,9 +42,7 @@ public class ModItems {
         )
     );
 
-    // TODO move transformation related things to recipies using creates own system
-
-    // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
+    // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite! // TODO move transformation related things to recipies using creates own system
     public static final DeferredItem<TransformItem> OSCILLITE_RESONATOR = ITEMS.registerItem(
         "oscillite_resonator",
         (properties) -> new TransformItem(

@@ -14,13 +14,25 @@ import net.minecraft.resources.ResourceLocation;
 
 public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWellEntity> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
+    public static final ResourceLocation TEXTURE_0 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
+    public static final ResourceLocation TEXTURE_1 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_1.png");
+    public static final ResourceLocation TEXTURE_2 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_2.png");
+    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png"); //TODO iterate on these textures a bit, center is messy
+    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png"); //TODO iterate on these textures a bit, center is messy
 
     private final DensiteWellCubeModel cube;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {
 
         cube = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
+    }
+
+    private ResourceLocation getTextureForPower(int power) { //texture change based on power
+        if (power == 0) return TEXTURE_0;
+        if (power <= 4) return TEXTURE_1;
+        if (power <= 8) return TEXTURE_2;
+        if (power <= 12) return TEXTURE_3;
+        return TEXTURE_4;
     }
 
     @Override
@@ -42,7 +54,7 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
 
         cube.renderToBuffer( //unspeakable violence
                 stack,
-                bufferSource.getBuffer(cube.renderType(TEXTURE)),
+                bufferSource.getBuffer(cube.renderType(getTextureForPower(power))), //gets the current texture based on power
                 packedLight, //takes the brightness from the existing block entity and passes it though
                 packedOverlay, //mostly unneeded, but im afraid if it's not here everything will break and im not willing to test otherwise
                 0xFFFFFFFF); //color tinting

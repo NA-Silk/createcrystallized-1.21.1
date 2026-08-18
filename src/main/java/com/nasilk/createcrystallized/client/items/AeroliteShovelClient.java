@@ -1,13 +1,16 @@
 package com.nasilk.createcrystallized.client.items;
 
 import com.nasilk.createcrystallized.item.custom.AeroliteShovelItem;
+import com.nasilk.createcrystallized.network.custom.SkyPaddlePayload;
 import dev.ryanhcode.sable.network.client.ClientSubLevelPunchHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class AeroliteShovelClient {
 
@@ -15,6 +18,7 @@ public class AeroliteShovelClient {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.player == null || minecraft.level == null) return;
+        if (minecraft.hitResult == null || minecraft.hitResult.getType() != HitResult.Type.MISS) return;
 
         BlockHitResult hitResult = AeroliteShovelItem.getSkyPaddle(minecraft.player);
 
@@ -23,6 +27,8 @@ public class AeroliteShovelClient {
                 minecraft.level,
                 false
         );
+
+       PacketDistributor.sendToServer(new SkyPaddlePayload());
 
         for (int i = 0; i < 4; i++) {
             double offsetX = (minecraft.level.random.nextDouble() - 0.5) * 0.5;
@@ -52,10 +58,5 @@ public class AeroliteShovelClient {
                 1.0F,
                 false
         );
-
-
-
-
-
     }
 }

@@ -500,6 +500,14 @@ public class ModBlocks {
         (block) -> new PebbleItem(block, new Item.Properties().stacksTo(1))
     );
 
+    public static final DeferredBlock<Block> PROPULSITE_CRYSTAL = registerBlock(
+            "propulsite_crystal",
+            () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.of()
+                    .sound(SoundType.LARGE_AMETHYST_BUD)
+                    .lightLevel((l) -> 8)
+            )
+    );
+
     public static final DeferredBlock<Block> AEROLITE_ORE = registerBlock(
         "aerolite_ore",
         () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()

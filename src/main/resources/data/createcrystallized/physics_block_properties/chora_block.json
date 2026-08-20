@@ -1,0 +1,7 @@
+{
+  "selector": "createcrystallized:chora_block",
+
+  "properties": {
+    "sable:mass": 4.00
+  }
+}

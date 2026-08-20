@@ -1,0 +1,35 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "createcrystallized:source_drift_condensate",
+      "amount": 500
+    },
+    {
+      "item": "create:copper_nugget"
+    },
+    {
+      "item": "create:copper_nugget"
+    },
+    {
+      "item": "minecraft:wind_charge"
+    },
+    {
+      "item": "minecraft:wind_charge"
+    },
+    {
+      "item": "minecraft:wind_charge"
+    },
+    {
+      "item": "minecraft:wind_charge"
+    }
+  ],
+  "results": [
+    {
+      "amount": 500,
+      "id": "createcrystallized:source_propulsite_flurry"
+    }
+  ]
+}

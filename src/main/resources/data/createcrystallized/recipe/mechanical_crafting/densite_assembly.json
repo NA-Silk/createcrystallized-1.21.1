@@ -4,25 +4,25 @@
   "category": "misc",
   "key": {
     "A": {
-      "item": "aeronautics:end_stone_powder"
+      "item": "createcrystallized:densite_core"
     },
     "B": {
-      "item": "createcrystallized:chora_block"
+      "item": "createcrystallized:chora_ingot"
     },
     "C": {
       "item": "create:sturdy_sheet"
     }
   },
   "pattern": [
-    " CAC ",
+    " C C ",
     "CB BC",
-    "A   A",
+    "  A  ",
     "CB BC",
-    " CAC "
+    " C C "
   ],
   "result": {
     "count": 1,
-    "id": "createcrystallized:densite_containment_bracket"
+    "id": "createcrystallized:densite_well"
   },
   "show_notification": false
 }

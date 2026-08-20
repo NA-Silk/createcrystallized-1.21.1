@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createcrystallized:block/propulsite_crystal",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createcrystallized:block/propulsite_crystal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createcrystallized:block/propulsite_crystal",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createcrystallized:block/propulsite_crystal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createcrystallized:block/propulsite_crystal"
+    },
+    "facing=west": {
+      "model": "createcrystallized:block/propulsite_crystal",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

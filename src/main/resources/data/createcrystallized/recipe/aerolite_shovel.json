@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tools",
+  "key": {
+    "A": {
+      "item": "minecraft:breeze_rod"
+    },
+    "B": {
+      "item": "createcrystallized:aerolite_ingot"
+    }
+  },
+  "pattern": [
+    " B ",
+    " A ",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "createcrystallized:aerolite_shovel"
+  }
+}

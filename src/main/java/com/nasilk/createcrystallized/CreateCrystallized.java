@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
@@ -54,6 +55,7 @@ public class CreateCrystallized {
         ModSounds.register(modEventBus); // Custom sounds
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus); // Unique CreativeMode Tab
         ModBlockEntities.register(modEventBus);
         ModFluidTypes.register(modEventBus); // Fluid textures
@@ -82,7 +84,7 @@ public class CreateCrystallized {
         event.enqueueWork(() -> {
             ModDispenserBehavior.register();
         });
-        LOGGER.info("Create: Crystallized Loaded");
+        LOGGER.info("Create:Crystallized Loaded");
     }
 
     // Add block items to creative tabs
@@ -97,8 +99,6 @@ public class CreateCrystallized {
             event.accept(ModFluids.OSCILLITE_SUSPENSION_BUCKET);
 
             // Transformation Items
-            event.accept(ModItems.DENSITE_CONTAINMENT_BRACKET);
-            event.accept(ModItems.PROPULSITE_NOZZLE);
             event.accept(ModItems.OSCILLITE_RESONATOR);
 
             // Uncategorized Items
@@ -109,12 +109,15 @@ public class CreateCrystallized {
             event.accept(ModItems.RAW_AEROLITE);
             event.accept(ModItems.AEROLITE_INGOT);
             event.accept(ModItems.AEROLITE_SHEET);
+            event.accept(ModItems.DENSITE_CORE);
+            event.accept(ModItems.AEROLITE_SHOVEL);
 
             // Uncategorized Blocks
             event.accept(ModBlocks.PEBBLE);
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
             event.accept(ModBlocks.AEROLITE_BLOCK);
+            event.accept(ModBlocks.PROPULSITE_CRYSTAL);
 
             // Echo Shard Blocks
             event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);

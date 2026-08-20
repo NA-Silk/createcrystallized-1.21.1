@@ -1,0 +1,18 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_cluster"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createcrystallized:source_propulsite_flurry"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:propulsite_crystal"
+    }
+  ]
+}

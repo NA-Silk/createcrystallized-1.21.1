@@ -1,0 +1,48 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "createcrystallized:encased_densite_block"
+  },
+  "sequence": [
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        },
+        {
+          "type": "neoforge:single",
+          "amount": 500,
+          "fluid": "minecraft:lava"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "createcrystallized:encased_densite_block"
+  },
+  "loops": 5,
+  "results": [
+    {
+      "id": "createcrystallized:densite_core"
+    }
+  ]
+}

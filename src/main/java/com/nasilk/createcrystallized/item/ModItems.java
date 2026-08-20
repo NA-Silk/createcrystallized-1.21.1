@@ -34,7 +34,7 @@ public class ModItems {
         () -> new Item(new Item.Properties().stacksTo(1))
     );
 
-    public static final DeferredItem<TransformItem> CHORA_INGOT = ITEMS.registerItem(
+    public static final DeferredItem<TransformItem> CHORA_INGOT = ITEMS.registerItem( //TODO move transformation related things to recipies using creates own system
         "chora_ingot",
         (properties) -> new TransformItem(
             properties.stacksTo(64),

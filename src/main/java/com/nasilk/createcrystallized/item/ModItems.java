@@ -21,10 +21,9 @@ public class ModItems {
         (properties) -> new CreativeFluidEraserItem(properties.stacksTo(1))
     );
 
-    // TODO Make this do something
-    public static final DeferredItem<Item> CREATIVE_BAG_OF_LONGS = ITEMS.register(
+    public static final DeferredItem<CreativeBagOfLongsItem> CREATIVE_BAG_OF_LONGS = ITEMS.registerItem(
         "creative_bag_of_longs",
-        () -> new Item(new Item.Properties().stacksTo(1))
+        (properties) -> new CreativeBagOfLongsItem(properties.stacksTo(1))
     );
 
     /** TRANSFORMATION ITEMS */

@@ -513,7 +513,8 @@ public class ModBlocks {
         () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_LIGHT_GRAY)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .requiresCorrectToolForDrops()
+            .strength(3.0F, 3.0F)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
@@ -533,20 +534,21 @@ public class ModBlocks {
     public static final DeferredBlock<Block> DEEPSLATE_AEROLITE_ORE = registerBlock(
         "deepslate_aerolite_ore",
         () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+            .mapColor(MapColor.COLOR_GRAY)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .requiresCorrectToolForDrops()
+            .strength(3.0f, 3.0F)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
             .isViewBlocking((state, level, pos) -> true)
             .sound(
-                new SoundType(1.0f, 0.8f,
-                    SoundEvents.STONE_BREAK,
-                    SoundEvents.STONE_STEP,
-                    SoundEvents.STONE_PLACE,
-                    SoundEvents.STONE_HIT,
-                    SoundEvents.STONE_FALL
+                new SoundType(1.0f, 1.4f,
+                    SoundEvents.DEEPSLATE_BREAK,
+                    SoundEvents.DEEPSLATE_STEP,
+                    SoundEvents.DEEPSLATE_PLACE,
+                    SoundEvents.DEEPSLATE_HIT,
+                    SoundEvents.DEEPSLATE_FALL
                 )
             )
         )

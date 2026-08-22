@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 public class AeroliteOreBlock extends Block {
     public static final BooleanProperty DISARMED = BlockStateProperties.DISARMED;
@@ -96,19 +98,22 @@ public class AeroliteOreBlock extends Block {
         );
 
         // Play effects
-        serverLevel.sendParticles(
-            ParticleTypes.PORTAL,
+        DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.55F, 0.65F, 0.85F),1.2F);
+            serverLevel.sendParticles(dust,
             pos.getX() + 0.5,
             pos.getY() + 0.5,
             pos.getZ() + 0.5,
-            8,0.5,0.5,0.5,1.0
+            10,
+            0.4, 0.4, 0.4,
+            0.1
         );
+
         serverLevel.playSound(
             null,
             pos,
-            SoundEvents.ENDERMAN_TELEPORT,
+            SoundEvents.BREEZE_SLIDE,
             SoundSource.BLOCKS,
-            1.0f,1.0f
+            1.3f,1.3f
         );
     }
 

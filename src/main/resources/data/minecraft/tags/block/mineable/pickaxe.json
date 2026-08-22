@@ -15,12 +15,8 @@
     "createcrystallized:medium_echo_crystal_bud",
     "createcrystallized:small_echo_crystal_bud",
 
-    "createcrystalized:aerolite_ore",
-    "createcrystalized:aerolite_block",
-    "createcrystalized:deepslate_aerolite_ore"
-
-
-
-
+    "createcrystallized:aerolite_ore",
+    "createcrystallized:aerolite_block",
+    "createcrystallized:deepslate_aerolite_ore"
   ]
 }

@@ -454,6 +454,40 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
 
+    // LONGS
+    public void defaultUpdateLongs(ServerLevel serverLevel) {
+        if (!(level instanceof ServerLevel && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
+
+        // Cooldown
+        if (cooldown > 0) {
+            cooldown = 0;
+        }
+
+        // Charging
+        else if (!armed && charge < MAX_CHARGE) {
+            charge = MAX_CHARGE;
+            armed = true;
+            serverLevel.playSound(
+                null, worldPosition,
+                SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
+                1.5F,0.7F
+            );
+        }
+
+        // Firing
+        else if (armed) {
+            charge = 0;
+            armed = false;
+            cooldown = MAX_COOLDOWN;
+        }
+
+        // Return
+        else return;
+        this.setChanged();
+        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
+
     // GOGGLE TOOLTIPS
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {

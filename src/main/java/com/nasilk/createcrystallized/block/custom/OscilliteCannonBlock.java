@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import com.nasilk.createcrystallized.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
@@ -38,7 +39,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IWrenchable {
+public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IWrenchable, IHaveLongs {
     // TODO Add part-checking into loot table... once we have a loot table
     public static final MapCodec<OscilliteCannonBlock> CODEC = simpleCodec(OscilliteCannonBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -183,6 +184,14 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         return (lvl, bp, bs, be) -> {
             if (be instanceof OscilliteCannonEntity cannon) cannon.tick();
         };
+    }
+
+    // LONGS
+    @Override
+    public boolean defaultUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+        if (state.getValue(IS_BARREL)) return false;
+        withBlockEntityDo(serverLevel, pos, be -> be.defaultUpdateLongs(serverLevel));
+        return true;
     }
 
     // WRENCH

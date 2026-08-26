@@ -91,13 +91,33 @@
 
   "item.createcrystallized.densite_core.tooltip.summary": "Heavily compressed cube of Densite.",
   "item.createcrystallized.densite_core.tooltip.condition1": "Can be _thrown_ at foes.",
-  "item.createcrystallized.densite_core.tooltip.behaviour2": "_Quite thrilling_.",
+  "item.createcrystallized.densite_core.tooltip.condition2": "_Quite thrilling_.",
 
   "block.createcrystallized.pebble.tooltip.summary": "Heavy friend.",
   "block.createcrystallized.pebble.tooltip.condition1": "When on head",
-  "block.createcrystallized.pebble.tooltip.behaviour1": "Whispers to you about kinetic _Stress impact_ or _Capacity_. _Stressometers_ show statistics of their _attached kinetic network_. Some other blocks reveal information such as item and fluid content.",
+  "block.createcrystallized.pebble.tooltip.behaviour1": "Whispers to you about kinetic _Stress Impact_ or _Capacity_. _Stressometers_ show statistics of their _attached kinetic network_. Some other blocks reveal information such as item and fluid content.",
 
   "item.createcrystallized.creative_fluid_eraser.tooltip.summary": "_DEV ITEM_ Removes liquid of one type in a large radius.",
   "item.createcrystallized.creative_fluid_eraser.tooltip.condition1": "R-Click on fluid",
-  "item.createcrystallized.creative_fluid_eraser.tooltip.behaviour1": "Removes fluid of _only that type_ in a large radius."
+  "item.createcrystallized.creative_fluid_eraser.tooltip.behaviour1": "Removes fluid of _only that type_ in a large radius.",
+
+  "block.createcrystallized.oscillite_cannon.tooltip.summary": "Violent resonance in one convenient package, _not_ suitable for home defence.",
+  "block.createcrystallized.oscillite_cannon.tooltip.condition1": "When at high velocity",
+  "block.createcrystallized.oscillite_cannon.tooltip.behaviour1": "Begins to charge, _loses charge_ when not moving fast enough.",
+  "block.createcrystallized.oscillite_cannon.tooltip.condition2": "After charging",
+  "block.createcrystallized.oscillite_cannon.tooltip.behaviour2": "Becomes _armed_, Redstone input discharges the cannon, must cool down _without redstone power_ after firing.",
+
+  "block.createcrystallized.propulsite_thruster.tooltip.summary": "Powerful burst propulsion with the power of crystals.",
+  "block.createcrystallized.propulsite_thruster.tooltip.condition1": "When at high velocity",
+  "block.createcrystallized.propulsite_thruster.tooltip.behaviour1": "Begins to charge, _loses charge_ when not moving fast enough.",
+  "block.createcrystallized.propulsite_thruster.tooltip.condition2": "After charging",
+  "block.createcrystallized.propulsite_thruster.tooltip.behaviour2": "Becomes _energized_, Redstone input releases a powerful burst of thrust, must cool down _without redstone power_ after firing.",
+  "block.createcrystallized.propulsite_thruster.tooltip.condition3": "When adjacent to Propulsite",
+  "block.createcrystallized.propulsite_thruster.tooltip.behaviour3": "Becomes _overcharged_, allowing for a _larger burst_ and _longer cooldown_ for every attached _Propulsite block_. Multiple thrusters divide additional power equally.",
+
+  "block.createcrystallized.densite_well.tooltip.summary": "A variable gravity well that _pulls in_ Simulated Contraptions.",
+  "block.createcrystallized.densite_well.tooltip.condition1": "When placed",
+  "block.createcrystallized.densite_well.tooltip.behaviour1": "Looks _fancy_ and _cool_.",
+  "block.createcrystallized.densite_well.tooltip.condition2": "When powered",
+  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a set radius, area and pull strength increase with _power supplied_."
 }

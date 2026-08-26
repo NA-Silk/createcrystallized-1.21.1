@@ -48,6 +48,9 @@ public class CreateCrystallizedClient { public CreateCrystallizedClient(ModConta
             CreateTooltipHelper.register(ModItems.DENSITE_CORE.get());
             CreateTooltipHelper.register(ModItems.CREATIVE_FLUID_ERASER.get());
             CreateTooltipHelper.register(ModBlocks.PEBBLE.get());
+            CreateTooltipHelper.register(ModBlocks.OSCILLITE_CANNON.get());
+            CreateTooltipHelper.register(ModBlocks.PROPULSITE_THRUSTER.get());
+            CreateTooltipHelper.register(ModBlocks.DENSITE_WELL.get());
             //moar item go here
         });
         CreateCrystallized.LOGGER.info("HELLO FROM CLIENT SETUP");

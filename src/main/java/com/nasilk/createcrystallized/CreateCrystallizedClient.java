@@ -5,9 +5,8 @@ import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
+import com.nasilk.createcrystallized.entity.renderer.ThrownDensiteCoreRenderer;
 import com.nasilk.createcrystallized.entity.ModEntities;
-
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -21,23 +20,23 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = CreateCrystallized.MOD_ID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = CreateCrystallized.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class CreateCrystallizedClient { public CreateCrystallizedClient(ModContainer container) {
+@EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
+public class CreateCrystallizedClient {
+    public CreateCrystallizedClient(ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
-        @SubscribeEvent
-        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // spinspinspinspinspinspinspinspinspinspinspinspinspin
-            event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
-
-            event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
-        }
+    @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // spinspinspinspinspinspinspinspinspinspinspinspinspin
+        event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
+    }
 
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(
-                DensiteWellCubeModel.LAYER_LOCATION,
-                DensiteWellCubeModel::createBodyLayer
+            DensiteWellCubeModel.LAYER_LOCATION,
+            DensiteWellCubeModel::createBodyLayer
         );
     }
 

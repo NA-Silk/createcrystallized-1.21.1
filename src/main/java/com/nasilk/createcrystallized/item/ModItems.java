@@ -50,28 +50,28 @@ public class ModItems {
 
     /** CRAFTING ITEMS */
     public static final DeferredItem<Item> DENSITE_CORE = ITEMS.registerItem(
-            "densite_core",
-            (properties) -> new DensiteCoreItem(properties.stacksTo(16))
+        "densite_core",
+        (properties) -> new DensiteCoreItem(properties.stacksTo(16))
     );
 
     public static final DeferredItem<Item> AEROLITE_INGOT = ITEMS.registerItem(
-            "aerolite_ingot",
-            (properties) -> new Item(properties.stacksTo(64))
+        "aerolite_ingot",
+        (properties) -> new Item(properties.stacksTo(64))
     );
 
     public static final DeferredItem<Item> RAW_AEROLITE = ITEMS.registerItem(
-            "raw_aerolite",
-            (properties) -> new Item(properties.stacksTo(64))
+        "raw_aerolite",
+        (properties) -> new Item(properties.stacksTo(64))
     );
 
     public static final DeferredItem<Item> CRUSHED_RAW_AEROLITE = ITEMS.registerItem(
-            "crushed_raw_aerolite",
-            (properties) -> new Item(properties.stacksTo(64))
+        "crushed_raw_aerolite",
+        (properties) -> new Item(properties.stacksTo(64))
     );
 
     public static final DeferredItem<Item> AEROLITE_SHEET = ITEMS.registerItem(
-            "aerolite_sheet",
-            (properties) -> new Item(properties.stacksTo(64))
+        "aerolite_sheet",
+        (properties) -> new Item(properties.stacksTo(64))
     );
 
     public static void register(IEventBus eventbus) {

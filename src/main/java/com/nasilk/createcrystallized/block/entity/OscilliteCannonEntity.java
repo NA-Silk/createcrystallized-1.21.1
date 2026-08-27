@@ -166,7 +166,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                     serverLevel.sendParticles(
                         ParticleTypes.SMOKE,
                         cannonPosition.x, cannonPosition.y, cannonPosition.z,
-                        5, 0.5, 0.5, 0.5, 0.1
+                        1, 0.5, 0.5, 0.5, 0.1
                     );
                 }
                 return;
@@ -186,6 +186,21 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 }
                 this.setChanged();
                 if (charge % PACKET_UPDATE_RATE == 0 || armed) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                return;
+            }
+
+            // Discharging
+            if (!armed && charge > 0) {
+                charge -= 1;
+                if (charge % SIMPLE_PARTICLE_RATE == 0) {
+                    serverLevel.sendParticles(
+                        ParticleTypes.WHITE_SMOKE,
+                        cannonPosition.x, cannonPosition.y, cannonPosition.z,
+                        10, 0.5, 0.5, 0.5, 0.1
+                    );
+                }
+                this.setChanged();
+                if (charge % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 

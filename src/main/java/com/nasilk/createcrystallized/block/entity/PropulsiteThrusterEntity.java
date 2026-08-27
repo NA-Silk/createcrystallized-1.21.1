@@ -156,7 +156,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // Cooldown
             if (cooldown > 0) {
-                if (cooldown % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.SMOKE, 5, cache);
+                if (cooldown % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.SMOKE, 1, cache);
                 if (!powered) {
                     cooldown--;
                     this.setChanged();
@@ -184,7 +184,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // Discharging
             if (!powered && !armed && charge > 0) {
-                charge = Math.max(charge - 2, 0);
+                charge -= 1;
                 if (charge % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.WHITE_SMOKE, 10, cache);
                 this.setChanged();
                 if (charge % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);

@@ -1,7 +1,5 @@
-package com.nasilk.createcrystallized.item.entity;
+package com.nasilk.createcrystallized.entity;
 
-
-import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,9 +10,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 // TODO NICK DO FUN THINGS HERE
-
 public class ThrownDensiteCoreEntity extends ThrowableItemProjectile {
-
     public ThrownDensiteCoreEntity(EntityType<? extends ThrownDensiteCoreEntity> entityType, Level level) {
         super(entityType, level);
     }
@@ -29,14 +25,18 @@ public class ThrownDensiteCoreEntity extends ThrowableItemProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result) {super.onHitEntity(result);if (!this.level().isClientSide) {
-
-            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), 5.0F);
+    protected void onHitEntity(EntityHitResult result) {
+        super.onHitEntity(result);
+        if (!this.level().isClientSide) {
+            result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), 5.0f);
         }
     }
 
     @Override
-    protected void onHit(HitResult result) {super.onHit(result);if (!this.level().isClientSide) {this.discard();
+    protected void onHit(HitResult result) {
+        super.onHit(result);
+        if (!this.level().isClientSide) {
+            this.discard();
         }
     }
 }

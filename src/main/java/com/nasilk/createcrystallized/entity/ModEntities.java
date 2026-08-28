@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.entity;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.nasilk.createcrystallized.item.entity.ThrownDensiteCoreEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

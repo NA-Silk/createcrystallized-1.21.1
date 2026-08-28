@@ -1,11 +1,11 @@
-package com.nasilk.createcrystallized.entity.renderer;
+package com.nasilk.createcrystallized.item.entity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
-import com.nasilk.createcrystallized.entity.ThrownDensiteCoreEntity;
+import com.nasilk.createcrystallized.item.entity.ThrownDensiteCoreEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

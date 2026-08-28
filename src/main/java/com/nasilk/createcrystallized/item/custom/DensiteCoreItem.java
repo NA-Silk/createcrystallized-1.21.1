@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.item.custom;
 
-import com.nasilk.createcrystallized.entity.ThrownDensiteCoreEntity;
+import com.nasilk.createcrystallized.item.entity.ThrownDensiteCoreEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;

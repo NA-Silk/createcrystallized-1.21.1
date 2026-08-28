@@ -1,5 +1,6 @@
-package com.nasilk.createcrystallized.entity;
+package com.nasilk.createcrystallized.item.entity;
 
+import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;

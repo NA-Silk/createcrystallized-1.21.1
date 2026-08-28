@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.entity.renderer.ThrownDensiteCoreRenderer;
+import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
 import net.minecraft.client.Minecraft;

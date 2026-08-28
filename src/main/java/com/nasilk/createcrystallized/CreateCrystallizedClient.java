@@ -33,7 +33,7 @@ public class CreateCrystallizedClient {
     }
 
     @SubscribeEvent
-    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) { //For the densite cube and well.
         event.registerLayerDefinition(
             DensiteWellCubeModel.LAYER_LOCATION,
             DensiteWellCubeModel::createBodyLayer

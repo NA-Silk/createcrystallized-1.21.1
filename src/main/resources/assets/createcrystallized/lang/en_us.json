@@ -90,8 +90,10 @@
   "item.createcrystallized.aerolite_shovel.tooltip.behaviour2": "High _Mass_ and _Drag_ greatly reduce effectiveness.",
 
   "item.createcrystallized.densite_core.tooltip.summary": "Heavily compressed cube of Densite.",
-  "item.createcrystallized.densite_core.tooltip.condition1": "Can be _thrown_ at foes.",
-  "item.createcrystallized.densite_core.tooltip.condition2": "_Quite thrilling_.",
+  "item.createcrystallized.densite_core.tooltip.condition1": "",
+  "item.createcrystallized.densite_core.tooltip.behaviour1": "Can be _thrown_ at foes.",
+  "item.createcrystallized.densite_core.tooltip.condition2": "",
+  "item.createcrystallized.densite_core.tooltip.behaviour2": "_Quite thrilling_.",
 
   "block.createcrystallized.pebble.tooltip.summary": "Heavy friend.",
   "block.createcrystallized.pebble.tooltip.condition1": "When on head",

@@ -60,11 +60,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final int CHARGING_PARTICLE_RATE = 2;
     private static final int MAX_CHARGE = 60; // How long it takes for the burst to be ready after receiving redstone power in ticks
     private static final int MAX_COOLDOWN = 100; // How long it takes for the block to be able to be charged again in ticks
-    private static final int BURST_DURATION = 40; // How long it takes for the full burst to go though in ticks
+    private static final int BURST_DURATION = 10; // How long it takes for the full burst to go though in ticks
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double AMPLITUDE = 100.0d; // How much total thrust is output over the length of the burst
-    private static final double STANDARD_DEVIATION = 5.0d; // Curve spread
-    private static final double MEAN = 20.0d; // Curve middle
+    private static final double STANDARD_DEVIATION = 1.5d; // Curve spread
+    private static final double MEAN = 3.0d; // Curve middle
     private static final double NORM_DENOMINATOR = STANDARD_DEVIATION * Math.sqrt(2.0 * Math.PI); // Precomputed denominator
     private static final double[] BURST_CURVE = new double[BURST_DURATION];
     static {

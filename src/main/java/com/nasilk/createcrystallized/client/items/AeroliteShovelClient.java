@@ -17,15 +17,11 @@ public class AeroliteShovelClient {
     public static void trySkyPaddle() {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (minecraft.player == null || minecraft.level == null) return;
-        if (minecraft.hitResult == null || minecraft.hitResult.getType() != HitResult.Type.MISS) return;
+        if (minecraft.player == null || minecraft.level == null) return; //don't do things if we don't exist
+        if (minecraft.hitResult == null || minecraft.hitResult.getType() != HitResult.Type.MISS) return; //don't do things if the shovel hits something
 
         BlockHitResult hitResult = AeroliteShovelItem.getSkyPaddle(minecraft.player);
-
-        ClientSubLevelPunchHelper.clientTryPunch(
-                hitResult,
-                minecraft.level,
-                false
+        ClientSubLevelPunchHelper.clientTryPunch(hitResult, minecraft.level, false
         );
 
        PacketDistributor.sendToServer(new SkyPaddlePayload());
@@ -37,8 +33,7 @@ public class AeroliteShovelClient {
 
             Vec3 particleVelocity = minecraft.player.getLookAngle().scale(0.2);
 
-            minecraft.level.addParticle(
-                    ParticleTypes.CLOUD,
+            minecraft.level.addParticle(ParticleTypes.CLOUD,
                     hitResult.getLocation().x + offsetX,
                     hitResult.getLocation().y + offsetY,
                     hitResult.getLocation().z + offsetZ,
@@ -47,7 +42,6 @@ public class AeroliteShovelClient {
                     particleVelocity.z
             );
         }
-
         minecraft.level.playLocalSound(
                 hitResult.getLocation().x,
                 hitResult.getLocation().y,

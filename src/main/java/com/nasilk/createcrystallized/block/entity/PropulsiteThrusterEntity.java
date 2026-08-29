@@ -446,7 +446,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 // Local -> global conversion (call by reference)
                 subLevel.logicalPose().transformPosition(cache.spawnPosition);
                 subLevel.logicalPose().transformPosition(cache.endPosition);
-
                 cache.spawnVelocity.set(cache.endPosition).sub(cache.spawnPosition);
             }
 

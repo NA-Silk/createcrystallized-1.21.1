@@ -12,12 +12,17 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ModCreativeModeTabs {
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB =
-            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateCrystallized.MOD_ID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateCrystallized.MOD_ID);
 
-    public static final Supplier<CreativeModeTab> FLUIDSANDFIXINS_TAB = CREATIVE_MODE_TAB.register("createcrystallized_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.DENSITE_BLOCK.get()))
-            .title(Component.translatable("creativetab.createcrystallized.createcrystallized_tab")).build());
+    public static final Supplier<CreativeModeTab> CREATECRYSTALLIZED_TAB = CREATIVE_MODE_TAB.register(
+        "createcrystallized_tab",
+        () -> CreativeModeTab.builder()
+            .icon(() -> new ItemStack(ModBlocks.DENSITE_BLOCK.get()))
+            .title(Component.translatable("creativetab.createcrystallized.createcrystallized_tab"))
+            .build()
+    );
 
-    public static void register(IEventBus bus) {CREATIVE_MODE_TAB.register(bus);}
+    public static void register(IEventBus bus) {
+        CREATIVE_MODE_TAB.register(bus);
+    }
 }

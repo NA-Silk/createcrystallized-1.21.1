@@ -20,10 +20,7 @@ import java.util.List;
 public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     private final List<FluidTransformSettings> settingsList;
 
-    protected TransformBaseFlowingFluid(
-        Properties properties,
-        List<FluidTransformSettings> settingsList
-    ) {
+    protected TransformBaseFlowingFluid(Properties properties, List<FluidTransformSettings> settingsList) {
         super(properties);
         this.settingsList = settingsList;
     }

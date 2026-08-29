@@ -37,7 +37,8 @@ public class EncasedBlock extends Block implements IWrenchable {
 
     // WRENCH
     @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {return InteractionResult.PASS;
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        return InteractionResult.PASS;
     }
 
     @Override

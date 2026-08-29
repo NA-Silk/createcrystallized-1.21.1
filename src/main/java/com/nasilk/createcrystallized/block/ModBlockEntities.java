@@ -13,8 +13,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("DataFlowIssue")
 public class ModBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreateCrystallized.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreateCrystallized.MOD_ID);
 
     public static final Supplier<BlockEntityType<DensiteWellEntity>> DENSITE_WELL = BLOCK_ENTITIES.register(
         "densite_well",

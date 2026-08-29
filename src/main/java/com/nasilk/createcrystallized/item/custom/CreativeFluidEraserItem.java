@@ -41,7 +41,6 @@ public class CreativeFluidEraserItem extends Item {
                     level.setBlockAndUpdate(currentPos, Blocks.AIR.defaultBlockState());
                 }
             }
-
             return InteractionResultHolder.success(itemStack);
         }
         return InteractionResultHolder.pass(itemStack);

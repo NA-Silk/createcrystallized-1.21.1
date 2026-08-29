@@ -16,8 +16,11 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
-    public int tickRate = 8, flowLife = 2;
-    public double timeFactor = 0.1, yFactor = 0.2, threshold = 0.8;
+    public int tickRate = 8;
+    public int flowLife = 2;
+    public double timeFactor = 0.1d;
+    public double yFactor = 0.2d;
+    public double threshold = 0.8d;
     public float flowingBlockHeight = 0.88f;
 
     protected UpwardBaseFlowingFluid(Properties properties) {
@@ -100,43 +103,19 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
 
     // VISUAL OVERRIDES
     // 0.88f = height of a Level 8 flowing block
-    @Override
-    public float getOwnHeight(FluidState state) {
-        return state.isSource() ? 1.0f : flowingBlockHeight;
-    }
-
-    @Override
-    public float getHeight(FluidState state, BlockGetter level, BlockPos pos) {
-        return state.isSource() ? 1.0f : flowingBlockHeight;
-    }
+    @Override public float getOwnHeight(FluidState state) { return state.isSource() ? 1.0f : flowingBlockHeight; }
+    @Override public float getHeight(FluidState state, BlockGetter level, BlockPos pos) { return state.isSource() ? 1.0f : flowingBlockHeight; }
 
     // DISABLE VANILLA FLOW BEHAVIOR
-    @Override
-    protected FluidState getNewLiquid(Level level, BlockPos pos, BlockState blockState) { return Fluids.EMPTY.defaultFluidState(); } // No source creation
-
-    @Override
-    protected void spreadTo(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState) {}
-
-    @Override
-    public Vec3 getFlow(BlockGetter level, BlockPos pos, FluidState state) { return Vec3.ZERO; }
-
-    @Override
-    protected boolean canSpreadTo(BlockGetter level, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fromFluid) { return false; } // No horizontal spreading
-
-    @Override
-    protected void spread(Level level, BlockPos pos, FluidState state) {} // Do nothing, handle everything in tick()
-
-    @Override
-    protected int getSlopeFindDistance(LevelReader level) { return 0; }
-
-    @Override
-    protected int getDropOff(LevelReader level) { return 1; }
-
-    @Override
-    public int getTickDelay(LevelReader level) { return tickRate; }
-
-    @Override
-    public FluidState getSource(boolean falling) { return super.getSource(false); }
+    @Override protected FluidState getNewLiquid(Level level, BlockPos pos, BlockState blockState) { return Fluids.EMPTY.defaultFluidState(); } // No source creation
+    @Override protected void spreadTo(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState) {}
+    @Override public Vec3 getFlow(BlockGetter level, BlockPos pos, FluidState state) { return Vec3.ZERO; }
+    @Override protected boolean canSpreadTo(BlockGetter level, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fromFluid) { return false; } // No horizontal spreading
+    @Override protected void spread(Level level, BlockPos pos, FluidState state) {} // Do nothing, handle everything in tick()
+    @Override protected int getSlopeFindDistance(LevelReader level) { return 0; }
+    @Override protected int getDropOff(LevelReader level) { return 1; }
+    @Override public int getTickDelay(LevelReader level) { return tickRate; }
+    @Override public FluidState getSource(boolean falling) { return super.getSource(false); }
 
 
     // INNER CLASSES

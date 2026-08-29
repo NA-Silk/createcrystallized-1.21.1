@@ -6,6 +6,7 @@ import com.nasilk.createcrystallized.item.custom.AeroliteShovelItem;
 import com.nasilk.createcrystallized.network.custom.SkyPaddlePayload;
 import dev.ryanhcode.sable.network.client.ClientSubLevelPunchHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -22,15 +23,16 @@ public class AeroliteShovelEventHandler {
         if (!event.isAttack()) return;
 
         Minecraft minecraft = Minecraft.getInstance();
-
-        if (minecraft.player == null || minecraft.level == null) return;
-        if (!minecraft.player.getMainHandItem().is(ModItems.AEROLITE_SHOVEL.get())) return;
-        if (minecraft.hitResult == null || minecraft.hitResult.getType() != HitResult.Type.MISS) return;
-
-        BlockHitResult hitResult = AeroliteShovelItem.getSkyPaddle(minecraft.player);
+        if (minecraft.level == null
+            || !(minecraft.player instanceof LocalPlayer player)
+            || !player.getMainHandItem().is(ModItems.AEROLITE_SHOVEL.get())
+            || !(minecraft.hitResult instanceof HitResult hitResult)
+            || !(hitResult.getType() == HitResult.Type.MISS)
+        ) return;
 
         //Dude Sables are so cool
-        ClientSubLevelPunchHelper.clientTryPunch(hitResult, minecraft.level, false);
+        BlockHitResult blockHitResult = AeroliteShovelItem.getSkyPaddle(minecraft.player);
+        ClientSubLevelPunchHelper.clientTryPunch(blockHitResult, minecraft.level, false);
 
         //Tell server that we lost the baby
         PacketDistributor.sendToServer(new SkyPaddlePayload());

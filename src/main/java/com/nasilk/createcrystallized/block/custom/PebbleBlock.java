@@ -40,7 +40,7 @@ public class PebbleBlock extends FallingBlock {
 
     @Override
     protected void falling(FallingBlockEntity fallingEntity) {
-        fallingEntity.setHurtsEntities(4.0F, 80);
+        fallingEntity.setHurtsEntities(4.0f, 80);
     }
 
     @Override

@@ -1,20 +1,14 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
-import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
-import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,8 +20,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
-public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThrusterEntity>, IWrenchable {
-    // TODO Mild Remodel, possibly spicy remodel, update 2 moment.
+public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThrusterEntity> {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -89,22 +82,6 @@ public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThru
         return (lvl, bp, bs, be) -> {
             if (be instanceof PropulsiteThrusterEntity thruster) thruster.tick();
         };
-    }
-
-    // WRENCH
-    @Override
-    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        return InteractionResult.PASS;
-    }
-
-    @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
-        Level level = context.getLevel();
-        if (level.isClientSide()) return InteractionResult.PASS;
-        BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, ModBlocks.PROPULSITE_CRYSTAL.get().asItem().getDefaultInstance());
-        level.setBlockAndUpdate(pos, ModBlocks.ENCASED_PROPULSITE_BLOCK.get().defaultBlockState());
-        return InteractionResult.SUCCESS;
     }
 
     // PARTICLES

@@ -4,7 +4,6 @@ import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.ctbehavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.item.custom.ChoraCasingItem;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -30,10 +29,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
-@SuppressWarnings({"deprecation", "SameParameterValue"})
+@SuppressWarnings({"deprecation", "SameParameterValue", "unused"})
 public class ModBlocks {
-    public static final DeferredRegister.Blocks BLOCKS =
-        DeferredRegister.createBlocks(CreateCrystallized.MOD_ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreateCrystallized.MOD_ID);
 
 
     // BLOCK REGISTRATIONS
@@ -301,8 +299,9 @@ public class ModBlocks {
         )
     );
 
+
     /** CASINGS */
-    public static final BlockEntry<Block> CHORA_CASING = registerBlockCTCustomItem(
+    public static final BlockEntry<Block> CHORA_CASING = registerBlockCT(
         "chora_casing",
             (properties) -> new ChoraCasingBlock(properties
             .mapColor(MapColor.COLOR_RED)
@@ -321,11 +320,10 @@ public class ModBlocks {
                 SoundEvents.GLASS_FALL
             ))
         ),
-        ChoraCasingCTBehavior::new,
-        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        ChoraCasingCTBehavior::new
     );
 
-    public static final BlockEntry<Block> DENSE_CHORA_CASING = registerBlockCTCustomItem(
+    public static final BlockEntry<Block> DENSE_CHORA_CASING = registerBlockCT(
         "chora_casing_densite",
         (properties) -> new ChoraCasingBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
@@ -344,11 +342,10 @@ public class ModBlocks {
                 SoundEvents.GLASS_FALL
             ))
         ),
-        DenseChoraCasingCTBehavior::new,
-        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        DenseChoraCasingCTBehavior::new
     );
 
-    public static final BlockEntry<Block> PROPULSED_CHORA_CASING = registerBlockCTCustomItem(
+    public static final BlockEntry<Block> PROPULSED_CHORA_CASING = registerBlockCT(
         "chora_casing_propulsite",
         (properties) -> new ChoraCasingBlock(properties
             .mapColor(MapColor.COLOR_RED)
@@ -367,11 +364,10 @@ public class ModBlocks {
                 SoundEvents.GLASS_FALL
             ))
         ),
-        PropulsedChoraCasingCTBehavior::new,
-        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        PropulsedChoraCasingCTBehavior::new
     );
 
-    public static final BlockEntry<Block> OSCILLATING_CHORA_CASING = registerBlockCTCustomItem(
+    public static final BlockEntry<Block> OSCILLATING_CHORA_CASING = registerBlockCT(
         "chora_casing_oscillite",
         (properties) -> new ChoraCasingBlock(properties
             .mapColor(MapColor.COLOR_RED)
@@ -390,11 +386,10 @@ public class ModBlocks {
                 SoundEvents.GLASS_FALL
             ))
         ),
-        OscillatingChoraCasingCTBehavior::new,
-        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        OscillatingChoraCasingCTBehavior::new
     );
 
-    public static final BlockEntry<Block> LEVITATING_CHORA_CASING = registerBlockCTCustomItem(
+    public static final BlockEntry<Block> LEVITATING_CHORA_CASING = registerBlockCT(
         "chora_casing_levitite",
         (properties) -> new ChoraCasingBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
@@ -413,8 +408,7 @@ public class ModBlocks {
                 SoundEvents.GLASS_FALL
             ))
         ),
-        LevitatingChoraCasingCTBehavior::new,
-        (block) -> new ChoraCasingItem(block, new Item.Properties().stacksTo(64))
+        LevitatingChoraCasingCTBehavior::new
     );
 
 
@@ -500,12 +494,13 @@ public class ModBlocks {
         (block) -> new PebbleItem(block, new Item.Properties().stacksTo(1))
     );
 
+    // TODO add stacksTo(16)
     public static final DeferredBlock<Block> PROPULSITE_CRYSTAL = registerBlock(
-            "propulsite_crystal",
-            () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.of()
-                    .sound(SoundType.LARGE_AMETHYST_BUD)
-                    .lightLevel((l) -> 8)
-            )
+        "propulsite_crystal",
+        () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.of()
+            .sound(SoundType.LARGE_AMETHYST_BUD)
+            .lightLevel((l) -> 8)
+        )
     );
 
     public static final DeferredBlock<Block> AEROLITE_ORE = registerBlock(
@@ -555,40 +550,40 @@ public class ModBlocks {
     );
 
     public static final DeferredBlock<Block> AEROLITE_BLOCK = registerBlock(
-            "aerolite_block",
-            () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
-                    .instrument(NoteBlockInstrument.HAT)
-                    .strength(5.0F, 6.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(
-                            new SoundType(1.0f, 1.2f,
-                                    SoundEvents.METAL_BREAK,
-                                    SoundEvents.METAL_STEP,
-                                    SoundEvents.METAL_PLACE,
-                                    SoundEvents.METAL_HIT,
-                                    SoundEvents.METAL_FALL
-                            )
-                    )
+        "aerolite_block",
+        () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(5.0F, 6.0F)
+            .requiresCorrectToolForDrops()
+            .sound(
+                new SoundType(1.0f, 1.2f,
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+                )
             )
+        )
     );
 
     public static final DeferredBlock<Block> CHORA_BLOCK = registerBlock(
-            "chora_block",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_RED)
-                    .strength(5.0F, 6.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(
-                            new SoundType(1.0f, 1.0f,
-                                    SoundEvents.METAL_BREAK,
-                                    SoundEvents.METAL_STEP,
-                                    SoundEvents.METAL_PLACE,
-                                    SoundEvents.METAL_HIT,
-                                    SoundEvents.METAL_FALL
-                            )
-                    )
+        "chora_block",
+        () -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_RED)
+            .strength(5.0F, 6.0F)
+            .requiresCorrectToolForDrops()
+            .sound(
+                new SoundType(1.0f, 1.0f,
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+                )
             )
+        )
     );
 
 

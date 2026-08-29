@@ -24,9 +24,9 @@ public class ModPayloads {
         );
 
         registrar.playToServer(
-                SkyPaddlePayload.TYPE,
-                SkyPaddlePayload.STREAM_CODEC,
-                SkyPaddlePayloadHandler::handleDataOnMain
+            SkyPaddlePayload.TYPE,
+            SkyPaddlePayload.STREAM_CODEC,
+            SkyPaddlePayloadHandler::handleDataOnMain
         );
     }
 }

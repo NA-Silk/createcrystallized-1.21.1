@@ -7,5 +7,4 @@ package com.nasilk.createcrystallized.util.setting;
 public class MixinSettings {
     public final int yVoidSeaSlurry = -40; // y value for Void Sea Slurry extraction
     public final int yDriftCondensate = 250; // y value for Drift Condensate extraction
-
 }

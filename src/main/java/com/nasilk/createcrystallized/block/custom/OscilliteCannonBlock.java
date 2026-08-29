@@ -3,10 +3,7 @@ package com.nasilk.createcrystallized.block.custom;
 import com.mojang.serialization.MapCodec;
 import com.nasilk.createcrystallized.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
-import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
-import com.nasilk.createcrystallized.item.ModItems;
-import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -15,12 +12,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -39,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IWrenchable, IHaveLongs {
+public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IHaveLongs {
     // TODO Add part-checking into loot table... once we have a loot table
     public static final MapCodec<OscilliteCannonBlock> CODEC = simpleCodec(OscilliteCannonBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -192,22 +187,6 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         if (state.getValue(IS_BARREL)) return false;
         withBlockEntityDo(serverLevel, pos, be -> be.defaultUpdateLongs(serverLevel));
         return true;
-    }
-
-    // WRENCH
-    @Override
-    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        return InteractionResult.PASS;
-    }
-
-    @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
-        Level level = context.getLevel();
-        if (level.isClientSide() || state.getValue(IS_BARREL)) return InteractionResult.PASS;
-        BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, ModItems.OSCILLITE_RESONATOR.toStack());
-        level.setBlockAndUpdate(pos, ModBlocks.ENCASED_OSCILLITE_BLOCK.get().defaultBlockState());
-        return InteractionResult.SUCCESS;
     }
 
     // PARTICLES

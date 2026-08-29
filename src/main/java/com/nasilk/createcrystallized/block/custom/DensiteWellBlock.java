@@ -1,16 +1,11 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
-import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import com.nasilk.createcrystallized.particle.ModParticles;
-import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +16,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity>, IWrenchable {
+public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     public DensiteWellBlock(Properties properties) {
@@ -66,22 +61,6 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity>, I
         return (lvl, bp, bs, be) -> {
             if (be instanceof DensiteWellEntity well) well.tick();
         };
-    }
-
-    // WRENCH
-    @Override
-    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-        return InteractionResult.PASS;
-    }
-
-    @Override
-    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
-        Level level = context.getLevel();
-        if (level.isClientSide()) return InteractionResult.PASS;
-        BlockPos pos = context.getClickedPos();
-        Block.popResource(level, pos, Items.STICK.getDefaultInstance()); // TODO Replace with correct item
-        level.setBlockAndUpdate(pos, ModBlocks.ENCASED_DENSITE_BLOCK.get().defaultBlockState());
-        return InteractionResult.SUCCESS;
     }
 
     // PARTICLES

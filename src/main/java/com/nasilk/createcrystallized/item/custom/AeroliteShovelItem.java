@@ -15,50 +15,48 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class AeroliteShovelItem extends ShovelItem {
-
     public static final Tier AEROLITE_TIER = Tiers.DIAMOND; // TODO custom tier
 
-    public AeroliteShovelItem(Tier tier, Properties properties) {super(tier, properties);
+    public AeroliteShovelItem(Tier tier, Properties properties) {
+        super(tier, properties);
     }
+
     //oh my johd is that a sky paddle
-    public static BlockHitResult getSkyPaddle(Player player) {Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5));
+    public static BlockHitResult getSkyPaddle(Player player) {
+        Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5));
         return new BlockHitResult(hitPosition, Direction.DOWN, BlockPos.containing(hitPosition), false);
     }
-    //Durability loss on use
-    public static void damageSkyPaddle(Player player) {player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+
+    // Durability loss on use
+    public static void damageSkyPaddle(Player player) {
+        player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
-    //PARTICLES
-    public static void skyPaddleParticles(ServerLevel level, Player player, BlockHitResult hitResult) {
+
+    // PARTICLES
+    public static void skyPaddleParticles(ServerLevel serverLevel, Player player, BlockHitResult hitResult) {
+        Vec3 pos = hitResult.getLocation();
         Vec3 particleVelocity = player.getLookAngle().scale(0.2);
-
         for (int i = 0; i < 4; i++) {
-            double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
-            double offsetY = (level.random.nextDouble() - 0.5) * 0.3;
-            double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
-
-            level.sendParticles(ParticleTypes.CLOUD,
-                    hitResult.getLocation().x + offsetX,
-                    hitResult.getLocation().y + offsetY,
-                    hitResult.getLocation().z + offsetZ,
-                    1,
-                    particleVelocity.x,
-                    particleVelocity.y,
-                    particleVelocity.z,
-                    0.2
+            double offsetX = (serverLevel.random.nextDouble() - 0.5) * 0.5;
+            double offsetY = (serverLevel.random.nextDouble() - 0.5) * 0.5;
+            double offsetZ = (serverLevel.random.nextDouble() - 0.5) * 0.5;
+            serverLevel.sendParticles(ParticleTypes.CLOUD,
+                pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ,
+                0,
+                particleVelocity.x, particleVelocity.y, particleVelocity.z,
+                1
             );
         }
     }
-    //SOUNDS
-    public static void skyPaddleSound(ServerLevel level, BlockHitResult hitResult) {
-        level.playSound(
-                null,
-                hitResult.getLocation().x,
-                hitResult.getLocation().y,
-                hitResult.getLocation().z,
-                SoundEvents.BREEZE_DEFLECT,
-                SoundSource.PLAYERS,
-                0.2F,
-                1.0F
+
+    // SOUNDS
+    public static void skyPaddleSound(ServerLevel serverLevel, BlockHitResult hitResult) {
+        Vec3 pos = hitResult.getLocation();
+        serverLevel.playSound(
+            null,
+            pos.x, pos.y, pos.z,
+            SoundEvents.BREEZE_DEFLECT, SoundSource.PLAYERS,
+            0.2F, 1.0F
         );
     }
 }

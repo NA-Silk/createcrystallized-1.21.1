@@ -21,25 +21,27 @@ public class DensiteWellCubeModel extends Model {
 	
 	private final ModelPart bb_main;
 
-	public DensiteWellCubeModel(ModelPart root) {super(RenderType::entitySolid);this.bb_main = root.getChild("bb_main");
+	public DensiteWellCubeModel(ModelPart root) {
+		super(RenderType::entitySolid);
+		this.bb_main = root.getChild("bb_main");
 	}
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
-
-		PartDefinition bb_main = partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
+		partdefinition.addOrReplaceChild(
+			"bb_main",
+			CubeListBuilder
+				.create()
+				.texOffs(0, 0)
+				.addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)),
+			PartPose.offset(0.0F, 0.0F, 0.0F)
+		);
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 
 	@Override
-	public void renderToBuffer
-		(PoseStack poseStack, 
-		 VertexConsumer vertexConsumer, 
-		 int packedLight, 
-		 int packedOverlay, 
-		 int color) 
-	     {this.bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		this.bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 	}
 }

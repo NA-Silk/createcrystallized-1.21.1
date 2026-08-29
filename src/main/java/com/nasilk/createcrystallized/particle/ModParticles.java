@@ -9,8 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ModParticles {
-    public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES =
-        DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, CreateCrystallized.MOD_ID);
+    public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, CreateCrystallized.MOD_ID);
 
     public static final Supplier<SimpleParticleType> DENSITE_PARTICLES = PARTICLE_TYPES.register(
         "densite_particles",
@@ -33,13 +32,13 @@ public class ModParticles {
     );
 
     public static final Supplier<SimpleParticleType> OSCILLITE_CANNON_CHARGING_PARTICLES = PARTICLE_TYPES.register(
-            "oscillite_cannon_charging_particles",
-            () -> new SimpleParticleType(true)
+        "oscillite_cannon_charging_particles",
+        () -> new SimpleParticleType(true)
     );
 
     public static final Supplier<SimpleParticleType> OSCILLITE_CANNON_FIRING_PARTICLES = PARTICLE_TYPES.register(
-            "oscillite_cannon_firing_particles",
-            () -> new SimpleParticleType(true)
+        "oscillite_cannon_firing_particles",
+        () -> new SimpleParticleType(true)
     );
 
     public static void register(IEventBus eventBus) {

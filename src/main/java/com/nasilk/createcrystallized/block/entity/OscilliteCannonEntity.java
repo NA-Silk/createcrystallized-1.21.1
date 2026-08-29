@@ -89,7 +89,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         final Vector3d angularVelocity = new Vector3d();
 
         // Firing
-        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+        final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final BoundingBox3d searchBox = new BoundingBox3d();
         final List<SubLevel> targets = new ArrayList<>();
         final Vector3d relEntityPosition = new Vector3d();

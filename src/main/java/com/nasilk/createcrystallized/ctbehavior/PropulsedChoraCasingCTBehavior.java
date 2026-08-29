@@ -9,10 +9,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class PropulsedChoraCasingCTBehavior extends ConnectedTextureBehaviour.Base {
-    @Nullable
-    @Override
+    @Nullable @Override
     public CTSpriteShiftEntry getShift (BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {
         return ModSpriteShifts.PROPULSED_CHORA_CASING;
     }
 }
-

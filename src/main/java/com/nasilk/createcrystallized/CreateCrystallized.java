@@ -89,7 +89,7 @@ public class CreateCrystallized {
 
     // Add block items to creative tabs
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTab() == ModCreativeModeTabs.FLUIDSANDFIXINS_TAB.get()) {
+        if(event.getTab() == ModCreativeModeTabs.CREATECRYSTALLIZED_TAB.get()) {
 
             // Buckets
             event.accept(ModFluids.VOID_SEA_SLURRY_BUCKET);
@@ -155,6 +155,7 @@ public class CreateCrystallized {
         LOGGER.info("HELLO from server starting");
     }
 
+    // TODO Move to client
     // @EventBusSubscriber automatically registers all static methods in the class annotated with @SubscribeEvent
     @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
     public static class ClientModEvents {
@@ -184,6 +185,7 @@ public class CreateCrystallized {
             event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(), OscilliteCannonFiringParticles.Provider::new);
         }
 
+        // TODO Move to client
         @SubscribeEvent
         public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
             IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {

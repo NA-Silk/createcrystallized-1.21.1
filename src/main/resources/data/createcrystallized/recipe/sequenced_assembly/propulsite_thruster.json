@@ -1,0 +1,51 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "createcrystallized:encased_propulsite_block"
+  },
+  "transitional_item": {
+    "id": "createcrystallized:encased_propulsite_block"
+  },
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_propulsite_block"
+        },
+        {
+          "item": "minecraft:amethyst_cluster"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_propulsite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_propulsite_block"
+        },
+        {
+          "type": "neoforge:single",
+          "fluid": "createcrystallized:source_propulsite_flurry",
+          "amount": 250
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_propulsite_block"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:propulsite_thruster"
+    }
+  ],
+  "loops": 1
+}

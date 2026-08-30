@@ -1,0 +1,62 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "createcrystallized:encased_oscillite_block"
+  },
+  "transitional_item": {
+    "id": "createcrystallized:encased_oscillite_block"
+  },
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_oscillite_block"
+        },
+        {
+          "item": "minecraft:slime_ball"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_oscillite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_oscillite_block"
+        },
+        {
+          "item": "createcrystallized:oscillite_resonator"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_oscillite_block"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_oscillite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_oscillite_block"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:oscillite_cannon"
+    }
+  ],
+  "loops": 1
+}

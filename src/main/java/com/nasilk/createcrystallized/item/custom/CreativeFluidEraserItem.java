@@ -14,7 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class CreativeFluidEraserItem extends Item {
-    public final int RADIUS = 32;
+    public static final int RADIUS = 32;
 
     public CreativeFluidEraserItem(Properties properties) {
         super(properties);

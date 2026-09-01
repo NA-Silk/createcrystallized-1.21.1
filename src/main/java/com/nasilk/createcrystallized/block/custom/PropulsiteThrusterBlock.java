@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.custom;
 
+import com.nasilk.createcrystallized.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
-public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThrusterEntity> {
+public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThrusterEntity>, IHaveLongs {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -82,6 +83,13 @@ public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThru
         return (lvl, bp, bs, be) -> {
             if (be instanceof PropulsiteThrusterEntity thruster) thruster.tick();
         };
+    }
+
+    // LONGS
+    @Override
+    public boolean defaultUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+        withBlockEntityDo(serverLevel, pos, be -> be.defaultUpdateLongs(serverLevel));
+        return true;
     }
 
     // PARTICLES

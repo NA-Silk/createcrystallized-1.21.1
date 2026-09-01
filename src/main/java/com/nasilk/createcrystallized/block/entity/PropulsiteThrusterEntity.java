@@ -20,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -61,7 +60,10 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final int MAX_CHARGE = 60; // How long it takes for the burst to be ready after receiving redstone power in ticks
     private static final int MAX_COOLDOWN = 100; // How long it takes for the block to be able to be charged again in ticks
     private static final int BURST_DURATION = 10; // How long it takes for the full burst to go though in ticks
+    private static final double FACE_OFFSET = 0.6d;
     private static final double AMBIENT_RATE = 8e-5d;
+    private static final double VELOCITY_SCALE = 15.0d; // TODO Tune this
+    private static final double THRESHOLD = 1.0d;
     private static final double AMPLITUDE = 100.0d; // How much total thrust is output over the length of the burst
     private static final double STANDARD_DEVIATION = 1.5d; // Curve spread
     private static final double MEAN = 3.0d; // Curve middle
@@ -110,8 +112,10 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         Direction facing = Direction.NORTH;
         final Vector3d thrusterForce =  new Vector3d();
         final Vector3d thrusterDirection = new Vector3d();
-        final Vector3d thrusterPosition = new Vector3d();
         final Vector3d thrusterFace =  new Vector3d();
+        final Vector3d thrusterPosition = new Vector3d();
+        final Vector3d thrusterPositionLocal = new Vector3d();
+        final Vector3d thrusterVelocity = new Vector3d();
 
         // BFS
         final long[] queue = new long[MAX_CLUSTER_SIZE];
@@ -119,15 +123,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
         // Entity pushing
         final BoundingBox3d searchBox = new BoundingBox3d();
-        final Vector3d globalThrusterDirection = new Vector3d();
-        final Vector3d globalThrusterPosition = new Vector3d();
         final Vector3d relEntityPosition = new Vector3d();
         final Vector3d relEntityRadialDistance = new Vector3d();
 
         // Particles
-        final Vector3d spawnPosition =  new Vector3d();
+        final Vector3d spawnPosition = new Vector3d();
         final Vector3d spawnVelocity = new Vector3d();
-        final Vector3d endPosition = new Vector3d();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -139,68 +140,95 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
     // TICK BEHAVIOR
     public void tick() {
-        if (level instanceof ServerLevel serverLevel) {
-            // Get initial variables
+        if (level instanceof ServerLevel serverLevel && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
+            // Get the physics handle and cache
+            RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
+            if (!handle.isValid()) return;
             Cache cache = CACHE.get();
             BlockState state = getBlockState();
             boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
 
-            // Update intial variables
-            ServerSubLevel subLevel = null;
-            if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel serverSubLevel) subLevel = serverSubLevel;
-            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0) updateAmplitude(serverLevel, worldPosition);
+            // Get global position
+            cache.thrusterPositionLocal.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            cache.thrusterPosition.set(cache.thrusterPositionLocal);
+            subLevel.logicalPose().transformPosition(cache.thrusterPosition);
+
+            // Get current net velocity
+            Sable.HELPER.getVelocity(serverLevel, subLevel, cache.thrusterPositionLocal, cache.thrusterVelocity);
+            cache.thrusterVelocity.mul(1.0d / 20.0d); // bps -> bpt
+
+            // Get velocitySquared
+            double velocitySquared = cache.thrusterVelocity.lengthSquared();
+            if (velocitySquared > 1e-3d) velocitySquared *= VELOCITY_SCALE; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
+            else velocitySquared = 0.0d;
+
+            // Transform local to global vectors and get face position
             cache.facing = state.getValue(PropulsiteThrusterBlock.FACING);
             cache.thrusterDirection.set(cache.facing.step());
-            cache.thrusterPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
-            cache.thrusterFace.set(cache.thrusterPosition).fma(0.6, cache.thrusterDirection);
+            subLevel.logicalPose().transformNormal(cache.thrusterDirection);
+            cache.thrusterFace.set(cache.thrusterPosition).fma(FACE_OFFSET, cache.thrusterDirection);
+
+            // Update amplitude
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0) updateAmplitude(serverLevel, worldPosition);
 
             // Cooldown
-            if (cooldown > 0) {
-                if (cooldown % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.SMOKE, 1, cache);
-                if (!powered) {
-                    cooldown--;
-                    this.setChanged();
-                    if (cooldown % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+            if (cooldown > 0 && !powered) {
+                cooldown--;
+                if (cooldown % SIMPLE_PARTICLE_RATE == 0) {
+                    serverLevel.sendParticles(
+                        ParticleTypes.SMOKE,
+                        cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
+                        1, 0.5d, 0.5d, 0.5d, 0.1d
+                    );
                 }
+                this.setChanged();
+                if (cooldown % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 
             // Charging
-            if (powered && !armed && charge < MAX_CHARGE) {
+            if (!armed && charge < MAX_CHARGE && velocitySquared >= THRESHOLD) {
                 charge++;
-                if (charge % CHARGING_PARTICLE_RATE == 0) addChargingParticles(serverLevel, subLevel, cache);
                 if (charge >= MAX_CHARGE) {
                     armed = true;
                     serverLevel.playSound(
                         null, worldPosition,
                         SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
-                        1.5F,1.2F
+                        1.5f,1.2f
                     );
                 }
+                if (charge % CHARGING_PARTICLE_RATE == 0) addChargingParticles(serverLevel, cache);
                 this.setChanged();
                 if (charge % PACKET_UPDATE_RATE == 0 || armed) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 
             // Discharging
-            if (!powered && !armed && charge > 0) {
-                charge -= 1;
-                if (charge % SIMPLE_PARTICLE_RATE == 0) addSimpleParticles(serverLevel, subLevel, ParticleTypes.WHITE_SMOKE, 10, cache);
+            if (!armed && charge > 0 && !powered) {
+                charge--;
+                if (charge % SIMPLE_PARTICLE_RATE == 0) {
+                    serverLevel.sendParticles(
+                        ParticleTypes.WHITE_SMOKE,
+                        cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
+                        10, 0.5d, 0.5d, 0.5d, 0.1d
+                    );
+                }
                 this.setChanged();
                 if (charge % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 
             // Firing initialization
-            if (armed && !powered && !firing) {
+            if (armed && powered && !firing) {
                 firing = true;
                 firingTick = 0;
                 serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
-                    1.5F,1.0F
+                    1.5f,1.0f
                 );
                 this.setChanged();
+                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return; // Wait a tick, don't be too hasty with sending packets
             }
 
@@ -211,12 +239,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                     * BURST_CURVE[firingTick]; // Curve computation
 
                 // Hande subLevel effects
-                if (subLevel != null) {
-                    RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
-                    if (!handle.isValid()) return;
-                    cache.thrusterForce.set(cache.thrusterDirection).mul(-thrust);
-                    handle.applyImpulseAtPoint(cache.thrusterPosition, cache.thrusterForce);
-                }
+                cache.thrusterForce.set(cache.facing.step()).mul(-thrust);
+                handle.applyImpulseAtPoint(cache.thrusterPositionLocal, cache.thrusterForce);
 
                 // Update firing state
                 firingTick++;
@@ -227,12 +251,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                     thrust = 0;
                     cooldown = MAX_COOLDOWN;
                 }
-                this.setChanged();
-                if (firingTick % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
 
                 // Effects
-                addFiringParticles(serverLevel, subLevel, cache);
-                pushEntities(serverLevel, subLevel, cache);
+                pushEntities(serverLevel, cache);
+                addFiringParticles(serverLevel, cache);
+                this.setChanged();
+                if (firingTick % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 return;
             }
 
@@ -241,12 +265,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 if (charge == 0) serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
-                    1.0F,0.8F
+                    1.0f,0.8f
                 );
                 else if (charge == MAX_CHARGE) serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
-                    1.0F,0.8F
+                    1.0f,0.8f
                 );
             }
         }
@@ -303,9 +327,9 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
     }
 
-    private void pushEntities(ServerLevel serverLevel, ServerSubLevel subLevel, Cache cache) {
+    private void pushEntities(ServerLevel serverLevel, Cache cache) {
         // Exit if thrust is too low
-        if (thrust < 0.1) return;
+        if (thrust < 0.1d) return;
 
         // Set bounding box
         cache.searchBox.setUnchecked(
@@ -313,17 +337,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             cache.thrusterPosition.x + MAX_PUSH_RANGE, cache.thrusterPosition.y + MAX_PUSH_RANGE, cache.thrusterPosition.z + MAX_PUSH_RANGE
         );
 
-        // Convert sublevel (local) vectors to global vectors (call by reference)
-        cache.globalThrusterDirection.set(cache.thrusterDirection);
-        cache.globalThrusterPosition.set(cache.thrusterPosition);
-        if (subLevel != null) {
-            cache.searchBox.transform(subLevel.logicalPose(), cache.searchBox);
-            subLevel.logicalPose().transformNormal(cache.globalThrusterDirection);
-            subLevel.logicalPose().transformPosition(cache.globalThrusterPosition);
-        }
-
         // Get entities within the bounding box
-        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), PUSH_PREDICATE); // toMojang() Allocates a new Mojang AABB...
+        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), PUSH_PREDICATE); // toMojang() allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities to apply acceleration
@@ -333,14 +348,14 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
             double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
             double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-            cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.globalThrusterPosition);
+            cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.thrusterPosition);
 
             // Length distance scalar
-            double relEntityLengthScalar = cache.globalThrusterDirection.dot(cache.relEntityPosition);
+            double relEntityLengthScalar = cache.thrusterDirection.dot(cache.relEntityPosition);
             if (relEntityLengthScalar < 0.5d || relEntityLengthScalar > 0.5d + MAX_PUSH_RANGE) continue;
 
             // Radial distance scalar
-            cache.relEntityRadialDistance.set(cache.relEntityPosition).fma(-relEntityLengthScalar, cache.globalThrusterDirection);
+            cache.relEntityRadialDistance.set(cache.relEntityPosition).fma(-relEntityLengthScalar, cache.thrusterDirection);
             if (cache.relEntityRadialDistance.lengthSquared() > SQR_MAX_PUSH_RADIUS) continue;
 
             // Acceleration scalar
@@ -354,12 +369,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             Vec3 entityVelocity = entity.getDeltaMovement(); // Internal minecraft reference, no extra allocation (yay)
             entity.setDeltaMovement(
                 entityVelocity.add(
-                    Math.clamp(accelerationScalar * cache.globalThrusterDirection.x, -MAX_ACCELERATION, MAX_ACCELERATION),
-                    Math.clamp(accelerationScalar * cache.globalThrusterDirection.y, -MAX_ACCELERATION, MAX_ACCELERATION),
-                    Math.clamp(accelerationScalar * cache.globalThrusterDirection.z, -MAX_ACCELERATION, MAX_ACCELERATION)
+                    Math.clamp(accelerationScalar * cache.thrusterDirection.x, -MAX_ACCELERATION, MAX_ACCELERATION),
+                    Math.clamp(accelerationScalar * cache.thrusterDirection.y, -MAX_ACCELERATION, MAX_ACCELERATION),
+                    Math.clamp(accelerationScalar * cache.thrusterDirection.z, -MAX_ACCELERATION, MAX_ACCELERATION)
                 )
             );
-            entity.fallDistance = 0;
+            entity.fallDistance = 0.0f;
 
             // Sync client-side (player) motion
             if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
@@ -372,92 +387,93 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
     }
 
-    private void addSimpleParticles(ServerLevel serverLevel, ServerSubLevel subLevel, SimpleParticleType particle, int particleCount, Cache cache) {
-        // Get local/sublevel vector
-        cache.spawnPosition.set(cache.thrusterPosition);
-
-        // Convert sublevel (local) vector to global vector
-        if (subLevel != null) subLevel.logicalPose().transformPosition(cache.spawnPosition);
-
-        // Spawn particles
-        serverLevel.sendParticles(
-            particle,
-            cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
-            particleCount, 0.5, 0.5, 0.5, 0.1
-        );
-    }
-
-    private void addChargingParticles(ServerLevel serverLevel, ServerSubLevel subLevel, Cache cache) {
+    private void addChargingParticles(ServerLevel serverLevel, Cache cache) {
         // Compute each particle
         for (int i = 0; i < NUM_PARTICLES; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (serverLevel.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double ySpeed = (serverLevel.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double zSpeed = (serverLevel.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
 
-            // Get local/sublevel vectors
-            cache.spawnPosition.set(cache.thrusterFace);
-            cache.spawnVelocity.set(xSpeed, ySpeed, zSpeed);
-
-            // Convert sublevel (local) vectors to global vectors
-            if (subLevel != null) {
-                cache.endPosition.set(cache.spawnPosition).add(cache.spawnVelocity);
-
-                // Local -> global conversion (call by reference)
-                subLevel.logicalPose().transformPosition(cache.spawnPosition);
-                subLevel.logicalPose().transformPosition(cache.endPosition);
-
-                cache.spawnVelocity.set(cache.endPosition).sub(cache.spawnPosition);
-            }
+            // Handle motion
+            cache.spawnPosition.set(cache.thrusterFace).fma(i, cache.thrusterVelocity);
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
                 ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
-                cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,
-                1.0 // Use above speed values
+                xSpeed, ySpeed, zSpeed,
+                1.0d // Use above speed values
             );
         }
     }
 
-    private void addFiringParticles(ServerLevel serverLevel, ServerSubLevel subLevel, Cache cache) {
+    private void addFiringParticles(ServerLevel serverLevel, Cache cache) {
         // Get starting values
         double maxThrust = amplitude / NORM_DENOMINATOR;
-        double thrustRatio = Math.max(0.0, thrust / maxThrust); // [0.0 to 1.0] multiplier based on current thrust strength
+        double thrustRatio = Math.max(0.0d, thrust / maxThrust); // [0.0 to 1.0] multiplier based on current thrust strength
         double baseVelocity = MIN_PARTICLE_SPEED + ((MAX_PARTICLE_SPEED - MIN_PARTICLE_SPEED) * thrustRatio); // Faster jet at peak thrust
         int particleCount = MIN_PARTICLES + (int) ((MAX_PARTICLES - MIN_PARTICLES) * thrustRatio);
 
         // Compute each particle
         for (int i = 0; i < particleCount; i++) {
             // Apply slight random spread to the cone of the thrust
-            double dirX = cache.facing.getStepX() + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
-            double dirY = cache.facing.getStepY() + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
-            double dirZ = cache.facing.getStepZ() + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+            double dirX = cache.thrusterDirection.x + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+            double dirY = cache.thrusterDirection.y + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+            double dirZ = cache.thrusterDirection.z + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
 
-            // Get local/sublevel vectors
-            cache.spawnPosition.set(cache.thrusterFace);
-            cache.spawnVelocity.set(dirX, dirY, dirZ).normalize().mul(baseVelocity); // Normalize the direction and scale by baseVelocity
-
-            // Convert sublevel (local) vectors to global vectors
-            if (subLevel != null) {
-                cache.endPosition.set(cache.spawnPosition).add(cache.spawnVelocity);
-
-                // Local -> global conversion (call by reference)
-                subLevel.logicalPose().transformPosition(cache.spawnPosition);
-                subLevel.logicalPose().transformPosition(cache.endPosition);
-                cache.spawnVelocity.set(cache.endPosition).sub(cache.spawnPosition);
-            }
+            // Normalize the direction and scale by baseVelocity
+            cache.spawnVelocity.set(dirX, dirY, dirZ).normalize().mul(baseVelocity);
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
                 ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
-                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
-                0,
+                cache.thrusterFace.x, cache.thrusterFace.y, cache.thrusterFace.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
                 cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,
-                1.0 // Use spawnVelocity values
+                1.0d // Use spawnVelocity values
             );
         }
+    }
+
+
+    // LONGS
+    @SuppressWarnings({"DuplicateCondition", "ConstantValue"})
+    public void defaultUpdateLongs(ServerLevel serverLevel) {
+        if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
+
+        // Cooldown
+        if (cooldown > 0) {
+            cooldown = 0;
+        }
+
+        // Charging
+        else if (!armed) {
+            charge = MAX_CHARGE;
+            armed = true;
+            serverLevel.playSound(
+                null, worldPosition,
+                SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
+                1.5f,1.2f
+            );
+        }
+
+        // Firing
+        else if (armed) {
+            firing = true;
+            firingTick = 0;
+            serverLevel.playSound(
+                null, worldPosition,
+                SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
+                1.5f,1.0f
+            );
+        }
+
+        // Return
+        else return;
+        this.setChanged();
+        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
 
@@ -467,7 +483,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentCharge = CCLangHelper
-            .number(5*charge/3.0).text("%")
+            .number(5 * charge / 3.0d).text("%")
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.current_charge", currentCharge)
@@ -479,14 +495,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.armed_state", armedState)
-            .style(ChatFormatting.GRAY)
-            .forGoggles(tooltip, 1);
-
-        final MutableComponent currentThrust = CCLangHelper
-            .pixelNewton(thrust)
-            .style(ChatFormatting.AQUA)
-            .component();
-        CCLangHelper.translate("goggles.current_thrust", currentThrust)
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 

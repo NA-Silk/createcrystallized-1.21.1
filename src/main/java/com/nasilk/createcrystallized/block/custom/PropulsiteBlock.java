@@ -23,10 +23,10 @@ public class PropulsiteBlock extends Block {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                 ModParticles.PROPULSITE_PARTICLES.get(),
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                16,0.5,0.5,0.5,0.25
+                pos.getX() + 0.5d,
+                pos.getY() + 0.5d,
+                pos.getZ() + 0.5d,
+                16,0.5d,0.5d,0.5d,0.25d
             );
         }
     }

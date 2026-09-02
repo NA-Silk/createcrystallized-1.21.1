@@ -74,10 +74,10 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                 ModParticles.DENSITE_PARTICLES.get(),
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                8,0.3,0.2,0.3,0.05
+                pos.getX() + 0.5d,
+                pos.getY() + 0.5d,
+                pos.getZ() + 0.5d,
+                8,0.3d,0.2d,0.3d,0.05d
             );
         }
     }

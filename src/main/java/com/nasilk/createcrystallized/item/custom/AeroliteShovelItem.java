@@ -15,7 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class AeroliteShovelItem extends ShovelItem {
-    public static final Tier AEROLITE_TIER = Tiers.DIAMOND; // TODO custom tier
+    public static final Tier AEROLITE_TIER = Tiers.DIAMOND; // TODO Custom tier
 
     public AeroliteShovelItem(Tier tier, Properties properties) {
         super(tier, properties);

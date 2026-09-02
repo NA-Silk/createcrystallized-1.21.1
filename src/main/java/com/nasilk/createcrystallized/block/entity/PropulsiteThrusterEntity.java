@@ -62,17 +62,17 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private static final int BURST_DURATION = 10; // How long it takes for the full burst to go though in ticks
     private static final double FACE_OFFSET = 0.6d;
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final double VELOCITY_SCALE = 15.0d; // TODO Tune this
+    private static final double VELOCITY_SCALE = 15.0d;
     private static final double THRESHOLD = 1.0d;
     private static final double AMPLITUDE = 100.0d; // How much total thrust is output over the length of the burst
     private static final double STANDARD_DEVIATION = 1.5d; // Curve spread
     private static final double MEAN = 3.0d; // Curve middle
-    private static final double NORM_DENOMINATOR = STANDARD_DEVIATION * Math.sqrt(2.0 * Math.PI); // Precomputed denominator
+    private static final double NORM_DENOMINATOR = STANDARD_DEVIATION * Math.sqrt(2.0d * Math.PI); // Precomputed denominator
     private static final double[] BURST_CURVE = new double[BURST_DURATION];
     static {
         for (int i = 0; i < BURST_DURATION; i++) {
             double diff = (i - MEAN) / STANDARD_DEVIATION;
-            BURST_CURVE[i] = Math.exp(-0.5 * diff * diff);
+            BURST_CURVE[i] = Math.exp(-0.5d * diff * diff);
         }
     }
 
@@ -97,14 +97,14 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
     // Charging particle constants
     private static final int NUM_PARTICLES = 2; // Number of particles to spawn per tick
-    private static final double PARTICLE_RADIUS = 1.5; // Particle spawn range from the face, in blocks
+    private static final double PARTICLE_RADIUS = 1.5d; // Particle spawn range from the face, in blocks
 
     // Firing particle constants
     private static final int MIN_PARTICLES = 3;
     private static final int MAX_PARTICLES = 11;
-    private static final double PARTICLE_SPREAD = 0.10;
-    private static final double MIN_PARTICLE_SPEED = 0.15;
-    private static final double MAX_PARTICLE_SPEED = 0.5;
+    private static final double PARTICLE_SPREAD = 0.10d;
+    private static final double MIN_PARTICLE_SPEED = 0.15d;
+    private static final double MAX_PARTICLE_SPEED = 0.5d;
 
     // Cache (short-lived storage to avoid garbage build-up)
     private static class Cache {
@@ -149,7 +149,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
 
             // Get global position
-            cache.thrusterPositionLocal.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            cache.thrusterPositionLocal.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
             cache.thrusterPosition.set(cache.thrusterPositionLocal);
             subLevel.logicalPose().transformPosition(cache.thrusterPosition);
 
@@ -483,7 +483,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentCharge = CCLangHelper
-            .number(5 * charge / 3.0d).text("%")
+            .number(5.0d * charge / 3.0d).text("%")
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.current_charge", currentCharge)
@@ -507,7 +507,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             .forGoggles(tooltip, 1);
 
         if (cooldown > 0) {
-            CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0).text("s").component())
+            CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0d).text("s").component())
                 .style(ChatFormatting.RED)
                 .forGoggles(tooltip, 1);
         }

@@ -107,7 +107,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
                 null, worldPosition,
                 SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS, SoundSource.BLOCKS,
-                1.0F,0.8F
+                1.0f,0.8f
             );
 
             // Exit if unpowered
@@ -115,7 +115,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
             // Get global position
             Cache cache = CACHE.get();
-            cache.wellPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            cache.wellPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
             ServerSubLevel wellSubLevel = null;
             if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
                 wellSubLevel = subLevel;

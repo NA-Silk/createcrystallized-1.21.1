@@ -103,10 +103,10 @@ public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThru
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                 ModParticles.PROPULSITE_PARTICLES.get(),
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                32,0.5,0.5,0.5,0.35
+                pos.getX() + 0.5d,
+                pos.getY() + 0.5d,
+                pos.getZ() + 0.5d,
+                32,0.5d,0.5d,0.5d,0.35d
             );
         }
     }

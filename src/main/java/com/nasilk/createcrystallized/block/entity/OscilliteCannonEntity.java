@@ -126,8 +126,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             cache.cannonPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d); // Local position
             cache.facing = state.getValue(OscilliteCannonBlock.FACING);
             cache.cannonDirection.set(cache.facing.step()); // K
-            if (cache.facing.getAxis() == Direction.Axis.Y) cache.tempVector.set(0d, 0d, -1d); // North
-            else cache.tempVector.set(0d, 1d, 0d); // Up
+            if (cache.facing.getAxis() == Direction.Axis.Y) cache.tempVector.set(0.0d, 0.0d, -1.0d); // North
+            else cache.tempVector.set(0.0d, 1.0d, 0.0d); // Up
             cache.cannonI.set(cache.cannonDirection).cross(cache.tempVector).normalize();
             cache.cannonJ.set(cache.cannonI).cross(cache.cannonDirection).normalize();
             cache.cannonFace.set(cache.cannonPosition).fma(FACE_OFFSET, cache.cannonDirection);
@@ -166,7 +166,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
-                    1.5F,0.7F
+                    1.5f,0.8f
                 );
                 addChargingParticles(serverLevel, cache);
                 this.setChanged();
@@ -180,7 +180,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
-                    1.5F,1.0F
+                    1.5f,0.8f
                 );
                 this.setChanged();
                 serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
@@ -203,12 +203,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 if (!armed) serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.WARDEN_LISTENING, SoundSource.BLOCKS,
-                    1.0F,0.8F
+                    1.0f,0.8f
                 );
                 else serverLevel.playSound(
                     null, worldPosition,
                     SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
-                    1.0F,0.8F
+                    1.0f,0.8f
                 );
             }
         }
@@ -232,7 +232,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
 
         // Move along beam paths and find nearest block
-        double range = 0.0;
+        double range = 0.0d;
         for (int u = -1; u <= 1; u++) {
             for (int v = -1; v <= 1; v++) {
                 // Set starting position
@@ -259,7 +259,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (cannonSubLevel instanceof ServerSubLevel cannonServerSubLevel) {
             RigidBodyHandle handle = RigidBodyHandle.of(cannonServerSubLevel);
             if (handle.isValid()) {
-                cache.localBeamPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+                cache.localBeamPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
                 cache.tempVector.set(cache.cannonDirection).mul(-RECOIL);
                 cannonServerSubLevel.logicalPose().orientation().transformInverse(cache.tempVector); // Use local orientation
                 handle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
@@ -306,29 +306,29 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // - 2D comparison for tDeltaX:
         //      tDeltaX = sqrt(1 + dy^2/dx^2) = sqrt((dx^2 + dy^2)/dx^2) = sqrt(1/dx^2 = |1/dx|
         // - Double.POSITIVE_INFINITY prevents null errors for unreachable directions
-        double tDeltaX = (stepX != 0) ? Math.abs(1.0 / cache.cannonDirection.x) :
+        double tDeltaX = (stepX != 0) ? Math.abs(1.0d / cache.cannonDirection.x) :
                          Double.POSITIVE_INFINITY;
-        double tDeltaY = (stepY != 0) ? Math.abs(1.0 / cache.cannonDirection.y) :
+        double tDeltaY = (stepY != 0) ? Math.abs(1.0d / cache.cannonDirection.y) :
                          Double.POSITIVE_INFINITY;
-        double tDeltaZ = (stepZ != 0) ? Math.abs(1.0 / cache.cannonDirection.z) :
+        double tDeltaZ = (stepZ != 0) ? Math.abs(1.0d / cache.cannonDirection.z) :
                          Double.POSITIVE_INFINITY;
 
         // Get projected ray lengths after following each possible step for comparison
         // - Add step and subtract origin for 1D distance in positive directions
         // - Subtract current from origin in negative directions
         // - Double.POSITIVE_INFINITY prevents null errors for unreachable directions
-        double tMaxX = (stepX > 0) ? (currentX + 1.0 - cache.beamOrigin.x) * tDeltaX :
+        double tMaxX = (stepX > 0) ? (currentX + 1.0d - cache.beamOrigin.x) * tDeltaX :
                        (stepX < 0) ? (cache.beamOrigin.x - currentX) * tDeltaX :
                        Double.POSITIVE_INFINITY;
-        double tMaxY = (stepY > 0) ? (currentY + 1.0 - cache.beamOrigin.y) * tDeltaY :
+        double tMaxY = (stepY > 0) ? (currentY + 1.0d - cache.beamOrigin.y) * tDeltaY :
                        (stepY < 0) ? (cache.beamOrigin.y - currentY) * tDeltaY :
                        Double.POSITIVE_INFINITY;
-        double tMaxZ = (stepZ > 0) ? (currentZ + 1.0 - cache.beamOrigin.z) * tDeltaZ :
+        double tMaxZ = (stepZ > 0) ? (currentZ + 1.0d - cache.beamOrigin.z) * tDeltaZ :
                        (stepZ < 0) ? (cache.beamOrigin.z - currentZ) * tDeltaZ :
                        Double.POSITIVE_INFINITY;
 
         // Initialize current range
-        double t = 0.0;
+        double t = 0.0d;
 
         // DDA traversal
         while (t < MAX_RANGE) {
@@ -460,7 +460,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         serverLevel.playSound(
             null, worldPosition,
             SoundEvents.WARDEN_AGITATED, SoundSource.BLOCKS,
-            1.0F,0.7F
+            1.5f,0.8f
         );
         return false;
     }
@@ -469,9 +469,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Compute each particle
         for (int i = 0; i < NUM_PARTICLES; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double ySpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
-            double zSpeed = (level.random.nextDouble() - 0.5) * 2.0 * PARTICLE_RADIUS;
+            double xSpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double ySpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double zSpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
 
             // Handle motion
             cache.spawnPosition.set(cache.cannonFace).fma(i, cache.cannonVelocity);
@@ -482,7 +482,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,
-                1.0 // Use above speed values
+                1.0d // Use above speed values
             );
         }
     }
@@ -502,7 +502,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             serverLevel.playSound(
                 null, worldPosition,
                 SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
-                1.5F,0.7F
+                1.5f,0.8f
             );
         }
 
@@ -512,7 +512,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             serverLevel.playSound(
                 null, worldPosition,
                 SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
-                1.5F,1.0F
+                1.5f,0.8f
             );
         }
 

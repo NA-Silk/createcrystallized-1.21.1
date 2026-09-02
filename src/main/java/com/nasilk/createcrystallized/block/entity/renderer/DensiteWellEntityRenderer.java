@@ -14,8 +14,8 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
     public static final ResourceLocation TEXTURE_0 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
     public static final ResourceLocation TEXTURE_1 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_1.png");
     public static final ResourceLocation TEXTURE_2 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_2.png");
-    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png"); //TODO iterate on these textures a bit, center is messy
-    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png"); //TODO iterate on these textures a bit, center is messy
+    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png"); // TODO Iterate on these textures a bit, center is messy
+    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png"); // TODO Iterate on these textures a bit, center is messy
     private final DensiteWellCubeModel cube;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -38,10 +38,10 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
 
         // CUBE
         stack.pushPose(); //starts the chain
-        stack.translate(0.5, 0.5, 0.5); //moves cube to center
+        stack.translate(0.5d, 0.5d, 0.5d); //moves cube to center
         stack.mulPose(Axis.XP.rotationDegrees(30)); //tilts the child
         stack.mulPose(Axis.YP.rotationDegrees(spinny * (power + 1 ))); //rotates the child, faster if powered
-        stack.mulPose(Axis.ZP.rotationDegrees(spinny * 0.37F * (power + 1 ))); //also rotates the child, but with gusto and pizzaz
+        stack.mulPose(Axis.ZP.rotationDegrees(spinny * 0.37f * (power + 1 ))); //also rotates the child, but with gusto and pizzaz
 
         cube.renderToBuffer( //unspeakable violence
             stack,

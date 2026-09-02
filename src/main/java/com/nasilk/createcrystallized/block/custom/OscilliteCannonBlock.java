@@ -6,8 +6,6 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -33,9 +31,10 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class OscilliteCannonBlock extends DirectionalBlock implements IBE<OscilliteCannonEntity>, IHaveLongs {
-    // TODO Add part-checking into loot table... once we have a loot table
     public static final MapCodec<OscilliteCannonBlock> CODEC = simpleCodec(OscilliteCannonBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -49,15 +48,13 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
     private static final VoxelShape DOWN_BARREL_SHAPE = Block.box(0.0d, 1.0d, 0.0d, 16.0d, 16.0d, 16.0d);
 
     // Simulated Assembly Integration
-    private static final ObjectList<BlockPos> BARREL_POSITIONS = new ObjectArrayList<>();
     static {
         SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
-            BARREL_POSITIONS.clear();
             if (state.getBlock() instanceof OscilliteCannonBlock) {
                 BlockPos connectedPos = pos.relative(getNeighborDirection(state));
-                if (!visited.contains(connectedPos)) BARREL_POSITIONS.addFirst(connectedPos);
+                if (!visited.contains(connectedPos)) return List.of(connectedPos);
             }
-            return BARREL_POSITIONS;
+            return Collections.emptyList();
         });
     }
 
@@ -109,15 +106,15 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        // Handle Creative breaking (no drops)
-        if (level instanceof ServerLevel serverLevel && player.isCreative()) {
-            BlockPos neighborPos = pos.relative(getNeighborDirection(state));
-            BlockState neighborState = serverLevel.getBlockState(neighborPos);
+        // Handle Creative breaking from barrel (no drops)
+        if (level instanceof ServerLevel serverLevel && player.isCreative() && state.getValue(IS_BARREL)) {
+            BlockPos basePos = pos.relative(getNeighborDirection(state));
+            BlockState baseState = serverLevel.getBlockState(basePos);
 
-            // Remove the connected portion if it is a different state (BASE vs BARREL)
-            if (neighborState.is(this) && neighborState.getValue(IS_BARREL) != state.getValue(IS_BARREL)) {
-                serverLevel.setBlock(neighborPos, Blocks.AIR.defaultBlockState(), 35);
-                serverLevel.levelEvent(player, 2001, neighborPos, Block.getId(neighborState));
+            // Remove the connected base
+            if (baseState.is(this) && !baseState.getValue(IS_BARREL)) {
+                serverLevel.setBlock(basePos, Blocks.AIR.defaultBlockState(), 35); // Flag 35 = UPDATE_CLIENTS | UPDATE_SUPPRESS_DROPS | UPDATE_NEIGHBORS
+                serverLevel.levelEvent(player, 2001, basePos, Block.getId(baseState));
             }
         }
         return super.playerWillDestroy(level, pos, state, player);
@@ -200,10 +197,10 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                 ParticleTypes.SCULK_SOUL,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                8,0.5,0.5,0.5,0.5
+                pos.getX() + 0.5d,
+                pos.getY() + 0.5d,
+                pos.getZ() + 0.5d,
+                8,0.5d,0.5d,0.5d,0.5d
             );
         }
     }

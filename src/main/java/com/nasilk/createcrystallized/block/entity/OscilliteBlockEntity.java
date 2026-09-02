@@ -36,7 +36,7 @@ public class OscilliteBlockEntity extends BlockEntity {
         ) {
             // Get global position
             Cache cache = CACHE.get();
-            cache.blockPosition.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            cache.blockPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
             subLevel.logicalPose().transformPosition(cache.blockPosition);
 
             // Run gyroscope effect

@@ -67,7 +67,7 @@ public class EncasedBlock extends Block implements IWrenchable {
 
             serverLevel.sendParticles(
                 particleOptions,
-                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
                 particleCount, xOffset, yOffset, zOffset, speed
             );
         }

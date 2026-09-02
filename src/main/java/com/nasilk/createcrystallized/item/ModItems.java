@@ -30,7 +30,7 @@ public class ModItems {
 
 
     /** CRAFTING ITEMS */
-    // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite! // TODO move transformation related things to recipies using creates own system
+    // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
     public static final DeferredItem<Item> OSCILLITE_RESONATOR = ITEMS.registerItem(
         "oscillite_resonator",
         (properties) -> new Item(properties.stacksTo(16))
@@ -41,7 +41,7 @@ public class ModItems {
         (properties) -> new DensiteCoreItem(properties.stacksTo(16))
     );
 
-    public static final DeferredItem<Item> CHORA_INGOT = ITEMS.registerItem( //TODO move transformation related things to recipies using creates own system
+    public static final DeferredItem<Item> CHORA_INGOT = ITEMS.registerItem(
         "chora_ingot",
         (properties) -> new Item(properties.stacksTo(64))
     );

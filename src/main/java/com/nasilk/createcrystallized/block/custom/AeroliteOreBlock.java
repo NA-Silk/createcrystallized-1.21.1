@@ -23,8 +23,8 @@ import org.joml.Vector3f;
 
 public class AeroliteOreBlock extends Block {
     public static final BooleanProperty DISARMED = BlockStateProperties.DISARMED;
-    private static final double THRUST = 10.0d;
     private static final int THRUST_DELAY = 2;
+    private static final double THRUST = 10.0d;
 
     public AeroliteOreBlock(Properties properties) {
         super(properties);
@@ -97,19 +97,17 @@ public class AeroliteOreBlock extends Block {
         );
 
         // Play effects
-        DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.55F, 0.65F, 0.85F),1.2F);
-            serverLevel.sendParticles(dust,
-            pos.getX() + 0.5,
-            pos.getY() + 0.5,
-            pos.getZ() + 0.5,
+        DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.2f);
+        serverLevel.sendParticles(dust,
+            pos.getX() + 0.5d,
+            pos.getY() + 0.5d,
+            pos.getZ() + 0.5d,
             10,
-            0.4, 0.4, 0.4,
-            0.1
+            0.4d, 0.4d, 0.4d, 0.1d
         );
 
         serverLevel.playSound(
-            null,
-            pos,
+            null, pos,
             SoundEvents.BREEZE_SLIDE,
             SoundSource.BLOCKS,
             1.3f,1.3f

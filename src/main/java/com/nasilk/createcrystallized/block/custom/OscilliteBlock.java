@@ -53,10 +53,10 @@ public class OscilliteBlock extends Block implements IBE<OscilliteBlockEntity> {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
                 ParticleTypes.SCULK_SOUL,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                8,0.5,0.5,0.5,0.5
+                pos.getX() + 0.5d,
+                pos.getY() + 0.5d,
+                pos.getZ() + 0.5d,
+                8,0.5d,0.5d,0.5d,0.5d
             );
         }
     }

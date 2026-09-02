@@ -25,9 +25,12 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"deprecation", "SameParameterValue", "unused"})
 public class ModBlocks {
@@ -65,7 +68,7 @@ public class ModBlocks {
         (properties) -> new PropulsiteBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
@@ -89,7 +92,7 @@ public class ModBlocks {
         (properties) -> new OscilliteBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
@@ -131,7 +134,7 @@ public class ModBlocks {
             ModBlocks.DENSE_CHORA_CASING::asItem,
             ModBlocks.DENSITE_BLOCK,
             ModParticles.DENSITE_PARTICLES,
-            8,0.3,0.2,0.3,0.05
+            8,0.3d,0.2d,0.3d,0.05d
         ),
         EncasedDensiteCTBehavior::new
     );
@@ -141,7 +144,7 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .lightLevel(state -> 4)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
@@ -159,7 +162,7 @@ public class ModBlocks {
             ModBlocks.PROPULSED_CHORA_CASING::asItem,
             ModBlocks.PROPULSITE_BLOCK,
             ModParticles.PROPULSITE_PARTICLES,
-            16,0.5,0.5,0.5,0.25
+            16,0.5d,0.5d,0.5d,0.25d
         ),
         EncasedPropulsiteCTBehavior::new
     );
@@ -169,7 +172,7 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .lightLevel(state -> 4)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
@@ -187,7 +190,7 @@ public class ModBlocks {
             ModBlocks.OSCILLATING_CHORA_CASING::asItem,
             ModBlocks.OSCILLITE_BLOCK,
             () -> ParticleTypes.SCULK_SOUL,
-            8,0.5,0.5,0.5,0.5
+            8,0.5d,0.5d,0.5d,0.5d
         ),
         EncasedOscilliteCTBehavior::new
     );
@@ -197,7 +200,7 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .lightLevel(state -> 4)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
@@ -218,7 +221,7 @@ public class ModBlocks {
                 ParticleTypes.BLOCK,
                 AeroBlocks.LEVITITE.get().defaultBlockState()
             ),
-            0,0.0,0.0,0.0,0.0
+            0,0.0d,0.0d,0.0d,0.0d
         ),
         EncasedLevititeCTBehavior::new
     );
@@ -256,7 +259,7 @@ public class ModBlocks {
         () -> new PropulsiteThrusterBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .noOcclusion()
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
@@ -280,7 +283,7 @@ public class ModBlocks {
         () -> new OscilliteCannonBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3F)
+            .strength(0.3f)
             .noOcclusion()
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
@@ -307,12 +310,11 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_RED)
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
-            .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .requiresCorrectToolForDrops()
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.GLASS_BREAK,
                 SoundEvents.GLASS_STEP,
                 SoundEvents.GLASS_PLACE,
@@ -329,12 +331,11 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_PURPLE)
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
-            .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .requiresCorrectToolForDrops()
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.GLASS_BREAK,
                 SoundEvents.GLASS_STEP,
                 SoundEvents.GLASS_PLACE,
@@ -351,12 +352,11 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_RED)
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
-            .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .requiresCorrectToolForDrops()
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.GLASS_BREAK,
                 SoundEvents.GLASS_STEP,
                 SoundEvents.GLASS_PLACE,
@@ -373,12 +373,11 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_RED)
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
-            .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .requiresCorrectToolForDrops()
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.GLASS_BREAK,
                 SoundEvents.GLASS_STEP,
                 SoundEvents.GLASS_PLACE,
@@ -395,12 +394,11 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_PURPLE)
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
-            .strength(1.0F, 1.0F)
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .requiresCorrectToolForDrops()
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.GLASS_BREAK,
                 SoundEvents.GLASS_STEP,
                 SoundEvents.GLASS_PLACE,
@@ -417,7 +415,7 @@ public class ModBlocks {
         "echo_crystal_block",
         () -> new AmethystBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_PURPLE)
-            .strength(1.5F)
+            .strength(1.5f)
             .sound(SoundType.AMETHYST)
             .requiresCorrectToolForDrops()
         )
@@ -428,7 +426,7 @@ public class ModBlocks {
         () -> new BuddingEchoCrystalBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_PURPLE)
             .randomTicks()
-            .strength(1.5F)
+            .strength(1.5f)
             .sound(SoundType.AMETHYST)
             .requiresCorrectToolForDrops()
             .pushReaction(PushReaction.DESTROY)
@@ -437,12 +435,12 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> ECHO_CRYSTAL_CLUSTER = registerBlock(
         "echo_crystal_cluster",
-        () -> new AmethystClusterBlock(7.0F, 3.0F, BlockBehaviour.Properties.of()
+        () -> new AmethystClusterBlock(7.0f, 3.0f, BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_PURPLE)
             .forceSolidOn()
             .noOcclusion()
             .sound(SoundType.AMETHYST_CLUSTER)
-            .strength(1.5F)
+            .strength(1.5f)
             .lightLevel((l) -> 5)
             .pushReaction(PushReaction.DESTROY)
         )
@@ -450,7 +448,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> LARGE_ECHO_CRYSTAL_BUD = registerBlock(
         "large_echo_crystal_bud",
-        () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+        () -> new AmethystClusterBlock(5.0f, 3.0f, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
             .sound(SoundType.LARGE_AMETHYST_BUD)
             .lightLevel((l) -> 4)
         )
@@ -458,7 +456,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> MEDIUM_ECHO_CRYSTAL_BUD = registerBlock(
         "medium_echo_crystal_bud",
-        () -> new AmethystClusterBlock(4.0F, 3.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+        () -> new AmethystClusterBlock(4.0f, 3.0f, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
             .sound(SoundType.MEDIUM_AMETHYST_BUD)
             .lightLevel((l) -> 2)
         )
@@ -466,7 +464,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> SMALL_ECHO_CRYSTAL_BUD = registerBlock(
         "small_echo_crystal_bud",
-        () -> new AmethystClusterBlock(3.0F, 4.0F, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
+        () -> new AmethystClusterBlock(3.0f, 4.0f, BlockBehaviour.Properties.ofLegacyCopy(ECHO_CRYSTAL_CLUSTER.get())
             .sound(SoundType.SMALL_AMETHYST_BUD)
             .lightLevel((l) -> 1)
         )
@@ -481,9 +479,9 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BASS)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9F)
+            .strength(0.9f)
             .sound(new SoundType(
-                1.0F, 1.0F,
+                1.0f, 1.0f,
                 SoundEvents.STONE_BREAK,
                 SoundEvents.STONE_STEP,
                 ModSounds.PEBBLE_PLACE.get(),
@@ -494,13 +492,13 @@ public class ModBlocks {
         (block) -> new PebbleItem(block, new Item.Properties().stacksTo(1))
     );
 
-    // TODO add stacksTo(16)
     public static final DeferredBlock<Block> PROPULSITE_CRYSTAL = registerBlock(
         "propulsite_crystal",
-        () -> new AmethystClusterBlock(5.0F, 3.0F, BlockBehaviour.Properties.of()
+        () -> new AmethystClusterBlock(5.0f, 3.0f, BlockBehaviour.Properties.of()
             .sound(SoundType.LARGE_AMETHYST_BUD)
             .lightLevel((l) -> 8)
-        )
+        ),
+        new Item.Properties().stacksTo(16)
     );
 
     public static final DeferredBlock<Block> AEROLITE_ORE = registerBlock(
@@ -509,7 +507,7 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_LIGHT_GRAY)
             .instrument(NoteBlockInstrument.HAT)
             .requiresCorrectToolForDrops()
-            .strength(3.0F, 3.0F)
+            .strength(3.0f)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
@@ -532,7 +530,7 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_GRAY)
             .instrument(NoteBlockInstrument.HAT)
             .requiresCorrectToolForDrops()
-            .strength(3.0f, 3.0F)
+            .strength(3.0f)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)
@@ -554,7 +552,7 @@ public class ModBlocks {
         () -> new AeroliteOreBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_LIGHT_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(5.0F, 6.0F)
+            .strength(5.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(
                 new SoundType(1.0f, 1.2f,
@@ -572,7 +570,7 @@ public class ModBlocks {
         "chora_block",
         () -> new Block(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_RED)
-            .strength(5.0F, 6.0F)
+            .strength(5.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(
                 new SoundType(1.0f, 1.0f,
@@ -588,9 +586,15 @@ public class ModBlocks {
 
 
     // REGISTRY HELPERS, please thank them before you go, they are very nice.
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block, Item.Properties itemProperties) {
+        DeferredBlock<T> toReturn = BLOCKS.register(name, block);
+        setBlockItem(name, toReturn, itemProperties);
+        return toReturn;
+    }
+
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
-        setBlockItem(name, toReturn);
+        setBlockItem(name, toReturn, null);
         return toReturn;
     }
 
@@ -600,11 +604,19 @@ public class ModBlocks {
         return toReturn;
     }
 
+    private static <T extends Block> BlockEntry<T> registerBlockCT(String name, NonNullFunction<BlockBehaviour.Properties, T> factory, Supplier<ConnectedTextureBehaviour> behavior, Item.Properties itemProperties) {
+        BlockEntry<T> toReturn = CreateCrystallized.REGISTRATE.block(name, factory)
+            .onRegister(CreateRegistrate.connectedTextures(behavior))
+            .register();
+        setBlockItem(name, toReturn, itemProperties);
+        return toReturn;
+    }
+
     private static <T extends Block> BlockEntry<T> registerBlockCT(String name, NonNullFunction<BlockBehaviour.Properties, T> factory, Supplier<ConnectedTextureBehaviour> behavior) {
         BlockEntry<T> toReturn = CreateCrystallized.REGISTRATE.block(name, factory)
             .onRegister(CreateRegistrate.connectedTextures(behavior))
             .register();
-        setBlockItem(name, toReturn);
+        setBlockItem(name, toReturn, null);
         return toReturn;
     }
 
@@ -616,8 +628,8 @@ public class ModBlocks {
         return toReturn;
     }
 
-    private static <T extends Block> void setBlockItem(String name, Supplier<T> block) {
-        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    private static <T extends Block> void setBlockItem(String name, Supplier<T> block, @Nullable Item.Properties itemProperties) {
+        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), Objects.requireNonNullElseGet(itemProperties, Item.Properties::new)));
     }
 
     public static void register(IEventBus eventBus) {

@@ -90,8 +90,8 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
         settings.transformParticle().ifPresent(
             particle -> level.sendParticles(
                 particle.get(),
-                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                8,0.5,0.5,0.5,0.5
+                pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
+                8,0.5d,0.5d,0.5d,0.5d
             )
         );
         settings.transformSound().ifPresent(

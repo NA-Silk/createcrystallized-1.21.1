@@ -20,12 +20,12 @@ public class DensiteParticles extends TerrainParticle {
         this.gravity = 0.15f; // Drop speed (higher -> faster), default 0.06f
         this.lifetime = (int) (30.0f / (this.random.nextFloat() * 0.9f + 0.1f)); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
         this.quadSize = 0.2f * (this.random.nextFloat() * 0.5f + 0.5f); // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
-        this.xd = xSpeed * 0.2; // x starting speed
-        this.yd = ySpeed * 0.05; // y starting speed
-        this.zd = zSpeed * 0.2; // z starting speed
-        this.rCol = 1f;
-        this.gCol = 1f;
-        this.bCol = 1f;
+        this.xd = xSpeed * 0.2d; // x starting speed
+        this.yd = ySpeed * 0.05d; // y starting speed
+        this.zd = zSpeed * 0.2d; // z starting speed
+        this.rCol = 1.0f;
+        this.gCol = 1.0f;
+        this.bCol = 1.0f;
     }
     
     @Override
@@ -47,8 +47,8 @@ public class DensiteParticles extends TerrainParticle {
 
         // onGround & falling logic
         if (this.onGround) {
-            this.xd = 0;
-            this.zd = 0;
+            this.xd = 0.0d;
+            this.zd = 0.0d;
         } else {
             this.xd *= this.friction;
             this.yd *= this.friction;
@@ -56,7 +56,7 @@ public class DensiteParticles extends TerrainParticle {
         }
 
         // Fade out slowly
-        if (this.age > this.lifetime * 0.8) {
+        if (this.age > this.lifetime * 0.8d) {
             this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.2f);
         }
     }

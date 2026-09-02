@@ -13,12 +13,12 @@ public class OscilliteCannonBeamPayloadHandler {
             if (Minecraft.getInstance().level instanceof ClientLevel clientLevel) {
                 // Fire particles straight outward
                 Vector3d beamPosition = new Vector3d();
-                for (double i = 0; i <= data.range(); i+=0.5) {
+                for (double i = 0.0d; i <= data.range(); i += 0.5d) {
                     beamPosition.set(data.face()).fma(i, data.direction());
                     clientLevel.addParticle(
                         ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(),
                         beamPosition.x, beamPosition.y, beamPosition.z,
-                        0.0, 0.0, 0.0
+                        0.0d, 0.0d, 0.0d
                     );
                 }
             }

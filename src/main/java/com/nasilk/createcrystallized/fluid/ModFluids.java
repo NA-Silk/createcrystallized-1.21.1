@@ -149,12 +149,12 @@ public class ModFluids {
     public static final Supplier<FlowingFluid> SOURCE_DRIFT_CONDENSATE = FLUIDS.register(
         "source_drift_condensate", //putting "source" at the front of our fluid registries took 3 hours from my spicy Thursday, we may wanna change that
         () -> new UpwardBaseFlowingFluid.Source(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
-            .setFlowAnimationOptions(10,3,0.2,0.4,0.5,1.0f)
+            .setFlowAnimationOptions(10,3,0.2d,0.4d,0.5d,1.0f)
     );
     public static final Supplier<FlowingFluid> FLOWING_DRIFT_CONDENSATE = FLUIDS.register(
         "flowing_drift_condensate",
         () -> new UpwardBaseFlowingFluid.Flowing(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
-            .setFlowAnimationOptions(10,3,0.2,0.4,0.8,1.0f)
+            .setFlowAnimationOptions(10,3,0.2d,0.4d,0.8d,1.0f)
     );
 
     public static final DeferredBlock<LiquidBlock> DRIFT_CONDENSATE_BLOCK = ModBlocks.BLOCKS.register(

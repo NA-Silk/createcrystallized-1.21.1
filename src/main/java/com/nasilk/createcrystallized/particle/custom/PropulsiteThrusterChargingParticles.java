@@ -15,7 +15,7 @@ public class PropulsiteThrusterChargingParticles extends TextureSheetParticle {
         double x, double y, double z,
         double xSpeed, double ySpeed, double zSpeed
     ) {
-        super(level, x + xSpeed, y + ySpeed, z + zSpeed, 0, 0, 0); // Start on the outside and stall, tick() handles the movement
+        super(level, x + xSpeed, y + ySpeed, z + zSpeed, 0.0d, 0.0d, 0.0d); // Start on the outside and stall, tick() handles the movement
         this.setSpriteFromAge(spriteSet);
 
         // Store initial and final positions
@@ -31,9 +31,9 @@ public class PropulsiteThrusterChargingParticles extends TextureSheetParticle {
         this.lifetime = 15 + this.random.nextInt(10); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
         this.quadSize = 0.1f * (this.random.nextFloat() * 0.5f + 0.5f); // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
 
-        this.rCol = 1f;
-        this.gCol = 1f;
-        this.bCol = 1f;
+        this.rCol = 1.0f;
+        this.gCol = 1.0f;
+        this.bCol = 1.0f;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PropulsiteThrusterChargingParticles extends TextureSheetParticle {
         this.z += this.zd;
 
         // Fade out near final position
-        if (this.age > this.lifetime * 0.8) {
+        if (this.age > this.lifetime * 0.8d) {
             this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.2f);
         }
     }

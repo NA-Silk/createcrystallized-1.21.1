@@ -88,7 +88,7 @@ public class VibrationEventListener {
                     if (!settings.vibrationSettings().requireVibration()) continue;
 
                     // Check if the vibration is in the fluid radius and if the frequency matches
-                    if (pos.closerThan(vibrationPos, settings.vibrationSettings().radius() + 0.5)
+                    if (pos.closerThan(vibrationPos, settings.vibrationSettings().radius() + 0.5d)
                         && frequency >= settings.vibrationSettings().minimumFrequency()
                     ) {
                         fluid.tryEventTransform(serverLevel, pos, state, FluidTransformTriggerType.VIBRATION, settings);

@@ -15,7 +15,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<ThrownDensiteCoreEntity>> THROWN_DENSITE_CORE = ENTITY_TYPES.register(
         "densite_core_projectile",
         () -> EntityType.Builder.<ThrownDensiteCoreEntity>of(ThrownDensiteCoreEntity::new, MobCategory.MISC)
-            .sized(0.5F, 0.5F)
+            .sized(0.5f, 0.5f)
             .clientTrackingRange(12)
             .updateInterval(1)
             .build("densite_core_projectile")

@@ -58,7 +58,7 @@ public class OscilliteCannonChargingParticles extends SimpleAnimatedParticle {
         this.z += this.zd;
 
         // Fade out near final position
-        if (this.age > this.lifetime * 0.8) {
+        if (this.age > this.lifetime * 0.8d) {
             this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.2f);
         }
 

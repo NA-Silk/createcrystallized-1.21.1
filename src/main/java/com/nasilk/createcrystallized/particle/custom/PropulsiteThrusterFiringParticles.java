@@ -17,7 +17,7 @@ public class PropulsiteThrusterFiringParticles extends SimpleAnimatedParticle {
         this.hasPhysics = true; // Run collision
         this.friction = 0.95f; // Scatter speed (lower -> faster), default 0.98f
         this.lifetime = (int) (10.0f + this.random.nextFloat() * 15.0f); // Short lifetime
-        this.oRoll = this.random.nextFloat() * ((float)Math.PI * 2F); // Random particle rotation
+        this.oRoll = this.random.nextFloat() * ((float)Math.PI * 2f); // Random particle rotation
         this.roll = this.oRoll; // Random particle rotation
 
         // Explicit speeds induced by 0-count spawning

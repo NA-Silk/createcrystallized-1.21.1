@@ -38,7 +38,7 @@ public class LightningEventListener {
                     if (!settings.lightningSettings().requireLightning()) continue;
 
                     // Check if the lightning is in the fluid radius
-                    if (pos.closerThan(lightningPos, settings.lightningSettings().radius() + 0.5)) {
+                    if (pos.closerThan(lightningPos, settings.lightningSettings().radius() + 0.5d)) {
                         fluid.tryEventTransform(serverLevel, pos, state, FluidTransformTriggerType.LIGHTNING, settings);
                     }
                 }

@@ -24,14 +24,14 @@ public class DensiteCoreItem extends Item {
             null,
             player.getX(), player.getY(), player.getZ(),
             SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL,
-            0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
+            0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f)
         );
 
         if (!level.isClientSide) {
             ThrownDensiteCoreEntity entity = new ThrownDensiteCoreEntity(level, player);
-            entity.setPos(player.getX() + player.getLookAngle().x * 0.6, player.getEyeY() - 0.1, player.getZ() + player.getLookAngle().z * 0.6);
+            entity.setPos(player.getX() + player.getLookAngle().x * 0.6d, player.getEyeY() - 0.1d, player.getZ() + player.getLookAngle().z * 0.6d);
             entity.setItem(stack);
-            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 0.5F);
+            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 0.5f);
             level.addFreshEntity(entity);
         }
 

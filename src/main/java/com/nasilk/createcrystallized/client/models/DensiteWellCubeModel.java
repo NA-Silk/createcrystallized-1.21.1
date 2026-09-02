@@ -34,8 +34,8 @@ public class DensiteWellCubeModel extends Model {
 			CubeListBuilder
 				.create()
 				.texOffs(0, 0)
-				.addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)),
-			PartPose.offset(0.0F, 0.0F, 0.0F)
+				.addBox(-3.0f, -3.0f, -3.0f, 6.0f, 6.0f, 6.0f, new CubeDeformation(0.0f)),
+			PartPose.offset(0.0f, 0.0f, 0.0f)
 		);
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}

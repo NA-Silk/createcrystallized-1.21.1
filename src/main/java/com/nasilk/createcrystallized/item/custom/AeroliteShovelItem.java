@@ -23,7 +23,7 @@ public class AeroliteShovelItem extends ShovelItem {
 
     //oh my johd is that a sky paddle
     public static BlockHitResult getSkyPaddle(Player player) {
-        Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5));
+        Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5d));
         return new BlockHitResult(hitPosition, Direction.DOWN, BlockPos.containing(hitPosition), false);
     }
 
@@ -35,16 +35,17 @@ public class AeroliteShovelItem extends ShovelItem {
     // PARTICLES
     public static void skyPaddleParticles(ServerLevel serverLevel, Player player, BlockHitResult hitResult) {
         Vec3 pos = hitResult.getLocation();
-        Vec3 particleVelocity = player.getLookAngle().scale(0.2);
+        Vec3 particleVelocity = player.getLookAngle().scale(0.2d);
         for (int i = 0; i < 4; i++) {
-            double offsetX = (serverLevel.random.nextDouble() - 0.5) * 0.5;
-            double offsetY = (serverLevel.random.nextDouble() - 0.5) * 0.5;
-            double offsetZ = (serverLevel.random.nextDouble() - 0.5) * 0.5;
-            serverLevel.sendParticles(ParticleTypes.CLOUD,
+            double offsetX = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
+            double offsetY = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
+            double offsetZ = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
+            serverLevel.sendParticles(
+                ParticleTypes.CLOUD,
                 pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ,
                 0,
                 particleVelocity.x, particleVelocity.y, particleVelocity.z,
-                1
+                1.0d
             );
         }
     }
@@ -56,7 +57,7 @@ public class AeroliteShovelItem extends ShovelItem {
             null,
             pos.x, pos.y, pos.z,
             SoundEvents.BREEZE_DEFLECT, SoundSource.PLAYERS,
-            0.2F, 1.0F
+            0.2f, 1.0f
         );
     }
 }

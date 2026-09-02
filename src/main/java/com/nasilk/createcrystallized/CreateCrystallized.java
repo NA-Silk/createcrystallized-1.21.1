@@ -12,18 +12,7 @@ import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.common.ModSpriteShifts;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -40,14 +29,9 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateCrystallized.MOD_ID)
 public class CreateCrystallized {
-    // Define mod id in a common place for everything to reference
-    public static final String MOD_ID = "createcrystallized";
-
-    // Connected textures registrator
-    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
-
-    // Directly reference a slf4j logger
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final String MOD_ID = "createcrystallized"; // Define mod id in a common place for everything to reference
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID); // Connected textures registrator
+    public static final Logger LOGGER = LogUtils.getLogger(); // Directly reference a slf4j logger
 
     // The constructor for the mod class is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
@@ -66,17 +50,17 @@ public class CreateCrystallized {
         ModSpriteShifts.init();
         REGISTRATE.registerEventListeners(modEventBus);
 
-        // Register ourselves for server and other game events
-        NeoForge.EVENT_BUS.register(this);
+        // Default registrations
+        NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
+        modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
+        modEventBus.addListener(this::addCreative); // Register the items to a creative tab
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register ModConfigSpec so that FML can create and load the config file
+    }
 
-        // Register the commonSetup method for mod loading
-        modEventBus.addListener(this::commonSetup);
-
-        // Register the items to a creative tab
-        modEventBus.addListener(this::addCreative);
-
-        // Register ModConfigSpec so that FML can create and load the config file
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        LOGGER.info("Minecraft Name >> {}", Minecraft.getInstance().getUser().getName());
+        LOGGER.info("HELLO from server starting");
     }
 
     @SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
@@ -85,12 +69,12 @@ public class CreateCrystallized {
             ModDispenserBehavior.register();
         });
         LOGGER.info("Create:Crystallized Loaded");
+        LOGGER.info("HELLO from common setup");
     }
 
     // Add block items to creative tabs
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTab() == ModCreativeModeTabs.CREATECRYSTALLIZED_TAB.get()) {
-
             // Buckets
             event.accept(ModFluids.VOID_SEA_SLURRY_BUCKET);
             event.accept(ModFluids.DENSITE_EMULSION_BUCKET);
@@ -146,68 +130,6 @@ public class CreateCrystallized {
             event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
             event.accept(ModBlocks.OSCILLITE_CANNON);
             event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
-        }
-    }
-
-    // @SubscribeEvent lets the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info("HELLO from server starting");
-    }
-
-    // TODO Move to client
-    // @EventBusSubscriber automatically registers all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(() -> {
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_VOID_SEA_SLURRY.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_DENSITE_EMULSION.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_DENSITE_EMULSION.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_DRIFT_CONDENSATE.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_PROPULSITE_FLURRY.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_OSCILLITE_SUSPENSION.get(), RenderType.translucent());
-            });
-        }
-
-        @SubscribeEvent
-        public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-            event.registerSpriteSet(ModParticles.DENSITE_PARTICLES.get(), DensiteParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.PROPULSITE_PARTICLES.get(), PropulsiteParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), OscilliteCannonChargingParticles.Provider::new);
-            event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(), OscilliteCannonFiringParticles.Provider::new);
-        }
-
-        // TODO Move to client
-        @SubscribeEvent
-        public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-            IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {
-                @Override
-                public boolean addDestroyEffects(BlockState state, Level level, BlockPos pos, ParticleEngine manager) {
-                    return true; // Cancel default particles
-                }
-            };
-
-            event.registerBlock(
-                noDefaultParticles,
-                ModBlocks.DENSITE_BLOCK.get(),
-                ModBlocks.ENCASED_DENSITE_BLOCK.get(),
-                ModBlocks.DENSITE_WELL.get(),
-                ModBlocks.PROPULSITE_BLOCK.get(),
-                ModBlocks.ENCASED_PROPULSITE_BLOCK.get(),
-                ModBlocks.PROPULSITE_THRUSTER.get(),
-                ModBlocks.OSCILLITE_BLOCK.get(),
-                ModBlocks.ENCASED_OSCILLITE_BLOCK.get(),
-                ModBlocks.OSCILLITE_CANNON.get(),
-                ModBlocks.ENCASED_LEVITITE_BLOCK.get()
-            );
         }
     }
 }

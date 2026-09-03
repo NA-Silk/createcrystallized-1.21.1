@@ -1,7 +1,6 @@
 package com.nasilk.createcrystallized.client.models; // Made with Blockbench 5.1.6
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nasilk.createcrystallized.CreateCrystallized;
@@ -14,11 +13,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 public class DensiteWellCubeModel extends Model {
-
-
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "densite_well_cube"), "main"
-	);
-	
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "densite_well_cube"), "main");
 	private final ModelPart bb_main;
 
 	public DensiteWellCubeModel(ModelPart root) {

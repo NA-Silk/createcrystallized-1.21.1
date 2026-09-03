@@ -46,19 +46,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInformation {
+    // Tick state
+    private TickState tickState = TickState.IDLE;
+    private final OscilliteCannonBehavior behavior = new OscilliteCannonBehavior(this);
+
     // Variables (saved)
     private int cooldown = 0;
     private boolean armed = false;
     private boolean firing = false;
 
     // Variables (unsaved)
-    private final Vector3d cannonPosition = new Vector3d();
     private final BlockPos.MutableBlockPos fuelPos = new BlockPos.MutableBlockPos();
     private DamageSource cannonDamageSource = null;
-
-    // Tick constants
-    private static final int FUEL_RADIUS = 1;
-    private static final double FACE_OFFSET = 1.5d;
 
     // Firing constants
     private static final float DAMAGE_AMOUNT = 50.0f;
@@ -75,6 +74,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
     // Cache
     public static class Cache {
+        // Public
+        public final Vector3d cannonPosition = new Vector3d();
+
         // Tick
         Direction facing = Direction.NORTH;
         final Vector3d cannonDirection = new Vector3d();
@@ -101,10 +103,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
-    // Tick state
-    private TickState tickState = TickState.IDLE;
-    private final OscilliteCannonBehavior behavior = new OscilliteCannonBehavior(this);
-
 
     // CONSTRUCTOR
     public OscilliteCannonEntity(BlockPos pos, BlockState state) {
@@ -118,27 +116,26 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             // Get initial variables
             Cache cache = CACHE.get();
             BlockState blockState = getBlockState();
-            boolean powered = blockState.getValue(OscilliteCannonBlock.POWERED);
 
             // Handle sublevels
             ServerSubLevel subLevel = null;
             if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel serverSubLevel) subLevel = serverSubLevel;
 
             // Get position, I, J, cannonDirection/K vectors
-            cannonPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d); // Local position
+            cache.cannonPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d); // Local position
             cache.facing = blockState.getValue(OscilliteCannonBlock.FACING);
             cache.cannonDirection.set(cache.facing.step()); // K
             if (cache.facing.getAxis() == Direction.Axis.Y) cache.tempVector.set(0.0d, 0.0d, -1.0d); // North
             else cache.tempVector.set(0.0d, 1.0d, 0.0d); // Up
             cache.cannonI.set(cache.cannonDirection).cross(cache.tempVector).normalize();
             cache.cannonJ.set(cache.cannonI).cross(cache.cannonDirection).normalize();
-            cache.cannonFace.set(cannonPosition).fma(FACE_OFFSET, cache.cannonDirection);
+            cache.cannonFace.set(cache.cannonPosition).fma(OscilliteCannonBehavior.FACE_OFFSET, cache.cannonDirection);
 
             // Transform local to global vectors and get face position
             if (subLevel != null) {
-                Sable.HELPER.getVelocity(serverLevel, subLevel, cannonPosition, cache.cannonVelocity);
+                Sable.HELPER.getVelocity(serverLevel, subLevel, cache.cannonPosition, cache.cannonVelocity);
                 cache.cannonVelocity.mul(1.0d / 20.0d); // bps -> bpt
-                subLevel.logicalPose().transformPosition(cannonPosition);
+                subLevel.logicalPose().transformPosition(cache.cannonPosition);
                 subLevel.logicalPose().transformNormal(cache.cannonDirection);
                 subLevel.logicalPose().transformNormal(cache.cannonI);
                 subLevel.logicalPose().transformNormal(cache.cannonJ);
@@ -148,13 +145,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             }
 
             // Select state and run tick
-            boolean randTick = (serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0;
-            if      (                     cooldown > 0  && !powered                                       ) tickState = TickState.COOLDOWN;
-            else if (!armed && !firing && cooldown == 0 &&  randTick && hasCrystalFuel(serverLevel, cache)) tickState = TickState.CHARGING;
-            else if ( armed && !firing                  &&  powered  && tryConsumeCrystalFuel(serverLevel)) tickState = TickState.FIRING_INIT;
-            else if (           firing                                                                    ) tickState = TickState.FIRING;
-            else                                                                                            tickState = TickState.IDLE;
-            behavior.tick(serverLevel, cache);
+            boolean randTick = (serverLevel.getGameTime() + worldPosition.hashCode()) % OscilliteCannonBehavior.RANDOM_TICK_RATE == 0;
+            boolean powered = blockState.getValue(OscilliteCannonBlock.POWERED);
+            if      (cooldown >  0                                                      ) tickState = TickState.COOLDOWN;
+            else if (!armed &&            randTick && hasCrystalFuel(serverLevel, cache)) tickState = TickState.CHARGING;
+            else if ( armed && !firing && powered  && tryConsumeCrystalFuel(serverLevel)) tickState = TickState.FIRING_INIT;
+            else if (           firing                                                  ) tickState = TickState.FIRING;
+            else                                                                          tickState = TickState.IDLE;
+            behavior.tick(serverLevel, randTick, powered, cache);
         }
     }
 
@@ -162,12 +160,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     // CHARGING
     private boolean hasCrystalFuel(ServerLevel serverLevel, Cache cache) {
         // Get coordinates
-        int x1 = cache.facing.getStepX() < 0 ? worldPosition.getX() - FUEL_RADIUS - 1 : worldPosition.getX() - FUEL_RADIUS;
-        int x2 = cache.facing.getStepX() > 0 ? worldPosition.getX() + FUEL_RADIUS + 1 : worldPosition.getX() + FUEL_RADIUS;
-        int y1 = cache.facing.getStepY() < 0 ? worldPosition.getY() - FUEL_RADIUS - 1 : worldPosition.getY() - FUEL_RADIUS;
-        int y2 = cache.facing.getStepY() > 0 ? worldPosition.getY() + FUEL_RADIUS + 1 : worldPosition.getY() + FUEL_RADIUS;
-        int z1 = cache.facing.getStepZ() < 0 ? worldPosition.getZ() - FUEL_RADIUS - 1 : worldPosition.getZ() - FUEL_RADIUS;
-        int z2 = cache.facing.getStepZ() > 0 ? worldPosition.getZ() + FUEL_RADIUS + 1 : worldPosition.getZ() + FUEL_RADIUS;
+        int x1 = cache.facing.getStepX() < 0 ? worldPosition.getX() - OscilliteCannonBehavior.FUEL_RADIUS - 1 : worldPosition.getX() - OscilliteCannonBehavior.FUEL_RADIUS;
+        int x2 = cache.facing.getStepX() > 0 ? worldPosition.getX() + OscilliteCannonBehavior.FUEL_RADIUS + 1 : worldPosition.getX() + OscilliteCannonBehavior.FUEL_RADIUS;
+        int y1 = cache.facing.getStepY() < 0 ? worldPosition.getY() - OscilliteCannonBehavior.FUEL_RADIUS - 1 : worldPosition.getY() - OscilliteCannonBehavior.FUEL_RADIUS;
+        int y2 = cache.facing.getStepY() > 0 ? worldPosition.getY() + OscilliteCannonBehavior.FUEL_RADIUS + 1 : worldPosition.getY() + OscilliteCannonBehavior.FUEL_RADIUS;
+        int z1 = cache.facing.getStepZ() < 0 ? worldPosition.getZ() - OscilliteCannonBehavior.FUEL_RADIUS - 1 : worldPosition.getZ() - OscilliteCannonBehavior.FUEL_RADIUS;
+        int z2 = cache.facing.getStepZ() > 0 ? worldPosition.getZ() + OscilliteCannonBehavior.FUEL_RADIUS + 1 : worldPosition.getZ() + OscilliteCannonBehavior.FUEL_RADIUS;
 
         // Run check
         for (BlockPos pos : BlockPos.betweenClosed(
@@ -200,8 +198,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Set bounding box to query subLevels
         cache.targets.clear();
         cache.searchBox.setUnchecked(
-            cannonPosition.x - MAX_RANGE, cannonPosition.y - MAX_RANGE, cannonPosition.z - MAX_RANGE,
-            cannonPosition.x + MAX_RANGE, cannonPosition.y + MAX_RANGE, cannonPosition.z + MAX_RANGE
+            cache.cannonPosition.x - MAX_RANGE, cache.cannonPosition.y - MAX_RANGE, cache.cannonPosition.z - MAX_RANGE,
+            cache.cannonPosition.x + MAX_RANGE, cache.cannonPosition.y + MAX_RANGE, cache.cannonPosition.z + MAX_RANGE
         );
 
         // Populate the target sublevel list
@@ -250,8 +248,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Set bounding box to query entities
         cache.searchBox.setUnchecked(
-            cannonPosition.x - range, cannonPosition.y - range, cannonPosition.z - range,
-            cannonPosition.x + range, cannonPosition.y + range, cannonPosition.z + range
+            cache.cannonPosition.x - range, cache.cannonPosition.y - range, cache.cannonPosition.z - range,
+            cache.cannonPosition.x + range, cache.cannonPosition.y + range, cache.cannonPosition.z + range
         );
 
         // Get entities within the bounding box
@@ -394,7 +392,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
         double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
         double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-        cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cannonPosition);
+        cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.cannonPosition);
 
         // Linear distance
         double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
@@ -439,14 +437,13 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     // LONGS
-    @SuppressWarnings({"DuplicateCondition", "ConstantValue"})
     public void defaultUpdateLongs(ServerLevel serverLevel) {
         // Cooldown -> Waiting (Idle)
         if (cooldown > 0) {
             cooldown = 0;
         }
 
-        // Charging -> Armed (Idle)
+        // Charging (Idle) -> Armed (Idle)
         else if (!armed) {
             armed = true;
             serverLevel.playSound(
@@ -456,8 +453,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             );
         }
 
-        // Armed -> Firing Initialization (next tick -> Firing)
-        else if (armed) {
+        // Armed (Idle) -> Firing Initialization { next tick -> Firing }
+        else {
             firing = true;
             serverLevel.playSound(
                 null, worldPosition,
@@ -467,7 +464,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
 
         // Send update packet
-        else return;
         this.setChanged();
         serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
@@ -545,6 +541,5 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     public boolean getArmed()             { return armed;             }
     public void setArmed(boolean armed)   { this.armed = armed;       }
     public void setFiring(boolean firing) { this.firing = firing;     }
-    public Vector3d getCannonPosition()   { return cannonPosition;    }
     public TickState getTickState()       { return tickState;         }
 }

@@ -2,10 +2,12 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
+import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
@@ -132,6 +134,13 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
+    // Tick state
+    private TickState tickState = TickState.IDLE;
+    public TickState getTickState() {
+        return tickState;
+    }
+    private final PropulsiteThrusterBehavior behavior = new PropulsiteThrusterBehavior(this);
+
 
     public PropulsiteThrusterEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PROPULSITE_THRUSTER.get(), pos, state);
@@ -145,8 +154,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) return;
             Cache cache = CACHE.get();
-            BlockState state = getBlockState();
-            boolean powered = state.getValue(PropulsiteThrusterBlock.POWERED);
+            BlockState blockState = getBlockState();
+            boolean powered = blockState.getValue(PropulsiteThrusterBlock.POWERED);
 
             // Get global position
             cache.thrusterPositionLocal.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
@@ -163,16 +172,25 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             else velocitySquared = 0.0d;
 
             // Transform local to global vectors and get face position
-            cache.facing = state.getValue(PropulsiteThrusterBlock.FACING);
+            cache.facing = blockState.getValue(PropulsiteThrusterBlock.FACING);
             cache.thrusterDirection.set(cache.facing.step());
             subLevel.logicalPose().transformNormal(cache.thrusterDirection);
             cache.thrusterFace.set(cache.thrusterPosition).fma(FACE_OFFSET, cache.thrusterDirection);
 
             // Update amplitude
-            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0) updateAmplitude(serverLevel, worldPosition);
+            boolean randTick = (serverLevel.getGameTime() + worldPosition.hashCode()) % 20 == 0;
+            if (randTick) updateAmplitude(serverLevel, worldPosition);
+
+            // Select state
+            if      (            cooldown > 0        && !powered                     ) tickState = TickState.COOLDOWN;
+            else if (!armed  &&  charge < MAX_CHARGE &&  velocitySquared >= THRESHOLD) tickState = TickState.CHARGING;
+            else if (!armed  &&  charge > 0          &&  velocitySquared <  THRESHOLD) tickState = TickState.DISCHARGING;
+            else if ( armed  && !firing              &&  powered                     ) tickState = TickState.FIRING_INIT;
+            else if (            firing                                              ) tickState = TickState.FIRING;
+            else                                                                       tickState = TickState.IDLE;
 
             // Cooldown
-            if (cooldown > 0 && !powered) {
+            if (tickState == TickState.COOLDOWN) {
                 cooldown--;
                 if (cooldown % SIMPLE_PARTICLE_RATE == 0) {
                     serverLevel.sendParticles(
@@ -187,7 +205,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
 
             // Charging
-            if (!armed && charge < MAX_CHARGE && velocitySquared >= THRESHOLD) {
+            if (tickState == TickState.CHARGING) {
                 charge++;
                 if (charge >= MAX_CHARGE) {
                     armed = true;
@@ -204,7 +222,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
 
             // Discharging
-            if (!armed && charge > 0 && !powered) {
+            if (tickState == TickState.DISCHARGING) {
                 charge--;
                 if (charge % SIMPLE_PARTICLE_RATE == 0) {
                     serverLevel.sendParticles(
@@ -219,7 +237,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
 
             // Firing initialization
-            if (armed && powered && !firing) {
+            if (tickState == TickState.FIRING_INIT) {
                 firing = true;
                 firingTick = 0;
                 serverLevel.playSound(
@@ -233,7 +251,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
 
             // Firing sequence
-            if (firing) {
+            if (tickState == TickState.FIRING) {
                 // The curve that determines the total thrust of the burst
                 thrust = (amplitude / NORM_DENOMINATOR) // Maximum
                     * BURST_CURVE[firingTick]; // Curve computation
@@ -261,17 +279,19 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
 
             // Idling; ambiance is nice
-            if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
-                if (charge == 0) serverLevel.playSound(
-                    null, worldPosition,
-                    SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
-                    1.0f,0.8f
-                );
-                else if (charge == MAX_CHARGE) serverLevel.playSound(
-                    null, worldPosition,
-                    SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
-                    1.0f,0.8f
-                );
+            if (tickState == TickState.IDLE) {
+                if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
+                    if (charge == 0) serverLevel.playSound(
+                        null, worldPosition,
+                        SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
+                        1.0f,0.8f
+                    );
+                    else if (charge == MAX_CHARGE) serverLevel.playSound(
+                        null, worldPosition,
+                        SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
+                        1.0f,0.8f
+                    );
+                }
             }
         }
     }
@@ -470,7 +490,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             );
         }
 
-        // Return
+        // Send update packet
         else return;
         this.setChanged();
         serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);

@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
+import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;
@@ -41,6 +42,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Tick constants
     private static final int TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
+    private static final double PARTICLE_RATE = 0.05d;
     private static final double MIN_RADIUS = 0.0d;
     private static final double RADIUS_SCALE = 2.0d;
     private static final double FIELD_CONSTANT = 0.5d;
@@ -60,7 +62,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
     private static final double DAMPEN_RADIUS = 1.5d;
     private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-    // private static final double DAMPEN_RADIUS_CUBED = DAMPEN_RADIUS * DAMPEN_RADIUS * DAMPEN_RADIUS;
     private static final double DAMPEN_FACTOR = 0.2d;
 
     // Cache
@@ -125,6 +126,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             // Run gravity effect
             if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
             if (!targets.isEmpty()) applyGravity(cache);
+            if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
         }
     }
 
@@ -206,6 +208,27 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             // Apply rotation transformed impulse
             targetSubLevel.logicalPose().orientation().transformInverse(cache.impulseVelocity);
             handle.applyLinearImpulse(cache.impulseVelocity);
+        }
+    }
+
+
+    // PARTICLES
+    private void addEffectParticles(ServerLevel serverLevel, Cache cache) {
+        // Compute each particle
+        for (int i = 0; i < power; i++) {
+            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
+            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
+            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
+            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
+
+            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            serverLevel.sendParticles(
+                ModParticles.DENSITE_WELL_PARTICLES.get(),
+                cache.wellPosition.x, cache.wellPosition.y, cache.wellPosition.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
+                xSpeed, ySpeed, zSpeed,
+                1.0d // Use above speed values
+            );
         }
     }
 

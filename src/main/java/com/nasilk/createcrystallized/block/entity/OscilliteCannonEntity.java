@@ -413,19 +413,19 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     // PARTICLES
-    public void addChargingParticles(ServerLevel level, Cache cache) {
+    public void addChargingParticles(ServerLevel serverLevel, Cache cache) {
         // Compute each particle
         for (int i = 0; i < NUM_PARTICLES; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
-            double ySpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
-            double zSpeed = (level.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
 
             // Handle motion
             cache.spawnPosition.set(cache.cannonFace).fma(i, cache.cannonVelocity);
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
-            level.sendParticles(
+            serverLevel.sendParticles(
                 ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)

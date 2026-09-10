@@ -16,6 +16,11 @@ public class ModParticles {
         () -> new SimpleParticleType(true)
     );
 
+    public static final Supplier<SimpleParticleType> DENSITE_WELL_PARTICLES = PARTICLE_TYPES.register(
+        "densite_well_particles",
+        () -> new SimpleParticleType(true)
+    );
+
     public static final Supplier<SimpleParticleType> PROPULSITE_PARTICLES = PARTICLE_TYPES.register(
         "propulsite_particles",
         () -> new SimpleParticleType(true)

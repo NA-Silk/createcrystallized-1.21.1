@@ -28,8 +28,8 @@ public class OscilliteCannonChargingParticles extends SimpleAnimatedParticle {
 
         // Set behavior parameters
         this.hasPhysics = false; // Disable collision?
-        this.lifetime = 30 + this.random.nextInt(10); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
-        this.quadSize = 0.1f * (this.random.nextFloat() * 0.5f + 0.5f); // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        this.lifetime = 30 + this.random.nextInt(20); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
+        this.quadSize = 0.05f * this.random.nextFloat() + 0.05f; // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
     }
 
     @Override

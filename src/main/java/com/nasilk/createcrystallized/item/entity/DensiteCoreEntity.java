@@ -5,8 +5,6 @@ import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +36,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.broadcastEntityEvent(this, (byte) 3);
+            serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
             this.discard();
             CreateCrystallized.LOGGER.info("HIT");
         }
@@ -53,7 +51,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // Test
     @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);

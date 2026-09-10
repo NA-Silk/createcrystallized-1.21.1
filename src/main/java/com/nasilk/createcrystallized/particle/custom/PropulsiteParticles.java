@@ -23,9 +23,6 @@ public class PropulsiteParticles extends TerrainParticle {
         this.xd = xSpeed * 10.0d; // x starting speed
         this.yd = ySpeed * 10.0d; // y starting speed
         this.zd = zSpeed * 10.0d; // z starting speed
-        this.rCol = 1.0f;
-        this.gCol = 1.0f;
-        this.bCol = 1.0f;
     }
     
     @Override

@@ -199,7 +199,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
             && !DivingBootsItem.isWornBy(entity);
     private void updateEntityTargets() {
         // Reset the target list
-        sublevelTargets.clear();
+        entityTargets.clear();
 
         // Get ServerLevel
         if (!(this.level() instanceof ServerLevel serverLevel)) return;

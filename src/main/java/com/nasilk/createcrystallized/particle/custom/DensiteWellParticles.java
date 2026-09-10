@@ -31,8 +31,8 @@ public class DensiteWellParticles extends TerrainParticle {
 
         // Set behavior parameters
         this.hasPhysics = false; // Disable collision?
-        int life = 20 * (int) Mth.length(xSpeed, ySpeed, zSpeed);
-        this.lifetime = life + this.random.nextInt(life / 2); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
+        int life = (int) (20 * Mth.length(xSpeed, ySpeed, zSpeed));
+        this.lifetime = life + this.random.nextInt(Math.max(1, life / 2)); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
         this.quadSize = 0.05f * this.random.nextFloat() + 0.05f; // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
     }
 

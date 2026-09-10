@@ -4,6 +4,9 @@ import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.equipment.armor.DivingBootsItem;
+import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
@@ -14,6 +17,7 @@ import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -23,6 +27,7 @@ import net.minecraft.world.phys.*;
 import org.joml.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 // TODO NICK DO FUN THINGS HERE
 public class DensiteCoreEntity extends ThrowableItemProjectile {
@@ -60,8 +65,9 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
             serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
             this.discard();
             this.updateSublevelTargets();
-            this.applySublevelGravity();
-            this.applyEntityGravity();
+            if (!sublevelTargets.isEmpty()) this.applySublevelGravity();
+            this.updateEntityTargets();
+            if (!entityTargets.isEmpty()) CreateCrystallized.LOGGER.info("ENTITIES DETECTED"); // this.applyEntityGravity();
             CreateCrystallized.LOGGER.info("HIT");
         }
     }
@@ -185,6 +191,30 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         }
     }
 
+    private final List<Entity> entityTargets = new ArrayList<>();
+    private static final Predicate<Entity> ENTITY_PREDICATE = entity ->
+        !entity.isSpectator()
+            && !(entity instanceof AbstractContraptionEntity)
+            && !AirCurrent.isPlayerCreativeFlying(entity)
+            && !DivingBootsItem.isWornBy(entity);
+    private void updateEntityTargets() {
+        // Reset the target list
+        sublevelTargets.clear();
+
+        // Get ServerLevel
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+
+        // Set bounding box to query entities
+        searchBox.setUnchecked(
+            this.position().x - FIELD_RADIUS, this.position().y - FIELD_RADIUS, this.position().z - FIELD_RADIUS,
+            this.position().x + FIELD_RADIUS, this.position().y + FIELD_RADIUS, this.position().z + FIELD_RADIUS
+        );
+
+        // Get eligible entities within the bounding box
+        entityTargets.addAll(serverLevel.getEntities((Entity) null, searchBox.toMojang(), ENTITY_PREDICATE)); // toMojang() allocates a new Mojang AABB...
+    }
+
+    // TODO
     private void applyEntityGravity() {
 
     }
@@ -200,7 +230,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
                 for (int i = 0; i < 8; i++) this.level().addParticle(
                     ModParticles.DENSITE_WELL_PARTICLES.get(),
                     this.getX(), this.getY(), this.getZ(),
-                    5.0d * random.nextDouble(), 5.0d * random.nextDouble(), 5.0d * random.nextDouble()
+                    10.0d * random.nextDouble() - 5.0d, 10.0d * random.nextDouble() - 5.0d, 10.0d * random.nextDouble() - 5.0d
                 );
                 break;
             case 4:

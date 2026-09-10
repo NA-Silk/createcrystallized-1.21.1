@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
-import com.nasilk.createcrystallized.item.entity.ThrownDensiteCoreEntity;
+import com.nasilk.createcrystallized.item.entity.DensiteCoreEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class ThrownDensiteCoreRenderer extends EntityRenderer<ThrownDensiteCoreEntity> {
+public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
     private final DensiteWellCubeModel model;
 
@@ -23,7 +23,7 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<ThrownDensiteCoreE
     }
 
     @Override
-    public void render(ThrownDensiteCoreEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(DensiteCoreEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0.0d, 0.15d, 0.0d); // uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh he go
         poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTicks) * 20.0f)); // s  p  i  n
@@ -40,7 +40,7 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<ThrownDensiteCoreE
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ThrownDensiteCoreEntity entity) {
+    public ResourceLocation getTextureLocation(DensiteCoreEntity entity) {
         return TEXTURE;
     }
 }

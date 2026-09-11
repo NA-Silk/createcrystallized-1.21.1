@@ -16,7 +16,6 @@ import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,11 +41,9 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
 
     // applySublevelGravity Variables
     private final Vector3d corePosition = new Vector3d();
-    private final Vector3d targetPosition = new Vector3d();
     private final Vector3d impulseVelocity = new Vector3d();
     private final Vector3d currentLinearVelocity = new Vector3d();
     private final Vector3d currentAngularVelocity = new Vector3d();
-    private final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d);
     private static final int FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
     private static final double SUBLEVEL_STRENGTH = 16.0d;
     private static final double IMPACT_RADIUS = 0.5d;
@@ -156,8 +153,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
             if (!handle.isValid()) continue;
 
             // Get sublevel position, impulse velocity, and current distance^2
-            targetPosition.set(targetSubLevel.logicalPose().position());
-            impulseVelocity.set(corePosition).sub(targetPosition);
+            impulseVelocity.set(corePosition).sub(targetSubLevel.logicalPose().position());
             double distanceSquared = impulseVelocity.lengthSquared();
 
             // Handle out of range entities
@@ -184,7 +180,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
                 // Handle dampening when within well radius
                 handle.getLinearVelocity(currentLinearVelocity);
                 currentLinearVelocity.mul(-DAMPEN_SCALE);
-                handle.addLinearAndAngularVelocity(currentLinearVelocity, zeroVector);
+                handle.addLinearAndAngularVelocity(currentLinearVelocity, new Vector3d(0.0d, 0.0d, 0.0d));
 
                 // Handle reduced pull impulse
                 impulseVelocity.mul(DAMPENED_STRENGTH);

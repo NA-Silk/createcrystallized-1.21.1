@@ -20,10 +20,24 @@ public class OscilliteBlockEntity extends BlockEntity {
         final Vector3d blockPosition = new Vector3d();
         final Vector3d angularVelocity = new Vector3d();
         final Vector3d rotation = new Vector3d();
-        final Vector3d unitUp = new Vector3d(0.0d, 1.0d, 0.0d); // Read-only reference
+        final Vector3d temp = new Vector3d();
         final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
+
+    private enum UnitDir {
+        UP(new Vector3d(0, 1, 0)),
+        DOWN(new Vector3d(0, -1, 0)),
+        NORTH(new Vector3d(0, 0, -1)),
+        SOUTH(new Vector3d(0, 0, 1)),
+        EAST(new Vector3d(1, 0, 0)),
+        WEST(new Vector3d(-1, 0, 0));
+
+        private static final UnitDir[] VALUES = values();
+        private final Vector3d normal;
+        public Vector3d getNormal() { return normal; }
+        UnitDir(Vector3d normal) { this.normal = normal; }
+    }
 
     public OscilliteBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.OSCILLITE_BLOCK.get(), pos, state);
@@ -49,15 +63,23 @@ public class OscilliteBlockEntity extends BlockEntity {
         RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
         if (!handle.isValid()) return;
 
-        // Get rotation vector
-        cache.rotation.set(cache.unitUp); // Set to global UP
-        subLevel.logicalPose().transformNormal(cache.rotation); // Convert to local UP
-        cache.rotation.cross(cache.unitUp); // Cross local with global to get target rotation
+        // Find closest upward face and get target rotation vector
+        double max = Double.NEGATIVE_INFINITY;
+        for (UnitDir unitDir : UnitDir.VALUES) {
+            cache.temp.set(unitDir.getNormal()); // Set to local orientation
+            subLevel.logicalPose().transformNormal(cache.temp); // Convert to global orientation
+            double dot = cache.temp.dot(UnitDir.UP.getNormal()); // Compare to global UP
+            if (dot > max) {
+                max = dot;
+                cache.rotation.set(cache.temp); // Store closest global orientation
+            }
+        }
+        cache.rotation.cross(UnitDir.UP.getNormal()); // Cross to get target rotation
 
         // Handle damping and scale
         handle.getAngularVelocity(cache.angularVelocity);
-        cache.rotation.fma(DAMPING_SCALE, cache.angularVelocity);
         cache.rotation.mul(TORQUE_SCALE);
+        cache.rotation.fma(DAMPING_SCALE, cache.angularVelocity);
 
         // Apply rotation
         handle.addLinearAndAngularVelocity(cache.zeroVector, cache.rotation);

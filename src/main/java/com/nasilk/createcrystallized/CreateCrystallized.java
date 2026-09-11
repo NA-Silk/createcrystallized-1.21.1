@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.config.Config;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
@@ -12,12 +13,12 @@ import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.common.ModSpriteShifts;
 import net.minecraft.client.Minecraft;
+import net.neoforged.fml.ModLoadingContext;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -53,7 +54,7 @@ public class CreateCrystallized {
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
-        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC); // Register ModConfigSpec so that FML can create and load the config file
+        Config.register(ModLoadingContext.get(), modContainer); // Register ModConfigSpec so that FML can create and load the config file
     }
 
     @SubscribeEvent
@@ -85,7 +86,7 @@ public class CreateCrystallized {
             event.accept(ModItems.OSCILLITE_RESONATOR);
 
             // Development Items
-            if (Config.ENABLE_ITEMS.get().equals(true)) {
+            if (Config.server().blockConfig.enableDevItems.get().equals(true)) {
                 event.accept(ModItems.CREATIVE_FLUID_ERASER);
                 event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
                 event.accept(ModBlocks.PEBBLE);

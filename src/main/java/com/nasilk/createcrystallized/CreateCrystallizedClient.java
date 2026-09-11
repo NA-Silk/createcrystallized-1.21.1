@@ -11,6 +11,7 @@ import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.particle.custom.*;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -27,7 +28,6 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -35,7 +35,11 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
 public class CreateCrystallizedClient {
     public CreateCrystallizedClient(ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        // Open Catnip's GUI instead of the default one
+        container.registerExtensionPoint(
+            IConfigScreenFactory.class,
+            (modContainer, parentScreen) -> new BaseConfigScreen(parentScreen, CreateCrystallized.MOD_ID)
+        );
     }
 
     @SubscribeEvent

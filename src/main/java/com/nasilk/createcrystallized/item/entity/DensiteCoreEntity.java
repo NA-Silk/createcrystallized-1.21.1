@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.item.entity;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -14,8 +13,8 @@ import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,8 +28,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-// TODO NICK DO FUN THINGS HERE
 public class DensiteCoreEntity extends ThrowableItemProjectile {
+    // updateSublevelTargets Variables
+    private final List<SubLevel> sublevelTargets = new ArrayList<>();
+    private final BoundingBox3d searchBox = new BoundingBox3d();
+    private static final int FIELD_RADIUS = 8;
+
+    // applySublevelGravity Variables
+    private final Vector3d corePosition = new Vector3d();
+    private final Vector3d targetPosition = new Vector3d();
+    private final Vector3d impulseVelocity = new Vector3d();
+    private final Vector3d currentLinearVelocity = new Vector3d();
+    private final Vector3d currentAngularVelocity = new Vector3d();
+    private final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d);
+    private static final int FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
+    private static final double SUBLEVEL_STRENGTH = 16.0d;
+    private static final double IMPACT_RADIUS = 0.5d;
+    private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
+    private static final double DAMPEN_RADIUS = 1.5d;
+    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
+    private static final double DAMPENED_STRENGTH = SUBLEVEL_STRENGTH / DAMPEN_RADIUS_SQUARED;
+    private static final double DAMPEN_SCALE = 0.2d;
+
+    // updateEntityTargets Variables
+    private final List<Entity> entityTargets = new ArrayList<>();
+    private static final Predicate<Entity> ENTITY_PREDICATE = entity ->
+            !entity.isSpectator()
+                    && !(entity instanceof AbstractContraptionEntity)
+                    && !AirCurrent.isPlayerCreativeFlying(entity)
+                    && !DivingBootsItem.isWornBy(entity);
+
+    // applyEntityGravity Variables
+    private static final double ENTITY_STRENGTH = 2.0d;
+
+
+    // CONSTRUCTORS
     public DensiteCoreEntity(EntityType<? extends DensiteCoreEntity> entityType, Level level) {
         super(entityType, level);
     }
@@ -48,14 +80,14 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         return ModItems.DENSITE_CORE.get();
     }
 
-    // TODO Test this
+
+    // TICK
     private static final double PARTICLE_RATE = 0.05d;
     @Override
     public void tick() {
         super.tick();
-        if (this.level() instanceof ServerLevel serverLevel)
-            if (this.level().random.nextDouble() < PARTICLE_RATE)
-                serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
+        if (this.level() instanceof ServerLevel serverLevel && this.level().random.nextDouble() < PARTICLE_RATE)
+            serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
     }
 
     @Override
@@ -64,11 +96,11 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
             this.discard();
+            corePosition.set(this.getX(), this.getY(), this.getZ()); // Get position as a Vector3d object
             this.updateSublevelTargets();
             if (!sublevelTargets.isEmpty()) this.applySublevelGravity();
             this.updateEntityTargets();
-            if (!entityTargets.isEmpty()) CreateCrystallized.LOGGER.info("ENTITIES DETECTED"); // this.applyEntityGravity();
-            CreateCrystallized.LOGGER.info("HIT");
+            if (!entityTargets.isEmpty()) this.applyEntityGravity();
         }
     }
 
@@ -77,24 +109,11 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         super.onHitEntity(result);
         if (this.level() instanceof ServerLevel) {
             result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), 5.0f);
-            CreateCrystallized.LOGGER.info("ENTITY HIT");
         }
     }
 
-    @SuppressWarnings("deprecation") // TODO Delete line
-    @Override
-    protected void onHitBlock(BlockHitResult result) {
-        super.onHitBlock(result);
-        if (this.level() instanceof ServerLevel serverLevel) {
-            BlockPos blockPos = result.getBlockPos(); // TODO Delete line
-            if (serverLevel.getBlockState(blockPos).getBlock().getExplosionResistance() <= 6.0f) serverLevel.destroyBlock(blockPos, false); // TODO Delete line
-            CreateCrystallized.LOGGER.info("BLOCK HIT");
-        }
-    }
 
-    private final List<SubLevel> sublevelTargets = new ArrayList<>();
-    private final BoundingBox3d searchBox = new BoundingBox3d();
-    private static final int FIELD_RADIUS = 5;
+    // BEHAVIOR
     private void updateSublevelTargets() {
         // Reset the target list
         sublevelTargets.clear();
@@ -115,24 +134,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         });
     }
 
-    private final Vector3d corePosition = new Vector3d();
-    private final Vector3d targetPosition = new Vector3d();
-    private final Vector3d impulseVelocity = new Vector3d();
-    private final Vector3d currentLinearVelocity = new Vector3d();
-    private final Vector3d currentAngularVelocity = new Vector3d();
-    private final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d);
-    private static final int FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
-    private static final int FIELD_STRENGTH = 8;
-    private static final double IMPACT_RADIUS = 0.5d;
-    private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
-    private static final double DAMPEN_RADIUS = 1.5d;
-    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-    private static final double DAMPEN_STRENGTH = FIELD_STRENGTH / DAMPEN_RADIUS_SQUARED;
-    private static final double DAMPEN_SCALE = 0.2d;
     private void applySublevelGravity() {
-        // Get position as a Vector3d object
-        corePosition.set(this.position().x, this.position().y, this.position().z);
-
         // Iterate backwards for safe removals
         for (int i = sublevelTargets.size() - 1; i >= 0; i--) {
             SubLevel targetSubLevel = sublevelTargets.get(i);
@@ -179,10 +181,10 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
                 handle.addLinearAndAngularVelocity(currentLinearVelocity, zeroVector);
 
                 // Handle reduced pull impulse
-                impulseVelocity.mul(DAMPEN_STRENGTH);
+                impulseVelocity.mul(DAMPENED_STRENGTH);
             } else {
                 // Handle standard pull impulse when outside well radius
-                impulseVelocity.mul(FIELD_STRENGTH / distanceSquared);
+                impulseVelocity.mul(SUBLEVEL_STRENGTH / distanceSquared);
             }
 
             // Apply rotation transformed impulse
@@ -191,12 +193,6 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         }
     }
 
-    private final List<Entity> entityTargets = new ArrayList<>();
-    private static final Predicate<Entity> ENTITY_PREDICATE = entity ->
-        !entity.isSpectator()
-            && !(entity instanceof AbstractContraptionEntity)
-            && !AirCurrent.isPlayerCreativeFlying(entity)
-            && !DivingBootsItem.isWornBy(entity);
     private void updateEntityTargets() {
         // Reset the target list
         entityTargets.clear();
@@ -214,30 +210,41 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         entityTargets.addAll(serverLevel.getEntities((Entity) null, searchBox.toMojang(), ENTITY_PREDICATE)); // toMojang() allocates a new Mojang AABB...
     }
 
-    // TODO
     private void applyEntityGravity() {
+        // Iterate through entities
+        for (Entity entity : entityTargets) {
+            // Get entity position relative to the thruster
+            AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
+            double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
+            double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
+            double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
+            impulseVelocity.set(entityX, entityY, entityZ).sub(corePosition);
 
+            // Apply pull
+            impulseVelocity.negate().normalize().mul(ENTITY_STRENGTH / impulseVelocity.lengthSquared());
+            entity.push(impulseVelocity.x, impulseVelocity.y, impulseVelocity.z);
+            if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
+        }
     }
 
+
+    // PARTICLES
     /**
      * Handles a client entity event received from a {@link net.minecraft.network.protocol.game.ClientboundEntityEventPacket}.
      */
     @Override
     public void handleEntityEvent(byte id) {
-        switch (id) {
-            case 3:
-                RandomSource random = this.level().random;
-                for (int i = 0; i < 8; i++) this.level().addParticle(
-                    ModParticles.DENSITE_WELL_PARTICLES.get(),
-                    this.getX(), this.getY(), this.getZ(),
-                    10.0d * random.nextDouble() - 5.0d, 10.0d * random.nextDouble() - 5.0d, 10.0d * random.nextDouble() - 5.0d
-                );
-                break;
-            case 4:
-                CreateCrystallized.LOGGER.info("How did we get here?");
-                break;
-            default:
-                super.handleEntityEvent(id);
-        }
+        if (id == 3) {
+            RandomSource random = this.level().random;
+            for (int i = 0; i < 8; i++) this.level().addParticle(
+                ModParticles.DENSITE_WELL_PARTICLES.get(),
+                this.getX(), this.getY(), this.getZ(),
+                this.nextSpeed(random), this.nextSpeed(random), this.nextSpeed(random)
+            );
+        } else super.handleEntityEvent(id);
+    }
+
+    private double nextSpeed(RandomSource random) {
+        return (random.nextDouble() - 0.5d) * 2.0d * FIELD_RADIUS;
     }
 }

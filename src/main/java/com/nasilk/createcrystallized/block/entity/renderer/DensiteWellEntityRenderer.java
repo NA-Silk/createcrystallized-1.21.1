@@ -14,8 +14,8 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
     public static final ResourceLocation TEXTURE_0 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
     public static final ResourceLocation TEXTURE_1 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_1.png");
     public static final ResourceLocation TEXTURE_2 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_2.png");
-    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png"); // TODO Iterate on these textures a bit, center is messy
-    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png"); // TODO Iterate on these textures a bit, center is messy
+    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png");
+    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png");
     private final DensiteWellCubeModel cube;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {

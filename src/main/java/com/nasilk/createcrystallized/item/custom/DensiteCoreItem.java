@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileItem;
 import net.minecraft.world.level.Level;
 
-// TODO NICK DO FUN THINGS HERE
 public class DensiteCoreItem extends Item implements ProjectileItem {
     public DensiteCoreItem(Properties properties) {
         super(properties);

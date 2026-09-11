@@ -1,8 +1,9 @@
 {
   "createcrystallized.configuration.title": "Create: Crystallized Configs",
+  "createcrystallized.configuration.ModConfig": "Create: Crystallized Configs",
+  "createcrystallized.configuration.EnableItems": "Enable Development Items?",
   "createcrystallized.configuration.section.createcrystallized.common.toml": "Create: Crystallized Configs",
   "createcrystallized.configuration.section.createcrystallized.common.toml.title": "Create: Crystallized Configs",
-  "createcrystallized.configuration.items": "Item List",
   "creativetab.createcrystallized.createcrystallized_tab": "Create: Crystallized",
 
   "fluid_type.createcrystallized.void_sea_slurry_fluid_type": "Void Sea Slurry",

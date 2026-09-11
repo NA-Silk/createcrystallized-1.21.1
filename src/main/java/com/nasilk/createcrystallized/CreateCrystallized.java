@@ -53,7 +53,7 @@ public class CreateCrystallized {
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register ModConfigSpec so that FML can create and load the config file
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC); // Register ModConfigSpec so that FML can create and load the config file
     }
 
     @SubscribeEvent
@@ -84,9 +84,14 @@ public class CreateCrystallized {
             // Transformation Items
             event.accept(ModItems.OSCILLITE_RESONATOR);
 
+            // Development Items
+            if (Config.ENABLE_ITEMS.get().equals(true)) {
+                event.accept(ModItems.CREATIVE_FLUID_ERASER);
+                event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
+                event.accept(ModBlocks.PEBBLE);
+            }
+
             // Uncategorized Items
-            event.accept(ModItems.CREATIVE_FLUID_ERASER);
-            event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
             event.accept(ModItems.CHORA_INGOT);
             event.accept(ModItems.CRUSHED_RAW_AEROLITE);
             event.accept(ModItems.RAW_AEROLITE);
@@ -96,7 +101,6 @@ public class CreateCrystallized {
             event.accept(ModItems.AEROLITE_SHOVEL);
 
             // Uncategorized Blocks
-            event.accept(ModBlocks.PEBBLE);
             event.accept(ModBlocks.AEROLITE_ORE);
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
             event.accept(ModBlocks.AEROLITE_BLOCK);

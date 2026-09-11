@@ -6,7 +6,6 @@ import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.particle.custom.*;
 import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;

@@ -186,6 +186,13 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
         return true;
     }
 
+    @Override
+    public boolean shiftUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+        if (state.getValue(IS_BARREL)) return false;
+        withBlockEntityDo(serverLevel, pos, be -> be.shiftUpdateLongs(serverLevel));
+        return true;
+    }
+
     // PARTICLES
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {

@@ -468,6 +468,22 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
+    public void shiftUpdateLongs(ServerLevel serverLevel) {
+        // Ready firing tick
+        cooldown = 0;
+        armed = true;
+        firing = true;
+        serverLevel.playSound(
+            null, worldPosition,
+            SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
+            1.5f,0.8f
+        );
+
+        // Send update packet
+        this.setChanged();
+        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
 
     // GOGGLE TOOLTIPS
     @Override

@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class DensiteCoreEntity extends ThrowableItemProjectile {
+    // tick Variables
+    private static final double PARTICLE_RATE = 0.05d;
+
     // updateSublevelTargets Variables
     private final List<SubLevel> sublevelTargets = new ArrayList<>();
     private final BoundingBox3d searchBox = new BoundingBox3d();
@@ -53,10 +56,10 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     // updateEntityTargets Variables
     private final List<Entity> entityTargets = new ArrayList<>();
     private static final Predicate<Entity> ENTITY_PREDICATE = entity ->
-            !entity.isSpectator()
-                    && !(entity instanceof AbstractContraptionEntity)
-                    && !AirCurrent.isPlayerCreativeFlying(entity)
-                    && !DivingBootsItem.isWornBy(entity);
+        !entity.isSpectator()
+            && !(entity instanceof AbstractContraptionEntity)
+            && !AirCurrent.isPlayerCreativeFlying(entity)
+            && !DivingBootsItem.isWornBy(entity);
 
     // applyEntityGravity Variables
     private static final double ENTITY_STRENGTH = 2.0d;
@@ -82,7 +85,6 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
 
 
     // TICK
-    private static final double PARTICLE_RATE = 0.05d;
     @Override
     public void tick() {
         super.tick();

@@ -92,6 +92,12 @@ public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThru
         return true;
     }
 
+    @Override
+    public boolean shiftUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+        withBlockEntityDo(serverLevel, pos, be -> be.shiftUpdateLongs(serverLevel));
+        return true;
+    }
+
     // PARTICLES
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {

@@ -368,6 +368,26 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
+    public void shiftUpdateLongs(ServerLevel serverLevel) {
+        if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
+
+        // Ready firing tick
+        cooldown = 0;
+        charge = PropulsiteThrusterBehavior.MAX_CHARGE;
+        armed = true;
+        firing = true;
+        firingTick = 0;
+        serverLevel.playSound(
+            null, worldPosition,
+            SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
+            1.5f,1.0f
+        );
+
+        // Send update packet
+        this.setChanged();
+        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
 
     // GOGGLE TOOLTIPS
     @Override

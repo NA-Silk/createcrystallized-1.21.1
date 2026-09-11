@@ -98,10 +98,9 @@ public class AeroliteOreBlock extends Block {
 
         // Play effects
         DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.2f);
-        serverLevel.sendParticles(dust,
-            pos.getX() + 0.5d,
-            pos.getY() + 0.5d,
-            pos.getZ() + 0.5d,
+        serverLevel.sendParticles(
+            dust,
+            pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
             10,
             0.4d, 0.4d, 0.4d, 0.1d
         );

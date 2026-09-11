@@ -13,6 +13,7 @@ import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -24,6 +25,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -97,6 +100,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
         super.onHit(result);
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
+            serverLevel.broadcastEntityEvent(this, (byte) 4);
             this.discard();
             corePosition.set(this.getX(), this.getY(), this.getZ()); // Get position as a Vector3d object
             this.updateSublevelTargets();
@@ -236,17 +240,32 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
      */
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == 3) {
-            RandomSource random = this.level().random;
-            for (int i = 0; i < 8; i++) this.level().addParticle(
-                ModParticles.DENSITE_WELL_PARTICLES.get(),
-                this.getX(), this.getY(), this.getZ(),
-                this.nextSpeed(random), this.nextSpeed(random), this.nextSpeed(random)
-            );
-        } else super.handleEntityEvent(id);
+        switch (id) {
+            case 3:
+                for (int i = 0; i < 8; i++) this.level().addParticle(
+                    ModParticles.DENSITE_WELL_PARTICLES.get(),
+                    this.getX(), this.getY(), this.getZ(),
+                    this.nextSpeed(), this.nextSpeed(), this.nextSpeed()
+                );
+                break;
+            case 4:
+                DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.20f, 0.0f, 0.310f),1.0f);
+                for (int i = 0; i < 8; i++) this.level().addParticle(
+                    dust,
+                    nextPos(this.getX()), nextPos(this.getY()), nextPos(this.getZ()),
+                    0.4d, 0.4d, 0.4d
+                );
+                break;
+            default:
+                super.handleEntityEvent(id);
+        }
     }
 
-    private double nextSpeed(RandomSource random) {
-        return (random.nextDouble() - 0.5d) * 2.0d * FIELD_RADIUS;
+    private double nextPos(double a) {
+        return a + getRandom().nextDouble() - 0.5d;
+    }
+
+    private double nextSpeed() {
+        return (getRandom().nextDouble() - 0.5d) * 2.0d * FIELD_RADIUS;
     }
 }

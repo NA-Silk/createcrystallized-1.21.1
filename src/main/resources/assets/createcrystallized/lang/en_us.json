@@ -2,14 +2,6 @@
   "createcrystallized.configuration.title": "Create: Crystallized Config",
   "createcrystallized.configuration.section.createcrystallized.server.toml": "Create: Crystallized Config",
   "createcrystallized.configuration.section.createcrystallized.server.toml.title": "Create: Crystallized Config",
-
-  "createcrystallized.configuration.block_config": "Blocks",
-  "createcrystallized.configuration.block_config.button": "Edit",
-  "createcrystallized.configuration.block_config.tooltip": "Parameters and abilities of Create Crystallized blocks",
-
-  "createcrystallized.configuration.enable_dev_items": "Allow Dev Items",
-  "createcrystallized.configuration.enable_dev_items.tooltip": "Would you like to enable development items?",
-
   "creativetab.createcrystallized.createcrystallized_tab": "Create: Crystallized",
 
   "fluid_type.createcrystallized.void_sea_slurry_fluid_type": "Void Sea Slurry",

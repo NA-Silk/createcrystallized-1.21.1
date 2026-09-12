@@ -1,6 +1,9 @@
 package com.nasilk.createcrystallized.config;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.nasilk.createcrystallized.config.type.ClientConfig;
+import com.nasilk.createcrystallized.config.type.CommonConfig;
+import com.nasilk.createcrystallized.config.type.ServerConfig;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -14,18 +17,25 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("SameParameterValue")
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID)
-public class Config {
+public class Configs {
     private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
+    private static ClientConfig client;
+    private static CommonConfig common;
     private static ServerConfig server;
 
+    public static ClientConfig client() {
+        return client;
+    }
+    public static CommonConfig common() {
+        return common;
+    }
     public static ServerConfig server() {
         return server;
     }
 
-    private Config() {}
+    private Configs() {}
 
     private static <T extends ConfigBase> T register(Supplier<T> factory, ModConfig.Type side) {
         Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
@@ -41,8 +51,8 @@ public class Config {
     }
 
     public static void register(ModLoadingContext ignoredContext, ModContainer container) {
-        // Add CLIENT here
-        // Add COMMON here
+        client = register(ClientConfig::new, ModConfig.Type.CLIENT);
+        common = register(CommonConfig::new, ModConfig.Type.COMMON);
         server = register(ServerConfig::new, ModConfig.Type.SERVER);
 
         for (Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())

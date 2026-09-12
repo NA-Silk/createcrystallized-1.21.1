@@ -60,5 +60,10 @@
       "createcrystallized:block/oscillite_break_3",
       "createcrystallized:block/oscillite_break_4"
     ]
+  },
+  "block.propulsite_thruster_fire": {
+    "sounds": [
+      "createcrystallized:block/propulsite_thruster_fire"
+    ]
   }
 }

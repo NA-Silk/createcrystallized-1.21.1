@@ -33,7 +33,7 @@ public class CreateCrystallized {
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID); // Connected textures registrator
     public static final Logger LOGGER = LogUtils.getLogger(); // Directly reference a slf4j logger
 
-    // The constructor for the mod class is the first code that is run when the mod is loaded
+    // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
         // Custom registrations
         ModSounds.register(modEventBus); // Custom sounds

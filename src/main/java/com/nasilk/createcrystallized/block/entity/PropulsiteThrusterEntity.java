@@ -4,6 +4,7 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
+import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
@@ -358,7 +359,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             firingTick = 0;
             serverLevel.playSound(
                 null, worldPosition,
-                SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
+                    ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
                 1.5f,1.0f
             );
         }
@@ -379,7 +380,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         firingTick = 0;
         serverLevel.playSound(
             null, worldPosition,
-            SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
+                ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
             1.5f,1.0f
         );
 

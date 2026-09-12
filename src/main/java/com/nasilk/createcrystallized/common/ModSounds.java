@@ -32,6 +32,13 @@ public class ModSounds {
         ))
     );
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> PROPULSITE_THRUSTER_FIRE = SOUND_EVENTS.register(
+            "block.propulsite_thruster_fire",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
+                    CreateCrystallized.MOD_ID, "block.propulsite_thruster_fire"
+            ))
+    );
+
     public static final DeferredHolder<SoundEvent, SoundEvent> DENSITE_BREAK = SOUND_EVENTS.register(
         "block.densite_break",
         () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(

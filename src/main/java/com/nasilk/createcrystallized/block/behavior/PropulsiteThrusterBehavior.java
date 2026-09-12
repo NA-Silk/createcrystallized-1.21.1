@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.block.behavior;
 
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
+import com.nasilk.createcrystallized.common.ModSounds;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -93,7 +94,7 @@ public class PropulsiteThrusterBehavior {
         be.setFiringTick(0);
         serverLevel.playSound(
             null, be.getBlockPos(),
-            SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.BLOCKS,
+            ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
             1.5f, 1.0f
         );
         be.setChanged();

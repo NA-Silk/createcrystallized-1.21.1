@@ -13,7 +13,6 @@ import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.common.ModSpriteShifts;
 import net.minecraft.client.Minecraft;
-import net.neoforged.fml.ModLoadingContext;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -54,7 +53,7 @@ public class CreateCrystallized {
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
-        Configs.register(ModLoadingContext.get(), modContainer); // Register ModConfigSpec so that FML can create and load the config file
+        Configs.register(modContainer); // Register ModConfigSpec so that FML can create and load the config file
     }
 
     @SubscribeEvent

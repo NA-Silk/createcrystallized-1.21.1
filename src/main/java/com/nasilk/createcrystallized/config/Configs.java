@@ -7,7 +7,6 @@ import com.nasilk.createcrystallized.config.type.ServerConfig;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -50,7 +49,7 @@ public class Configs {
         return config;
     }
 
-    public static void register(ModLoadingContext ignoredContext, ModContainer container) {
+    public static void register(ModContainer container) {
         client = register(ClientConfig::new, ModConfig.Type.CLIENT);
         common = register(CommonConfig::new, ModConfig.Type.COMMON);
         server = register(ServerConfig::new, ModConfig.Type.SERVER);

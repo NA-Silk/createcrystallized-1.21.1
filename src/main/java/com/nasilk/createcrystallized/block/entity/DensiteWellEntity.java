@@ -30,6 +30,7 @@ import org.joml.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO Tune constants with config
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick variables (saved)
     private int power = 0;
@@ -43,7 +44,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Tick constants
     private static final int TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final double PARTICLE_RATE = 0.05d;
+    private static final double PARTICLE_RATE = 0.025d;
     private double MIN_RADIUS = Double.NaN; // 0.0d;
     private double RADIUS_SCALE = Double.NaN; // 2.0d;
     private double FIELD_SCALE = Double.NaN; // 0.5d;
@@ -240,9 +241,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Compute each particle
         for (int i = 0; i < power; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
-            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
-            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * fieldRadius;
+            double xSpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
+            double ySpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
+            double zSpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(

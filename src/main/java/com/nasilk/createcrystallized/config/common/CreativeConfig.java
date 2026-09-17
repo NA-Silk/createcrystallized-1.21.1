@@ -10,7 +10,7 @@ public class CreativeConfig extends ConfigBase {
 
     @Override
     public String getName() {
-        return "item_config";
+        return "creative_config";
     }
 
     private static class Constants {

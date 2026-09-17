@@ -42,7 +42,7 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     private double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
 
     // tick Constants
-    private static final double PARTICLE_RATE = 0.05d;
+    private static final double PARTICLE_RATE = 0.01d;
 
     // updateSublevelTargets Variables
     private final List<SubLevel> sublevelTargets = new ArrayList<>();
@@ -237,8 +237,8 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     public void handleEntityEvent(byte id) {
         switch (id) {
             case 3:
-                for (int i = 0; i < 8; i++) this.level().addParticle(
-                    ModParticles.DENSITE_WELL_PARTICLES.get(),
+                for (int i = 0; i < 16; i++) this.level().addParticle(
+                    ModParticles.DENSITE_CORE_PARTICLES.get(),
                     this.getX(), this.getY(), this.getZ(),
                     this.nextSpeed(), this.nextSpeed(), this.nextSpeed()
                 );
@@ -261,6 +261,6 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     }
 
     private double nextSpeed() {
-        return (getRandom().nextDouble() - 0.5d) * 2.0d * FIELD_RADIUS;
+        return Math.clamp(getRandom().nextGaussian() * FIELD_RADIUS / 2.5758293, -FIELD_RADIUS, FIELD_RADIUS);
     }
 }

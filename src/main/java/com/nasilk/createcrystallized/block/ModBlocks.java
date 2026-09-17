@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.ctbehavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
-import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.client.ModSounds;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;

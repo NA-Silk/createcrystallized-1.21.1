@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.common;
+package com.nasilk.createcrystallized.client;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.simibubi.create.foundation.block.connected.AllCTTypes;

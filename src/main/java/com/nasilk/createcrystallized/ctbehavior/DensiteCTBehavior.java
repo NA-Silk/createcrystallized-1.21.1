@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.ctbehavior;
 
 import com.nasilk.createcrystallized.block.custom.DensiteBlock;
-import com.nasilk.createcrystallized.common.ModSpriteShifts;
+import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

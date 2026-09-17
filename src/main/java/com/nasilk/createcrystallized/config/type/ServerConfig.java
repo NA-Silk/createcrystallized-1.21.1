@@ -20,7 +20,7 @@ public class ServerConfig extends ConfigBase {
 
     // Do these even do anything?
     private static class Comments {
-        static String blockConfig = "Parameters and abilities of Create Crystallized blocks";
-        static String itemConfig = "Parameters and abilities of Create Crystallized items";
+        private static final String blockConfig = "Parameters and abilities of Create Crystallized blocks.";
+        private static final String itemConfig = "Parameters and abilities of Create Crystallized items.";
     }
 }

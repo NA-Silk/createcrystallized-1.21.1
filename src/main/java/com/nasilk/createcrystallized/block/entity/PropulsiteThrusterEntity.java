@@ -4,7 +4,7 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
-import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.client.ModSounds;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
@@ -428,6 +428,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         return true;
     }
 
+
+    // SYNCING
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         // Save data to the network sync packet

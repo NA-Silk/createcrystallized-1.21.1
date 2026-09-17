@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.item.entity;
 
+import com.nasilk.createcrystallized.config.Configs;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -30,28 +31,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@SuppressWarnings("FieldMayBeFinal") // Interferes with config
 public class DensiteCoreEntity extends ThrowableItemProjectile {
-    // tick Variables
+    // config Constants
+    private double FIELD_RADIUS = Configs.server().itemConfig.coreFieldRadius.get(); // 8.0d;
+    private double IMPACT_RADIUS = Configs.server().itemConfig.coreImpactRadius.get(); // 0.5d;
+    private double SUBLEVEL_STRENGTH = Configs.server().itemConfig.coreSublevelStrength.get(); // 16.0d;
+    private double ENTITY_STRENGTH = Configs.server().itemConfig.coreEntityStrength.get(); // 2.0d;
+    private double FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
+    private double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
+
+    // tick Constants
     private static final double PARTICLE_RATE = 0.05d;
 
     // updateSublevelTargets Variables
     private final List<SubLevel> sublevelTargets = new ArrayList<>();
     private final BoundingBox3d searchBox = new BoundingBox3d();
-    private static final int FIELD_RADIUS = 8;
 
     // applySublevelGravity Variables
     private final Vector3d corePosition = new Vector3d();
     private final Vector3d impulseVelocity = new Vector3d();
-    private final Vector3d currentLinearVelocity = new Vector3d();
-    private final Vector3d currentAngularVelocity = new Vector3d();
-    private static final int FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
-    private static final double SUBLEVEL_STRENGTH = 16.0d;
-    private static final double IMPACT_RADIUS = 0.5d;
-    private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
-    private static final double DAMPEN_RADIUS = 1.5d;
-    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-    private static final double DAMPENED_STRENGTH = SUBLEVEL_STRENGTH / DAMPEN_RADIUS_SQUARED;
-    private static final double DAMPEN_SCALE = 0.2d;
 
     // updateEntityTargets Variables
     private final List<Entity> entityTargets = new ArrayList<>();
@@ -60,9 +59,6 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
             && !(entity instanceof AbstractContraptionEntity)
             && !AirCurrent.isPlayerCreativeFlying(entity)
             && !DivingBootsItem.isWornBy(entity);
-
-    // applyEntityGravity Variables
-    private static final double ENTITY_STRENGTH = 2.0d;
 
 
     // CONSTRUCTORS
@@ -152,11 +148,11 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) continue;
 
-            // Get sublevel position, impulse velocity, and current distance^2
+            // Get sublevel position relative to the core
             impulseVelocity.set(corePosition).sub(targetSubLevel.logicalPose().position());
             double distanceSquared = impulseVelocity.lengthSquared();
 
-            // Handle out of range entities
+            // Handle out of range sublevels
             if (distanceSquared > FIELD_RADIUS_SQUARED) {
                 sublevelTargets.remove(i);
                 continue;
@@ -164,30 +160,11 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
 
             // Handle impact when very close
             if (distanceSquared < IMPACT_RADIUS_SQUARED) {
-                // Get current linear and angular velocity
-                handle.getLinearVelocity(currentLinearVelocity);
-                handle.getAngularVelocity(currentAngularVelocity);
-
-                // Apply opposite vectors to negate current motion
-                currentLinearVelocity.negate();
-                currentAngularVelocity.negate();
-                handle.addLinearAndAngularVelocity(currentLinearVelocity, currentAngularVelocity);
                 continue;
             }
 
-            // Handle dampening relative to well radius
-            if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
-                // Handle dampening when within well radius
-                handle.getLinearVelocity(currentLinearVelocity);
-                currentLinearVelocity.mul(-DAMPEN_SCALE);
-                handle.addLinearAndAngularVelocity(currentLinearVelocity, new Vector3d(0.0d, 0.0d, 0.0d));
-
-                // Handle reduced pull impulse
-                impulseVelocity.mul(DAMPENED_STRENGTH);
-            } else {
-                // Handle standard pull impulse when outside well radius
-                impulseVelocity.mul(SUBLEVEL_STRENGTH / distanceSquared);
-            }
+            // Handle standard pull impulse
+            impulseVelocity.mul(SUBLEVEL_STRENGTH / distanceSquared);
 
             // Apply rotation transformed impulse
             targetSubLevel.logicalPose().orientation().transformInverse(impulseVelocity);
@@ -213,17 +190,39 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
     }
 
     private void applyEntityGravity() {
-        // Iterate through entities
-        for (Entity entity : entityTargets) {
-            // Get entity position relative to the thruster
+        // Iterate backwards for safe removals
+        for (int i = entityTargets.size() - 1; i >= 0; i--) {
+            Entity entity = entityTargets.get(i);
+
+            // If the entity was destroyed or unloaded, remove it from the list
+            if (entity.isRemoved()) {
+                sublevelTargets.remove(i);
+                continue;
+            }
+
+            // Get entity position relative to the core
             AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
             double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
             double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
             double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-            impulseVelocity.set(entityX, entityY, entityZ).sub(corePosition);
+            impulseVelocity.set(corePosition).sub(entityX, entityY, entityZ);
+            double distanceSquared = impulseVelocity.lengthSquared();
 
-            // Apply pull
-            impulseVelocity.negate().normalize().mul(ENTITY_STRENGTH / impulseVelocity.lengthSquared());
+            // Handle out of range entities
+            if (distanceSquared > FIELD_RADIUS_SQUARED) {
+                entityTargets.remove(i);
+                continue;
+            }
+
+            // Handle impact when very close
+            if (distanceSquared < IMPACT_RADIUS_SQUARED) {
+                continue;
+            }
+
+            // Handle standard pull impulse
+            impulseVelocity.mul(ENTITY_STRENGTH / distanceSquared);
+
+            // Apply impulse
             entity.push(impulseVelocity.x, impulseVelocity.y, impulseVelocity.z);
             if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
         }

@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
+import com.nasilk.createcrystallized.config.Configs;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -43,26 +44,42 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final int TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double PARTICLE_RATE = 0.05d;
-    private static final double MIN_RADIUS = 0.0d;
-    private static final double RADIUS_SCALE = 2.0d;
-    private static final double FIELD_CONSTANT = 0.5d;
-    private static final double[] FIELD_STRENGTH_CURVE = new double[16];
-    private static final double[] FIELD_RADIUS_CURVE = new double[16];
-    private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
-    static {
-        for (int i = 0; i < 16; i++) {
-            FIELD_STRENGTH_CURVE[i] = FIELD_CONSTANT * i;
+    private double MIN_RADIUS = Double.NaN; // 0.0d;
+    private double RADIUS_SCALE = Double.NaN; // 2.0d;
+    private double FIELD_SCALE = Double.NaN; // 0.5d;
+    private final double[] FIELD_STRENGTH_CURVE = new double[16];
+    private final double[] FIELD_RADIUS_CURVE = new double[16];
+    private final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
+
+    // Physics constants
+    private double IMPACT_RADIUS = Double.NaN; // 0.5d;
+    private double DAMPEN_RADIUS = Double.NaN; // 1.5d;
+    private double DAMPEN_SCALE = Double.NaN; // 0.2d;
+    private double IMPACT_RADIUS_SQUARED = Double.NaN;
+    private double DAMPEN_RADIUS_SQUARED = Double.NaN;
+
+    // Config constants
+    private boolean updateConstants() { // Don't worry about it
+        double tempVar; boolean changed = false;
+        tempVar = Configs.server().blockConfig.wellMinRadius.get();    if (MIN_RADIUS    != tempVar) { MIN_RADIUS    = tempVar; changed = true; }
+        tempVar = Configs.server().blockConfig.wellRadiusScale.get();  if (RADIUS_SCALE  != tempVar) { RADIUS_SCALE  = tempVar; changed = true; }
+        tempVar = Configs.server().blockConfig.wellFieldScale.get();   if (FIELD_SCALE   != tempVar) { FIELD_SCALE   = tempVar; changed = true; }
+        if (changed) for (int i = 0; i < 16; i++) {
+            FIELD_STRENGTH_CURVE[i] = FIELD_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
+        tempVar = Configs.server().blockConfig.wellImpactRadius.get(); if (IMPACT_RADIUS != tempVar) { IMPACT_RADIUS = tempVar; changed = true; IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS; }
+        tempVar = Configs.server().blockConfig.wellDampenRadius.get(); if (DAMPEN_RADIUS != tempVar) { DAMPEN_RADIUS = tempVar; changed = true; DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS; }
+        tempVar = Configs.server().blockConfig.wellDampenScale.get();  if (DAMPEN_SCALE  != tempVar) { DAMPEN_SCALE  = tempVar; changed = true; }
+        if (changed && power > 0) {
+            fieldStrength = FIELD_STRENGTH_CURVE[power];
+            fieldRadius = FIELD_RADIUS_CURVE[power];
+            fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
+        }
+        return changed;
     }
-
-    // Physics constants
-    private static final double IMPACT_RADIUS = 0.5d;
-    private static final double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
-    private static final double DAMPEN_RADIUS = 1.5d;
-    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-    private static final double DAMPEN_FACTOR = 0.2d;
+    { updateConstants(); }
 
     // Cache
     private static class Cache {
@@ -123,8 +140,14 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 subLevel.logicalPose().transformPosition(cache.wellPosition);
             }
 
-            // Run gravity effect
-            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache);
+            // Run effects
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) {
+                if (updateConstants()) { // Handle config changes
+                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                    this.setChanged();
+                }
+                updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
+            }
             if (!targets.isEmpty()) applyGravity(cache);
             if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
         }
@@ -170,7 +193,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             cache.impulseVelocity.set(cache.wellPosition).sub(cache.targetPosition);
             double distanceSquared = cache.impulseVelocity.lengthSquared();
 
-            // Handle out of range entities
+            // Handle out of range sublevels
             if (distanceSquared > fieldRadiusSquared) {
                 targets.remove(i);
                 continue;
@@ -193,7 +216,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
                 // Handle dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
-                cache.currentLinearVelocity.mul(-DAMPEN_FACTOR);
+                cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
 
                 // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^3
@@ -257,11 +280,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         return true;
     }
 
+
+    // SYNCING
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         // Save data to the network sync packet
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Power", this.power);
+        tag.putDouble("FieldStrength", this.fieldStrength);
+        tag.putDouble("FieldRadius", this.fieldRadius);
         return tag;
     }
 
@@ -270,15 +297,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Handle receiving the packet on the Client side
         CompoundTag tag = pkt.getTag();
         this.power = tag.getInt("Power");
-        if (power == 0) {
-            this.fieldStrength = 0.0d;
-            this.fieldRadius = 0.0d;
-            this.fieldRadiusSquared = 0.0d;
-        } else {
-            this.fieldStrength = FIELD_CONSTANT * power;
-            this.fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
-            this.fieldRadiusSquared = fieldRadius * fieldRadius;
-        }
+        this.fieldStrength = tag.getDouble("FieldStrength");
+        this.fieldRadius = tag.getDouble("FieldRadius");
+        this.fieldRadiusSquared = this.fieldRadius * this.fieldRadius;
     }
 
     @Override
@@ -293,20 +314,16 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Power", this.power);
+        tag.putDouble("FieldStrength", this.fieldStrength);
+        tag.putDouble("FieldRadius", this.fieldRadius);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.power = tag.getInt("Power");
-        if (power == 0) {
-            this.fieldStrength = 0.0d;
-            this.fieldRadius = 0.0d;
-            this.fieldRadiusSquared = 0.0d;
-        } else {
-            this.fieldStrength = FIELD_CONSTANT * power;
-            this.fieldRadius = RADIUS_SCALE * power + MIN_RADIUS;
-            this.fieldRadiusSquared = fieldRadius * fieldRadius;
-        }
+        this.fieldStrength = tag.getDouble("FieldStrength");
+        this.fieldRadius = tag.getDouble("FieldRadius");
+        this.fieldRadiusSquared = this.fieldRadius * this.fieldRadius;
     }
 }

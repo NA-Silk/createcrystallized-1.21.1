@@ -507,6 +507,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         return true;
     }
 
+
+    // SYNCING
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         // Save data to the network sync packet

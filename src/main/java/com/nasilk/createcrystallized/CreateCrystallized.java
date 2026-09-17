@@ -10,8 +10,8 @@ import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
-import com.nasilk.createcrystallized.common.ModSounds;
-import com.nasilk.createcrystallized.common.ModSpriteShifts;
+import com.nasilk.createcrystallized.client.ModSounds;
+import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -89,7 +89,7 @@ public class CreateCrystallized {
             event.accept(ModItems.CRUSHED_RAW_AEROLITE);
             event.accept(ModItems.RAW_AEROLITE);
             event.accept(ModItems.AEROLITE_INGOT);
-            event.accept(ModItems.AEROLITE_SHEET);
+            if (Configs.common().creativeConfig.enableUnusedItems.get().equals(true)) event.accept(ModItems.AEROLITE_SHEET);
             event.accept(ModItems.DENSITE_CORE);
             event.accept(ModItems.AEROLITE_SHOVEL);
 
@@ -127,14 +127,10 @@ public class CreateCrystallized {
             event.accept(ModBlocks.OSCILLITE_CANNON);
             event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
 
-            // Development Items
-            if (Configs.server().itemConfig.enableDevItems.get().equals(true)) {
+            // Development Items and Blocks
+            if (Configs.common().creativeConfig.enableDevItems.get().equals(true)) {
                 event.accept(ModItems.CREATIVE_FLUID_ERASER);
                 event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
-            }
-
-            // Development Blocks
-            if (Configs.server().blockConfig.enableDevBlocks.get().equals(true)) {
                 event.accept(ModBlocks.PEBBLE);
             }
         }

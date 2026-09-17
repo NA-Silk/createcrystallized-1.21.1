@@ -1,6 +1,5 @@
 {
-  "replace": false,
-  "values": [
+  "values" : [
     "createcrystallized:chora_block",
     "createcrystallized:chora_casing",
     "createcrystallized:chora_casing_densite",
@@ -10,6 +9,8 @@
 
     "createcrystallized:aerolite_block",
     "createcrystallized:aerolite_ore",
-    "createcrystallized:deepslate_aerolite_ore"
+    "createcrystallized:deepslate_aerolite_ore",
+
+    "#minecraft:needs_diamond_tool"
   ]
 }

@@ -10,13 +10,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class AeroliteShovelItem extends ShovelItem {
-    public static final Tier AEROLITE_TIER = Tiers.DIAMOND; // TODO Custom tier
-
     public AeroliteShovelItem(Tier tier, Properties properties) {
         super(tier, properties);
     }

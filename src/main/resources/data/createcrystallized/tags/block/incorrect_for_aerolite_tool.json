@@ -1,0 +1,8 @@
+{
+  "remove": [
+    "#createcrystallized:needs_aerolite_tool"
+  ],
+  "values": [
+    "#minecraft:incorrect_for_diamond_tool"
+  ]
+}

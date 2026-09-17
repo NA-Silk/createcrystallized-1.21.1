@@ -3,10 +3,10 @@ package com.nasilk.createcrystallized.item;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.item.custom.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ShovelItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import static com.nasilk.createcrystallized.item.custom.AeroliteShovelItem.AEROLITE_TIER;
 
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreateCrystallized.MOD_ID);
@@ -23,9 +23,12 @@ public class ModItems {
         (properties) -> new CreativeBagOfLongsItem(properties.stacksTo(1))
     );
 
-    public static final DeferredItem<Item> AEROLITE_SHOVEL = ITEMS.registerItem(
+    public static final DeferredItem<ShovelItem> AEROLITE_SHOVEL = ITEMS.registerItem(
         "aerolite_shovel",
-        (properties) -> new AeroliteShovelItem(AEROLITE_TIER, properties.stacksTo(1))
+        (properties) -> new AeroliteShovelItem(ModTiers.AEROLITE, properties
+            .stacksTo(1)
+            .attributes(ShovelItem.createAttributes(ModTiers.AEROLITE, 1.5f, -2.4f))
+        )
     );
 
 

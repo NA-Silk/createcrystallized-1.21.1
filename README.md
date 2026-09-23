@@ -1,28 +1,32 @@
 # Create: Crystallized
 *Current Version: 0.0.1 (pre-release development)*
 
-*Last README Update: 5/13/2026*
+*Last README Update: 9/23/2026*
 
 
 ## Mod Description:
-Adds new fluids and blocks inspired by *Create Aeronautics*' Levitite Blend and Levitite block.
+Adds new fluids, blocks, and items inspired by *Create Aeronautics*' features, including the Levitite and Magnet blocks.
 
-*Create: Crystallized* extends Levitite into a family of unique fluids/blocks, including three planned additions to the block family and six planned fluids with unique acquisitions, interactions, and uses.
+*Create: Crystallized* (CC) extends Levitite into a family of unique fluids/blocks, including three primary additions to the block family and 5 new fluids with unique acquisitions, interactions, and uses. Additionally, CC will add a series of new crafting recipes, related items, and advanced "Machined" blocks to take Aeronautics builds to the next level. 
 
-**Blocks**:
-1. Densite
-2. Propulsite
-3. Oscillite
+**Main Series Blocks**:
+1. Densite - Heavy; sensitive to Redstone. 
+2. Propulsite - Light; careful, it might try to run away. 
+3. Oscillite - Good vibrations; really doesn't like being tipped over. 
+
+**Machined Blocks**
+1. Densite Well - A variable gravity well that pulls in Simulated Contraptions. Attracts Simulated Contraptions within a set radius, area and pull strength increase with power supplied. 
+2. Propusite Thruster - Powerful burst of propulsion with the power of crystals. Begins to charge at high velocity, loses charge when not moving fast enough, and releases a powerful burst of thrust when powered. 
+3. Oscillite Cannon - Violent resonance in one convenient package (not suitable for home defence). Charges by absorbing nearby Echo Crystalls; releases a immensely powerful beam of focused sound waves to tear through blocks and entities alike when powered. 
 
 **Fluids**:
-1. Void Sea Slurry
-2. Densite Emulsion
-3. Drift Condensate
-4. Propulsite Flurry
-5. Soul Steep
-6. Oscillite Suspension
+1. Void Sea Slurry - Find some hiding in the End Sea. 
+2. Densite Emulsion - Refined slurry with high density and a cold and spacey vibe. 
+3. Drift Condensate - Find it high in the sky. Caution: it may try to go back. 
+4. Propulsite Flurry - Refined condensate with lightning quick flow. 
+5. Oscillite Suspension - Liquid sound? Very sensistive to additional noises. 
 
-Additional *Create* and *Create Aeronautics* compatible Contraptions are also planned, including new Sails!
+Additional *Create* and *Create Aeronautics* compatible Contraptions are also added, including a new shovel for paddling your (air)ships! 
 
 
 ## Additional Resources:
@@ -35,6 +39,8 @@ Additional *Create* and *Create Aeronautics* compatible Contraptions are also pl
 [Create Repository](https://github.com/Creators-of-Create/Create)
 
 [Create Aeronautics Repository](https://github.com/Creators-of-Aeronautics/Simulated-Project)
+
+[Sable](https://github.com/ryanhcode/sable)
 
 
 ## Development Setup:

@@ -13,25 +13,25 @@ public class OscilliteCannonBehavior {
     private final OscilliteCannonEntity be;
 
     // Tick constants
-    private static final int MAX_COOLDOWN = 180;
-    private static final int RANDOM_TICK_RATE = 20;
-    private static final int PACKET_UPDATE_RATE = 10;
-    private static final double AMBIENT_RATE = 8e-5d;
-    public final int FUEL_RADIUS = 1;
-    public final double FACE_OFFSET = 1.6d;
+    public static final int MAX_COOLDOWN = 180;
+    public static final int RANDOM_TICK_RATE = 20;
+    public static final int PACKET_UPDATE_RATE = 10;
+    public static final double AMBIENT_RATE = 8e-5d;
+    public static final int FUEL_RADIUS = 1;
+    public static final double FACE_OFFSET = 1.6d;
 
     // Firing constants
-    public static double DAMAGE; // 50.0f;
-    public static double RECOIL; // 25.0d;
-    public static double ENTITY_KNOCKBACK; // 3.0d;
-    public static double SUBLEVEL_KNOCKBACK; // 500.0d;
-    public static double MAX_RANGE; // 80.0d; // Length effectiveness distance
-    public static double MAX_RADIUS; // 2.12d; // Radial effectiveness distance
+    public static double DAMAGE;
+    public static double RECOIL;
+    public static double ENTITY_KNOCKBACK;
+    public static double SUBLEVEL_KNOCKBACK;
+    public static double MAX_RANGE;          // Length effectiveness distance
+    public static double MAX_RADIUS;         // Radial effectiveness distance
     public static double MAX_RADIUS_SQUARED;
 
     // Charging particle constants
-    public final int NUM_PARTICLES = 10;
-    public final double PARTICLE_RADIUS = 1.5d;
+    public static final int NUM_PARTICLES = 10;
+    public static final double PARTICLE_RADIUS = 1.5d;
 
     // Config constants
     public static void updateConstants() {

@@ -18,6 +18,7 @@ public class CannonConfig extends ConfigBase {
         super.onLoad();
         OscilliteCannonBehavior.updateConstants();
     }
+
     @Override
     public void onReload() {
         super.onReload();

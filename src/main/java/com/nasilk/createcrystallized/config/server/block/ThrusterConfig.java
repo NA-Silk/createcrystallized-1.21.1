@@ -1,10 +1,11 @@
 package com.nasilk.createcrystallized.config.server.block;
 
+import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ThrusterConfig extends ConfigBase {
-    public final ConfigFloat thrusterNormStandardDeviation = this.f(Constants.thrusterNormStandardDeviation, 0.0f, "thruster_norm_standard_deviation", Comments.thrusterNormStandardDeviation);
     public final ConfigFloat thrusterNormMean              = this.f(Constants.thrusterNormMean,              0.0f, "thruster_norm_mean",               Comments.thrusterNormMean);
+    public final ConfigFloat thrusterNormStandardDeviation = this.f(Constants.thrusterNormStandardDeviation, 0.0f, "thruster_norm_standard_deviation", Comments.thrusterNormStandardDeviation);
     public final ConfigFloat thrusterFiringAmplitude       = this.f(Constants.thrusterFiringAmplitude,       0.0f, "thruster_firing_amplitude",        Comments.thrusterFiringAmplitude);
     public final ConfigFloat thrusterVelocitySensitivity   = this.f(Constants.thrusterVelocitySensitivity,   0.0f, "thruster_velocity_sensitivity",    Comments.thrusterVelocitySensitivity);
     public final ConfigFloat thrusterVelocityThreshold     = this.f(Constants.thrusterVelocityThreshold,     0.0f, "thruster_velocity_threshold",      Comments.thrusterVelocityThreshold);
@@ -19,13 +20,25 @@ public class ThrusterConfig extends ConfigBase {
     public ThrusterConfig() {}
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        PropulsiteThrusterBehavior.updateConstants();
+    }
+
+    @Override
+    public void onReload() {
+        super.onReload();
+        PropulsiteThrusterBehavior.updateConstants();
+    }
+
+    @Override
     public String getName() {
         return "thruster_config";
     }
 
     private static class Constants {
-        private static final float thrusterNormStandardDeviation = 1.5f;
         private static final float thrusterNormMean = 3.0f;
+        private static final float thrusterNormStandardDeviation = 1.5f;
         private static final float thrusterFiringAmplitude = 100.0f;
         private static final float thrusterVelocitySensitivity = 15.0f;
         private static final float thrusterVelocityThreshold = 1.0f;
@@ -39,8 +52,8 @@ public class ThrusterConfig extends ConfigBase {
     }
 
     private static class Comments {
-        private static final String thrusterNormStandardDeviation = "Propulsite Thruster firing curve spread.";
         private static final String thrusterNormMean = "Propulsite Thruster firing curve center.";
+        private static final String thrusterNormStandardDeviation = "Propulsite Thruster firing curve spread.";
         private static final String thrusterFiringAmplitude = "Propulsite Thruster firing curve total thrust output.";
         private static final String thrusterVelocitySensitivity = "Propulsite Thruster charging velocity sensitivity.";
         private static final String thrusterVelocityThreshold = "Propulsite Thruster charging velocity threshold.";

@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.config.Configs;
+import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
@@ -53,7 +53,7 @@ public class CreateCrystallized {
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
-        Configs.register(modContainer); // Register ModConfigSpec so that FML can create and load the config file
+        ModConfigs.register(modContainer); // Register ModConfigSpec so that FML can create and load the config file
     }
 
     @SubscribeEvent
@@ -89,7 +89,7 @@ public class CreateCrystallized {
             event.accept(ModItems.CRUSHED_RAW_AEROLITE);
             event.accept(ModItems.RAW_AEROLITE);
             event.accept(ModItems.AEROLITE_INGOT);
-            if (Configs.common().creativeConfig.enableUnusedItems.get().equals(true)) event.accept(ModItems.AEROLITE_SHEET);
+            if (ModConfigs.common().creativeConfig.enableUnusedItems.get().equals(true)) event.accept(ModItems.AEROLITE_SHEET);
             event.accept(ModItems.DENSITE_CORE);
             event.accept(ModItems.AEROLITE_SHOVEL);
 
@@ -128,7 +128,7 @@ public class CreateCrystallized {
             event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
 
             // Development Items and Blocks
-            if (Configs.common().creativeConfig.enableDevItems.get().equals(true)) {
+            if (ModConfigs.common().creativeConfig.enableDevItems.get().equals(true)) {
                 event.accept(ModItems.CREATIVE_FLUID_ERASER);
                 event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
                 event.accept(ModBlocks.PEBBLE);

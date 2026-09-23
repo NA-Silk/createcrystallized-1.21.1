@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.item.entity;
 
-import com.nasilk.createcrystallized.config.Configs;
+import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@SuppressWarnings("FieldMayBeFinal") // Interferes with config
+@SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"}) // Interferes with config
 public class DensiteCoreEntity extends ThrowableItemProjectile {
     // config Constants
-    private double FIELD_RADIUS = Configs.server().itemConfig.coreFieldRadius.get(); // 8.0d;
-    private double IMPACT_RADIUS = Configs.server().itemConfig.coreImpactRadius.get(); // 0.5d;
-    private double SUBLEVEL_STRENGTH = Configs.server().itemConfig.coreSublevelStrength.get(); // 16.0d;
-    private double ENTITY_STRENGTH = Configs.server().itemConfig.coreEntityStrength.get(); // 2.0d;
+    private double FIELD_RADIUS = ModConfigs.server().itemConfig.coreFieldRadius.get(); // 8.0d;
+    private double IMPACT_RADIUS = ModConfigs.server().itemConfig.coreImpactRadius.get(); // 0.5d;
+    private double SUBLEVEL_STRENGTH = ModConfigs.server().itemConfig.coreSublevelStrength.get(); // 16.0d;
+    private double ENTITY_STRENGTH = ModConfigs.server().itemConfig.coreEntityStrength.get(); // 2.0d;
     private double FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
     private double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
 

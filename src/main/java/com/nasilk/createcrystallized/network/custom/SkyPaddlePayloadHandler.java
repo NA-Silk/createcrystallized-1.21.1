@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SkyPaddlePayloadHandler {
 
-    public static void handleDataOnMain(SkyPaddlePayload ignoredPayload, IPayloadContext context) {
+    public static void handleDataOnMain(SkyPaddlePayload ignored, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
             if (!player.getMainHandItem().is(ModItems.AEROLITE_SHOVEL.get())) return;

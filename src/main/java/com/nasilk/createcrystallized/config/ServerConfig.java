@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.config.type;
+package com.nasilk.createcrystallized.config;
 
 import com.nasilk.createcrystallized.config.server.BlockConfig;
 import com.nasilk.createcrystallized.config.server.ItemConfig;

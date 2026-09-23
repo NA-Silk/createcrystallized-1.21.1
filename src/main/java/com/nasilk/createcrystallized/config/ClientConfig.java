@@ -1,9 +1,8 @@
-package com.nasilk.createcrystallized.config.type;
+package com.nasilk.createcrystallized.config;
 
 import com.nasilk.createcrystallized.config.client.ParticleConfig;
 import net.createmod.catnip.config.ConfigBase;
 
-@SuppressWarnings("unused")
 public class ClientConfig extends ConfigBase {
     public final ParticleConfig particleConfig;
 

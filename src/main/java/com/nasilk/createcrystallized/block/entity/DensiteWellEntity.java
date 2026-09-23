@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
-import com.nasilk.createcrystallized.config.Configs;
+import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -62,17 +62,17 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Config constants
     private boolean updateConstants() { // Don't worry about it
         double tempVar; boolean changed = false;
-        tempVar = Configs.server().blockConfig.wellMinRadius.get();    if (MIN_RADIUS    != tempVar) { MIN_RADIUS    = tempVar; changed = true; }
-        tempVar = Configs.server().blockConfig.wellRadiusScale.get();  if (RADIUS_SCALE  != tempVar) { RADIUS_SCALE  = tempVar; changed = true; }
-        tempVar = Configs.server().blockConfig.wellFieldScale.get();   if (FIELD_SCALE   != tempVar) { FIELD_SCALE   = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellMinRadius.get();    if (MIN_RADIUS    != tempVar) { MIN_RADIUS    = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellRadiusScale.get();  if (RADIUS_SCALE  != tempVar) { RADIUS_SCALE  = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellFieldScale.get();   if (FIELD_SCALE   != tempVar) { FIELD_SCALE   = tempVar; changed = true; }
         if (changed) for (int i = 0; i < 16; i++) {
             FIELD_STRENGTH_CURVE[i] = FIELD_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
-        tempVar = Configs.server().blockConfig.wellImpactRadius.get(); if (IMPACT_RADIUS != tempVar) { IMPACT_RADIUS = tempVar; changed = true; IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS; }
-        tempVar = Configs.server().blockConfig.wellDampenRadius.get(); if (DAMPEN_RADIUS != tempVar) { DAMPEN_RADIUS = tempVar; changed = true; DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS; }
-        tempVar = Configs.server().blockConfig.wellDampenScale.get();  if (DAMPEN_SCALE  != tempVar) { DAMPEN_SCALE  = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellImpactRadius.get(); if (IMPACT_RADIUS != tempVar) { IMPACT_RADIUS = tempVar; changed = true; IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellDampenRadius.get(); if (DAMPEN_RADIUS != tempVar) { DAMPEN_RADIUS = tempVar; changed = true; DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS; }
+        tempVar = ModConfigs.server().blockConfig.wellConfig.wellDampenScale.get();  if (DAMPEN_SCALE  != tempVar) { DAMPEN_SCALE  = tempVar; changed = true; }
         if (changed && power > 0) {
             fieldStrength = FIELD_STRENGTH_CURVE[power];
             fieldRadius = FIELD_RADIUS_CURVE[power];
@@ -80,7 +80,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         }
         return changed;
     }
-    { updateConstants(); }
 
     // Cache
     private static class Cache {
@@ -97,6 +96,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     public DensiteWellEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DENSITE_WELL.get(), pos, state);
+        updateConstants();
     }
 
 

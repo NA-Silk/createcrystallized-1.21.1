@@ -60,7 +60,7 @@ public class DensiteParticles extends TerrainParticle {
 
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
-        public Provider(SpriteSet ignoredSpriteSet) {}
+        public Provider(SpriteSet ignored) {}
 
         @Nullable
         @Override

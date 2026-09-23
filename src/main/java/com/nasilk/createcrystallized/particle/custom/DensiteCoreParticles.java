@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.particle.custom;
 
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.config.Configs;
+import com.nasilk.createcrystallized.config.ModConfigs;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
@@ -45,7 +45,7 @@ public class DensiteCoreParticles extends TerrainParticle {
         double d = Mth.length(xSpeed, ySpeed, zSpeed); // Total distance
 
         // Short Singularity Lifetime: 4-10 ticks total base duration
-        double speedScale = Configs.client().particleConfig.coreParticleSpeedScale.get();
+        double speedScale = ModConfigs.client().particleConfig.coreParticleSpeedScale.get();
         int baseLife = (int) Math.max(3, 5.0d * d / speedScale);
         this.lifetime = baseLife + this.random.nextInt(Math.max(1, baseLife / 3)); // Particle lifetime in ticks
         this.quadSize = this.baseQuadSize = 0.05f * this.random.nextFloat() + 0.05f; // Particle size
@@ -103,7 +103,7 @@ public class DensiteCoreParticles extends TerrainParticle {
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
-        public Provider(SpriteSet ignoredSpriteSet) {}
+        public Provider(SpriteSet ignored) {}
 
         @Nullable
         @Override

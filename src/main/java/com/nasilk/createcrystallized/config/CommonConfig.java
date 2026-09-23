@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.config.type;
+package com.nasilk.createcrystallized.config;
 
 import com.nasilk.createcrystallized.config.common.CreativeConfig;
 import net.createmod.catnip.config.ConfigBase;

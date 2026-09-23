@@ -2,42 +2,112 @@ package com.nasilk.createcrystallized.block.behavior;
 
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import com.nasilk.createcrystallized.client.ModSounds;
+import com.nasilk.createcrystallized.config.ModConfigs;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.equipment.armor.DivingBootsItem;
+import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 
+import java.util.function.Predicate;
+
+// TODO Tune constants with config
 public class PropulsiteThrusterBehavior {
     protected PropulsiteThrusterEntity be;
+
+    // Tick constants
+    private static final int MAX_COOLDOWN = 100; // How long it takes for the block to be able to be charged again in ticks
+    private static final int FIRING_DURATION = 10; // How long it takes for the full burst to go though in ticks
+    private static final int RANDOM_TICK_RATE = 20;
     private static final int PACKET_UPDATE_RATE = 10;
     private static final int SIMPLE_PARTICLE_RATE = 20;
     private static final int CHARGING_PARTICLE_RATE = 2;
-    private static final int MAX_COOLDOWN = 100; // How long it takes for the block to be able to be charged again in ticks
-    private static final int BURST_DURATION = 10; // How long it takes for the full burst to go though in ticks
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final double STANDARD_DEVIATION = 1.5d; // Curve spread
-    private static final double MEAN = 3.0d; // Curve middle
-    private static final double[] BURST_CURVE = new double[BURST_DURATION];
-    static {
-        for (int i = 0; i < BURST_DURATION; i++) {
-            double diff = (i - MEAN) / STANDARD_DEVIATION;
-            BURST_CURVE[i] = Math.exp(-0.5d * diff * diff);
+    public final int MAX_CHARGE = 60; // How long it takes for the burst to be ready after receiving redstone power in ticks
+    public final double FACE_OFFSET = 0.6d;
+    private double NORM_STANDARD_DEVIATION = Double.NaN; // 1.5d; // Curve spread
+    private double NORM_MEAN = Double.NaN; // 3.0d; // Curve middle
+    private double NORM_DENOMINATOR = Double.NaN; // NORM_STANDARD_DEVIATION * Math.sqrt(2.0d * Math.PI); // Precomputed denominator
+    public double FIRING_AMPLITUDE = Double.NaN; // 100.0d; // How much total thrust is output over the length of the burst
+    public double VELOCITY_SENSITIVITY = Double.NaN; // 15.0d;
+    public double VELOCITY_THRESHOLD = Double.NaN; // 1.0d;
+    private final double[] NORM_CURVE = new double[FIRING_DURATION];
+
+    // BFS constants
+    public final Direction[] DIRECTIONS = Direction.values();
+    public double CLUSTER_BONUS_SCALE = Double.NaN; // 2.0d;
+
+    // Entity pushing constants
+    public final Predicate<Entity> PUSH_PREDICATE = entity ->
+        !entity.isSpectator() &&
+        !(entity instanceof AbstractContraptionEntity) &&
+        !AirCurrent.isPlayerCreativeFlying(entity) &&
+        !DivingBootsItem.isWornBy(entity);
+    public double MAX_ENTITY_KNOCKBACK = Double.NaN; // 6.0d; // Maximum acceleration allowed in blocks per tick
+    public double MAX_PUSH_RANGE = Double.NaN; // 8.0d; // Length effectiveness distance
+    public double MAX_PUSH_RADIUS = Double.NaN; // 0.75d; // Radial effectiveness distance
+    public double MAX_PUSH_RADIUS_SQUARED = Double.NaN; // MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; // Precomputed radial distance squared
+    public double PUSH_SCALE = Double.NaN; // 0.1d; // Acceleration multiplier
+    public double PUSH_SHIFT_REDUCTION = Double.NaN; // 8.0d; // Acceleration multiplier while holding shift
+    public double DAMAGE_SCALE = Double.NaN; // 5.0d; // Thruster damage multiplier
+
+    // Charging particle constants
+    public final int NUM_PARTICLES = 2; // Number of particles to spawn per tick
+    public final double PARTICLE_RADIUS = 1.5d; // Particle spawn range from the face, in blocks
+
+    // Firing particle constants
+    public final int MIN_PARTICLES = 3;
+    public final int MAX_PARTICLES = 11;
+    public final double PARTICLE_SPREAD = 0.10d;
+    public final double MIN_PARTICLE_SPEED = 0.15d;
+    public final double MAX_PARTICLE_SPEED = 0.5d;
+
+    // Config constants
+    private boolean updateConstants() { // Don't worry about it
+        double tempVar; boolean changed = false;
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterNormStandardDeviation.get(); if (NORM_STANDARD_DEVIATION != tempVar) { NORM_STANDARD_DEVIATION = tempVar; changed = true; NORM_DENOMINATOR = NORM_STANDARD_DEVIATION * Math.sqrt(2.0d * Math.PI); }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterNormMean.get();              if (NORM_MEAN               != tempVar) { NORM_MEAN               = tempVar; changed = true; }
+        if (changed) for (int i = 0; i < FIRING_DURATION; i++) {
+            double diff = (i - NORM_MEAN) / NORM_STANDARD_DEVIATION;
+            NORM_CURVE[i] = Math.exp(-0.5d * diff * diff) / NORM_DENOMINATOR;
         }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterFiringAmplitude.get();       if (FIRING_AMPLITUDE        != tempVar) { FIRING_AMPLITUDE         = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterVelocitySensitivity.get();   if (VELOCITY_SENSITIVITY    != tempVar) { VELOCITY_SENSITIVITY     = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterVelocityThreshold.get();     if (VELOCITY_THRESHOLD      != tempVar) { VELOCITY_THRESHOLD       = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterClusterBonusScale.get();     if (CLUSTER_BONUS_SCALE     != tempVar) { CLUSTER_BONUS_SCALE      = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterMaxEntityKnockback.get();    if (MAX_ENTITY_KNOCKBACK    != tempVar) { MAX_ENTITY_KNOCKBACK     = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterMaxPushRange.get();          if (MAX_PUSH_RANGE          != tempVar) { MAX_PUSH_RANGE           = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterMaxPushRadius.get();         if (MAX_PUSH_RADIUS         != tempVar) { MAX_PUSH_RADIUS          = tempVar; changed = true; MAX_PUSH_RADIUS_SQUARED = MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterPushScale.get();             if (PUSH_SCALE              != tempVar) { PUSH_SCALE               = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterPushShiftReduction.get();    if (PUSH_SHIFT_REDUCTION    != tempVar) { PUSH_SHIFT_REDUCTION     = tempVar; changed = true; }
+        tempVar = ModConfigs.server().blockConfig.thrusterConfig.thrusterDamageScale.get();           if (DAMAGE_SCALE            != tempVar) { DAMAGE_SCALE             = tempVar; changed = true; }
+        return changed;
     }
-    public static final int RANDOM_TICK_RATE = 20;
-    public static final int MAX_CHARGE = 60; // How long it takes for the burst to be ready after receiving redstone power in ticks
-    public static final double FACE_OFFSET = 0.6d;
-    public static final double VELOCITY_SCALE = 15.0d;
-    public static final double THRESHOLD = 1.0d;
-    public static final double AMPLITUDE = 100.0d; // How much total thrust is output over the length of the burst
-    public static final double NORM_DENOMINATOR = STANDARD_DEVIATION * Math.sqrt(2.0d * Math.PI); // Precomputed denominator
+
+    public double getPeakThrust(double currentAmplitude) {
+        if (Double.isNaN(NORM_DENOMINATOR) || NORM_DENOMINATOR == 0) return 0.0d;
+        return currentAmplitude / NORM_DENOMINATOR;
+    }
 
     public PropulsiteThrusterBehavior(PropulsiteThrusterEntity be) {
         this.be = be;
+        updateConstants();
     }
 
-    public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean randTick, boolean powered, PropulsiteThrusterEntity.Cache cache) {
+    public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean powered, PropulsiteThrusterEntity.Cache cache) {
+        boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
+        if (randTick) {
+            if (updateConstants()) { // Handle config changes
+                serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+                be.setChanged();
+            }
+            be.updateAmplitude(serverLevel, be.getBlockPos());
+        }
         switch (be.getTickState()) {
             case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
             case CHARGING -> charging(serverLevel, cache);
@@ -103,8 +173,7 @@ public class PropulsiteThrusterBehavior {
 
     private void firing(ServerLevel serverLevel, RigidBodyHandle handle, PropulsiteThrusterEntity.Cache cache) {
         // The curve that determines the total thrust of the burst
-        be.setThrust((be.getAmplitude() / NORM_DENOMINATOR) // Maximum
-            * BURST_CURVE[be.getFiringTick()]); // Curve computation
+        be.setThrust(be.getAmplitude() * NORM_CURVE[be.getFiringTick()]); // Curve computation
 
         // Hande subLevel effects
         cache.thrusterForce.set(cache.facing.step()).mul(-be.getThrust());
@@ -112,7 +181,7 @@ public class PropulsiteThrusterBehavior {
 
         // Update firing state
         be.setFiringTick(be.getFiringTick() + 1);
-        if (be.getFiringTick() >= BURST_DURATION) {
+        if (be.getFiringTick() >= FIRING_DURATION) {
             be.setFiring(false);
             be.setArmed(false);
             be.setCharge(0);

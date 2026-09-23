@@ -15,7 +15,7 @@ Adds new fluids, blocks, and items inspired by *Create Aeronautics*' features, i
 3. Oscillite - Good vibrations; really doesn't like being tipped over. 
 
 **Machined Blocks**
-1. Densite Well - A variable gravity well that pulls in Simulated Contraptions. Attracts Simulated Contraptions within a set radius, area and pull strength increase with power supplied. 
+1. Densite Well - A variable gravity well that pulls in Simulated Contraptions. Attracts Simulated Contraptions within a scalable radius, area, and pull strength when power is supplied. 
 2. Propusite Thruster - Powerful burst of propulsion with the power of crystals. Begins to charge at high velocity, loses charge when not moving fast enough, and releases a powerful burst of thrust when powered. 
 3. Oscillite Cannon - Violent resonance in one convenient package (not suitable for home defence). Charges by absorbing nearby Echo Crystalls; releases a immensely powerful beam of focused sound waves to tear through blocks and entities alike when powered. 
 

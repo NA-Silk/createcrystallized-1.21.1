@@ -40,7 +40,7 @@ Additional *Create* and *Create Aeronautics* compatible Contraptions are also ad
 
 [Create Aeronautics Repository](https://github.com/Creators-of-Aeronautics/Simulated-Project)
 
-[Sable](https://github.com/ryanhcode/sable)
+[Sable Repository](https://github.com/ryanhcode/sable)
 
 
 ## Development Setup:

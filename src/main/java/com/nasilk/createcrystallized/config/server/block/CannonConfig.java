@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.config.server.block;
 
+import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import net.createmod.catnip.config.ConfigBase;
 
 public class CannonConfig extends ConfigBase {
@@ -12,17 +13,16 @@ public class CannonConfig extends ConfigBase {
 
     public CannonConfig() {}
 
-// TODO Transition to static model
-//    @Override
-//    public void onLoad() {
-//        super.onLoad();
-//        OscilliteCannonBehavior.updateConstants();
-//    }
-//    @Override
-//    public void onReload() {
-//        super.onReload();
-//        OscilliteCannonBehavior.updateConstants();
-//    }
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        OscilliteCannonBehavior.updateConstants();
+    }
+    @Override
+    public void onReload() {
+        super.onReload();
+        OscilliteCannonBehavior.updateConstants();
+    }
 
     @Override
     public String getName() {

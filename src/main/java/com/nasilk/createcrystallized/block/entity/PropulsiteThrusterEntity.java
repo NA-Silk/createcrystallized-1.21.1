@@ -59,12 +59,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     // Cache (short-lived storage to avoid garbage build-up)
     public static class Cache {
         // Public
+        public Direction facing = Direction.NORTH;
         public final Vector3d thrusterPosition = new Vector3d();
         public final Vector3d thrusterPositionLocal = new Vector3d();
+        public final Vector3d thrusterForce =  new Vector3d();
 
         // Tick
-        public Direction facing = Direction.NORTH;
-        public final Vector3d thrusterForce =  new Vector3d();
         final Vector3d thrusterDirection = new Vector3d();
         final Vector3d thrusterFace =  new Vector3d();
         final Vector3d thrusterVelocity = new Vector3d();

@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.config.server.block;
 
+import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class WellConfig extends ConfigBase {
@@ -11,6 +12,18 @@ public class WellConfig extends ConfigBase {
     public final ConfigFloat wellDampenScale  = this.f(Constants.wellDampenScale,  0.0f, "well_dampen_scale",  Comments.wellDampenScale);
 
     public WellConfig() {}
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        DensiteWellEntity.updateConstants();
+    }
+
+    @Override
+    public void onReload() {
+        super.onReload();
+        DensiteWellEntity.updateConstants();
+    }
 
     @Override
     public String getName() {

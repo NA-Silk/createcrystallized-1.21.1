@@ -14,10 +14,10 @@ public class OscilliteCannonBehavior {
 
     // Tick constants
     public static final int MAX_COOLDOWN = 180;
+    public static final int FUEL_RADIUS = 1;
     public static final int RANDOM_TICK_RATE = 20;
     public static final int PACKET_UPDATE_RATE = 10;
     public static final double AMBIENT_RATE = 8e-5d;
-    public static final int FUEL_RADIUS = 1;
     public static final double FACE_OFFSET = 1.6d;
 
     // Firing constants

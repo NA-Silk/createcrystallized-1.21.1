@@ -38,7 +38,7 @@ public class PropulsiteThrusterBehavior {
     public static double FIRING_AMPLITUDE;         // How much total thrust is output over the length of the burst
     public static double VELOCITY_SENSITIVITY;
     public static double VELOCITY_THRESHOLD;
-    public static double[] NORM_CURVE = new double[FIRING_DURATION];
+    public static final double[] NORM_CURVE = new double[FIRING_DURATION];
 
     // BFS constants (non-config)
     public static final Direction[] DIRECTIONS = Direction.values();

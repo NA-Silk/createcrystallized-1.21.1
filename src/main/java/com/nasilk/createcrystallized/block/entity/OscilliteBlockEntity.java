@@ -9,11 +9,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 
 public class OscilliteBlockEntity extends BlockEntity {
     // Constants
     private static final double DAMPING_SCALE = -0.9d;
     private static final double TORQUE_SCALE = 2.0d;
+    private static final Vector3dc zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Cache
     private static class Cache {
@@ -21,7 +23,6 @@ public class OscilliteBlockEntity extends BlockEntity {
         final Vector3d angularVelocity = new Vector3d();
         final Vector3d rotation = new Vector3d();
         final Vector3d temp = new Vector3d();
-        final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -82,6 +83,6 @@ public class OscilliteBlockEntity extends BlockEntity {
         cache.rotation.fma(DAMPING_SCALE, cache.angularVelocity);
 
         // Apply rotation
-        handle.addLinearAndAngularVelocity(cache.zeroVector, cache.rotation);
+        handle.addLinearAndAngularVelocity(zeroVector, cache.rotation);
     }
 }

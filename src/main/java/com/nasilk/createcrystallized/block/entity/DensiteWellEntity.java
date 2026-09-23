@@ -3,6 +3,7 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
 import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.config.server.block.WellConfig;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -27,6 +28,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,44 +43,38 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Tick variables (unsaved)
     private final List<SubLevel> targets = new ArrayList<>();
 
-    // Tick constants
-    private static final int TICK_RATE = 20;
-    private static final double AMBIENT_RATE = 8e-5d;
+    // Tick constants (non-config)
+    private static final int RANDOM_TICK_RATE = 20;
     private static final double PARTICLE_RATE = 0.025d;
-    private double MIN_RADIUS = Double.NaN; // 0.0d;
-    private double RADIUS_SCALE = Double.NaN; // 2.0d;
-    private double FIELD_SCALE = Double.NaN; // 0.5d;
-    private final double[] FIELD_STRENGTH_CURVE = new double[16];
-    private final double[] FIELD_RADIUS_CURVE = new double[16];
-    private final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
+    private static final double AMBIENT_RATE = 8e-5d;
+    private static final Vector3dc zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
+
+    // Tick constants (config)
+    private static final double[] FIELD_STRENGTH_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
 
     // Physics constants
-    private double IMPACT_RADIUS = Double.NaN; // 0.5d;
-    private double DAMPEN_RADIUS = Double.NaN; // 1.5d;
-    private double DAMPEN_SCALE = Double.NaN; // 0.2d;
-    private double IMPACT_RADIUS_SQUARED = Double.NaN;
-    private double DAMPEN_RADIUS_SQUARED = Double.NaN;
+    private static double DAMPEN_SCALE;
+    private static double IMPACT_RADIUS_SQUARED;
+    private static double DAMPEN_RADIUS_SQUARED;
 
     // Config constants
-    private boolean updateConstants() { // Don't worry about it
-        double tempVar; boolean changed = false;
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellMinRadius.get();    if (MIN_RADIUS    != tempVar) { MIN_RADIUS    = tempVar; changed = true; }
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellRadiusScale.get();  if (RADIUS_SCALE  != tempVar) { RADIUS_SCALE  = tempVar; changed = true; }
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellFieldScale.get();   if (FIELD_SCALE   != tempVar) { FIELD_SCALE   = tempVar; changed = true; }
-        if (changed) for (int i = 0; i < 16; i++) {
+    public static void updateConstants() {
+        WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
+        double MIN_RADIUS = wellConfig.wellMinRadius.get();
+        double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
+        double FIELD_SCALE = wellConfig.wellFieldScale.get();
+        for (int i = 0; i < 16; i++) {
             FIELD_STRENGTH_CURVE[i] = FIELD_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellImpactRadius.get(); if (IMPACT_RADIUS != tempVar) { IMPACT_RADIUS = tempVar; changed = true; IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS; }
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellDampenRadius.get(); if (DAMPEN_RADIUS != tempVar) { DAMPEN_RADIUS = tempVar; changed = true; DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS; }
-        tempVar = ModConfigs.server().blockConfig.wellConfig.wellDampenScale.get();  if (DAMPEN_SCALE  != tempVar) { DAMPEN_SCALE  = tempVar; changed = true; }
-        if (changed && power > 0) {
-            fieldStrength = FIELD_STRENGTH_CURVE[power];
-            fieldRadius = FIELD_RADIUS_CURVE[power];
-            fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
-        }
-        return changed;
+        double IMPACT_RADIUS = wellConfig.wellImpactRadius.get();
+        double DAMPEN_RADIUS = wellConfig.wellDampenRadius.get();
+        IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
+        DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
+        DAMPEN_SCALE = wellConfig.wellDampenScale.get();
     }
 
     // Cache
@@ -89,7 +85,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         final Vector3d impulseVelocity = new Vector3d();
         final Vector3d currentLinearVelocity = new Vector3d();
         final Vector3d currentAngularVelocity = new Vector3d();
-        final Vector3d zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -142,13 +137,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run effects
-            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % TICK_RATE == 0) {
-                if (updateConstants()) { // Handle config changes
-                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-                    this.setChanged();
-                }
-                updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
-            }
+            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % RANDOM_TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
             if (!targets.isEmpty()) applyGravity(cache);
             if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
         }
@@ -218,7 +207,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 // Handle dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
-                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.zeroVector);
+                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, zeroVector);
 
                 // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^3
                 // cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_CUBED);

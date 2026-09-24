@@ -1,7 +1,6 @@
 package com.nasilk.createcrystallized.mixin;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
-import com.nasilk.createcrystallized.util.setting.MixinSettings;
 import com.simibubi.create.content.fluids.OpenEndedPipe;
 import dev.ryanhcode.sable.Sable;
 import net.minecraft.world.level.Level;
@@ -13,6 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import static com.nasilk.createcrystallized.util.setting.MixinSettings.*;
 
 @Mixin(OpenEndedPipe.class)
 public class OpenEndedPipeMixin {
@@ -21,8 +21,6 @@ public class OpenEndedPipeMixin {
 
     @Inject(method = "removeFluidFromSpace", at = @At("HEAD"), cancellable = true)
     private void removeFluidFromSpaceMixin(boolean simulate, CallbackInfoReturnable<FluidStack> cir) {
-        MixinSettings settings = new MixinSettings();
-
         // Error check
         if (world == null) return;
 
@@ -31,13 +29,13 @@ public class OpenEndedPipeMixin {
         Sable.HELPER.projectOutOfSubLevel(world, pos);
 
         // VOID SEA SLURRY: check if in END and y < yVoidSeaSlurry
-        if (world.dimension() == Level.END && pos.y < settings.yVoidSeaSlurry) {
+        if (world.dimension() == Level.END && pos.y < Y_VOID_SEA_SLURRY) {
             // Return Void Sea Slurry as if it was extracted
             cir.setReturnValue(new FluidStack(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), 250));
         }
 
         // DRIFT CONDENSATE: check if in OVERWORLD and y > yDriftCondensate
-        if (world.dimension() == Level.OVERWORLD && pos.y > settings.yDriftCondensate) {
+        if (world.dimension() == Level.OVERWORLD && pos.y > Y_DRIFT_CONDENSATE) {
             // Pretend there is something to pull so HosePulleyFluidHandler proceeds
             cir.setReturnValue(new FluidStack(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), 1000));
         }

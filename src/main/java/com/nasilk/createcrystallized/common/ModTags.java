@@ -8,14 +8,15 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+/**
+ * Usable via the following boolean methods:
+ * <ol>
+ *     <li>((BlockState) block).is(ModTags.Blocks.TAG)</li>
+ *     <li>((ItemStack) item).is(ModTags.Items.TAG)</li>
+ * </ol>
+ */
 @SuppressWarnings({"unused", "SameParameterValue"})
 public class ModTags {
-    /**
-     * Usable via the following boolean methods:
-     *  1. ((BlockState) block).is(ModTags.Blocks.TAG)
-     *  2. ((ItemStack) item).is(ModTags.Items.TAG)
-     */
-
     public static class Blocks {
         public static final TagKey<Block> NEEDS_AEROLITE_TOOL = createTag("needs_aerolite_tool");
         public static final TagKey<Block> INCORRECT_FOR_AEROLITE_TOOL = createTag("incorrect_for_aerolite_tool");

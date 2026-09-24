@@ -16,9 +16,18 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Fluid Transformation Settings
- * - Allows more convenient fluid settings
-
+ * Fluid Transformation Settings - Allows more convenient fluid settings
+ * <table>
+ *   <tr><th align="center">Event</th> <th align="center">Frequency</th></tr>
+ *   <tr><td>Walking             </td> <td>1 (Not supported)       </td></tr>
+ *   <tr><td>Projectile impact   </td> <td>2 (Not supported)       </td></tr>
+ *   <tr><td>Elytra              </td> <td>4                       </td></tr>
+ *   <tr><td>Damage              </td> <td>7                       </td></tr>
+ *   <tr><td>Doors               </td> <td>10                      </td></tr>
+ *   <tr><td>Block break         </td> <td>12                      </td></tr>
+ *   <tr><td>Block place         </td> <td>13                      </td></tr>
+ *   <tr><td>Explosion           </td> <td>15                      </td></tr>
+ * </table>
  * @param transformRate                 Random transformation chance per tick
  * @param maxSkyLight                   Maximum skylight level allowed
  * @param yRange                        Height restrictions
@@ -34,17 +43,6 @@ import java.util.function.Supplier;
  * @param transformParticle             Optional transformation particle
  * @param transformSound                Optional transformation sound
  * @param chainCatalyzes                Transforms adjacent same-fluid blocks
-
- * Frequency Table
- * Event:                               Frequency:
- * Walking	                            1 (Not supported)
- * Projectile impact	                2 (Not supported)
- * Elytra	                            4
- * Damage	                            7
- * Doors	                            10
- * Block break	                        12
- * Block place	                        13
- * Explosion	                        15
  */
 public record FluidTransformSettings(
     Supplier<Block> transformBlock,

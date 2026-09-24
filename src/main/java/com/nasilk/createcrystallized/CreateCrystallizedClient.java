@@ -61,6 +61,7 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.register(ModItems.AEROLITE_SHOVEL.get());
             CreateTooltipHelper.register(ModItems.DENSITE_CORE.get());
             CreateTooltipHelper.register(ModItems.CREATIVE_FLUID_ERASER.get());
+            CreateTooltipHelper.register(ModItems.CREATIVE_BAG_OF_LONGS.get());
             CreateTooltipHelper.register(ModBlocks.PEBBLE.get());
             CreateTooltipHelper.register(ModBlocks.OSCILLITE_CANNON.get());
             CreateTooltipHelper.register(ModBlocks.PROPULSITE_THRUSTER.get());

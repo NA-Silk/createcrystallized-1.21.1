@@ -89,7 +89,9 @@ public class CreateCrystallized {
             event.accept(ModItems.CRUSHED_RAW_AEROLITE);
             event.accept(ModItems.RAW_AEROLITE);
             event.accept(ModItems.AEROLITE_INGOT);
-            if (ModConfigs.common().creativeConfig.enableUnusedItems.get().equals(true)) event.accept(ModItems.AEROLITE_SHEET);
+            if (ModConfigs.common().creativeConfig.enableUnusedItems.get().equals(true)) {
+                event.accept(ModItems.AEROLITE_SHEET);
+            }
             event.accept(ModItems.DENSITE_CORE);
             event.accept(ModItems.AEROLITE_SHOVEL);
 

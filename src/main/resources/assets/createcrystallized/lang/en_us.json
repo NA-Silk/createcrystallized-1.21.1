@@ -22,7 +22,7 @@
   "item.createcrystallized.aerolite_ingot": "Aerolite Ingot",
   "item.createcrystallized.raw_aerolite": "Raw Aerolite",
   "item.createcrystallized.crushed_raw_aerolite": "Crushed Raw Aerolite",
-  "item.createcrystallized.aerolite_sheet": "UNUSED Aerolite Sheet",
+  "item.createcrystallized.aerolite_sheet": "_UNUSED ITEM_ Aerolite Sheet",
   "item.createcrystallized.densite_core": "Densite Core",
   "item.createcrystallized.oscillite_resonator": "Oscillite Cannon Resonator",
   "item.createcrystallized.aerolite_shovel": "Aerolite Shovel",
@@ -102,13 +102,17 @@
   "item.createcrystallized.creative_fluid_eraser.tooltip.condition1": "R-Click on fluid",
   "item.createcrystallized.creative_fluid_eraser.tooltip.behaviour1": "Removes fluid of _only that type_ in a large radius.",
 
-  "block.createcrystallized.oscillite_cannon.tooltip.summary": "Violent resonance in one convenient package, _not_ suitable for home defence.",
-  "block.createcrystallized.oscillite_cannon.tooltip.condition1": "When at high velocity",
-  "block.createcrystallized.oscillite_cannon.tooltip.behaviour1": "Begins to charge, _loses charge_ when not moving fast enough.",
-  "block.createcrystallized.oscillite_cannon.tooltip.condition2": "After charging",
-  "block.createcrystallized.oscillite_cannon.tooltip.behaviour2": "Becomes _armed_, Redstone input discharges the cannon, must cool down _without redstone power_ after firing.",
+  "item.createcrystallized.creative_bag_of_longs.tooltip.summary": "_DEV ITEM_ Changes states of _Machined Crystal Blocks_.",
+  "item.createcrystallized.creative_bag_of_longs.tooltip.condition1": "R-Click on machined crystal block",
+  "item.createcrystallized.creative_bag_of_longs.tooltip.behaviour1": "Changes the firing, charging, etc. state of _that_ block.",
 
-  "block.createcrystallized.propulsite_thruster.tooltip.summary": "Powerful burst propulsion with the power of crystals.",
+  "block.createcrystallized.oscillite_cannon.tooltip.summary": "Violent resonance in one convenient package, _not_ suitable for home defence.",
+  "block.createcrystallized.oscillite_cannon.tooltip.condition1": "When at near an _Echo Crystal_",
+  "block.createcrystallized.oscillite_cannon.tooltip.behaviour1": "Arms itself, _loses arming_ once powered if the crystal fuel has been removed.",
+  "block.createcrystallized.oscillite_cannon.tooltip.condition2": "After arming",
+  "block.createcrystallized.oscillite_cannon.tooltip.behaviour2": "Redstone input discharges the cannon, must cool down _without redstone power_ after firing.",
+
+  "block.createcrystallized.propulsite_thruster.tooltip.summary": "Powerful burst of propulsion with the power of crystals.",
   "block.createcrystallized.propulsite_thruster.tooltip.condition1": "When at high velocity",
   "block.createcrystallized.propulsite_thruster.tooltip.behaviour1": "Begins to charge, _loses charge_ when not moving fast enough.",
   "block.createcrystallized.propulsite_thruster.tooltip.condition2": "After charging",
@@ -120,5 +124,5 @@
   "block.createcrystallized.densite_well.tooltip.condition1": "When placed",
   "block.createcrystallized.densite_well.tooltip.behaviour1": "Looks _fancy_ and _cool_.",
   "block.createcrystallized.densite_well.tooltip.condition2": "When powered",
-  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a set radius, area and pull strength increase with _power supplied_."
+  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength that increase with _power supplied_."
 }

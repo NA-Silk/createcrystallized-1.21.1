@@ -20,7 +20,7 @@ public class OscilliteCannonBehavior {
     public static final double AMBIENT_RATE = 8e-5d;
     public static final double FACE_OFFSET = 1.6d;
 
-    // Firing constants
+    // Firing constants (config)
     public static double DAMAGE;
     public static double RECOIL;
     public static double ENTITY_KNOCKBACK;
@@ -47,7 +47,6 @@ public class OscilliteCannonBehavior {
 
     public OscilliteCannonBehavior(OscilliteCannonEntity be) {
         this.be = be;
-        updateConstants(); // Probably not necessary
     }
 
     public void tick(ServerLevel serverLevel, boolean powered, OscilliteCannonEntity.Cache cache) {

@@ -31,6 +31,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 // TODO Tune constants with config
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
@@ -43,7 +44,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Tick variables (unsaved)
     private final List<SubLevel> targets = new ArrayList<>();
 
-    // Tick constants (non-config)
+    // Tick constants
     private static final int RANDOM_TICK_RATE = 20;
     private static final double PARTICLE_RATE = 0.025d;
     private static final double AMBIENT_RATE = 8e-5d;
@@ -54,12 +55,14 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double[] FIELD_RADIUS_CURVE = new double[16];
     private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
 
-    // Physics constants
-    private static double DAMPEN_SCALE;
+    // Physics constants (config)
     private static double IMPACT_RADIUS_SQUARED;
     private static double DAMPEN_RADIUS_SQUARED;
+    private static double DAMPEN_SCALE;
 
     // Config constants
+    private final AtomicLong currentID = new AtomicLong();
+    private static final AtomicLong configID = new AtomicLong();
     public static void updateConstants() {
         WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
         double MIN_RADIUS = wellConfig.wellMinRadius.get();
@@ -75,6 +78,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
         DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
         DAMPEN_SCALE = wellConfig.wellDampenScale.get();
+        configID.getAndIncrement();
     }
 
     // Cache
@@ -91,7 +95,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     public DensiteWellEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DENSITE_WELL.get(), pos, state);
-        updateConstants();
     }
 
 
@@ -101,18 +104,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             // Get block power
             BlockState state = getBlockState();
             int newPower = state.getValue(DensiteWellBlock.POWER);
-            if (power != newPower) {
-                power = newPower;
-                if (power == 0) {
-                    fieldStrength = 0.0d;
-                    fieldRadius = 0.0d;
-                    fieldRadiusSquared = 0.0d;
-                    if (!targets.isEmpty()) targets.clear();
-                } else {
-                    fieldStrength = FIELD_STRENGTH_CURVE[power];
-                    fieldRadius = FIELD_RADIUS_CURVE[power];
-                    fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
-                }
+            if (power != newPower || currentID.get() != configID.get()) {
+                updateFieldVariables(power);
+                currentID.set(configID.get());
                 serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 this.setChanged();
             }
@@ -277,8 +271,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Save data to the network sync packet
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Power", this.power);
-        tag.putDouble("FieldStrength", this.fieldStrength);
-        tag.putDouble("FieldRadius", this.fieldRadius);
         return tag;
     }
 
@@ -287,9 +279,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         // Handle receiving the packet on the Client side
         CompoundTag tag = pkt.getTag();
         this.power = tag.getInt("Power");
-        this.fieldStrength = tag.getDouble("FieldStrength");
-        this.fieldRadius = tag.getDouble("FieldRadius");
-        this.fieldRadiusSquared = this.fieldRadius * this.fieldRadius;
+        updateFieldVariables(this.power);
     }
 
     @Override
@@ -304,16 +294,34 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Power", this.power);
-        tag.putDouble("FieldStrength", this.fieldStrength);
-        tag.putDouble("FieldRadius", this.fieldRadius);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.power = tag.getInt("Power");
-        this.fieldStrength = tag.getDouble("FieldStrength");
-        this.fieldRadius = tag.getDouble("FieldRadius");
-        this.fieldRadiusSquared = this.fieldRadius * this.fieldRadius;
+        updateFieldVariables(this.power);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        this.targets.clear();
+    }
+
+
+    // UTIL
+    private void updateFieldVariables(int newPower) {
+        this.power = newPower;
+        if (power == 0) {
+            fieldStrength = 0.0d;
+            fieldRadius = 0.0d;
+            fieldRadiusSquared = 0.0d;
+            targets.clear();
+        } else {
+            fieldStrength = FIELD_STRENGTH_CURVE[power];
+            fieldRadius = FIELD_RADIUS_CURVE[power];
+            fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
+        }
     }
 }

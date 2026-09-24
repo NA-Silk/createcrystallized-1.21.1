@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.item.entity;
 
 import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.config.server.ItemConfig;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.particle.ModParticles;
@@ -31,34 +32,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"}) // Interferes with config
 public class DensiteCoreEntity extends ThrowableItemProjectile {
-    // config Constants
-    private double FIELD_RADIUS = ModConfigs.server().itemConfig.coreFieldRadius.get(); // 8.0d;
-    private double IMPACT_RADIUS = ModConfigs.server().itemConfig.coreImpactRadius.get(); // 0.5d;
-    private double SUBLEVEL_STRENGTH = ModConfigs.server().itemConfig.coreSublevelStrength.get(); // 16.0d;
-    private double ENTITY_STRENGTH = ModConfigs.server().itemConfig.coreEntityStrength.get(); // 2.0d;
-    private double FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
-    private double IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
-
-    // tick Constants
-    private static final double PARTICLE_RATE = 0.01d;
-
-    // updateSublevelTargets Variables
+    // Tick variables
     private final List<SubLevel> sublevelTargets = new ArrayList<>();
     private final BoundingBox3d searchBox = new BoundingBox3d();
-
-    // applySublevelGravity Variables
     private final Vector3d corePosition = new Vector3d();
     private final Vector3d impulseVelocity = new Vector3d();
-
-    // updateEntityTargets Variables
     private final List<Entity> entityTargets = new ArrayList<>();
+
+    // Tick constants
+    private static final double PARTICLE_RATE = 0.01d;
     private static final Predicate<Entity> ENTITY_PREDICATE = entity ->
-        !entity.isSpectator()
-            && !(entity instanceof AbstractContraptionEntity)
-            && !AirCurrent.isPlayerCreativeFlying(entity)
-            && !DivingBootsItem.isWornBy(entity);
+        !entity.isSpectator() &&
+        !(entity instanceof AbstractContraptionEntity) &&
+        !AirCurrent.isPlayerCreativeFlying(entity) &&
+        !DivingBootsItem.isWornBy(entity);
+
+    // Tick constants (config)
+    private static double FIELD_RADIUS;
+    private static double FIELD_RADIUS_SQUARED;
+    private static double IMPACT_RADIUS_SQUARED;
+    private static double SUBLEVEL_STRENGTH;
+    private static double ENTITY_STRENGTH;
+
+    // Config constants
+    public static void updateConstants() {
+        ItemConfig itemConfig = ModConfigs.server().itemConfig;
+        FIELD_RADIUS = itemConfig.coreFieldRadius.get();
+        FIELD_RADIUS_SQUARED = FIELD_RADIUS * FIELD_RADIUS;
+        double IMPACT_RADIUS = itemConfig.coreImpactRadius.get();
+        IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
+        SUBLEVEL_STRENGTH = itemConfig.coreSublevelStrength.get();
+        ENTITY_STRENGTH = itemConfig.coreEntityStrength.get();
+    }
 
 
     // CONSTRUCTORS

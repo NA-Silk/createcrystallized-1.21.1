@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 public class PropulsiteThrusterBehavior {
     private final PropulsiteThrusterEntity be;
 
-    // Tick constants (non-config)
+    // Tick constants
     public static final int MAX_COOLDOWN = 100;   // How long it takes for the block to be able to be charged again in ticks
     public static final int MAX_CHARGE = 60;      // How long it takes for the burst to be ready after receiving redstone power in ticks
     public static final int FIRING_DURATION = 10; // How long it takes for the full burst to go though in ticks
@@ -40,13 +40,13 @@ public class PropulsiteThrusterBehavior {
     public static double VELOCITY_THRESHOLD;
     public static final double[] NORM_CURVE = new double[FIRING_DURATION];
 
-    // BFS constants (non-config)
+    // BFS constants
     public static final Direction[] DIRECTIONS = Direction.values();
 
     // BFS constants (config)
     public static double CLUSTER_BONUS_SCALE;
 
-    // Entity pushing constants (non-config)
+    // Entity pushing constants
     public static final Predicate<Entity> PUSH_PREDICATE = entity ->
         !entity.isSpectator() &&
         !(entity instanceof AbstractContraptionEntity) &&
@@ -98,7 +98,6 @@ public class PropulsiteThrusterBehavior {
 
     public PropulsiteThrusterBehavior(PropulsiteThrusterEntity be) {
         this.be = be;
-        updateConstants(); // Probably not necessary
     }
 
     public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean powered, PropulsiteThrusterEntity.Cache cache) {

@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.config.server;
 
+import com.nasilk.createcrystallized.item.entity.DensiteCoreEntity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ItemConfig extends ConfigBase {
@@ -9,6 +10,18 @@ public class ItemConfig extends ConfigBase {
     public final ConfigFloat coreEntityStrength = this.f(Constants.coreEntityStrength, 0.0f, "core_entity_strength", Comments.coreEntityStrength);
 
     public ItemConfig() {}
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        DensiteCoreEntity.updateConstants();
+    }
+
+    @Override
+    public void onReload() {
+        super.onReload();
+        DensiteCoreEntity.updateConstants();
+    }
 
     @Override
     public String getName() {

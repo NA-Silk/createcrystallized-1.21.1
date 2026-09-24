@@ -4,6 +4,7 @@ import com.nasilk.createcrystallized.particle.ModParticles;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.joml.Vector3f;
 
 public class DensiteBlock extends Block {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
@@ -55,10 +57,6 @@ public class DensiteBlock extends Block {
 
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        updateClusterPower(level, pos);
-    }
-
-    private void updateClusterPower(Level level, BlockPos pos) {
         // Using specialized set and primitive array for long efficiency
         Cache cache = CACHE.get();
         LongOpenHashSet cluster = cache.set;
@@ -76,6 +74,7 @@ public class DensiteBlock extends Block {
 
         // Perform breadth-first search (BFS) on cluster blocks for maximum power
         int maxPower = 0;
+        boolean hitMaxSize = false;
         while (head < tail) {
             // Dequeue a block position
             BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
@@ -94,7 +93,11 @@ public class DensiteBlock extends Block {
                     // Update cluster and queue
                     cluster.add(neighborLong);
                     queue[tail++] = neighborLong; // Enqueue
-                    if (tail >= MAX_CLUSTER_SIZE) break;
+                    if (tail >= MAX_CLUSTER_SIZE) {
+                        maxPower = 0; // Never mind lol
+                        hitMaxSize = true; // Angry Densite
+                        break;
+                    }
                 }
             }
         }
@@ -103,6 +106,13 @@ public class DensiteBlock extends Block {
         for (int i = 0; i < tail; i++) {
             BlockPos currentPos = BlockPos.of(queue[i]);
             BlockState currentState = level.getBlockState(currentPos);
+            if (hitMaxSize) level.sendParticles(
+                new DustParticleOptions(new Vector3f(0.20f, 0.0f, 0.310f),1.0f),
+                currentPos.getX() + 0.5d,
+                currentPos.getY() + 0.5d,
+                currentPos.getZ() + 0.5d,
+                8,0.5d,0.5d,0.5d,0.5d
+            );
 
             // Safety check: still Densite & power level is actually different
             if (currentState.is(this) && currentState.getValue(POWER) != maxPower) {
@@ -119,7 +129,7 @@ public class DensiteBlock extends Block {
         }
     }
 
-    private int getExternalPower(Level level, BlockPos pos) {
+    private int getExternalPower(ServerLevel level, BlockPos pos) {
         // Search each direction for maximum power
         int maxPower = 0;
         for (Direction direction : Direction.values()) {

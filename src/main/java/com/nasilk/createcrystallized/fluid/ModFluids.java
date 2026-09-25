@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class ModFluids {
     public static final DeferredRegister<Fluid> FLUIDS =
         DeferredRegister.create(BuiltInRegistries.FLUID, CreateCrystallized.MOD_ID);
@@ -113,14 +114,14 @@ public class ModFluids {
         "source_densite_emulsion",
         () -> new TransformBaseFlowingFluid.Source(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
-            List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
+            List.of(DENSITE_EMULSION_SETTINGS_1) // List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
     public static final Supplier<FlowingFluid> FLOWING_DENSITE_EMULSION = FLUIDS.register(
         "flowing_densite_emulsion",
         () -> new TransformBaseFlowingFluid.Flowing(
             ModFluids.DENSITE_EMULSION_PROPERTIES,
-            List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
+            List.of(DENSITE_EMULSION_SETTINGS_1) // List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
 

@@ -105,7 +105,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             BlockState state = getBlockState();
             int newPower = state.getValue(DensiteWellBlock.POWER);
             if (power != newPower || currentID.get() != configID.get()) {
-                updateFieldVariables(power);
+                updateFieldVariables(newPower);
                 currentID.set(configID.get());
                 serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
                 this.setChanged();

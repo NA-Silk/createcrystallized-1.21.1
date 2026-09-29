@@ -13,6 +13,8 @@ import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
 import com.nasilk.createcrystallized.client.ModSounds;
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -29,21 +31,21 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 @Mod(CreateCrystallized.MOD_ID)
 public class CreateCrystallized {
     public static final String MOD_ID = "createcrystallized"; // Define mod id in a common place for everything to reference
-    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID); // Connected textures registrator
     public static final Logger LOGGER = LogUtils.getLogger(); // Directly reference a slf4j logger
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID).defaultCreativeTab((ResourceKey<CreativeModeTab>) null); // Connected textures registrator
 
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
         // Custom registrations
         ModSounds.register(modEventBus); // Custom sounds
-        ModItems.register(modEventBus);
-        ModBlocks.register(modEventBus);
-        ModEntities.register(modEventBus);
-        ModCreativeModeTabs.register(modEventBus); // Unique CreativeMode Tab
-        ModBlockEntities.register(modEventBus);
+        ModItems.register();
+        ModBlocks.register();
         ModFluidTypes.register(modEventBus); // Fluid textures
         ModFluids.register(modEventBus); // Fluid behaviors
+        ModEntities.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModParticles.register(modEventBus);
+        ModCreativeModeTabs.register(modEventBus); // Unique CreativeMode Tab
 
         // Connected textures
         ModSpriteShifts.init();
@@ -136,5 +138,9 @@ public class CreateCrystallized {
                 event.accept(ModBlocks.PEBBLE);
             }
         }
+    }
+
+    public static CreateRegistrate getRegistrate() {
+        return REGISTRATE;
     }
 }

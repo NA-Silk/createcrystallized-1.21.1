@@ -9,32 +9,17 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.joml.Vector3f;
 import java.util.function.Supplier;
 
-@SuppressWarnings({"SpellCheckingInspection", "GrazieInspectionRunner"})
+@SuppressWarnings({"SpellCheckingInspection", "GrazieInspectionRunner", "CommentedOutCode"})
 public class ModFluidTypes {
-    /* DEFAULT
-     * public static final ResourceLocation WATER_STILL_RL = ResourceLocation.parse("block/water_still");
-     * public static final ResourceLocation WATER_FLOWING_RL = ResourceLocation.parse("block/water_flow");
-     * public static final ResourceLocation WATER_OVERLAY_RL = ResourceLocation.parse("block/water_overlay");
-     */
-
-    public static final DeferredRegister<FluidType> FLUID_TYPES =
-        DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreateCrystallized.MOD_ID);
+    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreateCrystallized.MOD_ID);
 
 
     // VOID SEA SLURRY
-    public static final ResourceLocation VOID_SEA_SLURRY_STILL_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/source_void_sea_slurry"
-    );
-    public static final ResourceLocation VOID_SEA_SLURRY_FLOWING_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/flowing_void_sea_slurry"
-    );
     public static final Supplier<FluidType> VOID_SEA_SLURRY_FLUID_TYPE = registerFluidType(
         "void_sea_slurry_fluid_type",
         new BaseFluidType(
-            VOID_SEA_SLURRY_STILL_RL,
-            VOID_SEA_SLURRY_FLOWING_RL,
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/source_void_sea_slurry"),
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/flowing_void_sea_slurry"),
             null,
             0xE6FFFFFF, // 0xAARRGGBB (ARGB format)
             new Vector3f(0.20f, 0.086f, 0.322f), // Fog color
@@ -48,19 +33,11 @@ public class ModFluidTypes {
 
 
     // DENSITE EMULSION
-    public static final ResourceLocation DENSITE_STILL_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/source_densite_emulsion"
-    );
-    public static final ResourceLocation DENSITE_FLOWING_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/flowing_densite_emulsion"
-    );
     public static final Supplier<FluidType> DENSITE_EMULSION_FLUID_TYPE = registerFluidType(
         "densite_emulsion_fluid_type",
         new BaseFluidType(
-            DENSITE_STILL_RL,
-            DENSITE_FLOWING_RL,
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/source_densite_emulsion"),
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/flowing_densite_emulsion"),
             null,
             null, // 0xAARRGGBB (ARGB format)
             new Vector3f(0.141f, 0.0f, 0.259f), // Fog color
@@ -74,19 +51,11 @@ public class ModFluidTypes {
 
 
     // DRIFT CONDENSATE
-    public static final ResourceLocation DRIFT_CONDENSATE_STILL_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/source_drift_condensate"
-    );
-    public static final ResourceLocation DRIFT_CONDENSATE_FLOWING_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/flowing_drift_condensate"
-    );
     public static final Supplier<FluidType> DRIFT_CONDENSATE_FLUID_TYPE = registerFluidType(
         "drift_condensate_fluid_type",
         new BaseFluidType(
-            DRIFT_CONDENSATE_STILL_RL,
-            DRIFT_CONDENSATE_FLOWING_RL,
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/source_drift_condensate"),
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/flowing_drift_condensate"),
             null,
             0xAAFFFFFF, // 0xAARRGGBB (ARGB format)
             new Vector3f(1.0f, 0.867f, 0.729f),  // Fog color
@@ -102,19 +71,11 @@ public class ModFluidTypes {
 
 
     // PROPULSITE FLURRY
-    public static final ResourceLocation PROPULSITE_FLURRY_STILL_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/source_propulsite_flurry"
-    );
-    public static final ResourceLocation PROPULSITE_FLURRY_FLOWING_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/flowing_propulsite_flurry"
-    );
     public static final Supplier<FluidType> PROPULSITE_FLURRY_FLUID_TYPE = registerFluidType(
         "propulsite_flurry_fluid_type",
         new BaseFluidType(
-            PROPULSITE_FLURRY_STILL_RL,
-            PROPULSITE_FLURRY_FLOWING_RL,
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/source_propulsite_flurry"),
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/flowing_propulsite_flurry"),
             null,
             0xEEFFFFFF, // 0xAARRGGBB (ARGB format)
             new Vector3f(1.0f, 0.867f, 0.729f),  // Fog color
@@ -130,19 +91,11 @@ public class ModFluidTypes {
 
 
     // OSCILLITE SUSPENSION
-    public static final ResourceLocation OSCILLITE_SUSPENSION_STILL_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/source_oscillite_suspension"
-    );
-    public static final ResourceLocation OSCILLITE_SUSPENSION_FLOWING_RL = ResourceLocation.fromNamespaceAndPath(
-        CreateCrystallized.MOD_ID,
-        "block/flowing_oscillite_suspension"
-    );
     public static final Supplier<FluidType> OSCILLITE_SUSPENSION_FLUID_TYPE = registerFluidType(
         "oscillite_suspension_fluid_type",
         new BaseFluidType(
-            OSCILLITE_SUSPENSION_STILL_RL,
-            OSCILLITE_SUSPENSION_FLOWING_RL,
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/source_oscillite_suspension"),
+            ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "block/flowing_oscillite_suspension"),
             null,
             0xEEFFFFFF, // 0xAARRGGBB (ARGB format)
             new Vector3f(0.271f, 0.804f, 1.0f),  // Fog color
@@ -164,4 +117,8 @@ public class ModFluidTypes {
     public static void register(IEventBus eventBus) {
         FLUID_TYPES.register(eventBus);
     }
+
+    // public static final ResourceLocation WATER_STILL_RL = ResourceLocation.parse("block/water_still");
+    // public static final ResourceLocation WATER_FLOWING_RL = ResourceLocation.parse("block/water_flow");
+    // public static final ResourceLocation WATER_OVERLAY_RL = ResourceLocation.parse("block/water_overlay");
 }

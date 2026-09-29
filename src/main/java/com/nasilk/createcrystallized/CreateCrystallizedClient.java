@@ -10,8 +10,10 @@ import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRende
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.particle.custom.*;
+import com.nasilk.createcrystallized.ponder.ModPonderPlugin;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -66,6 +68,9 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.register(ModBlocks.OSCILLITE_CANNON.get());
             CreateTooltipHelper.register(ModBlocks.PROPULSITE_THRUSTER.get());
             CreateTooltipHelper.register(ModBlocks.DENSITE_WELL.get());
+
+            // Ponders
+            PonderIndex.addPlugin(new ModPonderPlugin());
         });
         CreateCrystallized.LOGGER.info("HELLO from client setup");
     }

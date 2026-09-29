@@ -33,7 +33,7 @@ public class BaseFluidType extends FluidType {
         this.stillTexture = stillTexture;
         this.flowingTexture = flowingTexture;
         this.overlayTexture = overlayTexture;
-        if (tintColor == null) { tintColor = 0xFFFFFFFF; } // No tint: 0xFFFFFFFF
+        if (tintColor == null) tintColor = 0xFFFFFFFF; // No tint: 0xFFFFFFFF
         this.tintColor = tintColor;
         this.fogColor = fogColor;
     }

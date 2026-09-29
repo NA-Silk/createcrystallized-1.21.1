@@ -6,12 +6,13 @@ import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
 import com.nasilk.createcrystallized.fluid.flowingfluid.UpwardBaseFlowingFluid;
-import com.nasilk.createcrystallized.item.ModItems;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -21,10 +22,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,8 +30,9 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ModFluids {
-    public static final DeferredRegister<Fluid> FLUIDS =
-        DeferredRegister.create(BuiltInRegistries.FLUID, CreateCrystallized.MOD_ID);
+    // TODO Convert to REGISTRATE
+    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID, CreateCrystallized.MOD_ID);
 
 
     // VOID SEA SLURRY
@@ -45,16 +44,14 @@ public class ModFluids {
         "flowing_void_sea_slurry",
         () -> new BaseFlowingFluid.Flowing(ModFluids.VOID_SEA_SLURRY_PROPERTIES)
     );
-
-    public static final DeferredBlock<LiquidBlock> VOID_SEA_SLURRY_BLOCK = ModBlocks.BLOCKS.register(
+    public static final BlockEntry<LiquidBlock> VOID_SEA_SLURRY_BLOCK = REGISTRATE.block(
         "void_sea_slurry_block",
-        () -> new LiquidBlock(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable())
-    );
-    public static final DeferredItem<Item> VOID_SEA_SLURRY_BUCKET = ModItems.ITEMS.registerItem(
+        (properties) -> new LiquidBlock(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable())
+    ).register();
+    public static final ItemEntry<BucketItem> VOID_SEA_SLURRY_BUCKET = REGISTRATE.item(
         "void_sea_slurry_bucket",
-        properties -> new BucketItem(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
-    );
-
+        (properties) -> new BucketItem(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
+    ).register();
     public static final BaseFlowingFluid.Properties VOID_SEA_SLURRY_PROPERTIES = new BaseFlowingFluid.Properties(
         ModFluidTypes.VOID_SEA_SLURRY_FLUID_TYPE,
         SOURCE_VOID_SEA_SLURRY,
@@ -124,16 +121,14 @@ public class ModFluids {
             List.of(DENSITE_EMULSION_SETTINGS_1) // List.of(DENSITE_EMULSION_SETTINGS_1, DENSITE_EMULSION_SETTINGS_2)
         )
     );
-
-    public static final DeferredBlock<LiquidBlock> DENSITE_EMULSION_BLOCK = ModBlocks.BLOCKS.register(
+    public static final BlockEntry<LiquidBlock> DENSITE_EMULSION_BLOCK = REGISTRATE.block(
         "densite_emulsion_block",
-        () -> new LiquidBlock(ModFluids.SOURCE_DENSITE_EMULSION.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
-    );
-    public static final DeferredItem<Item> DENSITE_EMULSION_BUCKET = ModItems.ITEMS.registerItem(
+        (properties) -> new LiquidBlock(ModFluids.SOURCE_DENSITE_EMULSION.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
+    ).register();
+    public static final ItemEntry<BucketItem> DENSITE_EMULSION_BUCKET = REGISTRATE.item(
         "densite_emulsion_bucket",
-        properties -> new BucketItem(ModFluids.SOURCE_DENSITE_EMULSION.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
-    );
-
+        (properties) -> new BucketItem(ModFluids.SOURCE_DENSITE_EMULSION.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
+    ).register();
     public static final TransformBaseFlowingFluid.Properties DENSITE_EMULSION_PROPERTIES = new TransformBaseFlowingFluid.Properties(
         ModFluidTypes.DENSITE_EMULSION_FLUID_TYPE,
         SOURCE_DENSITE_EMULSION,
@@ -157,16 +152,14 @@ public class ModFluids {
         () -> new UpwardBaseFlowingFluid.Flowing(ModFluids.DRIFT_CONDENSATE_PROPERTIES)
             .setFlowAnimationOptions(10,3,0.2d,0.4d,0.8d,1.0f)
     );
-
-    public static final DeferredBlock<LiquidBlock> DRIFT_CONDENSATE_BLOCK = ModBlocks.BLOCKS.register(
+    public static final BlockEntry<LiquidBlock> DRIFT_CONDENSATE_BLOCK = REGISTRATE.block(
         "drift_condensate_block",
-        () -> new LiquidBlock(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable())
-    );
-    public static final DeferredItem<Item> DRIFT_CONDENSATE_BUCKET = ModItems.ITEMS.registerItem(
+        (properties) -> new LiquidBlock(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable())
+    ).register();
+    public static final ItemEntry<BucketItem> DRIFT_CONDENSATE_BUCKET = REGISTRATE.item(
         "drift_condensate_bucket",
-        properties -> new BucketItem(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
-    );
-
+        (properties) -> new BucketItem(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
+    ).register();
     public static final UpwardBaseFlowingFluid.Properties DRIFT_CONDENSATE_PROPERTIES = new UpwardBaseFlowingFluid.Properties(
         ModFluidTypes.DRIFT_CONDENSATE_FLUID_TYPE,
         SOURCE_DRIFT_CONDENSATE,
@@ -209,16 +202,14 @@ public class ModFluids {
             List.of(PROPULSITE_FLURRY_SETTINGS)
         )
     );
-
-    public static final DeferredBlock<LiquidBlock> PROPULSITE_FLURRY_BLOCK = ModBlocks.BLOCKS.register(
+    public static final BlockEntry<LiquidBlock> PROPULSITE_FLURRY_BLOCK = REGISTRATE.block(
         "propulsite_flurry_block",
-        () -> new LiquidBlock(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
-    );
-    public static final DeferredItem<Item> PROPULSITE_FLURRY_BUCKET = ModItems.ITEMS.registerItem(
+        (properties) -> new LiquidBlock(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
+    ).register();
+    public static final ItemEntry<BucketItem> PROPULSITE_FLURRY_BUCKET = REGISTRATE.item(
         "propulsite_flurry_bucket",
-        properties -> new BucketItem(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
-    );
-
+        (properties) -> new BucketItem(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
+    ).register();
     public static final TransformBaseFlowingFluid.Properties PROPULSITE_FLURRY_PROPERTIES = new TransformBaseFlowingFluid.Properties(
         ModFluidTypes.PROPULSITE_FLURRY_FLUID_TYPE,
         SOURCE_PROPULSITE_FLURRY,
@@ -264,16 +255,14 @@ public class ModFluids {
             List.of(OSCILLITE_SUSPENSION_SETTINGS)
         )
     );
-
-    public static final DeferredBlock<LiquidBlock> OSCILLITE_SUSPENSION_BLOCK = ModBlocks.BLOCKS.register(
+    public static final BlockEntry<LiquidBlock> OSCILLITE_SUSPENSION_BLOCK = REGISTRATE.block(
         "oscillite_suspension_block",
-        () -> new LiquidBlock(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
-    );
-    public static final DeferredItem<Item> OSCILLITE_SUSPENSION_BUCKET = ModItems.ITEMS.registerItem(
+        (properties) -> new LiquidBlock(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).randomTicks().noLootTable())
+    ).register();
+    public static final ItemEntry<BucketItem> OSCILLITE_SUSPENSION_BUCKET = REGISTRATE.item(
         "oscillite_suspension_bucket",
-        properties -> new BucketItem(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
-    );
-
+        (properties) -> new BucketItem(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), properties.craftRemainder(Items.BUCKET).stacksTo(1))
+    ).register();
     public static final TransformBaseFlowingFluid.Properties OSCILLITE_SUSPENSION_PROPERTIES = new TransformBaseFlowingFluid.Properties(
         ModFluidTypes.OSCILLITE_SUSPENSION_FLUID_TYPE,
         SOURCE_OSCILLITE_SUSPENSION,

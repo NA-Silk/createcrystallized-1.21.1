@@ -124,5 +124,16 @@
   "block.createcrystallized.densite_well.tooltip.condition1": "When placed",
   "block.createcrystallized.densite_well.tooltip.behaviour1": "Looks _fancy_ and _cool_.",
   "block.createcrystallized.densite_well.tooltip.condition2": "When powered",
-  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength that increase with _power supplied_."
+  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength that increase with _power supplied_.",
+
+  "createcrystallized.ponder.tag.machined_crystal_blocks": "Machined Crystal Blocks",
+  "createcrystallized.ponder.tag.machined_crystal_blocks.description": "Blocks that enable crystal powered physics interactions.",
+  "createcrystallized.ponder.densite_well.header": "Densite Well",
+  "createcrystallized.ponder.densite_well.text_1": "Densite Wells generate a gravitational field when powered.",
+  "createcrystallized.ponder.densite_well.text_2": "Use a redstone input to control the Well's power and range.",
+  "createcrystallized.ponder.densite_well.text_3": "Physics assemblies inside the field are affected by the Well.",
+  "createcrystallized.ponder.densite_well.text_4": "A low redstone signal creates a smaller field.",
+  "createcrystallized.ponder.densite_well.text_5": "The weaker field slowly pulls nearby physics assemblies toward the Well.",
+  "createcrystallized.ponder.densite_well.text_6": "Increasing the redstone signal strengthens and enlarges the field.",
+  "createcrystallized.ponder.densite_well.text_7": "The stronger field quickly pulls nearby physics assemblies toward the Well."
 }

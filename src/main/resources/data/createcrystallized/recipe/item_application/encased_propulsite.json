@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createcrystallized:propulsite_block"
+    },
+    {
+      "item": "createcrystallized:chora_casing"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:encased_propulsite_block"
+    }
+  ]
+}

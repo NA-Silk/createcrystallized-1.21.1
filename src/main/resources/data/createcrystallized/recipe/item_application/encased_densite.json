@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createcrystallized:densite_block"
+    },
+    {
+      "item": "createcrystallized:chora_casing"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:encased_densite_block"
+    }
+  ]
+}

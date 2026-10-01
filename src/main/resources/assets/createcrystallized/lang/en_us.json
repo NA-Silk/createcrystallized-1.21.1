@@ -126,8 +126,13 @@
   "block.createcrystallized.densite_well.tooltip.condition2": "When powered",
   "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength that increase with _power supplied_.",
 
+  "createcrystallized.ponder.tag.crystal_fluids": "Crystal Fluids",
+  "createcrystallized.ponder.tag.crystal_fluids.description": "Fluids that produce fancy crystals.",
+  "createcrystallized.ponder.tag.crystal_blocks": "Crystal Blocks",
+  "createcrystallized.ponder.tag.crystal_blocks.description": "Blocks that enable crystal shenanigans.",
   "createcrystallized.ponder.tag.machined_crystal_blocks": "Machined Crystal Blocks",
   "createcrystallized.ponder.tag.machined_crystal_blocks.description": "Blocks that enable crystal powered physics interactions.",
+
   "createcrystallized.ponder.densite_well.header": "Densite Well",
   "createcrystallized.ponder.densite_well.text_1": "Densite Wells generate a gravitational field when powered.",
   "createcrystallized.ponder.densite_well.text_2": "Use a redstone input to control the Well's power and range.",

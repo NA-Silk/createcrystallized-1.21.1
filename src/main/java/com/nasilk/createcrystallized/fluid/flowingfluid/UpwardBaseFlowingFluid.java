@@ -18,10 +18,10 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
     public int tickRate = 8;
     public int flowLife = 2;
+    public float flowingBlockHeight = 0.88f;
     public double timeFactor = 0.1d;
     public double yFactor = 0.2d;
     public double threshold = 0.8d;
-    public float flowingBlockHeight = 0.88f;
 
     protected UpwardBaseFlowingFluid(Properties properties) {
         super(properties);

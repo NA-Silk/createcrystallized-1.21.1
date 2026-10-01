@@ -38,6 +38,8 @@ Additional *Create* and *Create Aeronautics* compatible Contraptions are also ad
 
 [Create Repository](https://github.com/Creators-of-Create/Create)
 
+[Ponder *and Catnip*](https://github.com/Creators-of-Create/Ponder)
+
 [Create Aeronautics Repository](https://github.com/Creators-of-Aeronautics/Simulated-Project)
 
 [Sable Repository](https://github.com/ryanhcode/sable)

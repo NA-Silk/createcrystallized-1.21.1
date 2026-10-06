@@ -32,6 +32,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.fluids.FluidType;
 
 @SuppressWarnings("SpellCheckingInspection")
 @Mod(value = CreateCrystallized.MOD_ID, dist = Dist.CLIENT)
@@ -78,11 +79,15 @@ public class CreateCrystallizedClient {
 
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerFluidType(((BaseFluidType) ModFluids.VOID_SEA_SLURRY.getType()).getClientExtensions(), ModFluids.VOID_SEA_SLURRY.getType());
-        event.registerFluidType(((BaseFluidType) ModFluids.DENSITE_EMULSION.getType()).getClientExtensions(), ModFluids.DENSITE_EMULSION.getType());
-        event.registerFluidType(((BaseFluidType) ModFluids.DRIFT_CONDENSATE.getType()).getClientExtensions(), ModFluids.DRIFT_CONDENSATE.getType());
-        event.registerFluidType(((BaseFluidType) ModFluids.PROPULSITE_FLURRY.getType()).getClientExtensions(), ModFluids.PROPULSITE_FLURRY.getType());
-        event.registerFluidType(((BaseFluidType) ModFluids.OSCILLITE_SUSPENSION.getType()).getClientExtensions(), ModFluids.OSCILLITE_SUSPENSION.getType());
+        // Register Fluid Textures
+        FluidType[] TYPES = {
+            ModFluids.VOID_SEA_SLURRY.getType(),
+            ModFluids.DENSITE_EMULSION.getType(),
+            ModFluids.DRIFT_CONDENSATE.getType(),
+            ModFluids.PROPULSITE_FLURRY.getType(),
+            ModFluids.OSCILLITE_SUSPENSION.getType()
+        };
+        for (FluidType type : TYPES) event.registerFluidType(((BaseFluidType) type).getClientExtensions(), type);
 
         // Disable Default Destroy Particles
         IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {

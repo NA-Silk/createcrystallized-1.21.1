@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-public class BaseFluidType extends FluidType implements IClientFluidTypeExtensions {
+public class BaseFluidType extends FluidType {
     private final ResourceLocation stillTexture;
     private final ResourceLocation flowTexture;
     private final ResourceLocation overlayTexture;

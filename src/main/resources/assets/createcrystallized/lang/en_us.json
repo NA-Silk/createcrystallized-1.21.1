@@ -4,11 +4,11 @@
   "createcrystallized.configuration.section.createcrystallized.server.toml.title": "Create: Crystallized Config",
   "creativetab.createcrystallized.createcrystallized_tab": "Create: Crystallized",
 
-  "fluid_type.createcrystallized.void_sea_slurry_fluid_type": "Void Sea Slurry",
-  "fluid_type.createcrystallized.densite_emulsion_fluid_type": "Densite Emulsion",
-  "fluid_type.createcrystallized.drift_condensate_fluid_type": "Drift Condensate",
-  "fluid_type.createcrystallized.propulsite_flurry_fluid_type": "Propulsite Flurry",
-  "fluid_type.createcrystallized.oscillite_suspension_fluid_type": "Oscillite Suspension",
+  "fluid.createcrystallized.void_sea_slurry": "Void Sea Slurry",
+  "fluid.createcrystallized.densite_emulsion": "Densite Emulsion",
+  "fluid.createcrystallized.drift_condensate": "Drift Condensate",
+  "fluid.createcrystallized.propulsite_flurry": "Propulsite Flurry",
+  "fluid.createcrystallized.oscillite_suspension": "Oscillite Suspension",
 
   "item.createcrystallized.void_sea_slurry_bucket": "Void Sea Slurry Bucket",
   "item.createcrystallized.densite_emulsion_bucket": "Densite Emulsion Bucket",

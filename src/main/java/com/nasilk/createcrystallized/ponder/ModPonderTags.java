@@ -20,14 +20,14 @@ public class ModPonderTags {
 
         /// FLUIDS
         helper.registerTag(CRYSTAL_FLUIDS).addToIndex()
-            .item(ModFluids.DENSITE_EMULSION_BUCKET.asItem())
+            .item(ModFluids.DENSITE_EMULSION.getBucket().orElseThrow().asItem())
             .title("Crystal Fluids")
             .description("Fluids that produce fancy crystals.")
             .register();
         itemHelper.addToTag(CRYSTAL_FLUIDS)
-            .add(ModFluids.DENSITE_EMULSION_BUCKET.asItem())
-            .add(ModFluids.PROPULSITE_FLURRY_BUCKET.asItem())
-            .add(ModFluids.OSCILLITE_SUSPENSION_BUCKET.asItem());
+            .add(ModFluids.DENSITE_EMULSION.getBucket().orElseThrow().asItem())
+            .add(ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow().asItem())
+            .add(ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow().asItem());
 
         /// CRYSTAL BLOCKS
         helper.registerTag(CRYSTAL_BLOCKS).addToIndex()

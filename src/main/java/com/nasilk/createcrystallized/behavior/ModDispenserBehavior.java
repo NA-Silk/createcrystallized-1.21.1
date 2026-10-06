@@ -34,10 +34,10 @@ public class ModDispenserBehavior {
     }
 
     public static void register() {
-        registerFluidBucket((BucketItem) ModFluids.VOID_SEA_SLURRY_BUCKET.get());
-        registerFluidBucket((BucketItem) ModFluids.DENSITE_EMULSION_BUCKET.get());
-        registerFluidBucket((BucketItem) ModFluids.DRIFT_CONDENSATE_BUCKET.get());
-        registerFluidBucket((BucketItem) ModFluids.PROPULSITE_FLURRY_BUCKET.get());
-        registerFluidBucket((BucketItem) ModFluids.OSCILLITE_SUSPENSION_BUCKET.get());
+        registerFluidBucket((BucketItem) ModFluids.VOID_SEA_SLURRY.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.DENSITE_EMULSION.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.DRIFT_CONDENSATE.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow());
     }
 }

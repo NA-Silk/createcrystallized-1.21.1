@@ -1,0 +1,44 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/void_sea_slurry_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/void_sea_slurry_flow"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/densite_emulsion_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/densite_emulsion_flow"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/drift_condensate_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/drift_condensate_flow"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/propulsite_flurry_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/propulsite_flurry_flow"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/oscillite_suspension_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcrystallized:fluid/oscillite_suspension_flow"
+    }
+  ]
+}

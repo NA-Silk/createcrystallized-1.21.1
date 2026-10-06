@@ -16,32 +16,23 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
-    public int tickRate = 8;
-    public int flowLife = 2;
-    public float flowingBlockHeight = 0.88f;
-    public double timeFactor = 0.1d;
-    public double yFactor = 0.2d;
-    public double threshold = 0.8d;
+    public final int tickRate;
+    public final int flowLife;
+    public final float flowingBlockHeight;
+    public final double timeFactor;
+    public final double yFactor;
+    public final double threshold;
 
-    protected UpwardBaseFlowingFluid(Properties properties) {
+    public record AnimationSettings(int tickRate, int flowLife, float flowingBlockHeight, double timeFactor, double yFactor, double threshold) {}
+
+    protected UpwardBaseFlowingFluid(Properties properties, AnimationSettings settings) {
         super(properties);
-    }
-
-    public BaseFlowingFluid setFlowAnimationOptions(
-        int tickRate,
-        int flowLife,
-        double timeFactor,
-        double yFactor,
-        double threshold,
-        float flowingBlockHeight
-    ) {
-        this.tickRate = tickRate;
-        this.flowLife = flowLife;
-        this.timeFactor = timeFactor;
-        this.yFactor = yFactor;
-        this.threshold = threshold;
-        this.flowingBlockHeight = flowingBlockHeight;
-        return this;
+        this.tickRate = settings.tickRate();
+        this.flowLife = settings.flowLife();
+        this.flowingBlockHeight = settings.flowingBlockHeight();
+        this.timeFactor = settings.timeFactor();
+        this.yFactor = settings.yFactor();
+        this.threshold = settings.threshold();
     }
 
     // BEHAVIOR OVERRIDES
@@ -117,10 +108,9 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
     @Override public int getTickDelay(LevelReader level) { return tickRate; }
     @Override public FluidState getSource(boolean falling) { return super.getSource(false); }
 
-
     // INNER CLASSES
     public static class Flowing extends UpwardBaseFlowingFluid {
-        public Flowing(Properties properties) { super(properties); }
+        public Flowing(Properties properties, AnimationSettings settings) { super(properties, settings); }
         @Override public boolean isSource(FluidState state) { return false; }
         @Override public int getAmount(FluidState state) { return state.getValue(LEVEL); }
         @Override protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
@@ -130,7 +120,7 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
     }
 
     public static class Source extends UpwardBaseFlowingFluid {
-        public Source(Properties properties) { super(properties); }
+        public Source(Properties properties, AnimationSettings settings) { super(properties, settings); }
         @Override public boolean isSource(FluidState state) { return true; }
         @Override public int getAmount(FluidState state) { return 8; }
     }

@@ -4,7 +4,6 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.entity.ModEntities;
-import com.nasilk.createcrystallized.fluid.ModFluidTypes;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
@@ -37,15 +36,14 @@ public class CreateCrystallized {
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
         // Custom registrations
-        ModSounds.register(modEventBus); // Custom sounds
+        ModSounds.register(modEventBus);
         ModItems.register();
         ModBlocks.register();
-        ModFluidTypes.register(modEventBus); // Fluid textures
-        ModFluids.register(modEventBus); // Fluid behaviors
+        ModFluids.register();
         ModEntities.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModParticles.register(modEventBus);
-        ModCreativeModeTabs.register(modEventBus); // Unique CreativeMode Tab
+        ModCreativeModeTabs.register(modEventBus);
 
         // Connected textures
         ModSpriteShifts.init();
@@ -77,11 +75,11 @@ public class CreateCrystallized {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTab() == ModCreativeModeTabs.CREATECRYSTALLIZED_TAB.get()) {
             // Buckets
-            event.accept(ModFluids.VOID_SEA_SLURRY_BUCKET);
-            event.accept(ModFluids.DENSITE_EMULSION_BUCKET);
-            event.accept(ModFluids.DRIFT_CONDENSATE_BUCKET);
-            event.accept(ModFluids.PROPULSITE_FLURRY_BUCKET);
-            event.accept(ModFluids.OSCILLITE_SUSPENSION_BUCKET);
+            event.accept(ModFluids.VOID_SEA_SLURRY.getBucket().orElseThrow());
+            event.accept(ModFluids.DENSITE_EMULSION.getBucket().orElseThrow());
+            event.accept(ModFluids.DRIFT_CONDENSATE.getBucket().orElseThrow());
+            event.accept(ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow());
+            event.accept(ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow());
 
             // Transformation Items
             event.accept(ModItems.OSCILLITE_RESONATOR);

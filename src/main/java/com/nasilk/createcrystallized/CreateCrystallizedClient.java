@@ -4,6 +4,7 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.fluid.BaseFluidType;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
@@ -48,16 +49,16 @@ public class CreateCrystallizedClient {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // Custom Fluid Renders
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_VOID_SEA_SLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_DENSITE_EMULSION.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_DENSITE_EMULSION.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_DRIFT_CONDENSATE.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_PROPULSITE_FLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_PROPULSITE_FLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_OSCILLITE_SUSPENSION.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_OSCILLITE_SUSPENSION.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.VOID_SEA_SLURRY.getSource(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.VOID_SEA_SLURRY.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.DENSITE_EMULSION.getSource(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.DENSITE_EMULSION.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.DRIFT_CONDENSATE.getSource(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.DRIFT_CONDENSATE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.PROPULSITE_FLURRY.getSource(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.PROPULSITE_FLURRY.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.OSCILLITE_SUSPENSION.getSource(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.OSCILLITE_SUSPENSION.get(), RenderType.translucent());
 
             // Custom Tooltips, add them in the lang file
             CreateTooltipHelper.register(ModItems.AEROLITE_SHOVEL.get());
@@ -77,14 +78,19 @@ public class CreateCrystallizedClient {
 
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerFluidType(((BaseFluidType) ModFluids.VOID_SEA_SLURRY.getType()).getClientExtensions(), ModFluids.VOID_SEA_SLURRY.getType());
+        event.registerFluidType(((BaseFluidType) ModFluids.DENSITE_EMULSION.getType()).getClientExtensions(), ModFluids.DENSITE_EMULSION.getType());
+        event.registerFluidType(((BaseFluidType) ModFluids.DRIFT_CONDENSATE.getType()).getClientExtensions(), ModFluids.DRIFT_CONDENSATE.getType());
+        event.registerFluidType(((BaseFluidType) ModFluids.PROPULSITE_FLURRY.getType()).getClientExtensions(), ModFluids.PROPULSITE_FLURRY.getType());
+        event.registerFluidType(((BaseFluidType) ModFluids.OSCILLITE_SUSPENSION.getType()).getClientExtensions(), ModFluids.OSCILLITE_SUSPENSION.getType());
+
+        // Disable Default Destroy Particles
         IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {
             @Override
             public boolean addDestroyEffects(BlockState state, Level level, BlockPos pos, ParticleEngine manager) {
                 return true; // Cancel default particles
             }
         };
-
-        // Disable Default Destroy Particles
         event.registerBlock(
             noDefaultParticles,
             ModBlocks.DENSITE_BLOCK.get(),

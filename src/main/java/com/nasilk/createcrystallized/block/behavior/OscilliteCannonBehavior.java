@@ -14,11 +14,13 @@ public class OscilliteCannonBehavior {
 
     // Tick constants
     public static final int MAX_COOLDOWN = 180;
-    public static final int FUEL_RADIUS = 1;
     public static final int RANDOM_TICK_RATE = 20;
     public static final int PACKET_UPDATE_RATE = 10;
     public static final double AMBIENT_RATE = 8e-5d;
     public static final double FACE_OFFSET = 1.6d;
+
+    // Tick constants (config)
+    public static int FUEL_RADIUS;
 
     // Firing constants (config)
     public static double DAMAGE;
@@ -36,6 +38,7 @@ public class OscilliteCannonBehavior {
     // Config constants
     public static void updateConstants() {
         CannonConfig cannonConfig = ModConfigs.server().blockConfig.cannonConfig;
+        FUEL_RADIUS = cannonConfig.cannonCrystalRadius.get();
         DAMAGE = cannonConfig.cannonDamage.get();
         RECOIL = cannonConfig.cannonRecoil.get();
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();

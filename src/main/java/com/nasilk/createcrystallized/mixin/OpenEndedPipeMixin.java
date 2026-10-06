@@ -31,13 +31,13 @@ public class OpenEndedPipeMixin {
         // VOID SEA SLURRY: check if in END and y < yVoidSeaSlurry
         if (world.dimension() == Level.END && pos.y < Y_VOID_SEA_SLURRY) {
             // Return Void Sea Slurry as if it was extracted
-            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_VOID_SEA_SLURRY.get(), 250));
+            cir.setReturnValue(new FluidStack(ModFluids.VOID_SEA_SLURRY.get(), 250));
         }
 
         // DRIFT CONDENSATE: check if in OVERWORLD and y > yDriftCondensate
         if (world.dimension() == Level.OVERWORLD && pos.y > Y_DRIFT_CONDENSATE) {
             // Pretend there is something to pull so HosePulleyFluidHandler proceeds
-            cir.setReturnValue(new FluidStack(ModFluids.SOURCE_DRIFT_CONDENSATE.get(), 1000));
+            cir.setReturnValue(new FluidStack(ModFluids.DRIFT_CONDENSATE.get(), 1000));
         }
     }
 }

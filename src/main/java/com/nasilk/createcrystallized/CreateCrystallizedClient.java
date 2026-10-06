@@ -34,7 +34,6 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.fluids.FluidType;
 
-@SuppressWarnings("SpellCheckingInspection")
 @Mod(value = CreateCrystallized.MOD_ID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
 public class CreateCrystallizedClient {
@@ -112,7 +111,7 @@ public class CreateCrystallizedClient {
     }
 
     @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // spinspinspinspinspinspinspinspinspinspinspinspinspin
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Spin
         event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
     }

@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.ctbehavior.*;
+import com.nasilk.createcrystallized.client.ctbehavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
 import com.nasilk.createcrystallized.client.ModSounds;
@@ -33,7 +33,7 @@ public class ModBlocks {
 
 
     // BLOCK REGISTRATIONS
-    /** RAW FORMS */
+    /// RAW FORMS
     public static final BlockEntry<Block> DENSITE_BLOCK = registerBlockCT(
         "densite_block",
         (properties) -> new DensiteBlock(properties
@@ -107,7 +107,7 @@ public class ModBlocks {
     );
 
 
-    /** ENCASED FORMS */
+    /// ENCASED FORMS
     public static final BlockEntry<Block> ENCASED_DENSITE_BLOCK = registerBlockCT(
         "encased_densite_block",
         (properties) -> new EncasedBlock(properties
@@ -222,7 +222,7 @@ public class ModBlocks {
     );
 
 
-    /** MACHINED FORMS */
+    /// MACHINED FORMS
     public static final BlockEntry<Block> DENSITE_WELL = registerBlock(
         "densite_well",
         (properties) -> new DensiteWellBlock(properties
@@ -298,7 +298,7 @@ public class ModBlocks {
     );
 
 
-    /** CASINGS */
+    /// CASINGS
     public static final BlockEntry<Block> CHORA_CASING = registerBlockCT(
         "chora_casing",
             (properties) -> new ChoraCasingBlock(properties
@@ -405,7 +405,7 @@ public class ModBlocks {
     );
 
 
-    /** ECHO BLOCKS - Copied Amethyst registries in Blocks.class */
+    /// ECHO BLOCKS - Copied Amethyst registries in Blocks.class
     public static final BlockEntry<Block> ECHO_CRYSTAL_BLOCK = registerBlock(
         "echo_crystal_block",
         (properties) -> new AmethystBlock(properties
@@ -481,7 +481,7 @@ public class ModBlocks {
     );
 
 
-    /** ADDITIONAL BLOCKS */
+    /// ADDITIONAL BLOCKS
     public static final BlockEntry<Block> PEBBLE = registerBlockCustomItem(
         "pebble",
         (properties) -> new PebbleBlock(properties
@@ -637,5 +637,7 @@ public class ModBlocks {
         REGISTRATE.item(name, (properties) -> itemFactory.apply(blockEntry.get())).register();
     }
 
-    public static void register() {}
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Blocks registered");
+    }
 }

@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrystalBlockScenes {
-    public CrystalBlockScenes() {}
-
     // TODO remove plagiarism
     @SuppressWarnings({"DataFlowIssue", "unchecked"})
     public static void densite(SceneBuilder builder, SceneBuildingUtil util) {

@@ -107,7 +107,7 @@ public class ModSpriteShifts {
         rl("block/chora_casing_levitite_connected")
     );
 
-    public static void init() {
-        CreateCrystallized.LOGGER.info("Connected textures initialized");
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Sprite Shifts registered");
     }
 }

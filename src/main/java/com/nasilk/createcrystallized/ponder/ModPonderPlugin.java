@@ -10,9 +10,7 @@ import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * See Simulated -> SimPonderPlugin
- */
+/// See Simulated -> SimPonderPlugin
 public class ModPonderPlugin extends CreatePonderPlugin {
     public ModPonderPlugin() {}
 

@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 
 public class ModDamageTypes {
     public static final ResourceKey<DamageType> PROPULSITE_THRUSTER = create("propulsite_thruster");
-
     public static final ResourceKey<DamageType> OSCILLITE_CANNON = create("oscillite_cannon");
 
     private static ResourceKey<DamageType> create(String name) {
@@ -19,5 +18,9 @@ public class ModDamageTypes {
 
     public static DamageSource getSource(Level level, ResourceKey<DamageType> key) {
         return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key));
+    }
+
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Damage Types registered");
     }
 }

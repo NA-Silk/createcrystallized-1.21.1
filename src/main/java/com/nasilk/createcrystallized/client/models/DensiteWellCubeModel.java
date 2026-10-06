@@ -1,4 +1,5 @@
-package com.nasilk.createcrystallized.client.models; // Made with Blockbench 5.1.6
+package com.nasilk.createcrystallized.client.models;
+// Made with Blockbench 5.1.6
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 
 import com.mojang.blaze3d.vertex.PoseStack;

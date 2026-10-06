@@ -12,7 +12,7 @@ public class ModItems {
 
 
     // ITEM REGISTRATIONS
-    /** ADVANCED ITEMS */
+    /// ADVANCED ITEMS
     public static final ItemEntry<CreativeFluidEraserItem> CREATIVE_FLUID_ERASER = REGISTRATE.item(
         "creative_fluid_eraser",
         (properties) -> new CreativeFluidEraserItem(properties.stacksTo(1))
@@ -32,7 +32,7 @@ public class ModItems {
     ).register();
 
 
-    /** CRAFTING ITEMS */
+    /// CRAFTING ITEMS
     // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
     public static final ItemEntry<Item> OSCILLITE_RESONATOR = REGISTRATE.item(
         "oscillite_resonator",
@@ -71,5 +71,7 @@ public class ModItems {
 
 
     // REGISTRY HELPERS
-    public static void register() {}
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Items registered");
+    }
 }

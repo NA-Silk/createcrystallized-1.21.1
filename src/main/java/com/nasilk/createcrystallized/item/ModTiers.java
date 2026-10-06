@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.item;
 
+import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.common.ModTags;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -11,4 +12,8 @@ public class ModTiers {
         1800, 6.0f, 2.0f, 20,
         () -> Ingredient.of(ModItems.AEROLITE_INGOT)
     );
+
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Tiers registered");
+    }
 }

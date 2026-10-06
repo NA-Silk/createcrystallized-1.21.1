@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-@SuppressWarnings("SpellCheckingInspection")
 public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
     private final DensiteWellCubeModel model;
@@ -25,7 +24,7 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreEntity>
     @Override
     public void render(DensiteCoreEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
-        poseStack.translate(0.0d, 0.15d, 0.0d); // uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh he go
+        poseStack.translate(0.0d, 0.15d, 0.0d); // uh he go
         poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTicks) * 20.0f)); // s  p  i  n
         poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTicks) * 10.0f)); // s  p  i  n  but sauced
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(getTextureLocation(entity)));

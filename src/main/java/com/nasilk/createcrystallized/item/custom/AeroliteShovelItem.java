@@ -18,7 +18,7 @@ public class AeroliteShovelItem extends ShovelItem {
         super(tier, properties);
     }
 
-    //oh my johd is that a sky paddle
+    // oh my johd is that a sky paddle
     public static BlockHitResult getSkyPaddle(Player player) {
         Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5d));
         return new BlockHitResult(hitPosition, Direction.DOWN, BlockPos.containing(hitPosition), false);

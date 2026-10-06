@@ -2,11 +2,15 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.client.ModJeiPlugin;
+import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.damage.ModDamageTypes;
 import com.nasilk.createcrystallized.entity.ModEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
+import com.nasilk.createcrystallized.item.ModTiers;
 import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
 import com.nasilk.createcrystallized.client.ModSounds;
@@ -26,7 +30,6 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateCrystallized.MOD_ID)
 public class CreateCrystallized {
     public static final String MOD_ID = "createcrystallized"; // Define mod id in a common place for everything to reference
@@ -35,25 +38,31 @@ public class CreateCrystallized {
 
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
-        // Custom registrations
-        ModSounds.register(modEventBus);
-        ModItems.register();
-        ModBlocks.register();
-        ModFluids.register();
+        // Custom registrations TODO Convert to Registrate / Static where possible
         ModEntities.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModParticles.register(modEventBus);
+        ModSounds.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
+        ModConfigs.register(modContainer);
 
-        // Connected textures
-        ModSpriteShifts.init();
+        // Static registrations
+        ModSpriteShifts.register();
+        ModJeiPlugin.register();
+        ModTags.register();
+        ModDamageTypes.register();
+        ModTiers.register();
+
+        // REGISTRATE registrations
+        ModItems.register();
+        ModBlocks.register();
+        ModFluids.register();
         REGISTRATE.registerEventListeners(modEventBus);
 
         // Default registrations
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
-        ModConfigs.register(modContainer); // Register ModConfigSpec so that FML can create and load the config file
     }
 
     @SubscribeEvent
@@ -138,6 +147,7 @@ public class CreateCrystallized {
         }
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static CreateRegistrate getRegistrate() {
         return REGISTRATE;
     }

@@ -33,4 +33,8 @@ public class ModTags {
             return ItemTags.create(ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, name));
         }
     }
+
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Mod Tags registered");
+    }
 }

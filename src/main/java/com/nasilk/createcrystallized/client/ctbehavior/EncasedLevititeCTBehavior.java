@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.ctbehavior;
+package com.nasilk.createcrystallized.client.ctbehavior;
 
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
@@ -8,9 +8,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class PropulsedChoraCasingCTBehavior extends ConnectedTextureBehaviour.Base {
+public class EncasedLevititeCTBehavior extends ConnectedTextureBehaviour.Base {
     @Nullable @Override
     public CTSpriteShiftEntry getShift (BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {
-        return ModSpriteShifts.PROPULSED_CHORA_CASING;
+        return ModSpriteShifts.ENCASED_LEVITITE;
     }
 }

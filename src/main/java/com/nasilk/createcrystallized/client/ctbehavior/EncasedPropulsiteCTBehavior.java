@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.ctbehavior;
+package com.nasilk.createcrystallized.client.ctbehavior;
 
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;

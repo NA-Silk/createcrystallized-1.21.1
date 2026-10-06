@@ -8,7 +8,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-//this is all just custom culling work I straight up don't think it's needed, but I kept the file just incase, you can kill it, or don't
+// this is all just custom culling work I straight up don't think it's needed, but I kept the file just incase, you can kill it, or don't
 public class ChoraCasingBlock extends Block {
     public ChoraCasingBlock(Properties properties) {
         super(properties);

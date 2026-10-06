@@ -13,9 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 
-/**
- * See Simulated -> RedstoneScenes.redstoneMagnet
- */
 public class MachinedCrystalBlockScenes {
     private static final int COMMON_DELAY = 10;
     private static final int MOVEMENT_DELAY = 20;

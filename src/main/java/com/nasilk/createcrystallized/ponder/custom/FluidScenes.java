@@ -25,8 +25,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class FluidScenes {
-    public FluidScenes() {}
-
     // TODO remove plagiarism
     @SuppressWarnings("unchecked")
     public static void densiteEmulsion(SceneBuilder scene, SceneBuildingUtil util) {

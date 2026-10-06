@@ -11,7 +11,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 
-@SuppressWarnings("deprecation")
 public class ModDispenserBehavior {
     private static void registerFluidBucket(BucketItem bucketItem) {
         DispenserBlock.registerBehavior(
@@ -23,7 +22,7 @@ public class ModDispenserBehavior {
                 public ItemStack dispense(BlockSource source, ItemStack stack) {
                     Level level = source.level();
                     BlockPos targetPos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
-                    if (bucketItem.emptyContents(null, level, targetPos, null)) {
+                    if (bucketItem.emptyContents(null, level, targetPos, null, null)) {
                         bucketItem.checkExtraContent(null, level, stack, targetPos);
                         return new ItemStack(Items.BUCKET);
                     }

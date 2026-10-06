@@ -14,8 +14,6 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ModPonderScenes {
-    public ModPonderScenes() {}
-
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
         final PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> helper = registry.withKeyFunction(DeferredHolder::getId);
 

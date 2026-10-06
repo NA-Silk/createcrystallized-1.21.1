@@ -124,7 +124,7 @@
   "block.createcrystallized.densite_well.tooltip.condition1": "When placed",
   "block.createcrystallized.densite_well.tooltip.behaviour1": "Looks _fancy_ and _cool_.",
   "block.createcrystallized.densite_well.tooltip.condition2": "When powered",
-  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength that increase with _power supplied_.",
+  "block.createcrystallized.densite_well.tooltip.behaviour2": "Attracts Simulated Contraptions within a radius, area, and pull strength increase with _power supplied_.",
 
   "createcrystallized.ponder.tag.crystal_fluids": "Crystal Fluids",
   "createcrystallized.ponder.tag.crystal_fluids.description": "Fluids that produce fancy crystals.",
@@ -140,5 +140,11 @@
   "createcrystallized.ponder.densite_well.text_4": "A low redstone signal creates a smaller field.",
   "createcrystallized.ponder.densite_well.text_5": "The weaker field slowly pulls nearby physics assemblies toward the Well.",
   "createcrystallized.ponder.densite_well.text_6": "Increasing the redstone signal strengthens and enlarges the field.",
-  "createcrystallized.ponder.densite_well.text_7": "The stronger field quickly pulls nearby physics assemblies toward the Well."
+  "createcrystallized.ponder.densite_well.text_7": "The stronger field quickly pulls nearby physics assemblies toward the Well.",
+
+  "advancement.createcrystallized.welcome.title": "Create Crystallized",
+  "advancement.createcrystallized.welcome.description": "Levitite wasn't enough for you eh?",
+  "advancement.createcrystallized.high_velocity_metals.title": "High-Velocity Metals",
+  "advancement.createcrystallized.high_velocity_metals.description": "Mine Aerolite and survive the associated Kinetics"
 }
+

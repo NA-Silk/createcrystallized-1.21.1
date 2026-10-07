@@ -1,16 +1,15 @@
 package com.nasilk.createcrystallized.ponder;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.ponder.custom.CrystalBlockScenes;
-import com.nasilk.createcrystallized.ponder.custom.FluidScenes;
-import com.nasilk.createcrystallized.ponder.custom.MachinedCrystalBlockScenes;
+import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.ponder.custom.*;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class ModPonderScenes {
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
         /// FLUIDS
+        /* V2
         registry.forComponents(CreateCrystallized.getRL("densite_emulsion_bucket"))
             .addStoryBoard("fluids/densite_emulsion", FluidScenes::densiteEmulsion)
             .addStoryBoard("crystal_blocks/densite", CrystalBlockScenes::densite);
@@ -31,13 +30,18 @@ public class ModPonderScenes {
         registry.forComponents(ModBlocks.OSCILLITE_BLOCK.getId())
             .addStoryBoard("crystal_blocks/oscillite", CrystalBlockScenes::oscillite)
             .addStoryBoard("fluids/oscillite_suspension", FluidScenes::oscilliteSuspension);
+        */
 
         /// MACHINED CRYSTAL BLOCKS
-        registry.forComponents(ModBlocks.DENSITE_WELL.getId())
-            .addStoryBoard("machined_crystal_blocks/densite_well", MachinedCrystalBlockScenes::densiteWell);
+        if (ModConfigs.client().ponderConfig.enableExperimentalPonders.get()) {
+            registry.forComponents(ModBlocks.DENSITE_WELL.getId())
+                .addStoryBoard("machined_crystal_blocks/densite_well", MachinedCrystalBlockScenes::densiteWell);
+        }
+        /* V2
         registry.forComponents(ModBlocks.PROPULSITE_THRUSTER.getId())
             .addStoryBoard("machined_crystal_blocks/propulsite_thruster", MachinedCrystalBlockScenes::propulsiteThruster);
         registry.forComponents(ModBlocks.OSCILLITE_CANNON.getId())
             .addStoryBoard("machined_crystal_blocks/oscillite_cannon", MachinedCrystalBlockScenes::oscilliteCannon);
+        */
     }
 }

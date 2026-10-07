@@ -6,13 +6,12 @@ import dev.simulated_team.simulated.ponder.instructions.CustomAnimateWorldSectio
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.WorldSectionElement;
-import net.createmod.ponder.api.scene.SceneBuilder;
-import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.api.scene.Selection;
+import net.createmod.ponder.api.scene.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 
+@SuppressWarnings({"unused", "EmptyMethod"})
 public class MachinedCrystalBlockScenes {
     private static final int COMMON_DELAY = 10;
     private static final int MOVEMENT_DELAY = 20;
@@ -145,13 +144,6 @@ public class MachinedCrystalBlockScenes {
         scene.idle(FOCUS_DELAY);
     }
 
-    // TODO
-    public static void propulsiteThruster(SceneBuilder scene, SceneBuildingUtil util) {
-        densiteWell(scene, util);
-    }
-
-    // TODO
-    public static void oscilliteCannon(SceneBuilder scene, SceneBuildingUtil util) {
-        densiteWell(scene, util);
-    }
+    public static void propulsiteThruster(SceneBuilder scene, SceneBuildingUtil util) {}
+    public static void oscilliteCannon(SceneBuilder scene, SceneBuildingUtil util) {}
 }

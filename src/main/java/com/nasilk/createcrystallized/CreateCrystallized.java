@@ -39,8 +39,6 @@ public class CreateCrystallized {
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
         // Custom registrations TODO Convert to Registrate / Static where possible
-        ModEntities.register(modEventBus);
-        ModBlockEntities.register(modEventBus);
         ModParticles.register(modEventBus);
         ModSounds.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
@@ -57,6 +55,8 @@ public class CreateCrystallized {
         ModItems.register();
         ModBlocks.register();
         ModFluids.register();
+        ModBlockEntities.register();
+        ModEntities.register();
         REGISTRATE.registerEventListeners(modEventBus);
 
         // Default registrations

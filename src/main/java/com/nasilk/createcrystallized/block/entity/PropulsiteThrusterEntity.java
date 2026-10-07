@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.entity;
 
-import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
@@ -31,6 +30,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -86,8 +86,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
 
     // CONSTRUCTOR
-    public PropulsiteThrusterEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.PROPULSITE_THRUSTER.get(), pos, state);
+    public PropulsiteThrusterEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
 

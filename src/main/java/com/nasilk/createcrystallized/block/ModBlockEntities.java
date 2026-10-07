@@ -5,53 +5,33 @@ import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import com.nasilk.createcrystallized.block.entity.OscilliteBlockEntity;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries;
-import java.util.function.Supplier;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
-@SuppressWarnings("DataFlowIssue")
 public class ModBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreateCrystallized.MOD_ID);
+    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-    public static final Supplier<BlockEntityType<DensiteWellEntity>> DENSITE_WELL = BLOCK_ENTITIES.register(
+    public static final BlockEntityEntry<DensiteWellEntity> DENSITE_WELL = REGISTRATE.blockEntity(
         "densite_well",
-        () -> BlockEntityType.Builder.of(
-            DensiteWellEntity::new,
-            ModBlocks.DENSITE_WELL.get()
-        )
-        .build(null)
-    );
+        DensiteWellEntity::new
+    ).validBlock(ModBlocks.DENSITE_WELL).register();
 
-    public static final Supplier<BlockEntityType<PropulsiteThrusterEntity>> PROPULSITE_THRUSTER = BLOCK_ENTITIES.register(
+    public static final BlockEntityEntry<PropulsiteThrusterEntity> PROPULSITE_THRUSTER = REGISTRATE.blockEntity(
         "propulsite_thruster",
-        () -> BlockEntityType.Builder.of(
-            PropulsiteThrusterEntity::new,
-            ModBlocks.PROPULSITE_THRUSTER.get()
-        )
-        .build(null)
-    );
+        PropulsiteThrusterEntity::new
+    ).validBlock(ModBlocks.PROPULSITE_THRUSTER).register();
 
-    public static final Supplier<BlockEntityType<OscilliteBlockEntity>> OSCILLITE_BLOCK = BLOCK_ENTITIES.register(
+    public static final BlockEntityEntry<OscilliteBlockEntity> OSCILLITE_BLOCK = REGISTRATE.blockEntity(
         "oscillite_block",
-        () -> BlockEntityType.Builder.of(
-            OscilliteBlockEntity::new,
-            ModBlocks.OSCILLITE_BLOCK.get()
-        )
-        .build(null)
-    );
+        OscilliteBlockEntity::new
+    ).validBlock(ModBlocks.OSCILLITE_BLOCK).register();
 
-    public static final Supplier<BlockEntityType<OscilliteCannonEntity>> OSCILLITE_CANNON = BLOCK_ENTITIES.register(
+    public static final BlockEntityEntry<OscilliteCannonEntity> OSCILLITE_CANNON = REGISTRATE.blockEntity(
         "oscillite_cannon",
-        () -> BlockEntityType.Builder.of(
-            OscilliteCannonEntity::new,
-            ModBlocks.OSCILLITE_CANNON.get()
-        )
-        .build(null)
-    );
+        OscilliteCannonEntity::new
+    ).validBlock(ModBlocks.OSCILLITE_CANNON).register();
 
-    public static void register(IEventBus modEventBus) {
-        BLOCK_ENTITIES.register(modEventBus);
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Block Entities registered");
     }
 }

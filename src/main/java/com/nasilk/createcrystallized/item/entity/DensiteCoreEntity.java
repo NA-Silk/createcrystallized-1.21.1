@@ -68,8 +68,8 @@ public class DensiteCoreEntity extends ThrowableItemProjectile {
 
 
     // CONSTRUCTORS
-    public DensiteCoreEntity(EntityType<? extends DensiteCoreEntity> entityType, Level level) {
-        super(entityType, level);
+    public DensiteCoreEntity(EntityType<DensiteCoreEntity> type, Level level) {
+        super(type, level);
     }
 
     public DensiteCoreEntity(Level level, LivingEntity shooter) {

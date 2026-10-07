@@ -1,12 +1,12 @@
 package com.nasilk.createcrystallized.block.entity;
 
-import com.nasilk.createcrystallized.block.ModBlockEntities;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -40,8 +40,8 @@ public class OscilliteBlockEntity extends BlockEntity {
         UnitDir(Vector3d normal) { this.normal = normal; }
     }
 
-    public OscilliteBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.OSCILLITE_BLOCK.get(), pos, state);
+    public OscilliteBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     // TICK BEHAVIOR

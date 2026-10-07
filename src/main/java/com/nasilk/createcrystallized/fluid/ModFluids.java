@@ -108,6 +108,14 @@ public class ModFluids {
 
 
     // REGISTRY HELPERS
+    public static final FluidEntry<?>[] FLUIDS = {
+        VOID_SEA_SLURRY,
+        DENSITE_EMULSION,
+        DRIFT_CONDENSATE,
+        PROPULSITE_FLURRY,
+        OSCILLITE_SUSPENSION
+    };
+
     private static ResourceLocation fluidTexture(String name, boolean source) {
         String suffix = source ? "_still" : "_flow";
         return ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "fluid/" + name + suffix);

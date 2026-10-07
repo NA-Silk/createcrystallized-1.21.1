@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.entity;
 
-import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.damage.ModDamageTypes;
@@ -37,6 +36,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -93,8 +93,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     // CONSTRUCTOR
-    public OscilliteCannonEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.OSCILLITE_CANNON.get(), pos, state);
+    public OscilliteCannonEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
 

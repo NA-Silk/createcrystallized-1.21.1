@@ -5,7 +5,6 @@ import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
 import com.nasilk.createcrystallized.fluid.BaseFluidType;
-import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
 import com.nasilk.createcrystallized.entity.ModEntities;
@@ -13,6 +12,7 @@ import com.nasilk.createcrystallized.particle.ModParticles;
 import com.nasilk.createcrystallized.particle.custom.*;
 import com.nasilk.createcrystallized.ponder.ModPonderPlugin;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
+import com.tterrag.registrate.util.entry.FluidEntry;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.particle.ParticleEngine;
@@ -32,7 +32,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.fluids.FluidType;
+import static com.nasilk.createcrystallized.fluid.ModFluids.FLUIDS;
 
 @Mod(value = CreateCrystallized.MOD_ID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
@@ -49,16 +49,10 @@ public class CreateCrystallizedClient {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // Custom Fluid Renders
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.VOID_SEA_SLURRY.getSource(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.VOID_SEA_SLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.DENSITE_EMULSION.getSource(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.DENSITE_EMULSION.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.DRIFT_CONDENSATE.getSource(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.DRIFT_CONDENSATE.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.PROPULSITE_FLURRY.getSource(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.PROPULSITE_FLURRY.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.OSCILLITE_SUSPENSION.getSource(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModFluids.OSCILLITE_SUSPENSION.get(), RenderType.translucent());
+            for (FluidEntry<?> fluid : FLUIDS) {
+                ItemBlockRenderTypes.setRenderLayer(fluid.getSource(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(fluid.get(), RenderType.translucent());
+            }
 
             // Custom Tooltips, add them in the lang file
             CreateTooltipHelper.register(ModItems.AEROLITE_SHOVEL.get());
@@ -79,14 +73,10 @@ public class CreateCrystallizedClient {
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
         // Register Fluid Textures
-        FluidType[] TYPES = {
-            ModFluids.VOID_SEA_SLURRY.getType(),
-            ModFluids.DENSITE_EMULSION.getType(),
-            ModFluids.DRIFT_CONDENSATE.getType(),
-            ModFluids.PROPULSITE_FLURRY.getType(),
-            ModFluids.OSCILLITE_SUSPENSION.getType()
-        };
-        for (FluidType type : TYPES) event.registerFluidType(((BaseFluidType) type).getClientExtensions(), type);
+        for (FluidEntry<?> fluid : FLUIDS) {
+            BaseFluidType type = (BaseFluidType) fluid.getType();
+            event.registerFluidType(type.getClientExtensions(), type);
+        }
 
         // Disable Default Destroy Particles
         IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {

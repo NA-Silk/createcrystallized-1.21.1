@@ -2,26 +2,22 @@ package com.nasilk.createcrystallized.entity;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.item.entity.DensiteCoreEntity;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.EntityType;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.util.entry.EntityEntry;
 import net.minecraft.world.entity.MobCategory;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModEntities {
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, CreateCrystallized.MOD_ID);
+    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-    public static final DeferredHolder<EntityType<?>, EntityType<DensiteCoreEntity>> THROWN_DENSITE_CORE = ENTITY_TYPES.register(
+    public static final EntityEntry<DensiteCoreEntity> THROWN_DENSITE_CORE = REGISTRATE.<DensiteCoreEntity>entity(
         "densite_core_projectile",
-        () -> EntityType.Builder.<DensiteCoreEntity>of(DensiteCoreEntity::new, MobCategory.MISC)
-            .sized(0.5f, 0.5f)
-            .clientTrackingRange(12)
-            .updateInterval(1)
-            .build("densite_core_projectile")
-    );
+        DensiteCoreEntity::new,
+        MobCategory.MISC
+    ).properties(properties ->
+        properties.sized(0.5f, 0.5f).clientTrackingRange(12).updateInterval(1)
+    ).register();
 
-    public static void register(IEventBus eventBus) {
-        ENTITY_TYPES.register(eventBus);
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Entities registered");
     }
 }

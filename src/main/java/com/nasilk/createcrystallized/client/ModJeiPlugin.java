@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 
 @JeiPlugin
 public class ModJeiPlugin implements IModPlugin {
-    private static final ResourceLocation PLUGIN_ID = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "jei_plugin");
+    private static final ResourceLocation PLUGIN_ID = CreateCrystallized.getRL("jei_plugin");
 
     @Override
     public ResourceLocation getPluginUid() {

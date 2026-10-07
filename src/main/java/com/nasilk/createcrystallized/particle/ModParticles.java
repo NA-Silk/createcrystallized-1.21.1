@@ -1,57 +1,56 @@
 package com.nasilk.createcrystallized.particle;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import java.util.function.Supplier;
+import net.minecraft.core.registries.Registries;
 
 public class ModParticles {
-    public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, CreateCrystallized.MOD_ID);
+    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-    public static final Supplier<SimpleParticleType> DENSITE_PARTICLES = PARTICLE_TYPES.register(
-        "densite_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_PARTICLES = registerParticle(
+        "densite_particles"
     );
 
-    public static final Supplier<SimpleParticleType> DENSITE_WELL_PARTICLES = PARTICLE_TYPES.register(
-        "densite_well_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_WELL_PARTICLES = registerParticle(
+        "densite_well_particles"
     );
 
-    public static final Supplier<SimpleParticleType> DENSITE_CORE_PARTICLES = PARTICLE_TYPES.register(
-        "densite_core_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_CORE_PARTICLES = registerParticle(
+        "densite_core_particles"
     );
 
-    public static final Supplier<SimpleParticleType> PROPULSITE_PARTICLES = PARTICLE_TYPES.register(
-        "propulsite_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> PROPULSITE_PARTICLES = registerParticle(
+        "propulsite_particles"
     );
 
-    public static final Supplier<SimpleParticleType> PROPULSITE_THRUSTER_FIRING_PARTICLES = PARTICLE_TYPES.register(
-        "propulsite_thruster_firing_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> PROPULSITE_THRUSTER_FIRING_PARTICLES = registerParticle(
+        "propulsite_thruster_firing_particles"
     );
 
-    public static final Supplier<SimpleParticleType> PROPULSITE_THRUSTER_CHARGING_PARTICLES = PARTICLE_TYPES.register(
-        "propulsite_thruster_charging_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> PROPULSITE_THRUSTER_CHARGING_PARTICLES = registerParticle(
+        "propulsite_thruster_charging_particles"
     );
 
-    public static final Supplier<SimpleParticleType> OSCILLITE_CANNON_CHARGING_PARTICLES = PARTICLE_TYPES.register(
-        "oscillite_cannon_charging_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> OSCILLITE_CANNON_CHARGING_PARTICLES = registerParticle(
+        "oscillite_cannon_charging_particles"
     );
 
-    public static final Supplier<SimpleParticleType> OSCILLITE_CANNON_FIRING_PARTICLES = PARTICLE_TYPES.register(
-        "oscillite_cannon_firing_particles",
-        () -> new SimpleParticleType(true)
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> OSCILLITE_CANNON_FIRING_PARTICLES = registerParticle(
+        "oscillite_cannon_firing_particles"
     );
 
-    public static void register(IEventBus eventBus) {
-        PARTICLE_TYPES.register(eventBus);
+    private static RegistryEntry<ParticleType<?>, SimpleParticleType> registerParticle(String name) {
+        return REGISTRATE.simple(
+            name,
+            Registries.PARTICLE_TYPE,
+            () -> new SimpleParticleType(true)
+        );
+    }
+
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Particles registered");
     }
 }

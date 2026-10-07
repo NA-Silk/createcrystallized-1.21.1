@@ -1,73 +1,55 @@
 package com.nasilk.createcrystallized.client;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, CreateCrystallized.MOD_ID);
+    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> PEBBLE_PLACE = SOUND_EVENTS.register(
-        "block.pebble_place",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.pebble_place"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> PEBBLE_PLACE = registerSound(
+        "block.pebble_place"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> PROPULSITE_BREAK = SOUND_EVENTS.register(
-        "block.propulsite_break",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.propulsite_break"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> PROPULSITE_BREAK = registerSound(
+        "block.propulsite_break"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> PROPULSITE_PLACE = SOUND_EVENTS.register(
-        "block.propulsite_place",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.propulsite_place"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> PROPULSITE_PLACE = registerSound(
+        "block.propulsite_place"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> PROPULSITE_THRUSTER_FIRE = SOUND_EVENTS.register(
-            "block.propulsite_thruster_fire",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-                    CreateCrystallized.MOD_ID, "block.propulsite_thruster_fire"
-            ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> PROPULSITE_THRUSTER_FIRE = registerSound(
+        "block.propulsite_thruster_fire"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> DENSITE_BREAK = SOUND_EVENTS.register(
-        "block.densite_break",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.densite_break"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> DENSITE_BREAK = registerSound(
+        "block.densite_break"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> DENSITE_PLACE = SOUND_EVENTS.register(
-        "block.densite_place",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.densite_place"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> DENSITE_PLACE = registerSound(
+        "block.densite_place"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> OSCILLITE_PLACE = SOUND_EVENTS.register(
-        "block.oscillite_place",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.oscillite_place"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> OSCILLITE_PLACE = registerSound(
+        "block.oscillite_place"
     );
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> OSCILLITE_BREAK = SOUND_EVENTS.register(
-        "block.oscillite_break",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-            CreateCrystallized.MOD_ID, "block.oscillite_break"
-        ))
+    public static final RegistryEntry<SoundEvent, SoundEvent> OSCILLITE_BREAK = registerSound(
+        "block.oscillite_break"
     );
 
-    public static void register(IEventBus eventBus) {
-        SOUND_EVENTS.register(eventBus);
+    private static RegistryEntry<SoundEvent, SoundEvent> registerSound(String name) {
+        return REGISTRATE.simple(
+            name,
+            Registries.SOUND_EVENT,
+            () -> SoundEvent.createVariableRangeEvent(CreateCrystallized.getRL(name))
+        );
+    }
+
+    public static void register() {
+        CreateCrystallized.LOGGER.info("Sounds registered");
     }
 }

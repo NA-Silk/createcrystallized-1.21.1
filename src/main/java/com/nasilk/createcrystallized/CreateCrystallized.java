@@ -17,6 +17,7 @@ import com.nasilk.createcrystallized.client.ModSounds;
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -38,28 +39,28 @@ public class CreateCrystallized {
 
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
-        // Custom registrations TODO Convert to Registrate / Static where possible
-        ModParticles.register(modEventBus);
-        ModSounds.register(modEventBus);
-        ModCreativeModeTabs.register(modEventBus);
+        // Container registrations
         ModConfigs.register(modContainer);
 
         // Static registrations
-        ModSpriteShifts.register();
-        ModJeiPlugin.register();
-        ModTags.register();
         ModDamageTypes.register();
+        ModJeiPlugin.register();
+        ModSpriteShifts.register();
+        ModTags.register();
         ModTiers.register();
 
         // REGISTRATE registrations
-        ModItems.register();
         ModBlocks.register();
-        ModFluids.register();
         ModBlockEntities.register();
+        ModCreativeModeTabs.register();
         ModEntities.register();
-        REGISTRATE.registerEventListeners(modEventBus);
+        ModFluids.register();
+        ModItems.register();
+        ModParticles.register();
+        ModSounds.register();
 
-        // Default registrations
+        // Bus registrations
+        REGISTRATE.registerEventListeners(modEventBus);
         NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
@@ -150,5 +151,9 @@ public class CreateCrystallized {
     @SuppressWarnings("SameReturnValue")
     public static CreateRegistrate getRegistrate() {
         return REGISTRATE;
+    }
+
+    public static ResourceLocation getRL(String path) {
+        return ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, path);
     }
 }

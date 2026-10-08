@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
 }
 
@@ -36,6 +36,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 neoForge {
     // Specify the version of NeoForge to use.
     version = project.neo_version
+    validateAccessTransformers = true
 
     parchment {
         mappingsVersion = project.parchment_mappings_version
@@ -165,13 +166,25 @@ idea {
 repositories {
     mavenCentral()
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
-    maven { url = "https://maven.ryanhcode.dev/releases" } // Sable, Aeronautics
+    maven { url = "https://maven.ryanhcode.dev/releases" } // Sable, Aeronautics, Simulated, Offroad
+    maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
 
+    maven { url = "https://mvn.devos.one/snapshots" }
     maven { url = "https://maven.theillusivec4.top/" }
     maven { url = 'https://maven.blamejared.com/' }
-    maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
-    maven { url = "https://mvn.devos.one/snapshots" } // Registrate?
-    
+
+    maven { url = "https://maven.ftb.dev/releases" }
+    maven { url = "https://maven.architectury.dev" }
+    maven { url = "https://maven.squiddev.cc" }
+
+    maven {
+        url = "https://jm.gserv.me/repository/maven-public"
+        content {
+            includeGroup "info.journeymap"
+            includeGroup "mysticdrew"
+        }
+    }
+
     exclusiveContent {
         forRepository {
             maven {
@@ -186,21 +199,26 @@ repositories {
 }
 
 dependencies {
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    // Create
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}")
+    //implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
-    api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") { transitive = false }
 
-    api("dev.eriksonn.aeronautics:aeronautics-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
-        exclude group: "cc.tweaked"
-    }
-    api("dev.simulated_team.simulated:simulated-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
-        exclude group: "cc.tweaked"
-    }
-    api("dev.ryanhcode.offroad:offroad-neoforge-${project.minecraft_version}:${project.aeronautics_version}") {
-        exclude group: "cc.tweaked"
-    }
+    // Sable
+    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") { transitive = false }
+    implementation("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:${sable_companion_version}")
 
+    // Aeronautics, Simulated, Offroad
+    implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}") { transitive = false }
+    implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
+    implementation("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_version}") { transitive = false }
+
+    // Flywheel
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    // JEI
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 }

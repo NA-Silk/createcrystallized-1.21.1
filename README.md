@@ -1,4 +1,4 @@
-# Create: Crystallized
+# Create Crystallized
 *Current Version: 0.0.1 (pre-release development)*
 
 *Last README Update: 9/23/2026*
@@ -7,7 +7,7 @@
 ## Mod Description:
 Adds new fluids, blocks, and items inspired by *Create Aeronautics*' features, including the Levitite and Magnet blocks.
 
-*Create: Crystallized* (CC) extends Levitite into a family of unique fluids/blocks, including three primary additions to the block family and 5 new fluids with unique acquisitions, interactions, and uses. Additionally, CC will add a series of new crafting recipes, related items, and advanced "Machined" blocks to take Aeronautics builds to the next level. 
+*Create Crystallized* (CC) extends Levitite into a family of unique fluids/blocks, including three primary additions to the block family and 5 new fluids with unique acquisitions, interactions, and uses. Additionally, CC will add a series of new crafting recipes, related items, and advanced "Machined" blocks to take Aeronautics builds to the next level. 
 
 **Main Series Blocks**:
 1. Densite - Heavy; sensitive to Redstone. 

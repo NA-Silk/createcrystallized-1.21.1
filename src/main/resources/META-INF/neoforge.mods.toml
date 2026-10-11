@@ -1,6 +1,4 @@
-# This is a neoforge.mods.toml file
-# It contains the data relating to the loading mods
-# The overall format is standard TOML format, v0.5.0. See here https://github.com/toml-lang/toml
+# TOML format, v0.5.0 (see here https://github.com/toml-lang/toml)
 
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
@@ -8,9 +6,7 @@ modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the FML version (currently 2)
 loaderVersion="${loader_version_range}" #mandatory
 
-# The license for the mod
-# Allows for easier comprehension of the redistributive properties
-# All rights reserved is the default copyright stance. See here https://choosealicense.com/
+# The license for the mod (see here https://choosealicense.com/)
 license="${mod_license}"
 
 # A list of mods - how many allowed here is determined by the individual mod loader
@@ -50,8 +46,7 @@ Create Crystallized
 [[mixins]]
     config="${mod_id}.mixins.json"
 
-# The [[accessTransformers]] block allows you to declare where your AT file is
-# If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
+# Declare where your AT file is (defaults to META-INF/accesstransformer.cfg)
 #[[accessTransformers]]
     #file="META-INF/accesstransformer.cfg"
 
@@ -65,9 +60,7 @@ Create Crystallized
     # reason="..."
     # The version range of the dependency
     versionRange="[${neo_version},)" #mandatory
-    # An ordering relationship for the dependency.
-    # BEFORE - This mod is loaded BEFORE the dependency
-    # AFTER - This mod is loaded AFTER the dependency
+    # An ordering relationship for the dependency - BEFORE or AFTER
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT, or SERVER
     side="BOTH"
@@ -107,7 +100,6 @@ Create Crystallized
     ordering="AFTER"
     side="CLIENT"
 
-# Features are specific properties of the game environment
-# This example declares that the mod requires GL version 3.2 or higher
+# Features are specific properties of the game environment (example: GL version 3.2 or higher)
 #[features.${mod_id}]
 #openGLVersion="[3.2,)"

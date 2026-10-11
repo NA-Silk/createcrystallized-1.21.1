@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.fluid.flowingfluid;
 
 import com.nasilk.createcrystallized.event.TaskEventScheduler;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.util.type.FluidTransformTriggerType;
 import com.simibubi.create.foundation.utility.BlockHelper;
@@ -115,6 +116,7 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
                         level.random.nextInt(20,200),
                         () -> {
                             if (level.isLoaded(targetPos)) performTransformation(level, targetPos, settings);
+                            AdvancementHelper.hitEmWithTheOlSwitcheroo(level, targetPos, settings.advancementID());
                         }
                     );
                 }

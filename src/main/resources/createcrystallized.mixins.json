@@ -5,6 +5,7 @@
   "mixins": [
     "ComparatorBlockMixin",
     "FluidDrainingBehaviourMixin",
+    "ItemApplicationAdvancementsMixin",
     "OpenEndedPipeMixin",
     "SculkVeinBlockMixin"
   ],

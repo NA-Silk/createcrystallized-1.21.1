@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.mixin;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.simibubi.create.content.fluids.transfer.FluidDrainingBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import dev.ryanhcode.sable.Sable;
@@ -56,12 +57,14 @@ public class FluidDrainingBehaviourMixin {
         // VOID SEA SLURRY: check if in END and y < Y_VOID_SEA_SLURRY
         if (world.dimension() == Level.END && pos.y < Y_VOID_SEA_SLURRY) {
             // Return Void Sea Slurry as if it was extracted
+            AdvancementHelper.hitEmWithTheOlSwitcheroo(world, rootPos, "the_fluid_in_the_sea_of_the_end");
             cir.setReturnValue(new FluidStack(ModFluids.VOID_SEA_SLURRY.get(), 250));
         }
 
         // DRIFT CONDENSATE: check if in OVERWORLD and y > Y_DRIFT_CONDENSATE
         if (world.dimension() == Level.OVERWORLD && pos.y > Y_DRIFT_CONDENSATE) {
             // Return Drift Condensate as if it was extracted
+            AdvancementHelper.hitEmWithTheOlSwitcheroo(world, rootPos, "out_of_thin_air");
             cir.setReturnValue(new FluidStack(ModFluids.DRIFT_CONDENSATE.get(), 1000));
         }
     }

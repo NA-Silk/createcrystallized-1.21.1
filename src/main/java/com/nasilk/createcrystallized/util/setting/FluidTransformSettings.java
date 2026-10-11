@@ -60,7 +60,8 @@ public record FluidTransformSettings(
     VibrationSettings vibrationSettings,
     Optional<Supplier<SimpleParticleType>> transformParticle,
     Optional<Supplier<SoundEvent>> transformSound,
-    boolean chainCatalyzes
+    boolean chainCatalyzes,
+    String advancementID
 ) {
     public record YRange(
         int minYLevel,

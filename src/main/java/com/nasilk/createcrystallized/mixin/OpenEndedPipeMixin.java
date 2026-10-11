@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.mixin;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.simibubi.create.content.fluids.OpenEndedPipe;
 import dev.ryanhcode.sable.Sable;
 import net.minecraft.world.level.Level;
@@ -31,12 +32,14 @@ public class OpenEndedPipeMixin {
         // VOID SEA SLURRY: check if in END and y < yVoidSeaSlurry
         if (world.dimension() == Level.END && pos.y < Y_VOID_SEA_SLURRY) {
             // Return Void Sea Slurry as if it was extracted
+            if (!simulate) AdvancementHelper.hitEmWithTheOlSwitcheroo(world, outputPos, "the_fluid_in_the_sea_of_the_end");
             cir.setReturnValue(new FluidStack(ModFluids.VOID_SEA_SLURRY.get(), 250));
         }
 
         // DRIFT CONDENSATE: check if in OVERWORLD and y > yDriftCondensate
         if (world.dimension() == Level.OVERWORLD && pos.y > Y_DRIFT_CONDENSATE) {
             // Pretend there is something to pull so HosePulleyFluidHandler proceeds
+            if (!simulate) AdvancementHelper.hitEmWithTheOlSwitcheroo(world, outputPos, "out_of_thin_air");
             cir.setReturnValue(new FluidStack(ModFluids.DRIFT_CONDENSATE.get(), 1000));
         }
     }

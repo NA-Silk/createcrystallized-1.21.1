@@ -40,8 +40,8 @@ public class ModFluids {
     ).block().build().bucket().build().register();
 
     /// DENSITE EMULSION
-    public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_1 = new FluidTransformSettings(ModBlocks.DENSITE_BLOCK, 0.8f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(() -> Blocks.ICE, () -> Blocks.PACKED_ICE, () -> Blocks.FROSTED_ICE), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.DENSITE_PARTICLES), Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), true);
-    // public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_2 = new FluidTransformSettings(() -> Blocks.BELL, 0.8f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(() -> Blocks.BLUE_ICE), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.DENSITE_PARTICLES), Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), true);
+    public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_1 = new FluidTransformSettings(ModBlocks.DENSITE_BLOCK, 0.8f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(() -> Blocks.ICE, () -> Blocks.PACKED_ICE, () -> Blocks.FROSTED_ICE), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.DENSITE_PARTICLES), Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), true, "mass_production");
+    // public static final FluidTransformSettings DENSITE_EMULSION_SETTINGS_2 = new FluidTransformSettings(() -> Blocks.BELL, 0.8f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(() -> Blocks.BLUE_ICE), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.DENSITE_PARTICLES), Optional.of(() -> SoundEvents.ENDER_EYE_DEATH), true, "mass_production");
     public static final FluidEntry<TransformBaseFlowingFluid.Flowing> DENSITE_EMULSION = REGISTRATE.fluid(
         "densite_emulsion",
         fluidTexture("densite_emulsion", true),
@@ -73,7 +73,7 @@ public class ModFluids {
     ).block().build().bucket().build().register();
 
     /// PROPULSITE FLURRY
-    public static final FluidTransformSettings PROPULSITE_FLURRY_SETTINGS = new FluidTransformSettings(ModBlocks.PROPULSITE_BLOCK, 1.0f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(true, 6), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.PROPULSITE_PARTICLES), Optional.of(() -> SoundEvents.GLASS_PLACE), true);
+    public static final FluidTransformSettings PROPULSITE_FLURRY_SETTINGS = new FluidTransformSettings(ModBlocks.PROPULSITE_BLOCK, 1.0f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(true, 6), new FluidTransformSettings.VibrationSettings(false, null, null), Optional.of(ModParticles.PROPULSITE_PARTICLES), Optional.of(() -> SoundEvents.GLASS_PLACE), true, "motion_made_manifest");
     public static final FluidEntry<TransformBaseFlowingFluid.Flowing> PROPULSITE_FLURRY = REGISTRATE.fluid(
         "propulsite_flurry",
         fluidTexture("propulsite_flurry", true),
@@ -90,7 +90,7 @@ public class ModFluids {
     ).block().build().bucket().build().register();
 
     /// OSCILLITE SUSPENSION
-    public static final FluidTransformSettings OSCILLITE_SUSPENSION_SETTINGS = new FluidTransformSettings(ModBlocks.OSCILLITE_BLOCK, 0.01f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(true, 6, 10), Optional.of(() -> ParticleTypes.SCULK_SOUL), Optional.of(() -> SoundEvents.GLASS_PLACE), true);
+    public static final FluidTransformSettings OSCILLITE_SUSPENSION_SETTINGS = new FluidTransformSettings(ModBlocks.OSCILLITE_BLOCK, 0.01f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(true, 6, 10), Optional.of(() -> ParticleTypes.SCULK_SOUL), Optional.of(() -> SoundEvents.GLASS_PLACE), true, "a_stable_arrangement");
     public static final FluidEntry<TransformBaseFlowingFluid.Flowing> OSCILLITE_SUSPENSION = REGISTRATE.fluid(
         "oscillite_suspension",
         fluidTexture("oscillite_suspension", true),

@@ -6,19 +6,25 @@ import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
 import com.nasilk.createcrystallized.client.ModSounds;
 import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import dev.eriksonn.aeronautics.index.AeroBlocks;
 import dev.eriksonn.aeronautics.index.AeroSoundEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import java.util.Objects;
@@ -437,7 +443,13 @@ public class ModBlocks {
             .pushReaction(PushReaction.DESTROY)
             .sound(SoundType.AMETHYST_CLUSTER)
             .lightLevel((l) -> 5)
-        ), null
+        ) {
+            @Override
+            public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+                AdvancementHelper.yoinkerSploinker(player, "sonic_shards");
+                return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+            }
+        }, null
     );
 
     public static final BlockEntry<Block> LARGE_ECHO_CRYSTAL_BUD = registerBlock(

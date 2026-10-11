@@ -5,10 +5,10 @@
       "id": "createcrystallized:chora_casing_propulsite"
     },
     "title": {
-      "translate": "advancements.createcrystallized.uncased_aesthetics.title"
+      "translate": "advancement.createcrystallized.uncased_aesthetics.title"
     },
     "description": {
-      "translate": "advancements.createcrystallized.uncased_aesthetics.description"
+      "translate": "advancement.createcrystallized.uncased_aesthetics.description"
     },
     "frame": "task",
     "show_toast": true,

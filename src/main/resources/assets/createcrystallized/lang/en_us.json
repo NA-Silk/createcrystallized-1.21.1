@@ -175,5 +175,7 @@
   "advancement.createcrystallized.motion_made_manifest.title": "Motion Made Manifest",
   "advancement.createcrystallized.motion_made_manifest.description": "Crystallize Propulsite Flurry into Propulsite, a block that doesn't like to remain motionless...",
   "advancement.createcrystallized.a_friend_of_sorts.title": "A Friend of Sorts",
-  "advancement.createcrystallized.a_friend_of_sorts.description": "Obtain a square friend, ready to help you with your Simulated adventures"
+  "advancement.createcrystallized.a_friend_of_sorts.description": "Obtain a square friend, ready to help you with your Simulated adventures",
+  "advancement.createcrystallized.uncased_aesthetics.title": "Uncased Aesthetics",
+  "advancement.createcrystallized.uncased_aesthetics.description": "Strip an Encased Physics Block with a Wrench and obtain the newly reformed Chora Casing"
 }

@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.event;
 
-public class TheFluidAtTheEndOfTheGameAdvancementEvent {
+public class TheFluidInTheSeaOfTheEndAdvancementEvent {
 }
 
 // TODO NICK PUT THE VOID PUMPING ADVANCEMENT HERE

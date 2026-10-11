@@ -1,0 +1,80 @@
+{
+  "parent": "createcrystallized:handle_with_care",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:chora_casing_propulsite"
+    },
+    "title": {
+      "translate": "advancements.createcrystallized.uncased_aesthetics.title"
+    },
+    "description": {
+      "translate": "advancements.createcrystallized.uncased_aesthetics.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_chora_casing_propulsite": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:chora_casing_propulsite",
+            "count": {
+              "min": 1
+            }
+          }
+        ]
+      }
+    },
+    "obtain_chora_casing_densite": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:chora_casing_densite",
+            "count": {
+              "min": 1
+            }
+          }
+        ]
+      }
+    },
+    "obtain_chora_casing_oscillite": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:chora_casing_oscillite",
+            "count": {
+              "min": 1
+            }
+          }
+        ]
+      }
+    },
+    "obtain_chora_casing_levitite": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:chora_casing_levitite",
+            "count": {
+              "min": 1
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_chora_casing_propulsite",
+      "obtain_chora_casing_densite",
+      "obtain_chora_casing_oscillite",
+      "obtain_chora_casing_levitite"
+    ]
+  ]
+}

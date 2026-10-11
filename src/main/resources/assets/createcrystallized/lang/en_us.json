@@ -143,7 +143,15 @@
   "createcrystallized.ponder.densite_well.text_7": "The stronger field quickly pulls nearby physics assemblies toward the Well.",
 
   "advancement.createcrystallized.welcome.title": "Create Crystallized",
-  "advancement.createcrystallized.welcome.description": "Levitite wasn't enough for you eh?",
+  "advancement.createcrystallized.welcome.description": "Simulated Curiosities",
   "advancement.createcrystallized.high_velocity_metals.title": "High-Velocity Metals",
-  "advancement.createcrystallized.high_velocity_metals.description": "Mine Aerolite and survive the associated Kinetics"
+  "advancement.createcrystallized.high_velocity_metals.description": "Mine Aerolite and survive the associated Kinetics",
+  "advancement.createcrystallized.crystaline_alloys.title": "Crystalline Alloys",
+  "advancement.createcrystallized.crystaline_alloys.description": "Obtain a Chora Ingot, A unique alloy with unusual applications",
+  "advancement.createcrystallized.your_own_breeze_to_sail_on.title": "Your own breeze to sail on",
+  "advancement.createcrystallized.your_own_breeze_to_sail_on.description": "Fwoosh! Create an Aerolite Shovel, capable of paddling your Simulated Contraptions through the air!",
+  "advancement.createcrystallized.sonic_shards.title": "Sonic Shards",
+  "advancement.createcrystallized.sonic_shards.description": "Harvest a fully grown Echo Cluster, a strange crystal that grows on Sculk-infected Budding Amethyst",
+  "advancement.createcrystallized.the_chora_age.title": "The Chora Age",
+  "advancement.createcrystallized.the_chora_age.description": "Obtain a Chora Casing, an advanced housing that can make specialized physics blocks safe for transport"
 }

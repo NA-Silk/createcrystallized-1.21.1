@@ -1,0 +1,30 @@
+{
+  "parent": "createcrystallized:high_velocity_metals",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:chora_ingot"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.crystaline_alloys.title"
+    },
+    "description": {
+      "translate": "advancement.createcrystallized.crystaline_alloys.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_chora_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:chora_ingot"
+          }
+        ]
+      }
+    }
+  }
+}

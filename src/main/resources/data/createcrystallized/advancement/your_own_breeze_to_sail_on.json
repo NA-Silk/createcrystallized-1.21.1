@@ -1,0 +1,30 @@
+{
+  "parent": "createcrystallized:high_velocity_metals",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:aerolite_shovel"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.title"
+    },
+    "description": {
+      "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_aerolite_shovel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:aerolite_shovel"
+          }
+        ]
+      }
+    }
+  }
+}

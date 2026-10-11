@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:out_of_thin_air",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:propulsite_flurry_bucket"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.turbulence_distilled.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.turbulence_distilled.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_propulsite_flurry_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:propulsite_flurry_bucket"
+          }
+        ]
+      }
+    }
+  }
+}

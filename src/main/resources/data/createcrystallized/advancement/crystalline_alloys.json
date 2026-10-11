@@ -5,14 +5,15 @@
       "id": "createcrystallized:chora_ingot"
     },
     "title": {
-      "translate": "advancement.createcrystallized.crystaline_alloys.title"
+      "translate": "advancement.createcrystallized.crystalline_alloys.title"
     },
     "description": {
-      "translate": "advancement.createcrystallized.crystaline_alloys.description"
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.crystalline_alloys.description"
     },
     "frame": "task",
     "show_toast": true,
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {

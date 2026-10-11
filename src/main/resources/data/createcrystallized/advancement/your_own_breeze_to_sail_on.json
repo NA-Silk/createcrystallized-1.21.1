@@ -8,11 +8,12 @@
       "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.title"
     },
     "description": {
+      "color": "#DBA213",
       "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.description"
     },
-    "frame": "task",
+    "frame": "challenge",
     "show_toast": true,
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {

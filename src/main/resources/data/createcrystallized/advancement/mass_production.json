@@ -1,0 +1,24 @@
+{
+  "parent": "createcrystallized:is_it_staring_back",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:densite_block"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.mass_production.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.mass_production.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

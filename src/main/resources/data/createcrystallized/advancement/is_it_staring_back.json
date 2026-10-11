@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:the_fluid_in_the_sea_of_the_end",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:densite_emulsion_bucket"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.is_it_staring_back.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.is_it_staring_back.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_densite_emulsion_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:densite_emulsion_bucket"
+          }
+        ]
+      }
+    }
+  }
+}

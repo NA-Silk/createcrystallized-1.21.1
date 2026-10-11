@@ -1,0 +1,103 @@
+
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "minecraft:stone"
+  },
+  "transitional_item": {
+    "id": "minecraft:stone"
+  },
+  "loops": 1,
+  "results": [
+    {
+      "id": "createcrystallized:pebble"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "minecraft:slime_ball"
+        }
+      ],
+      "results": [
+        {
+          "id": "minecraft:stone"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "minecraft:ender_eye"
+        }
+      ],
+      "results": [
+        {
+          "id": "minecraft:stone"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "minecraft:ender_eye"
+        }
+      ],
+      "results": [
+        {
+          "id": "minecraft:stone"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "results": [
+        {
+          "id": "minecraft:stone"
+        }
+      ]
+    },
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "type": "neoforge:components",
+          "amount": 250,
+          "components": {
+            "create:potion_fluid_bottle_type": "regular",
+            "minecraft:potion_contents": {
+              "potion": "minecraft:awkward"
+            }
+          },
+          "fluids": "create:potion"
+        }
+      ],
+      "results": [
+        {
+          "id": "minecraft:stone"
+        }
+      ]
+    }
+  ]
+}

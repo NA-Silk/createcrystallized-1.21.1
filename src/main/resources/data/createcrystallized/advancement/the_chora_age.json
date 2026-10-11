@@ -1,5 +1,5 @@
 {
-  "parent": "createcrystallized:crystaline_alloys",
+  "parent": "createcrystallized:crystalline_alloys",
   "display": {
     "icon": {
       "id": "createcrystallized:chora_casing"
@@ -8,11 +8,12 @@
       "translate": "advancement.createcrystallized.the_chora_age.title"
     },
     "description": {
+      "color": "#DBA213",
       "translate": "advancement.createcrystallized.the_chora_age.description"
     },
     "frame": "task",
     "show_toast": true,
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {

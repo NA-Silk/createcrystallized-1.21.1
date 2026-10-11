@@ -297,7 +297,6 @@ public class ModBlocks {
         ), null
     );
 
-
     /// CASINGS
     public static final BlockEntry<Block> CHORA_CASING = registerBlockCT(
         "chora_casing",

@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:sonic_shards",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:oscillite_suspension_bucket"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.bellowing_buckets.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.bellowing_buckets.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_oscillite_suspension_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:oscillite_suspension_bucket"
+          }
+        ]
+      }
+    }
+  }
+}

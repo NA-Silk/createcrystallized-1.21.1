@@ -1,0 +1,24 @@
+{
+  "parent": "createcrystallized:turbulence_distilled",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:propulsite_block"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.motion_made_manifest.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.motion_made_manifest.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

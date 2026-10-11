@@ -1,0 +1,24 @@
+{
+  "parent": "createcrystallized:bellowing_buckets",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:oscillite_block"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.a_stable_arrangement.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.a_stable_arrangement.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

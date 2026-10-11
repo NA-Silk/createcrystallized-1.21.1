@@ -2,24 +2,23 @@
   "parent": "createcrystallized:welcome",
   "display": {
     "icon": {
-      "id": "minecraft:echo_shard"
+      "id": "createcrystallized:echo_crystal_cluster"
     },
     "title": {
       "translate": "advancement.createcrystallized.sonic_shards.title"
     },
     "description": {
+      "color": "#DBA213",
       "translate": "advancement.createcrystallized.sonic_shards.description"
     },
     "frame": "task",
     "show_toast": true,
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "mine_echo_crystal_cluster": {
-      "trigger": "",
-      "conditions": {
-      }
+    "impossible": {
+      "trigger": "minecraft:impossible"
     }
   }
 }

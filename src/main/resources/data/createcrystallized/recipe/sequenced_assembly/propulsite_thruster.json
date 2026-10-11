@@ -1,3 +1,4 @@
+
 {
   "type": "create:sequenced_assembly",
   "ingredient": {
@@ -7,6 +8,19 @@
     "id": "createcrystallized:encased_propulsite_block"
   },
   "sequence": [
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_propulsite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_propulsite_block"
+        }
+      ]
+    },
     {
       "type": "create:deploying",
       "ingredients": [
@@ -31,8 +45,8 @@
         },
         {
           "type": "neoforge:single",
-          "fluid": "createcrystallized:source_propulsite_flurry",
-          "amount": 250
+          "fluid": "createcrystallized:propulsite_flurry",
+          "amount": 500
         }
       ],
       "results": [
@@ -46,6 +60,5 @@
     {
       "id": "createcrystallized:propulsite_thruster"
     }
-  ],
-  "loops": 1
+  ]
 }

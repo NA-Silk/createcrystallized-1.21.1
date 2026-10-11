@@ -12,9 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-@EventBusSubscriber(
-    modid = CreateCrystallized.MOD_ID,
-    bus = EventBusSubscriber.Bus.GAME
+@EventBusSubscriber(modid = CreateCrystallized.MOD_ID
 )
 public class ChoraAgeAdvancementEvent { //fuck you create mod god said it's my turn on the free will
 

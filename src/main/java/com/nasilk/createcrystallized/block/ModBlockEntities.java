@@ -31,7 +31,7 @@ public class ModBlockEntities {
         OscilliteCannonEntity::new
     ).validBlock(ModBlocks.OSCILLITE_CANNON).register();
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Block Entities registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Block Entities initialized");
     }
 }

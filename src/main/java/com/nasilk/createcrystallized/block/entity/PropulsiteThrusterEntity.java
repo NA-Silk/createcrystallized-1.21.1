@@ -3,9 +3,9 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
-import com.nasilk.createcrystallized.client.ModSounds;
-import com.nasilk.createcrystallized.damage.ModDamageTypes;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.common.ModDamageTypes;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -269,7 +269,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
-                ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
+                ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,
@@ -296,7 +296,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
-                ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
+                ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
                 cache.thrusterFace.x, cache.thrusterFace.y, cache.thrusterFace.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,

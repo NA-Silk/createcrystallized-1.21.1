@@ -34,7 +34,7 @@ public class ModTags {
         }
     }
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Mod Tags registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Mod Tags initialized");
     }
 }

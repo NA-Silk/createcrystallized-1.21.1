@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.block.custom;
 
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -153,7 +153,7 @@ public class DensiteBlock extends Block {
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
-                ModParticles.DENSITE_PARTICLES.get(),
+                ModParticleTypes.DENSITE_PARTICLES.get(),
                 pos.getX() + 0.5d,
                 pos.getY() + 0.5d,
                 pos.getZ() + 0.5d,

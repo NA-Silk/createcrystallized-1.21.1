@@ -21,7 +21,7 @@ public class ModCreativeModeTabs {
             .build()
     );
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Creative Mode Tabs registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Creative Mode Tabs initialized");
     }
 }

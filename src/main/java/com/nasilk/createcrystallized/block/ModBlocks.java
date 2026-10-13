@@ -1,11 +1,11 @@
 package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.client.ctbehavior.*;
+import com.nasilk.createcrystallized.client.behavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
-import com.nasilk.createcrystallized.client.ModSounds;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModSounds;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -134,7 +134,7 @@ public class ModBlocks {
             ),
             ModBlocks.DENSE_CHORA_CASING::asItem,
             ModBlocks.DENSITE_BLOCK,
-            ModParticles.DENSITE_PARTICLES,
+            ModParticleTypes.DENSITE_PARTICLES,
             8,0.3d,0.2d,0.3d,0.05d
         ),
         EncasedDensiteCTBehavior::new, null
@@ -162,7 +162,7 @@ public class ModBlocks {
             ),
             ModBlocks.PROPULSED_CHORA_CASING::asItem,
             ModBlocks.PROPULSITE_BLOCK,
-            ModParticles.PROPULSITE_PARTICLES,
+            ModParticleTypes.PROPULSITE_PARTICLES,
             16,0.5d,0.5d,0.5d,0.25d
         ),
         EncasedPropulsiteCTBehavior::new, null
@@ -648,7 +648,7 @@ public class ModBlocks {
         REGISTRATE.item(name, (properties) -> itemFactory.apply(blockEntry.get())).register();
     }
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Blocks registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Blocks initialized");
     }
 }

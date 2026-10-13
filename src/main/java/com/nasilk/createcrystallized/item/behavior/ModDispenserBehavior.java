@@ -1,0 +1,42 @@
+package com.nasilk.createcrystallized.item.behavior;
+
+import com.nasilk.createcrystallized.fluid.ModFluids;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
+
+public class ModDispenserBehavior {
+    private static void registerFluidBucket(BucketItem bucketItem) {
+        DispenserBlock.registerBehavior(
+            bucketItem,
+            new DispenseItemBehavior() {
+                private final DefaultDispenseItemBehavior defaultBehavior = new DefaultDispenseItemBehavior();
+
+                @Override
+                public ItemStack dispense(BlockSource source, ItemStack stack) {
+                    Level level = source.level();
+                    BlockPos targetPos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+                    if (bucketItem.emptyContents(null, level, targetPos, null, null)) {
+                        bucketItem.checkExtraContent(null, level, stack, targetPos);
+                        return new ItemStack(Items.BUCKET);
+                    }
+                    return defaultBehavior.dispense(source, stack);
+                }
+            }
+        );
+    }
+
+    public static void register() {
+        registerFluidBucket((BucketItem) ModFluids.VOID_SEA_SLURRY.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.DENSITE_EMULSION.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.DRIFT_CONDENSATE.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow());
+        registerFluidBucket((BucketItem) ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow());
+    }
+}

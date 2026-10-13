@@ -10,8 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreateCrystallized.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = CreateCrystallized.MOD_ID)
 public class ModPayloads {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {

@@ -2,9 +2,9 @@ package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
-import com.nasilk.createcrystallized.damage.ModDamageTypes;
+import com.nasilk.createcrystallized.common.ModDamageTypes;
 import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -413,7 +413,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
-                ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
+                ModParticleTypes.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,

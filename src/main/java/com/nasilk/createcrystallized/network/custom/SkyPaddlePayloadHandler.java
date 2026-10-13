@@ -8,13 +8,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SkyPaddlePayloadHandler {
-
     public static void handleDataOnMain(SkyPaddlePayload ignored, IPayloadContext context) {
+        // Push code to the main thread
         context.enqueueWork(() -> {
+            // Validate context
             Player player = context.player();
-            if (!player.getMainHandItem().is(ModItems.AEROLITE_SHOVEL.get())) return;
+            AeroliteShovelItem shovel = ModItems.AEROLITE_SHOVEL.get();
+            if (!player.getMainHandItem().is(shovel)) return;
+            if (player.getCooldowns().isOnCooldown(shovel)) return;
             if (!(player.level() instanceof ServerLevel serverLevel)) return;
 
+            // Run effects
             BlockHitResult hitResult = AeroliteShovelItem.getSkyPaddle(player);
             AeroliteShovelItem.damageSkyPaddle(player);
             AeroliteShovelItem.skyPaddleParticles(serverLevel, player, hitResult);

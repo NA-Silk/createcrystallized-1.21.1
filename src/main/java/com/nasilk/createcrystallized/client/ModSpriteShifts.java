@@ -102,7 +102,7 @@ public class ModSpriteShifts {
         CreateCrystallized.getRL("block/chora_casing_levitite_connected")
     );
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Sprite Shifts registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Sprite Shifts initialized");
     }
 }

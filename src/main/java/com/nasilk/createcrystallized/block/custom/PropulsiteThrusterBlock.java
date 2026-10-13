@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.custom;
 import com.nasilk.createcrystallized.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -108,7 +108,7 @@ public class PropulsiteThrusterBlock extends Block implements IBE<PropulsiteThru
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
-                ModParticles.PROPULSITE_PARTICLES.get(),
+                ModParticleTypes.PROPULSITE_PARTICLES.get(),
                 pos.getX() + 0.5d,
                 pos.getY() + 0.5d,
                 pos.getZ() + 0.5d,

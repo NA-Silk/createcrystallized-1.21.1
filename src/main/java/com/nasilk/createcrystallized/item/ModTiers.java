@@ -13,7 +13,7 @@ public class ModTiers {
         () -> Ingredient.of(ModItems.AEROLITE_INGOT)
     );
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Tiers registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Tiers initialized");
     }
 }

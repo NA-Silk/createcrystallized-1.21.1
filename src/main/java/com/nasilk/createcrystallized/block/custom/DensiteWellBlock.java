@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -73,7 +73,7 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
-                ModParticles.DENSITE_PARTICLES.get(),
+                ModParticleTypes.DENSITE_PARTICLES.get(),
                 pos.getX() + 0.5d,
                 pos.getY() + 0.5d,
                 pos.getZ() + 0.5d,

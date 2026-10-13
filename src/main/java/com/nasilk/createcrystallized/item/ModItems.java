@@ -71,7 +71,7 @@ public class ModItems {
 
 
     // REGISTRY HELPERS
-    public static void register() {
-        CreateCrystallized.LOGGER.info("Items registered");
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Items initialized");
     }
 }

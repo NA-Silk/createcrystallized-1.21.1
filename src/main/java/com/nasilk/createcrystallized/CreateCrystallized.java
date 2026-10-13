@@ -2,33 +2,26 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.client.ModJeiPlugin;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.damage.ModDamageTypes;
-import com.nasilk.createcrystallized.entity.ModEntities;
+import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.behavior.ModDispenserBehavior;
+import com.nasilk.createcrystallized.item.behavior.ModDispenserBehavior;
 import com.nasilk.createcrystallized.item.ModTiers;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
-import com.nasilk.createcrystallized.client.ModSounds;
-import com.nasilk.createcrystallized.client.ModSpriteShifts;
-import net.minecraft.client.Minecraft;
+import com.nasilk.createcrystallized.common.ModSounds;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 
 @Mod(CreateCrystallized.MOD_ID)
@@ -39,46 +32,43 @@ public class CreateCrystallized {
 
     // The fitness gram pacer test is the first code that is run when the mod is loaded
     public CreateCrystallized(IEventBus modEventBus, ModContainer modContainer) {
-        // Container registrations
+        // ModContainer registrations
         ModConfigs.register(modContainer);
 
-        // Static registrations
-        ModDamageTypes.register();
-        ModJeiPlugin.register();
-        ModSpriteShifts.register();
-        ModTags.register();
-        ModTiers.register();
+        // Static initializations
+        ModTags.init();
+        ModTiers.init();
 
-        // REGISTRATE registrations
-        ModBlocks.register();
-        ModBlockEntities.register();
-        ModCreativeModeTabs.register();
-        ModEntities.register();
-        ModFluids.register();
-        ModItems.register();
-        ModParticles.register();
-        ModSounds.register();
+        // REGISTRATE initializations
+        ModBlocks.init();
+        ModBlockEntities.init();
+        ModCreativeModeTabs.init();
+        ModItemEntities.init();
+        ModFluids.init();
+        ModItems.init();
+        ModParticleTypes.init(); // Types are common, factories are client
+        ModSounds.init();
 
-        // Bus registrations
+        // ModBus registrations
         REGISTRATE.registerEventListeners(modEventBus);
-        NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
         modEventBus.addListener(this::addCreative); // Register the items to a creative tab
+        //NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events (retained for reference)
     }
 
+/* onServerStarting block (retained for reference)
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info("Minecraft Name >> {}", Minecraft.getInstance().getUser().getName());
         LOGGER.info("HELLO from server starting");
     }
+*/
 
     @SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             ModDispenserBehavior.register();
         });
-        LOGGER.info("Create:Crystallized Loaded");
-        LOGGER.info("HELLO from common setup");
+        //LOGGER.info("HELLO from common setup");
     }
 
     // Add block items to creative tabs

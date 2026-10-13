@@ -2,15 +2,16 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.block.entity.renderer.DensiteWellEntityRenderer;
-import com.nasilk.createcrystallized.client.models.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.client.ModSpriteShifts;
+import com.nasilk.createcrystallized.client.renderer.DensiteWellEntityRenderer;
+import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
 import com.nasilk.createcrystallized.fluid.BaseFluidType;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.item.entity.renderer.ThrownDensiteCoreRenderer;
-import com.nasilk.createcrystallized.entity.ModEntities;
-import com.nasilk.createcrystallized.particle.ModParticles;
-import com.nasilk.createcrystallized.particle.custom.*;
-import com.nasilk.createcrystallized.ponder.ModPonderPlugin;
+import com.nasilk.createcrystallized.client.renderer.ThrownDensiteCoreRenderer;
+import com.nasilk.createcrystallized.item.ModItemEntities;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.client.particle.*;
+import com.nasilk.createcrystallized.client.ponder.ModPonderPlugin;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
@@ -48,6 +49,9 @@ public class CreateCrystallizedClient {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            // Static initializations
+            ModSpriteShifts.init();
+
             // Custom Fluid Renders
             for (FluidEntry<?> fluid : FLUIDS) {
                 ItemBlockRenderTypes.setRenderLayer(fluid.getSource(), RenderType.translucent());
@@ -67,7 +71,7 @@ public class CreateCrystallizedClient {
             // Ponders
             PonderIndex.addPlugin(new ModPonderPlugin());
         });
-        CreateCrystallized.LOGGER.info("HELLO from client setup");
+        //CreateCrystallized.LOGGER.info("HELLO from client setup");
     }
 
     @SubscribeEvent
@@ -103,7 +107,7 @@ public class CreateCrystallizedClient {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Spin
         event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
-        event.registerEntityRenderer(ModEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
+        event.registerEntityRenderer(ModItemEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
     }
 
     @SubscribeEvent
@@ -116,14 +120,14 @@ public class CreateCrystallizedClient {
 
     @SubscribeEvent
     public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(ModParticles.DENSITE_PARTICLES.get(), DensiteParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.DENSITE_WELL_PARTICLES.get(), DensiteWellParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.DENSITE_CORE_PARTICLES.get(), DensiteCoreParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.PROPULSITE_PARTICLES.get(), PropulsiteParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), OscilliteCannonChargingParticles.Provider::new);
-        event.registerSpriteSet(ModParticles.OSCILLITE_CANNON_FIRING_PARTICLES.get(), OscilliteCannonFiringParticles.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.DENSITE_PARTICLES.get(), DensiteParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.DENSITE_WELL_PARTICLES.get(), DensiteWellParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.DENSITE_CORE_PARTICLES.get(), DensiteCoreParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.PROPULSITE_PARTICLES.get(), PropulsiteParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), OscilliteCannonChargingParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.OSCILLITE_CANNON_FIRING_PARTICLES.get(), OscilliteCannonFiringParticle.Provider::new);
     }
 
     // @SubscribeEvent lets the Event Bus discover methods to call

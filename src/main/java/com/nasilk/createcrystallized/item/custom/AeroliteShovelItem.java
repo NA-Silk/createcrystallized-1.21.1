@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.item.custom;
 
+import com.nasilk.createcrystallized.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,6 +28,7 @@ public class AeroliteShovelItem extends ShovelItem {
     // Durability loss on use
     public static void damageSkyPaddle(Player player) {
         player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        player.getCooldowns().addCooldown(ModItems.AEROLITE_SHOVEL.get(), 1);
     }
 
     // PARTICLES

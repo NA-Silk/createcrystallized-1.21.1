@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.block.custom;
 
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,7 @@ public class PropulsiteBlock extends Block {
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(
-                ModParticles.PROPULSITE_PARTICLES.get(),
+                ModParticleTypes.PROPULSITE_PARTICLES.get(),
                 pos.getX() + 0.5d,
                 pos.getY() + 0.5d,
                 pos.getZ() + 0.5d,

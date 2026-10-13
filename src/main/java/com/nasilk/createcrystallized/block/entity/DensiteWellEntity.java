@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.WellConfig;
-import com.nasilk.createcrystallized.particle.ModParticles;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;
@@ -230,7 +230,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
-                ModParticles.DENSITE_WELL_PARTICLES.get(),
+                ModParticleTypes.DENSITE_WELL_PARTICLES.get(),
                 cache.wellPosition.x, cache.wellPosition.y, cache.wellPosition.z,
                 0, // Count = 0 (Crucial for passing custom payloads)
                 xSpeed, ySpeed, zSpeed,

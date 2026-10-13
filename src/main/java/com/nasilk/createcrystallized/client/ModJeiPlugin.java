@@ -12,11 +12,13 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
+import java.util.Optional;
 
 @JeiPlugin
 public class ModJeiPlugin implements IModPlugin {
@@ -50,42 +52,23 @@ public class ModJeiPlugin implements IModPlugin {
         );
     }
 
-    public static void register() {
-        CreateCrystallized.LOGGER.info("JEI Plugin registered");
-    }
-
-    //Hide the Pebble Recipe from JEI, if you're a player digging into this code, don't tell!
+    // Hide the Pebble Recipe from JEI, if you're a player digging into this code, don't tell!
     private static final ResourceLocation PEBBLE_RECIPE_ID = CreateCrystallized.getRL("sequenced_assembly/the_pebble");
+    private static final RecipeType<RecipeHolder<SequencedAssemblyRecipe>> SEQUENCED_ASSEMBLY_JEI_TYPE = RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath("create", "sequenced_assembly"));
 
-    private static final RecipeType<RecipeHolder<SequencedAssemblyRecipe>>
-        SEQUENCED_ASSEMBLY_JEI_TYPE = RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath("create", "sequenced_assembly")
-        );
-
+    @SuppressWarnings("unchecked")
     @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {var connection = Minecraft.getInstance().getConnection();
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        ClientPacketListener listener = Minecraft.getInstance().getConnection();
+        if (listener == null) return;
 
-        if (connection == null) {return;
+        Optional<RecipeHolder<?>> holder = listener.getRecipeManager().byKey(PEBBLE_RECIPE_ID);
+        if (holder.isEmpty()) {
+            CreateCrystallized.LOGGER.warn("Could not find Pebble recipe: {}", PEBBLE_RECIPE_ID);
+            return;
         }
 
-        var holder = connection.getRecipeManager().byKey(PEBBLE_RECIPE_ID);
-
-        if (holder.isEmpty()) {CreateCrystallized.LOGGER.warn("Could not find Pebble recipe: {}", PEBBLE_RECIPE_ID);return;
-        }
-
-        @SuppressWarnings("unchecked") RecipeHolder<SequencedAssemblyRecipe> pebbleRecipe = (RecipeHolder<SequencedAssemblyRecipe>) holder.get();
-
-        jeiRuntime.getRecipeManager().hideRecipes(SEQUENCED_ASSEMBLY_JEI_TYPE, List.of(pebbleRecipe)
-        );
-
+        RecipeHolder<SequencedAssemblyRecipe> pebbleRecipe = (RecipeHolder<SequencedAssemblyRecipe>) holder.get();
+        jeiRuntime.getRecipeManager().hideRecipes(SEQUENCED_ASSEMBLY_JEI_TYPE, List.of(pebbleRecipe));
     }
-
-
-
-
-
-
-
-
-
-
 }

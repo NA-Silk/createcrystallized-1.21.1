@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.config.server;
 
-import com.nasilk.createcrystallized.item.entity.DensiteCoreEntity;
+import com.nasilk.createcrystallized.item.entity.DensiteCoreItemEntity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ItemConfig extends ConfigBase {
@@ -14,13 +14,13 @@ public class ItemConfig extends ConfigBase {
     @Override
     public void onLoad() {
         super.onLoad();
-        DensiteCoreEntity.updateConstants();
+        DensiteCoreItemEntity.updateConstants();
     }
 
     @Override
     public void onReload() {
         super.onReload();
-        DensiteCoreEntity.updateConstants();
+        DensiteCoreItemEntity.updateConstants();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.item.custom;
 
-import com.nasilk.createcrystallized.item.entity.DensiteCoreEntity;
+import com.nasilk.createcrystallized.item.entity.DensiteCoreItemEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.server.level.ServerLevel;
@@ -32,7 +32,7 @@ public class DensiteCoreItem extends Item implements ProjectileItem {
         );
 
         if (level instanceof ServerLevel serverLevel) {
-            DensiteCoreEntity entity = new DensiteCoreEntity(serverLevel, player);
+            DensiteCoreItemEntity entity = new DensiteCoreItemEntity(serverLevel, player);
             //entity.setPos(player.getX() + player.getLookAngle().x * 0.6d, player.getEyeY() - 0.1d, player.getZ() + player.getLookAngle().z * 0.6d);
             entity.setItem(stack);
             entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 0.5f);
@@ -46,7 +46,7 @@ public class DensiteCoreItem extends Item implements ProjectileItem {
 
     @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
-        DensiteCoreEntity entity = new DensiteCoreEntity(level, pos.x(), pos.y(), pos.z());
+        DensiteCoreItemEntity entity = new DensiteCoreItemEntity(level, pos.x(), pos.y(), pos.z());
         entity.setItem(stack);
         return entity;
     }

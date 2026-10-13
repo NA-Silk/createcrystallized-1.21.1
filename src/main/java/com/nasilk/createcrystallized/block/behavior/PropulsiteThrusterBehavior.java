@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.block.behavior;
 
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
-import com.nasilk.createcrystallized.client.ModSounds;
+import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.ThrusterConfig;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;

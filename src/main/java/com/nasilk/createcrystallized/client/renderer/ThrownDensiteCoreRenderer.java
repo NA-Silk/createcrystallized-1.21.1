@@ -1,0 +1,45 @@
+package com.nasilk.createcrystallized.client.renderer;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.nasilk.createcrystallized.CreateCrystallized;
+import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.item.entity.DensiteCoreItemEntity;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+
+public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreItemEntity> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
+    private final DensiteWellCubeModel model;
+
+    public ThrownDensiteCoreRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
+    }
+
+    @Override
+    public void render(DensiteCoreItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        poseStack.translate(0.0d, 0.15d, 0.0d); // uh he go
+        poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTicks) * 20.0f)); // s  p  i  n
+        poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTicks) * 10.0f)); // s  p  i  n  but sauced
+        VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(getTextureLocation(entity)));
+        this.model.renderToBuffer(
+            poseStack,
+            vertexConsumer,
+            packedLight,
+            OverlayTexture.NO_OVERLAY,
+            0xFFFFFFFF
+        );
+        poseStack.popPose();
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(DensiteCoreItemEntity entity) {
+        return TEXTURE;
+    }
+}

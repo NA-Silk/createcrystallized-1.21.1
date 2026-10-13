@@ -12,8 +12,8 @@ import net.minecraft.world.level.Level;
 import org.joml.Vector3d;
 
 public class AdvancementHelper {
-    private static final String CRITERION_KEY = "impossible"; // TODO Custom key
-    private static final int RADIUS = 10;
+    private static final String CRITERION_KEY = "impossible";
+    private static final int RADIUS = 16;
     private static final int RADIUS_SQUARED = RADIUS * RADIUS;
 
     // Give advancement to nearby players

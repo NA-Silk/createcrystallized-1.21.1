@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:motion_made_manifest",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:propulsite_thruster"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.zero_to_sixty.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.zero_to_sixty.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_densite_well": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:propulsite_thruster"
+          }
+        ]
+      }
+    }
+  }
+}

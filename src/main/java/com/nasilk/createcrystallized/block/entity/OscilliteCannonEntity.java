@@ -5,6 +5,7 @@ import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
 import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -33,6 +34,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -372,7 +374,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
     private void damageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
         // Skip invalid entities
-        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) return;
+        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity))
+            return;
 
         // Get entity position relative to the thruster
         AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
@@ -386,20 +389,31 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (entityLinearDistance < 0.0d || entityLinearDistance > range) return;
 
         // Radial distance
-        double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance*entityLinearDistance;
+        double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance * entityLinearDistance;
         if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
 
-        // Apply damage and knockback
-        if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
-        entity.hurt(cannonDamageSource, (float) DAMAGE); //you wouldn't download a MODDAMAGETYPES.OSCILLITE_CANNON
+
+        // Apply damage, Warden Takes Additional Damage
+        if (cannonDamageSource == null)
+        cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
+        boolean wasAlive = entity.isAlive();
+        entity.hurt(cannonDamageSource, entity instanceof Warden ? (float) DAMAGE * 5.0f : (float) DAMAGE); //Racism Line
+
+        // Handle "Hair of the Dog" Advancement
+        if (wasAlive && !entity.isAlive() && entity instanceof Warden) {
+            AdvancementHelper.hitEmWithTheOlSwitcheroo(
+                serverLevel,
+                entity.blockPosition(),
+                "hair_of_the_dog"
+            );
+        }
+        // Apply Knockback (i think)
         if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(ENTITY_KNOCKBACK);
         else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(ENTITY_KNOCKBACK);
         entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
         if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
     }
-
-
-    // PARTICLES
+        // PARTICLES
     public void addChargingParticles(ServerLevel serverLevel, Cache cache) {
         // Compute each particle
         for (int i = 0; i < NUM_PARTICLES; i++) {

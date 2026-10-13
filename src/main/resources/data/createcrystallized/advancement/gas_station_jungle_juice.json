@@ -3,14 +3,14 @@
   "parent": "createcrystallized:the_chora_age",
   "display": {
     "icon": {
-      "id": "createcrystallized:encased_densite_block"
+      "id": "create:chocolate_bucket"
     },
     "title": {
-      "translate": "advancement.createcrystallized.the_simulated_contrapocalypse.title"
+      "translate": "advancement.createcrystallized.gas_station_jungle_juice.title"
     },
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.createcrystallized.the_simulated_contrapocalypse.description"
+      "translate": "advancement.createcrystallized.gas_station_jungle_juice.description"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -23,16 +23,16 @@
       "conditions": {
         "items": [
           {
-            "items": "createcrystallized:encased_propulsite_block"
+            "items": "createcrystallized:oscillite_suspension_bucket"
           },
           {
-            "items": "createcrystallized:encased_densite_block"
+            "items": "createcrystallized:densite_emulsion_bucket"
           },
           {
-            "items": "createcrystallized:encased_levitite_block"
+            "items": "createcrystallized:propulsite_flurry_bucket"
           },
           {
-            "items": "createcrystallized:encased_oscillite_block"
+            "items": "aeronautics:levitite_blend_bucket"
           }
         ]
       }

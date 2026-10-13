@@ -6,6 +6,7 @@ import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -242,9 +243,18 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             float appliedDamage = (float) (accelerationScalar * DAMAGE_SCALE);
             if (appliedDamage < 0.5d) continue;
             if (thrusterDamageSource == null) thrusterDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.PROPULSITE_THRUSTER);
+            boolean wasAlive = entity.isAlive();
             entity.hurt(thrusterDamageSource, appliedDamage);
+
+            // Handle "Crystal Cremation" Advancement
+            if (wasAlive && !entity.isAlive()
+            && entity instanceof ServerPlayer player) {
+                AdvancementHelper.yoinkerSploinker(
+                    player, "crystal_cremation");
+            }
         }
     }
+
 
     private double getAccelerationScalar(Entity entity, double relEntityLengthScalar) {
         double inverseDistanceRatio = 1.0d - (relEntityLengthScalar - 0.5d) / MAX_PUSH_RANGE; // 1.0 - [0.0 to 1.0] distance ratio

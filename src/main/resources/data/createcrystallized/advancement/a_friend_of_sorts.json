@@ -11,7 +11,7 @@
       "color": "#DBA213",
       "translate": "advancement.createcrystallized.a_friend_of_sorts.description"
     },
-    "frame": "task",
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true

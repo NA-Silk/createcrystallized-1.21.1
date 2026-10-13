@@ -1,7 +1,7 @@
 {
   "selector": "createcrystallized:propulsite_block",
   "properties": {
-    "sable:mass": 0.5,
+    "sable:mass": 1.0,
     "sable:floating_material": "createcrystallized:propulsite_block"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:a_stable_arrangement",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:oscillite_cannon"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.sound_investment.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.sound_investment.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_oscillite_cannon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:oscillite_cannon"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "createcrystallized:mass_production",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:densite_well"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.event_horizon.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.event_horizon.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_densite_well": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "createcrystallized:densite_well"
+          }
+        ]
+      }
+    }
+  }
+}

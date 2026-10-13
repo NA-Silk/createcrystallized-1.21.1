@@ -2,7 +2,7 @@
   "parent": "createcrystallized:handle_with_care",
   "display": {
     "icon": {
-      "id": "createcrystallized:chora_casing_propulsite"
+      "id": "createcrystallized:chora_casing_levitite"
     },
     "title": {
       "translate": "advancement.createcrystallized.uncased_aesthetics.title"

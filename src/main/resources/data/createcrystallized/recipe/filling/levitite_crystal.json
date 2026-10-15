@@ -1,0 +1,18 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_cluster"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "aeronautics:levitite_blend"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:levitite_crystal"
+    }
+  ]
+}

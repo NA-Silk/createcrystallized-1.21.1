@@ -1,0 +1,13 @@
+
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "createcrystallized:aerolite_block"
+    }
+  ],
+  "result": {
+    "id": "createcrystallized:aerolite_ingot",
+    "count": 9
+  }
+}

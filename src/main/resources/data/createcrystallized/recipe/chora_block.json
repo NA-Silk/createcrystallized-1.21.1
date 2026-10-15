@@ -1,0 +1,18 @@
+
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "createcrystallized:chora_ingot"
+    }
+  },
+  "result": {
+    "id": "createcrystallized:chora_block",
+    "count": 1
+  }
+}

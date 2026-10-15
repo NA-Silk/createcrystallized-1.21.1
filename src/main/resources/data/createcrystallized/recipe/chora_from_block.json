@@ -1,0 +1,13 @@
+
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "createcrystallized:chora_block"
+    }
+  ],
+  "result": {
+    "id": "createcrystallized:chora_ingot",
+    "count": 9
+  }
+}

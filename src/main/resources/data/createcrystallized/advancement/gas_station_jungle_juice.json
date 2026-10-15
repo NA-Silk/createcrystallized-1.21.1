@@ -1,6 +1,6 @@
 
 {
-  "parent": "createcrystallized:the_chora_age",
+  "parent": "createcrystallized:welcome",
   "display": {
     "icon": {
       "id": "create:chocolate_bucket"

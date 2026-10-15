@@ -1,0 +1,7 @@
+{
+  "fluid": "createcrystallized:propulsite_flurry",
+  "thrust_multiplier": 2.0,
+  "consumption_multiplier": 1.8,
+  "particle": "plasma",
+  "use_fluid_color": true
+}

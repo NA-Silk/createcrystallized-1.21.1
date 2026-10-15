@@ -4,7 +4,7 @@
   "ingredients": [
     {
       "type": "neoforge:single",
-      "fluid": "createcrystallized:source_void_sea_slurry",
+      "fluid": "createcrystallized:void_sea_slurry",
       "amount": 500
     },
     {
@@ -29,7 +29,7 @@
   "results": [
     {
       "amount": 500,
-      "id": "createcrystallized:source_densite_emulsion"
+      "id": "createcrystallized:densite_emulsion"
     }
   ]
 }

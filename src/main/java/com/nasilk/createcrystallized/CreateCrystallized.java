@@ -100,6 +100,8 @@ public class CreateCrystallized {
             event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
             event.accept(ModBlocks.AEROLITE_BLOCK);
             event.accept(ModBlocks.PROPULSITE_CRYSTAL);
+            event.accept(ModBlocks.DENSITE_CRYSTAL);
+            event.accept(ModBlocks.LEVITITE_CRYSTAL);
 
             // Echo Shard Blocks
             event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);

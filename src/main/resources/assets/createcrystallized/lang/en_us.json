@@ -32,6 +32,8 @@
   "block.createcrystallized.deepslate_aerolite_ore": "Deepslate Aerolite Ore",
 
   "block.createcrystallized.propulsite_crystal": "Propulsite Crystal",
+  "block.createcrystallized.densite_crystal": "Densite Crystal",
+  "block.createcrystallized.levitite_crystal": "Levitite Crystal",
   "block.createcrystallized.echo_crystal_block": "Block of Echo Crystal",
   "block.createcrystallized.budding_echo_crystal": "Budding Echo Crystal",
   "block.createcrystallized.echo_crystal_cluster": "Echo Crystal Cluster",

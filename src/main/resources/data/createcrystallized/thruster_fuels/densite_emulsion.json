@@ -1,0 +1,7 @@
+{
+  "fluid": "createcrystallized:densite_emulsion",
+  "thrust_multiplier": 0.7,
+  "consumption_multiplier": 0.3,
+  "particle": "plume",
+  "use_fluid_color": true
+}

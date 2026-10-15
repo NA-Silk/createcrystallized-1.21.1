@@ -527,6 +527,34 @@ public class ModBlocks {
         new Item.Properties().stacksTo(16)
     );
 
+    public static final BlockEntry<Block> DENSITE_CRYSTAL = registerBlock(
+            "densite_crystal",
+            (properties) -> new AmethystClusterBlock(5.0f, 3.0f, properties
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .forceSolidOn()
+                    .noOcclusion()
+                    .strength(1.5f)
+                    .pushReaction(PushReaction.DESTROY)
+                    .sound(SoundType.LARGE_AMETHYST_BUD)
+                    .lightLevel((l) -> 8)
+            ),
+            new Item.Properties().stacksTo(16)
+    );
+
+    public static final BlockEntry<Block> LEVITITE_CRYSTAL = registerBlock(
+            "levitite_crystal",
+            (properties) -> new AmethystClusterBlock(5.0f, 3.0f, properties
+                    .mapColor(MapColor.COLOR_GREEN)
+                    .forceSolidOn()
+                    .noOcclusion()
+                    .strength(1.5f)
+                    .pushReaction(PushReaction.DESTROY)
+                    .sound(SoundType.LARGE_AMETHYST_BUD)
+                    .lightLevel((l) -> 8)
+            ),
+            new Item.Properties().stacksTo(16)
+    );
+
     public static final BlockEntry<Block> AEROLITE_ORE = registerBlock(
         "aerolite_ore",
         (properties) -> new AeroliteOreBlock(properties

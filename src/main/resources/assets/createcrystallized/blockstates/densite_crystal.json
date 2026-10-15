@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createcrystallized:block/densite_crystal",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createcrystallized:block/densite_crystal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createcrystallized:block/densite_crystal",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createcrystallized:block/densite_crystal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createcrystallized:block/densite_crystal"
+    },
+    "facing=west": {
+      "model": "createcrystallized:block/densite_crystal",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

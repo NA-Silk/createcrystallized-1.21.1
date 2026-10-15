@@ -7,7 +7,7 @@
     {
       "type": "neoforge:single",
       "amount": 500,
-      "fluid": "createcrystallized:source_propulsite_flurry"
+      "fluid": "createcrystallized:propulsite_flurry"
     }
   ],
   "results": [

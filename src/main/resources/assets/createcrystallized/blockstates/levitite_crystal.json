@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createcrystallized:block/levitite_crystal",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createcrystallized:block/levitite_crystal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createcrystallized:block/levitite_crystal",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createcrystallized:block/levitite_crystal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createcrystallized:block/levitite_crystal"
+    },
+    "facing=west": {
+      "model": "createcrystallized:block/levitite_crystal",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

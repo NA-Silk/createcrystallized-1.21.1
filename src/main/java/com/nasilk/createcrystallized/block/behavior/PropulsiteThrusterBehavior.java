@@ -48,9 +48,9 @@ public class PropulsiteThrusterBehavior {
 
     // Entity pushing constants
     public static final Predicate<Entity> PUSH_PREDICATE = entity ->
-        !entity.isSpectator() &&
         !(entity instanceof AbstractContraptionEntity) &&
         !AirCurrent.isPlayerCreativeFlying(entity) &&
+        !entity.isSpectator() &&
         !DivingBootsItem.isWornBy(entity);
 
     // Entity pushing constants (config)

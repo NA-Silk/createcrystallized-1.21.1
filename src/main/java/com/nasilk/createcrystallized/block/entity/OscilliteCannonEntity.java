@@ -10,9 +10,6 @@ import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.equipment.armor.DivingBootsItem;
-import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
@@ -147,7 +144,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     // CHARGING
-    private boolean hasCrystalFuel(ServerLevel serverLevel, Cache cache) {
+    public boolean hasCrystalFuel(ServerLevel serverLevel, Cache cache) {
         // Get coordinates
         int x1 = cache.facing.getStepX() < 0 ? worldPosition.getX() - FUEL_RADIUS - 1 : worldPosition.getX() - FUEL_RADIUS;
         int x2 = cache.facing.getStepX() > 0 ? worldPosition.getX() + FUEL_RADIUS + 1 : worldPosition.getX() + FUEL_RADIUS;
@@ -186,10 +183,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     public void fireCannon(ServerLevel serverLevel, Cache cache) {
         // Set bounding box to query subLevels
         cache.targets.clear();
-        cache.searchBox.setUnchecked(
-            cache.cannonPosition.x - MAX_RANGE, cache.cannonPosition.y - MAX_RANGE, cache.cannonPosition.z - MAX_RANGE,
-            cache.cannonPosition.x + MAX_RANGE, cache.cannonPosition.y + MAX_RANGE, cache.cannonPosition.z + MAX_RANGE
-        );
+        setSearchBox(MAX_RANGE, cache);
 
         // Populate the target sublevel list
         SubLevel cannonSubLevel = Sable.HELPER.getContaining(serverLevel, worldPosition);
@@ -211,6 +205,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 if (range < currentRange) range = currentRange;
             }
         }
+        if (range <= 0.0d) return;
 
         // Fire particles (sadly, nothing I can do about the allocations...)
         OscilliteCannonBeamPayload payload = new OscilliteCannonBeamPayload(
@@ -236,13 +231,10 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
 
         // Set bounding box to query entities
-        cache.searchBox.setUnchecked(
-            cache.cannonFace.x - range, cache.cannonFace.y - range, cache.cannonFace.z - range,
-            cache.cannonFace.x + range, cache.cannonFace.y + range, cache.cannonFace.z + range
-        );
+        setSearchBox(range, cache);
 
         // Get entities within the bounding box
-        List<Entity> entities = serverLevel.getEntities(null, cache.searchBox.toMojang()); // toMojang() allocates a new Mojang AABB...
+        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), DAMAGE_PREDICATE); // toMojang() allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities
@@ -373,9 +365,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private void damageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
-        // Skip invalid entities
-        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) return;
-
         // Get entity position relative to the thruster
         AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
         double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;

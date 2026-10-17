@@ -5,6 +5,7 @@ public enum TickState {
     COOLDOWN,
     CHARGING,
     DISCHARGING,
+    ARMED,
     FIRING_INIT,
     FIRING
 }

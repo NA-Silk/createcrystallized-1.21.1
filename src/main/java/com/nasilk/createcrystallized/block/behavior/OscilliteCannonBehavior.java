@@ -3,10 +3,16 @@ package com.nasilk.createcrystallized.block.behavior;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.CannonConfig;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.equipment.armor.DivingBootsItem;
+import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+
+import java.util.function.Predicate;
 
 // TODO Tune constants with config
 public class OscilliteCannonBehavior {
@@ -25,6 +31,11 @@ public class OscilliteCannonBehavior {
     // Firing constants
     public static final double MAX_RADIUS = 2.12d; // Radial effectiveness distance
     public static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
+    public static final Predicate<Entity> DAMAGE_PREDICATE = entity ->
+        !(entity instanceof AbstractContraptionEntity) &&
+        !AirCurrent.isPlayerCreativeFlying(entity) &&
+        !entity.isSpectator() &&
+        !DivingBootsItem.isWornBy(entity);
 
     // Firing constants (config)
     public static float DAMAGE;

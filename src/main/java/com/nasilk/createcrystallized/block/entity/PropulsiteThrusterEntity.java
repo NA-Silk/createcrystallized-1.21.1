@@ -247,11 +247,10 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             entity.hurt(thrusterDamageSource, appliedDamage);
 
             // Handle "Crystal Cremation" Advancement
-            if (wasAlive && !entity.isAlive()
-            && entity instanceof ServerPlayer player) {
-                AdvancementHelper.yoinkerSploinker(
-                    player, "crystal_cremation");
-            }
+            if (wasAlive && !entity.isAlive() && entity instanceof ServerPlayer player) AdvancementHelper.yoinkerSploinker(
+                player,
+                "crystal_cremation"
+            );
         }
     }
 

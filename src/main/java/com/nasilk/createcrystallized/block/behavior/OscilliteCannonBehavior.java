@@ -22,14 +22,16 @@ public class OscilliteCannonBehavior {
     // Tick constants (config)
     public static int FUEL_RADIUS;
 
+    // Firing constants
+    public static final double MAX_RADIUS = 2.12d; // Radial effectiveness distance
+    public static final double MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
+
     // Firing constants (config)
     public static float DAMAGE;
     public static double RECOIL;
     public static double ENTITY_KNOCKBACK;
     public static double SUBLEVEL_KNOCKBACK;
-    public static double MAX_RANGE;          // Length effectiveness distance
-    public static double MAX_RADIUS;         // Radial effectiveness distance
-    public static double MAX_RADIUS_SQUARED;
+    public static double MAX_RANGE; // Length effectiveness distance
 
     // Charging particle constants
     public static final int NUM_PARTICLES = 10;
@@ -44,8 +46,6 @@ public class OscilliteCannonBehavior {
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();
         SUBLEVEL_KNOCKBACK = cannonConfig.cannonSublevelKnockback.get();
         MAX_RANGE = cannonConfig.cannonMaxRange.get();
-        MAX_RADIUS = cannonConfig.cannonMaxRadius.get();
-        MAX_RADIUS_SQUARED = MAX_RADIUS * MAX_RADIUS;
     }
 
     public OscilliteCannonBehavior(OscilliteCannonEntity be) {

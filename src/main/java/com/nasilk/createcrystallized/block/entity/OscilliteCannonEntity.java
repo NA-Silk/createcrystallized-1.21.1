@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.entity;
 
+import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
@@ -36,7 +37,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,7 +160,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         for (BlockPos pos : BlockPos.betweenClosed(
                 x1, y1, z1,
                 x2, y2, z2
-        )) if (serverLevel.getBlockState(pos).getBlock() instanceof AmethystClusterBlock) {
+        )) if (ModBlocks.ECHO_CRYSTAL_CLUSTER.has(serverLevel.getBlockState(pos))) {
             fuelPos.set(pos);
             return true;
         }
@@ -168,7 +168,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private boolean tryConsumeCrystalFuel(ServerLevel serverLevel) {
-        if (serverLevel.getBlockState(fuelPos).getBlock() instanceof AmethystClusterBlock) {
+        if (ModBlocks.ECHO_CRYSTAL_CLUSTER.has(serverLevel.getBlockState(fuelPos))) {
             serverLevel.destroyBlock(fuelPos, false);
             return true;
         }
@@ -237,8 +237,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Set bounding box to query entities
         cache.searchBox.setUnchecked(
-            cache.cannonPosition.x - range, cache.cannonPosition.y - range, cache.cannonPosition.z - range,
-            cache.cannonPosition.x + range, cache.cannonPosition.y + range, cache.cannonPosition.z + range
+            cache.cannonFace.x - range, cache.cannonFace.y - range, cache.cannonFace.z - range,
+            cache.cannonFace.x + range, cache.cannonFace.y + range, cache.cannonFace.z + range
         );
 
         // Get entities within the bounding box
@@ -381,7 +381,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
         double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
         double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-        cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.cannonPosition);
+        cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.cannonFace);
 
         // Linear distance
         double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
@@ -409,6 +409,24 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(ENTITY_KNOCKBACK);
         entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
         if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
+    }
+
+    private void setSearchBox(double range, Cache cache) {
+        // Find beam center
+        double xCenter = cache.cannonFace.x + range * cache.cannonDirection.x * 0.5d;
+        double yCenter = cache.cannonFace.y + range * cache.cannonDirection.y * 0.5d;
+        double zCenter = cache.cannonFace.z + range * cache.cannonDirection.z * 0.5d;
+
+        // Get beam range offsets
+        double xOffset = range * Math.abs(cache.cannonDirection.x) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.x) + Math.abs(cache.cannonJ.x));
+        double yOffset = range * Math.abs(cache.cannonDirection.y) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.y) + Math.abs(cache.cannonJ.y));
+        double zOffset = range * Math.abs(cache.cannonDirection.z) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.z) + Math.abs(cache.cannonJ.z));
+
+        // Set search box
+        cache.searchBox.setUnchecked(
+            xCenter - xOffset, yCenter - yOffset, zCenter - zOffset,
+            xCenter + xOffset, yCenter + yOffset, zCenter + zOffset
+        );
     }
 
 

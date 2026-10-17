@@ -1,11 +1,16 @@
 package com.nasilk.createcrystallized.block.behavior;
 
+import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.CannonConfig;
+import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +22,9 @@ import java.util.function.Predicate;
 // TODO Tune constants with config
 public class OscilliteCannonBehavior {
     private final OscilliteCannonEntity be;
+
+    // Tick variables
+    public final BlockPos.MutableBlockPos fuelPos = new BlockPos.MutableBlockPos();
 
     // Tick constants
     public static final int MAX_COOLDOWN = 180;
@@ -63,15 +71,81 @@ public class OscilliteCannonBehavior {
         this.be = be;
     }
 
-    public void tick(ServerLevel serverLevel, boolean powered, OscilliteCannonEntity.Cache cache) {
+
+    /// TICK
+    public void tick(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+        boolean powered = be.getBlockState().getValue(OscilliteCannonBlock.POWERED);
         boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
         switch (be.getTickState()) {
-            case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
-            case CHARGING -> { if (randTick) charging(serverLevel, cache); }
-            case FIRING_INIT -> firingInitialization(serverLevel);
+            case IDLE -> idle(serverLevel, randTick, cache);
+            case ARMED -> armed(serverLevel, powered);
+            case FIRING_INIT -> firingInit(serverLevel);
             case FIRING -> firing(serverLevel, cache);
-            default -> idle(serverLevel);
+            case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
+            default -> be.setTickState(TickState.IDLE);
         }
+    }
+
+
+    /// STATE HANDLERS
+    private void idle(ServerLevel serverLevel, boolean randTick, OscilliteCannonEntity.Cache cache) {
+        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
+            null, be.getBlockPos(),
+            SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
+            1.0f, 0.8f
+        );
+
+        // IDLE -> ARMED (randTick && hasCrystalFuel)
+        if (randTick && hasCrystalFuel(serverLevel, cache)) {
+            serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
+            addChargingParticles(serverLevel, cache);
+            be.setTickState(TickState.ARMED);
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
+    }
+
+    private void armed(ServerLevel serverLevel, boolean powered) {
+        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
+            null, be.getBlockPos(),
+            SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
+            1.0f, 0.8f
+        );
+
+        // ARMED -> FIRING_INIT (powered && tryConsumeCrystalFuel)
+        // ARMED -> IDLE (!tryConsumeCrystalFuel)
+        if (powered) {
+            if (tryConsumeCrystalFuel(serverLevel)) be.setTickState(TickState.FIRING_INIT);
+            else {
+                serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_AGITATED, SoundSource.BLOCKS, 1.5f, 0.8f);
+                be.setTickState(TickState.IDLE);
+            }
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
+    }
+
+    private void firingInit(ServerLevel serverLevel) {
+        serverLevel.playSound(
+            null, be.getBlockPos(),
+            SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
+            1.5f, 0.8f
+        );
+
+        // FIRING_INIT -> FIRING (*)
+        be.setTickState(TickState.FIRING);
+        be.setChanged();
+        serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+    }
+
+    private void firing(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+        be.setCooldown(MAX_COOLDOWN);
+        be.fireCannon(serverLevel, cache);
+
+        // FIRING -> COOLDOWN (*)
+        be.setTickState(TickState.COOLDOWN);
+        be.setChanged();
+        serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
     private void cooldown(ServerLevel serverLevel, boolean randTick, boolean powered, OscilliteCannonEntity.Cache cache) {
@@ -85,51 +159,68 @@ public class OscilliteCannonBehavior {
             be.setChanged();
             if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
+
+        // COOLDOWN -> COOLDOWN (cooldown > 0)
+        // COOLDOWN -> IDLE (cooldown <= 0)
+        if (be.getCooldown() <= 0) {
+            be.setTickState(TickState.IDLE);
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
     }
 
-    private void charging(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
-        be.setArmed(true);
-        serverLevel.playSound(
-            null, be.getBlockPos(),
-            SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
-            1.5f, 0.8f
-        );
-        be.addChargingParticles(serverLevel, cache);
-        be.setChanged();
-        serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+
+    /// FIRING {@link OscilliteCannonEntity:133}
+
+
+    /// CHARGING
+    public boolean hasCrystalFuel(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+        // Get coordinates
+        BlockPos blockPos = be.getBlockPos();
+        int x1 = cache.facing.getStepX() < 0 ? blockPos.getX() - FUEL_RADIUS - 1 : blockPos.getX() - FUEL_RADIUS;
+        int x2 = cache.facing.getStepX() > 0 ? blockPos.getX() + FUEL_RADIUS + 1 : blockPos.getX() + FUEL_RADIUS;
+        int y1 = cache.facing.getStepY() < 0 ? blockPos.getY() - FUEL_RADIUS - 1 : blockPos.getY() - FUEL_RADIUS;
+        int y2 = cache.facing.getStepY() > 0 ? blockPos.getY() + FUEL_RADIUS + 1 : blockPos.getY() + FUEL_RADIUS;
+        int z1 = cache.facing.getStepZ() < 0 ? blockPos.getZ() - FUEL_RADIUS - 1 : blockPos.getZ() - FUEL_RADIUS;
+        int z2 = cache.facing.getStepZ() > 0 ? blockPos.getZ() + FUEL_RADIUS + 1 : blockPos.getZ() + FUEL_RADIUS;
+
+        // Run check
+        for (BlockPos pos : BlockPos.betweenClosed(
+            x1, y1, z1,
+            x2, y2, z2
+        )) if (ModBlocks.ECHO_CRYSTAL_CLUSTER.has(serverLevel.getBlockState(pos))) {
+            fuelPos.set(pos);
+            return true;
+        }
+        return false;
     }
 
-    private void firingInitialization(ServerLevel serverLevel) {
-        be.setFiring(true);
-        serverLevel.playSound(
-            null, be.getBlockPos(),
-            SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
-            1.5f, 0.8f
-        );
-        be.setChanged();
-        serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+    public boolean tryConsumeCrystalFuel(ServerLevel serverLevel) {
+        if (ModBlocks.ECHO_CRYSTAL_CLUSTER.has(serverLevel.getBlockState(fuelPos))) {
+            serverLevel.destroyBlock(fuelPos, false);
+            return true;
+        }
+        return false;
     }
 
-    private void firing(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
-        be.setFiring(false);
-        be.setArmed(false);
-        be.setCooldown(MAX_COOLDOWN);
-        be.fireCannon(serverLevel, cache);
-        be.setChanged();
-        serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
-    }
+    public void addChargingParticles(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+        // Compute each particle
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
+            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
 
-    private void idle(ServerLevel serverLevel) {
-        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
-            if (!be.getArmed()) serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.WARDEN_LISTENING, SoundSource.BLOCKS,
-                1.0f, 0.8f
-            );
-            else serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
-                1.0f, 0.8f
+            // Handle motion
+            cache.spawnPosition.set(cache.cannonFace).fma(i, cache.cannonVelocity);
+
+            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            serverLevel.sendParticles(
+                ModParticleTypes.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
+                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
+                xSpeed, ySpeed, zSpeed,
+                1.0d // Use above speed values
             );
         }
     }

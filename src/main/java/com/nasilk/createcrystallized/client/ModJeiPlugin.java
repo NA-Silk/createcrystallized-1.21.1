@@ -3,6 +3,7 @@ package com.nasilk.createcrystallized.client;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.fluid.ModFluids;
+import com.simibubi.create.Create;
 import com.simibubi.create.compat.jei.ConversionRecipe;
 import com.simibubi.create.compat.jei.category.MysteriousItemConversionCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
@@ -16,10 +17,10 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 @JeiPlugin
 public class ModJeiPlugin implements IModPlugin {
     private static final ResourceLocation PLUGIN_ID = CreateCrystallized.getRL("jei_plugin");
@@ -54,7 +55,7 @@ public class ModJeiPlugin implements IModPlugin {
 
     // Hide the Pebble Recipe from JEI, if you're a player digging into this code, don't tell!
     private static final ResourceLocation PEBBLE_RECIPE_ID = CreateCrystallized.getRL("sequenced_assembly/the_pebble");
-    private static final RecipeType<RecipeHolder<SequencedAssemblyRecipe>> SEQUENCED_ASSEMBLY_JEI_TYPE = RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath("create", "sequenced_assembly"));
+    private static final RecipeType<RecipeHolder<SequencedAssemblyRecipe>> SEQUENCED_ASSEMBLY_JEI_TYPE = RecipeType.createRecipeHolderType(Create.asResource("sequenced_assembly"));
 
     @SuppressWarnings("unchecked")
     @Override

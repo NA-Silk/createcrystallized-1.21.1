@@ -17,6 +17,7 @@ public class MachinedCrystalBlockScenes {
     private static final int MOVEMENT_DELAY = 20;
     private static final int FOCUS_DELAY = 40;
 
+    // Densite Well constants
     private static final double WELL_POWER_INCREASE = 1.0d;
 
     /**

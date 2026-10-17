@@ -13,9 +13,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class DensiteCoreParticle extends TerrainParticle {
-    private final double xi, yi, zi;
+    private final double yi;
     private final double xf, yf, zf;
     private final double ri, ai;
     private final float baseQuadSize;
@@ -30,16 +29,14 @@ public class DensiteCoreParticle extends TerrainParticle {
         this.hasPhysics = false; // Disable collision?
 
         // Store initial and final positions
-        this.xi = this.x; // x + xSpeed
-        this.yi = this.y; // y + ySpeed
-        this.zi = this.z; // z + zSpeed
+        this.yi = this.y; // yi = y + ySpeed (xi = x + xSpeed, zi = z + zSpeed)
         this.xf = x;
         this.yf = y;
         this.zf = z;
 
         // Distance & Angle setup for spiral math
-        double dx = this.xi - this.xf;
-        double dz = this.zi - this.zf;
+        double dx = this.x - this.xf;
+        double dz = this.z - this.zf;
         this.ri = Mth.length(dx, dz); // Initial radius
         this.ai = Math.atan2(dz, dx); // Initial angle
         double d = Mth.length(xSpeed, ySpeed, zSpeed); // Total distance
@@ -87,13 +84,9 @@ public class DensiteCoreParticle extends TerrainParticle {
         this.quadSize = (float) ((1.0d - (progress * 0.85d)) * this.baseQuadSize);
 
         // Brighten quickly and fade out near final position
-        if (progress < 0.1f) {
-            this.alpha = (float) progress / 0.1f;
-        } else if (progress > 0.85d) {
-            this.alpha = (1.0f - (float) progress) / 0.15f;
-        } else {
-            this.alpha = 1.0f;
-        }
+        if (progress < 0.1f) this.alpha = (float) progress / 0.1f;
+        else if (progress > 0.85d) this.alpha = (1.0f - (float) progress) / 0.15f;
+        else this.alpha = 1.0f;
     }
 
     // Force full emissive brightness

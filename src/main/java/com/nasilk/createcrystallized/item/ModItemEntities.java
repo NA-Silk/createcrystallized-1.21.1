@@ -7,7 +7,7 @@ import com.tterrag.registrate.util.entry.EntityEntry;
 import net.minecraft.world.entity.MobCategory;
 
 public class ModItemEntities {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final EntityEntry<DensiteCoreItemEntity> THROWN_DENSITE_CORE = REGISTRATE.<DensiteCoreItemEntity>entity(
         "densite_core_projectile",

@@ -374,8 +374,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
     private void damageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
         // Skip invalid entities
-        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity))
-            return;
+        if (entity instanceof AbstractContraptionEntity || AirCurrent.isPlayerCreativeFlying(entity) || DivingBootsItem.isWornBy(entity)) return;
 
         // Get entity position relative to the thruster
         AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
@@ -392,28 +391,28 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance * entityLinearDistance;
         if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
 
-
-        // Apply damage, Warden Takes Additional Damage
-        if (cannonDamageSource == null)
-        cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
+        // Apply damage, Warden takes additional damage
+        if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
         boolean wasAlive = entity.isAlive();
-        entity.hurt(cannonDamageSource, entity instanceof Warden ? (float) DAMAGE * 5.0f : (float) DAMAGE); //Racism Line
+        boolean isWarden = entity instanceof Warden;
+        entity.hurt(cannonDamageSource, isWarden ? DAMAGE * 5.0f : DAMAGE); // Racism line
 
         // Handle "Hair of the Dog" Advancement
-        if (wasAlive && !entity.isAlive() && entity instanceof Warden) {
-            AdvancementHelper.hitEmWithTheOlSwitcheroo(
-                serverLevel,
-                entity.blockPosition(),
-                "hair_of_the_dog"
-            );
-        }
-        // Apply Knockback (i think)
+        if (wasAlive && !entity.isAlive() && isWarden) AdvancementHelper.hitEmWithTheOlSwitcheroo(
+            serverLevel,
+            entity.blockPosition(),
+            "hair_of_the_dog"
+        );
+
+        // Apply Knockback
         if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(ENTITY_KNOCKBACK);
         else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(ENTITY_KNOCKBACK);
         entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
         if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
     }
-        // PARTICLES
+
+
+    // PARTICLES
     public void addChargingParticles(ServerLevel serverLevel, Cache cache) {
         // Compute each particle
         for (int i = 0; i < NUM_PARTICLES; i++) {

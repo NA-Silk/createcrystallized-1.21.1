@@ -20,10 +20,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ModFluids {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-
-    // FLUID REGISTRATIONS
     /// VOID SEA SLURRY
     public static final FluidEntry<BaseFlowingFluid.Flowing> VOID_SEA_SLURRY = REGISTRATE.fluid(
         "void_sea_slurry",
@@ -106,8 +104,6 @@ public class ModFluids {
         new TransformBaseFlowingFluid.Source(properties, List.of(OSCILLITE_SUSPENSION_SETTINGS))
     ).block().build().bucket().build().register(); //TODO tweak values
 
-
-    // REGISTRY HELPERS
     public static final FluidEntry<?>[] FLUIDS = {
         VOID_SEA_SLURRY,
         DENSITE_EMULSION,
@@ -118,7 +114,7 @@ public class ModFluids {
 
     private static ResourceLocation fluidTexture(String name, boolean source) {
         String suffix = source ? "_still" : "_flow";
-        return ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "fluid/" + name + suffix);
+        return CreateCrystallized.getRL("fluid/" + name + suffix);
     }
 
     public static void init() {

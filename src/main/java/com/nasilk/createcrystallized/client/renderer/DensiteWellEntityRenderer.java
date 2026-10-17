@@ -11,11 +11,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWellEntity> {
-    public static final ResourceLocation TEXTURE_0 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
-    public static final ResourceLocation TEXTURE_1 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_1.png");
-    public static final ResourceLocation TEXTURE_2 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_2.png");
-    public static final ResourceLocation TEXTURE_3 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_3.png");
-    public static final ResourceLocation TEXTURE_4 = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_cube_activated/densite_well_cube_4.png");
+    public static final ResourceLocation TEXTURE_0 = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
+    public static final ResourceLocation TEXTURE_1 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_1.png");
+    public static final ResourceLocation TEXTURE_2 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_2.png");
+    public static final ResourceLocation TEXTURE_3 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_3.png");
+    public static final ResourceLocation TEXTURE_4 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_4.png");
     private final DensiteWellCubeModel cube;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -41,7 +41,7 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
         stack.translate(0.5d, 0.5d, 0.5d); //moves cube to center
         stack.mulPose(Axis.XP.rotationDegrees(30)); //tilts the child
         stack.mulPose(Axis.YP.rotationDegrees(spinny * (power + 1 ))); //rotates the child, faster if powered
-        stack.mulPose(Axis.ZP.rotationDegrees(spinny * 0.37f * (power + 1 ))); //also rotates the child, but with gusto and pizzaz
+        stack.mulPose(Axis.ZP.rotationDegrees(spinny * 0.37f * (power + 1 ))); //also rotates the child, but with gusto and pizzazz
 
         cube.renderToBuffer( //unspeakable violence
             stack,

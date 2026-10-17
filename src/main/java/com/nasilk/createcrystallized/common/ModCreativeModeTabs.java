@@ -10,7 +10,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 public class ModCreativeModeTabs {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final RegistryEntry<CreativeModeTab, CreativeModeTab> CREATECRYSTALLIZED_TAB = REGISTRATE.simple(
         "createcrystallized_tab",

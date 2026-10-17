@@ -9,7 +9,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 public class ModBlockEntities {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final BlockEntityEntry<DensiteWellEntity> DENSITE_WELL = REGISTRATE.blockEntity(
         "densite_well",

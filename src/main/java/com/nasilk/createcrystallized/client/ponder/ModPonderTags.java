@@ -9,9 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
 public class ModPonderTags {
-    public static final ResourceLocation CRYSTAL_FLUIDS = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "crystal_fluids");
-    public static final ResourceLocation CRYSTAL_BLOCKS = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "crystal_blocks");
-    public static final ResourceLocation MACHINED_CRYSTAL_BLOCKS = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "machined_crystal_blocks");
+    public static final ResourceLocation CRYSTAL_FLUIDS = CreateCrystallized.getRL("crystal_fluids");
+    public static final ResourceLocation CRYSTAL_BLOCKS = CreateCrystallized.getRL("crystal_blocks");
+    public static final ResourceLocation MACHINED_CRYSTAL_BLOCKS = CreateCrystallized.getRL("machined_crystal_blocks");
 
     public ModPonderTags() {}
 

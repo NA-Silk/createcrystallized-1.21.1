@@ -7,7 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 
 public class ModSounds {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final RegistryEntry<SoundEvent, SoundEvent> PEBBLE_PLACE = registerSound(
         "block.pebble_place"

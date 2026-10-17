@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreItemEntity> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "textures/block/densite_well_cube.png");
+    private static final ResourceLocation TEXTURE = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
     private final DensiteWellCubeModel model;
 
     public ThrownDensiteCoreRenderer(EntityRendererProvider.Context context) {

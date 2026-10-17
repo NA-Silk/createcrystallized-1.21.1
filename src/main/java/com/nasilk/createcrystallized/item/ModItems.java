@@ -8,10 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShovelItem;
 
 public class ModItems {
-    public static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
+    private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
-
-    // ITEM REGISTRATIONS
     /// ADVANCED ITEMS
     public static final ItemEntry<CreativeFluidEraserItem> CREATIVE_FLUID_ERASER = REGISTRATE.item(
         "creative_fluid_eraser",
@@ -30,7 +28,6 @@ public class ModItems {
             .attributes(ShovelItem.createAttributes(ModTiers.AEROLITE, 1.5f, -2.4f))
         )
     ).register();
-
 
     /// CRAFTING ITEMS
     // Credit to @Eevneon from the Create Aeronautics Discord for the Sprite!
@@ -69,8 +66,6 @@ public class ModItems {
         (properties) -> new Item(properties.stacksTo(64))
     ).register();
 
-
-    // REGISTRY HELPERS
     public static void init() {
         CreateCrystallized.LOGGER.info("Items initialized");
     }

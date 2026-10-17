@@ -3,7 +3,6 @@ package com.nasilk.createcrystallized.config;
 import com.nasilk.createcrystallized.config.common.CreativeConfig;
 import net.createmod.catnip.config.ConfigBase;
 
-@SuppressWarnings("unused")
 public class CommonConfig extends ConfigBase {
     public final CreativeConfig creativeConfig;
 

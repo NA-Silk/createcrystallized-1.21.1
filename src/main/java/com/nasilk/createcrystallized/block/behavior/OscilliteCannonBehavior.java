@@ -23,7 +23,7 @@ public class OscilliteCannonBehavior {
     public static int FUEL_RADIUS;
 
     // Firing constants (config)
-    public static double DAMAGE;
+    public static float DAMAGE;
     public static double RECOIL;
     public static double ENTITY_KNOCKBACK;
     public static double SUBLEVEL_KNOCKBACK;
@@ -39,7 +39,7 @@ public class OscilliteCannonBehavior {
     public static void updateConstants() {
         CannonConfig cannonConfig = ModConfigs.server().blockConfig.cannonConfig;
         FUEL_RADIUS = cannonConfig.cannonCrystalRadius.get();
-        DAMAGE = cannonConfig.cannonDamage.get();
+        DAMAGE = cannonConfig.cannonDamage.getF();
         RECOIL = cannonConfig.cannonRecoil.get();
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();
         SUBLEVEL_KNOCKBACK = cannonConfig.cannonSublevelKnockback.get();

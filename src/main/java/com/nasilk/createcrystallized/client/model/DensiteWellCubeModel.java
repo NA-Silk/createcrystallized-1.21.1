@@ -11,10 +11,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 
 public class DensiteWellCubeModel extends Model {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CreateCrystallized.MOD_ID, "densite_well_cube"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(CreateCrystallized.getRL("densite_well_cube"), "main");
 	private final ModelPart bb_main;
 
 	public DensiteWellCubeModel(ModelPart root) {

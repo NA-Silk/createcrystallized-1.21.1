@@ -160,7 +160,6 @@ public class OscilliteCannonBehavior {
             if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
 
-        // COOLDOWN -> COOLDOWN (cooldown > 0)
         // COOLDOWN -> IDLE (cooldown <= 0)
         if (be.getCooldown() <= 0) {
             be.setTickState(TickState.IDLE);

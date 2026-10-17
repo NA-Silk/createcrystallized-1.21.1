@@ -124,6 +124,15 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             // Select state and run tick
             boolean powered = blockState.getValue(PropulsiteThrusterBlock.POWERED);
             boolean passesThreshold = velocitySquared >= VELOCITY_THRESHOLD;
+            /// IDLE -> CHARGING (passesThreshold)
+            /// CHARGING -> ARMED (charge >= MAX_CHARGE)
+            /// CHARGING -> DISCHARGING (!passesThreshold)
+            /// DISCHARGING -> IDLE (charge <= 0)
+            /// DISCHARGING -> CHARGING (passesThreshold)
+            /// ARMED -> FIRING_INIT (powered)
+            /// FIRING_INIT -> FIRING (*)
+            /// FIRING -> COOLDOWN (firingTick <= 0)
+            /// COOLDOWN -> IDLE (cooldown <= 0)
             if      (cooldown > 0                                      ) tickState = TickState.COOLDOWN;
             else if (!armed &&  charge < MAX_CHARGE &&  passesThreshold) tickState = TickState.CHARGING;
             else if (!armed &&  charge > 0          && !passesThreshold) tickState = TickState.DISCHARGING;

@@ -100,6 +100,8 @@ public class PropulsiteThrusterBehavior {
         this.be = be;
     }
 
+
+    /// TICK
     public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean powered, PropulsiteThrusterEntity.Cache cache) {
         boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
         if (randTick) be.updateAmplitude(serverLevel, be.getBlockPos());
@@ -107,22 +109,26 @@ public class PropulsiteThrusterBehavior {
             case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
             case CHARGING -> charging(serverLevel, cache);
             case DISCHARGING -> discharging(serverLevel, cache);
-            case FIRING_INIT -> firingInitialization(serverLevel);
+            case FIRING_INIT -> firingInit(serverLevel);
             case FIRING -> firing(serverLevel, handle, cache);
             default -> idle(serverLevel);
         }
     }
 
-    private void cooldown(ServerLevel serverLevel, boolean randTick, boolean powered, PropulsiteThrusterEntity.Cache cache) {
-        if (randTick) serverLevel.sendParticles(
-            ParticleTypes.SMOKE,
-            cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
-            1, 0.5d, 0.5d, 0.5d, 0.1d
-        );
-        if (!powered) {
-            be.setCooldown(be.getCooldown() - 1);
-            be.setChanged();
-            if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+
+    /// STATE HANDLERS
+    private void idle(ServerLevel serverLevel) {
+        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
+            if (be.getCharge() == 0) serverLevel.playSound(
+                null, be.getBlockPos(),
+                SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
+                1.0f, 0.8f
+            );
+            else if (be.getCharge() == MAX_CHARGE) serverLevel.playSound(
+                null, be.getBlockPos(),
+                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
+                1.0f, 0.8f
+            );
         }
     }
 
@@ -154,7 +160,7 @@ public class PropulsiteThrusterBehavior {
         if (be.getCharge() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
-    private void firingInitialization(ServerLevel serverLevel) {
+    private void firingInit(ServerLevel serverLevel) {
         be.setFiring(true);
         be.setFiringTick(0);
         serverLevel.playSound(
@@ -191,18 +197,16 @@ public class PropulsiteThrusterBehavior {
         if (be.getFiringTick() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
-    private void idle(ServerLevel serverLevel) {
-        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
-            if (be.getCharge() == 0) serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
-                1.0f, 0.8f
-            );
-            else if (be.getCharge() == MAX_CHARGE) serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
-                1.0f, 0.8f
-            );
+    private void cooldown(ServerLevel serverLevel, boolean randTick, boolean powered, PropulsiteThrusterEntity.Cache cache) {
+        if (randTick) serverLevel.sendParticles(
+            ParticleTypes.SMOKE,
+            cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
+            1, 0.5d, 0.5d, 0.5d, 0.1d
+        );
+        if (!powered) {
+            be.setCooldown(be.getCooldown() - 1);
+            be.setChanged();
+            if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
     }
 }

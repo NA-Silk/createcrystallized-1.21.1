@@ -102,7 +102,7 @@ public class ModFluids {
         properties.slopeFindDistance(8).levelDecreasePerBlock(1).tickRate(2)
     ).source(properties ->
         new TransformBaseFlowingFluid.Source(properties, List.of(OSCILLITE_SUSPENSION_SETTINGS))
-    ).block().build().bucket().build().register(); //TODO tweak values
+    ).block().build().bucket().build().register(); //TODO Tweak values
 
     public static final FluidEntry<?>[] FLUIDS = {
         VOID_SEA_SLURRY,

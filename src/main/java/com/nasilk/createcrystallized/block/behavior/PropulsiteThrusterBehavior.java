@@ -32,7 +32,7 @@ public class PropulsiteThrusterBehavior {
     public static final int SIMPLE_PARTICLE_RATE = 20;
     public static final int CHARGING_PARTICLE_RATE = 2;
     public static final double AMBIENT_RATE = 8e-5d;
-    public static final double FACE_OFFSET = 0.6d;
+    public static final double FACE_OFFSET = 1.6d;
 
     // Tick constants (config)
     public static double NORM_STANDARD_DEVIATION; // Curve spread

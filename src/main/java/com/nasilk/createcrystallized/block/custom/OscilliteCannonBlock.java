@@ -80,12 +80,11 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         if (level instanceof ServerLevel serverLevel) {
-            boolean powered = serverLevel.hasNeighborSignal(pos);
-
             // Do nothing if BARREL is being powered
             if (state.getValue(IS_BARREL)) return;
 
             // Update power if BASE is being powered
+            boolean powered = serverLevel.hasNeighborSignal(pos);
             if (powered != state.getValue(POWERED)) serverLevel.setBlockAndUpdate(pos, state.setValue(POWERED, powered));
         }
     }

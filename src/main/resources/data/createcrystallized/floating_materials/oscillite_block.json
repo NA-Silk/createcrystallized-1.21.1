@@ -1,0 +1,10 @@
+{
+  "prevent_self_lift": true,
+  "scale_friction_with_gravity":false,
+  "lift_strength": 0.0,
+  "transition_speed": 2,
+  "slow_vertical_friction": 0.0,
+  "fast_vertical_friction": 0.7,
+  "slow_horizontal_friction": 0.0,
+  "fast_horizontal_friction": 0.7
+}

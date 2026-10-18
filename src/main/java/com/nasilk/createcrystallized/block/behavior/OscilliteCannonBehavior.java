@@ -16,15 +16,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-
 import java.util.function.Predicate;
 
 // TODO Tune constants with config
 public class OscilliteCannonBehavior {
     private final OscilliteCannonEntity be;
 
-    // Tick variables
-    public final BlockPos.MutableBlockPos fuelPos = new BlockPos.MutableBlockPos();
+    // Variables (unsaved)
+    private final BlockPos.MutableBlockPos fuelPos = new BlockPos.MutableBlockPos();
 
     // Tick constants
     public static final int MAX_COOLDOWN = 180;
@@ -73,25 +72,35 @@ public class OscilliteCannonBehavior {
 
 
     /// TICK
+    // IDLE -> ARMED (randTick && hasCrystalFuel)
+    // ARMED -> FIRING_INIT (powered && tryConsumeCrystalFuel)
+    // ARMED -> IDLE (powered && !tryConsumeCrystalFuel)
+    // FIRING_INIT -> FIRING (*)
+    // FIRING -> COOLDOWN (*)
+    // COOLDOWN -> IDLE (cooldown <= 0)
     public void tick(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
-        boolean powered = be.getBlockState().getValue(OscilliteCannonBlock.POWERED);
         boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
         switch (be.getTickState()) {
             case IDLE -> idle(serverLevel, randTick, cache);
-            case ARMED -> armed(serverLevel, powered);
+            case ARMED -> armed(serverLevel);
             case FIRING_INIT -> firingInit(serverLevel);
             case FIRING -> firing(serverLevel, cache);
-            case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
-            default -> be.setTickState(TickState.IDLE);
+            case COOLDOWN -> cooldown(serverLevel, randTick, cache);
+            default -> {
+                be.setTickState(TickState.IDLE);
+                be.setChanged();
+                serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+            }
         }
     }
 
 
     /// STATE HANDLERS
     private void idle(ServerLevel serverLevel, boolean randTick, OscilliteCannonEntity.Cache cache) {
+        // Play spooky listening noise on occasion
         if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
             null, be.getBlockPos(),
-            SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
+            SoundEvents.WARDEN_LISTENING, SoundSource.BLOCKS,
             1.0f, 0.8f
         );
 
@@ -105,7 +114,8 @@ public class OscilliteCannonBehavior {
         }
     }
 
-    private void armed(ServerLevel serverLevel, boolean powered) {
+    private void armed(ServerLevel serverLevel) {
+        // Play even spookier angry noise on occasion
         if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
             null, be.getBlockPos(),
             SoundEvents.WARDEN_LISTENING_ANGRY, SoundSource.BLOCKS,
@@ -113,8 +123,8 @@ public class OscilliteCannonBehavior {
         );
 
         // ARMED -> FIRING_INIT (powered && tryConsumeCrystalFuel)
-        // ARMED -> IDLE (!tryConsumeCrystalFuel)
-        if (powered) {
+        // ARMED -> IDLE (powered && !tryConsumeCrystalFuel)
+        if (be.getBlockState().getValue(OscilliteCannonBlock.POWERED)) {
             if (tryConsumeCrystalFuel(serverLevel)) be.setTickState(TickState.FIRING_INIT);
             else {
                 serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_AGITATED, SoundSource.BLOCKS, 1.5f, 0.8f);
@@ -126,6 +136,7 @@ public class OscilliteCannonBehavior {
     }
 
     private void firingInit(ServerLevel serverLevel) {
+        // Play loud firing noise
         serverLevel.playSound(
             null, be.getBlockPos(),
             SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS,
@@ -139,6 +150,7 @@ public class OscilliteCannonBehavior {
     }
 
     private void firing(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+        // Set cooldown and run firing effects
         be.setCooldown(MAX_COOLDOWN);
         be.fireCannon(serverLevel, cache);
 
@@ -148,13 +160,16 @@ public class OscilliteCannonBehavior {
         serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
-    private void cooldown(ServerLevel serverLevel, boolean randTick, boolean powered, OscilliteCannonEntity.Cache cache) {
+    private void cooldown(ServerLevel serverLevel, boolean randTick, OscilliteCannonEntity.Cache cache) {
+        // Sometimes create some smoke particles to show something is happening
         if (randTick) serverLevel.sendParticles(
             ParticleTypes.SMOKE,
             cache.cannonPosition.x, cache.cannonPosition.y, cache.cannonPosition.z,
             1, 0.5d, 0.5d, 0.5d, 0.1d
         );
-        if (!powered) {
+
+        // Decrement cooldown if unpowered
+        if (!be.getBlockState().getValue(OscilliteCannonBlock.POWERED)) {
             be.setCooldown(be.getCooldown() - 1);
             be.setChanged();
             if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
@@ -167,9 +182,6 @@ public class OscilliteCannonBehavior {
             serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
     }
-
-
-    /// FIRING {@link OscilliteCannonEntity:133}
 
 
     /// CHARGING
@@ -223,4 +235,7 @@ public class OscilliteCannonBehavior {
             );
         }
     }
+
+
+    /// FIRING {@link OscilliteCannonEntity:133}
 }

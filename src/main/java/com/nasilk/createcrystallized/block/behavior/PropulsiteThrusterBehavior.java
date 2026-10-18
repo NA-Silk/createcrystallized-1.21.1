@@ -1,9 +1,12 @@
 package com.nasilk.createcrystallized.block.behavior;
 
+import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.ThrusterConfig;
+import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
@@ -102,111 +105,209 @@ public class PropulsiteThrusterBehavior {
 
 
     /// TICK
-    public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean powered, PropulsiteThrusterEntity.Cache cache) {
+    // IDLE -> CHARGING (canCharge)
+    // CHARGING -> ARMED (charge >= MAX_CHARGE)
+    // CHARGING -> DISCHARGING (!canCharge)
+    // DISCHARGING -> IDLE (charge <= 0)
+    // DISCHARGING -> CHARGING (canCharge)
+    // ARMED -> FIRING_INIT (powered)
+    // FIRING_INIT -> FIRING (*)
+    // FIRING -> COOLDOWN (firingTick >= FIRING_DURATION)
+    // COOLDOWN -> IDLE (cooldown <= 0)
+    public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
         boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
         if (randTick) be.updateAmplitude(serverLevel, be.getBlockPos());
         switch (be.getTickState()) {
-            case COOLDOWN -> cooldown(serverLevel, randTick, powered, cache);
-            case CHARGING -> charging(serverLevel, cache);
-            case DISCHARGING -> discharging(serverLevel, cache);
+            case IDLE -> idle(serverLevel, canCharge);
+            case CHARGING -> charging(serverLevel, canCharge, cache);
+            case DISCHARGING -> discharging(serverLevel, canCharge, cache);
+            case ARMED -> armed(serverLevel);
             case FIRING_INIT -> firingInit(serverLevel);
             case FIRING -> firing(serverLevel, handle, cache);
-            default -> idle(serverLevel);
+            case COOLDOWN -> cooldown(serverLevel, randTick, cache);
+            default -> {
+                be.setTickState(TickState.IDLE);
+                be.setChanged();
+                serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+            }
         }
     }
 
 
     /// STATE HANDLERS
-    private void idle(ServerLevel serverLevel) {
-        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) {
-            if (be.getCharge() == 0) serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
-                1.0f, 0.8f
-            );
-            else if (be.getCharge() == MAX_CHARGE) serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
-                1.0f, 0.8f
-            );
+    private void idle(ServerLevel serverLevel, boolean canCharge) {
+        // Play happy little resonation noises on occasion
+        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
+            null, be.getBlockPos(),
+            SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS,
+            1.0f, 0.8f
+        );
+
+        // IDLE -> CHARGING (canCharge)
+        if (canCharge) {
+            be.setTickState(TickState.CHARGING);
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
+
     }
 
-    private void charging(ServerLevel serverLevel, PropulsiteThrusterEntity.Cache cache) {
+    private void charging(ServerLevel serverLevel, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
+        // Increment charge and create particles
         be.setCharge(be.getCharge() + 1);
+        if (be.getCharge() % CHARGING_PARTICLE_RATE == 0) addChargingParticles(serverLevel, cache);
+
+        // CHARGING -> ARMED (charge >= MAX_CHARGE)
+        // CHARGING -> DISCHARGING (!canCharge)
         if (be.getCharge() >= MAX_CHARGE) {
-            be.setArmed(true);
-            serverLevel.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
-                1.5f, 1.2f
-            );
-        }
-        if (be.getCharge() % CHARGING_PARTICLE_RATE == 0) be.addChargingParticles(serverLevel, cache);
+            serverLevel.playSound(null, be.getBlockPos(), SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f, 1.2f);
+            be.setTickState(TickState.ARMED);
+        } else if (!canCharge) be.setTickState(TickState.DISCHARGING);
         be.setChanged();
-        if (be.getCharge() % PACKET_UPDATE_RATE == 0 || be.getArmed()) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        if (be.getCharge() % PACKET_UPDATE_RATE == 0 || !TickState.CHARGING.equals(be.getTickState())) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+
     }
 
-    private void discharging(ServerLevel serverLevel, PropulsiteThrusterEntity.Cache cache) {
+    private void discharging(ServerLevel serverLevel, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
+        // Decrement charge and create particles
         be.setCharge(be.getCharge() - 1);
-        if (be.getCharge() % SIMPLE_PARTICLE_RATE == 0) {
-            serverLevel.sendParticles(
-                ParticleTypes.WHITE_SMOKE,
-                cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
-                10, 0.5d, 0.5d, 0.5d, 0.1d
-            );
-        }
+        if (be.getCharge() % SIMPLE_PARTICLE_RATE == 0) serverLevel.sendParticles(ParticleTypes.WHITE_SMOKE, cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z, 10, 0.5d, 0.5d, 0.5d, 0.1d);
+
+        // DISCHARGING -> IDLE (charge <= 0)
+        // DISCHARGING -> CHARGING (canCharge)
+        if (be.getCharge() <= 0) be.setTickState(TickState.IDLE);
+        else if (canCharge) be.setTickState(TickState.CHARGING);
         be.setChanged();
-        if (be.getCharge() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        if (be.getCharge() % PACKET_UPDATE_RATE == 0 || !TickState.DISCHARGING.equals(be.getTickState())) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+    }
+
+    private void armed(ServerLevel serverLevel) {
+        // Play a nice chime noise on occasion
+        if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
+            null, be.getBlockPos(),
+            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
+            1.0f, 0.8f
+        );
+
+        // ARMED -> FIRING_INIT (powered)
+        if (be.getBlockState().getValue(PropulsiteThrusterBlock.POWERED)) {
+            be.setTickState(TickState.FIRING_INIT);
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
     }
 
     private void firingInit(ServerLevel serverLevel) {
-        be.setFiring(true);
+        // Reset charge and firingTick and play loud firing noise
+        be.setCharge(0);
         be.setFiringTick(0);
         serverLevel.playSound(
             null, be.getBlockPos(),
             ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
             1.5f, 1.0f
         );
+
+        // FIRING_INIT -> FIRING (*)
+        be.setTickState(TickState.FIRING);
         be.setChanged();
         serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
     private void firing(ServerLevel serverLevel, RigidBodyHandle handle, PropulsiteThrusterEntity.Cache cache) {
-        // The curve that determines the total thrust of the burst
-        be.setThrust(be.getAmplitude() * NORM_CURVE[be.getFiringTick()]); // Curve computation
+        // Set thrust using norm curve and increment firing tick
+        be.setThrust(be.getAmplitude() * NORM_CURVE[be.getFiringTick()]);
+        be.setFiringTick(be.getFiringTick() + 1);
 
-        // Hande subLevel effects
+        // Run firing effects
         cache.thrusterForce.set(cache.facing.step()).mul(-be.getThrust());
         handle.applyImpulseAtPoint(cache.thrusterPositionLocal, cache.thrusterForce);
-
-        // Update firing state
-        be.setFiringTick(be.getFiringTick() + 1);
-        if (be.getFiringTick() >= FIRING_DURATION) {
-            be.setFiring(false);
-            be.setArmed(false);
-            be.setCharge(0);
-            be.setThrust(0);
-            be.setCooldown(MAX_COOLDOWN);
-        }
-
-        // Effects
         be.pushEntities(serverLevel, cache);
-        be.addFiringParticles(serverLevel, cache);
+        addFiringParticles(serverLevel, cache);
+
+        // FIRING -> COOLDOWN (firingTick >= FIRING_DURATION)
+        if (be.getFiringTick() >= FIRING_DURATION) {
+            be.setCooldown(MAX_COOLDOWN);
+            be.setThrust(0);
+            be.setTickState(TickState.COOLDOWN);
+        }
         be.setChanged();
-        if (be.getFiringTick() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        if (be.getCharge() % PACKET_UPDATE_RATE == 0 || !TickState.FIRING.equals(be.getTickState())) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+
     }
 
-    private void cooldown(ServerLevel serverLevel, boolean randTick, boolean powered, PropulsiteThrusterEntity.Cache cache) {
+    private void cooldown(ServerLevel serverLevel, boolean randTick, PropulsiteThrusterEntity.Cache cache) {
+        // Sometimes create some smoke particles to show something is happening
         if (randTick) serverLevel.sendParticles(
             ParticleTypes.SMOKE,
             cache.thrusterPosition.x, cache.thrusterPosition.y, cache.thrusterPosition.z,
             1, 0.5d, 0.5d, 0.5d, 0.1d
         );
-        if (!powered) {
+
+        // Decrement cooldown if unpowered
+        if (!be.getBlockState().getValue(PropulsiteThrusterBlock.POWERED)) {
             be.setCooldown(be.getCooldown() - 1);
             be.setChanged();
             if (be.getCooldown() % PACKET_UPDATE_RATE == 0) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
+
+        // COOLDOWN -> IDLE (cooldown <= 0)
+        if (be.getCooldown() <= 0) {
+            be.setTickState(TickState.IDLE);
+            be.setChanged();
+            serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+        }
+    }
+
+
+    /// CHARGING
+    public void addChargingParticles(ServerLevel serverLevel, PropulsiteThrusterEntity.Cache cache) {
+        // Compute each particle
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
+            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
+
+            // Handle motion
+            cache.spawnPosition.set(cache.thrusterFace).fma(i, cache.thrusterVelocity);
+
+            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            serverLevel.sendParticles(
+                ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
+                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
+                xSpeed, ySpeed, zSpeed,
+                1.0d // Use above speed values
+            );
+        }
+    }
+
+
+    /// FIRING {@link PropulsiteThrusterEntity:___}
+    public void addFiringParticles(ServerLevel serverLevel, PropulsiteThrusterEntity.Cache cache) {
+        // Get starting values
+        double thrustRatio = Math.max(0.0d, be.getThrust() / be.getMaxThrust()); // [0.0 to 1.0] multiplier based on current thrust strength
+        double baseVelocity = MIN_PARTICLE_SPEED + ((MAX_PARTICLE_SPEED - MIN_PARTICLE_SPEED) * thrustRatio); // Faster jet at peak thrust
+        int particleCount = MIN_PARTICLES + (int) ((MAX_PARTICLES - MIN_PARTICLES) * thrustRatio);
+
+        // Compute each particle
+        for (int i = 0; i < particleCount; i++) {
+            // Apply slight random spread to the cone of the thrust
+            double dirX = cache.thrusterDirection.x + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+            double dirY = cache.thrusterDirection.y + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+            double dirZ = cache.thrusterDirection.z + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
+
+            // Normalize the direction and scale by baseVelocity
+            cache.spawnVelocity.set(dirX, dirY, dirZ).normalize().mul(baseVelocity);
+
+            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            serverLevel.sendParticles(
+                ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
+                cache.thrusterFace.x, cache.thrusterFace.y, cache.thrusterFace.z,
+                0, // Count = 0 (Crucial for passing custom payloads)
+                cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,
+                1.0d // Use spawnVelocity values
+            );
         }
     }
 }

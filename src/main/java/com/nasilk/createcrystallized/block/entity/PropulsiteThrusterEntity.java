@@ -3,9 +3,7 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
-import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
-import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
@@ -49,26 +47,22 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private int cooldown = 0;
     private int firingTick = 0;
     private double amplitude = FIRING_AMPLITUDE;
-    private double thrust = 0.0d;
     private double maxThrust = 0.0d;
-    private boolean armed = false;
-    private boolean firing = false;
+    private double thrust = 0.0d;
 
     // Variables (unsaved)
     private DamageSource thrusterDamageSource = null;
 
     // Cache (short-lived storage to avoid garbage build-up)
     public static class Cache {
-        // Public
+        // Tick public
         public Direction facing = Direction.NORTH;
         public final Vector3d thrusterPosition = new Vector3d();
         public final Vector3d thrusterPositionLocal = new Vector3d();
+        public final Vector3d thrusterFace =  new Vector3d();
+        public final Vector3d thrusterDirection = new Vector3d();
+        public final Vector3d thrusterVelocity = new Vector3d();
         public final Vector3d thrusterForce =  new Vector3d();
-
-        // Tick
-        final Vector3d thrusterDirection = new Vector3d();
-        final Vector3d thrusterFace =  new Vector3d();
-        final Vector3d thrusterVelocity = new Vector3d();
 
         // BFS
         final long[] queue = new long[16];
@@ -80,8 +74,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         final Vector3d relEntityRadialDistance = new Vector3d();
 
         // Particles
-        final Vector3d spawnPosition = new Vector3d();
-        final Vector3d spawnVelocity = new Vector3d();
+        public final Vector3d spawnPosition = new Vector3d();
+        public final Vector3d spawnVelocity = new Vector3d();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -122,29 +116,13 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             cache.thrusterFace.set(cache.thrusterPosition).fma(FACE_OFFSET, cache.thrusterDirection);
 
             // Select state and run tick
-            boolean powered = blockState.getValue(PropulsiteThrusterBlock.POWERED);
-            boolean passesThreshold = velocitySquared >= VELOCITY_THRESHOLD;
-            /// IDLE -> CHARGING (passesThreshold)
-            /// CHARGING -> ARMED (charge >= MAX_CHARGE)
-            /// CHARGING -> DISCHARGING (!passesThreshold)
-            /// DISCHARGING -> IDLE (charge <= 0)
-            /// DISCHARGING -> CHARGING (passesThreshold)
-            /// ARMED -> FIRING_INIT (powered)
-            /// FIRING_INIT -> FIRING (*)
-            /// FIRING -> COOLDOWN (firingTick <= 0)
-            /// COOLDOWN -> IDLE (cooldown <= 0)
-            if      (cooldown > 0                                      ) tickState = TickState.COOLDOWN;
-            else if (!armed &&  charge < MAX_CHARGE &&  passesThreshold) tickState = TickState.CHARGING;
-            else if (!armed &&  charge > 0          && !passesThreshold) tickState = TickState.DISCHARGING;
-            else if ( armed && !firing              &&  powered        ) tickState = TickState.FIRING_INIT;
-            else if (           firing                                 ) tickState = TickState.FIRING;
-            else                                                         tickState = TickState.IDLE;
-            behavior.tick(serverLevel, handle, powered, cache);
+            boolean canCharge = velocitySquared >= VELOCITY_THRESHOLD;
+            behavior.tick(serverLevel, handle, canCharge, cache);
         }
     }
 
 
-    // FIRING
+    /// FIRING
     public void updateAmplitude(ServerLevel serverLevel, BlockPos pos) {
         // Cache setup
         Cache cache = CACHE.get(); // Get fresh cache since this method may be called from outside this class
@@ -272,86 +250,22 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     }
 
 
-    // PARTICLES
-    public void addChargingParticles(ServerLevel serverLevel, Cache cache) {
-        // Compute each particle
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
-            double ySpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
-            double zSpeed = (serverLevel.random.nextDouble() - 0.5d) * 2.0d * PARTICLE_RADIUS;
-
-            // Handle motion
-            cache.spawnPosition.set(cache.thrusterFace).fma(i, cache.thrusterVelocity);
-
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
-            serverLevel.sendParticles(
-                ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
-                cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
-                0, // Count = 0 (Crucial for passing custom payloads)
-                xSpeed, ySpeed, zSpeed,
-                1.0d // Use above speed values
-            );
-        }
-    }
-
-    public void addFiringParticles(ServerLevel serverLevel, Cache cache) {
-        // Get starting values
-        double thrustRatio = Math.max(0.0d, thrust / maxThrust); // [0.0 to 1.0] multiplier based on current thrust strength
-        double baseVelocity = MIN_PARTICLE_SPEED + ((MAX_PARTICLE_SPEED - MIN_PARTICLE_SPEED) * thrustRatio); // Faster jet at peak thrust
-        int particleCount = MIN_PARTICLES + (int) ((MAX_PARTICLES - MIN_PARTICLES) * thrustRatio);
-
-        // Compute each particle
-        for (int i = 0; i < particleCount; i++) {
-            // Apply slight random spread to the cone of the thrust
-            double dirX = cache.thrusterDirection.x + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
-            double dirY = cache.thrusterDirection.y + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
-            double dirZ = cache.thrusterDirection.z + (serverLevel.random.nextGaussian() * PARTICLE_SPREAD);
-
-            // Normalize the direction and scale by baseVelocity
-            cache.spawnVelocity.set(dirX, dirY, dirZ).normalize().mul(baseVelocity);
-
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
-            serverLevel.sendParticles(
-                ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
-                cache.thrusterFace.x, cache.thrusterFace.y, cache.thrusterFace.z,
-                0, // Count = 0 (Crucial for passing custom payloads)
-                cache.spawnVelocity.x, cache.spawnVelocity.y, cache.spawnVelocity.z,
-                1.0d // Use spawnVelocity values
-            );
-        }
-    }
-
-
     // LONGS
     public void defaultUpdateLongs(ServerLevel serverLevel) {
         if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
 
-        // Cooldown -> Waiting (Idle)
-        if (cooldown > 0) {
-            cooldown = 0;
-        }
-
-        // Charging (Idle) -> Armed (Idle)
-        else if (!armed) {
-            charge = MAX_CHARGE;
-            armed = true;
-            serverLevel.playSound(
-                null, worldPosition,
-                SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS,
-                1.5f,1.2f
-            );
-        }
-
-        // Armed (Idle) -> Firing Initialization { next tick -> Firing }
-        else {
-            firing = true;
-            firingTick = 0;
-            serverLevel.playSound(
-                null, worldPosition,
-                    ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
-                1.5f,1.0f
-            );
+        // Change state
+        switch (tickState) {
+            case IDLE -> {
+                setCharge(MAX_CHARGE);
+                serverLevel.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f,1.2f);
+                setTickState(TickState.ARMED);
+            }
+            case ARMED -> setTickState(TickState.FIRING_INIT);
+            case COOLDOWN -> {
+                setCooldown(0);
+                setTickState(TickState.IDLE);
+            }
         }
 
         // Send update packet
@@ -362,17 +276,9 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     public void shiftUpdateLongs(ServerLevel serverLevel) {
         if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
 
-        // Ready firing tick
-        cooldown = 0;
-        charge = MAX_CHARGE;
-        armed = true;
-        firing = true;
-        firingTick = 0;
-        serverLevel.playSound(
-            null, worldPosition,
-                ModSounds.PROPULSITE_THRUSTER_FIRE.get(), SoundSource.BLOCKS,
-            1.5f,1.0f
-        );
+        // Set state to FIRING_INIT
+        setCooldown(0);
+        setTickState(TickState.FIRING_INIT);
 
         // Send update packet
         this.setChanged();
@@ -394,7 +300,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             .forGoggles(tooltip, 1);
 
         final MutableComponent armedState = CCLangHelper
-            .text(armed ? "Armed" : "Disarmed")
+            .text(TickState.ARMED.equals(tickState) ? "Armed" : "Disarmed")
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.armed_state", armedState)
@@ -426,10 +332,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Charge", this.charge);
         tag.putInt("Cooldown", this.cooldown);
+        tag.putInt("FiringTick", this.firingTick);
         tag.putDouble("Amplitude", this.amplitude);
-        tag.putDouble("Thrust", this.thrust);
         tag.putDouble("MaxThrust", this.maxThrust);
-        tag.putBoolean("Armed", this.armed);
+        tag.putDouble("Thrust", this.thrust);
+        tag.putInt("State", this.tickState != null ? this.tickState.getKey() : TickState.IDLE.getKey());
         return tag;
     }
 
@@ -439,10 +346,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         CompoundTag tag = pkt.getTag();
         this.charge = tag.getInt("Charge");
         this.cooldown = tag.getInt("Cooldown");
+        this.firingTick = Math.clamp(tag.getInt("FiringTick"), 0, FIRING_DURATION - 1);
         this.amplitude = tag.getDouble("Amplitude");
-        this.thrust = tag.getDouble("Thrust");
         this.maxThrust = tag.getDouble("MaxThrust");
-        this.armed = tag.getBoolean("Armed");
+        this.thrust = tag.getDouble("Thrust");
+        this.tickState = TickState.get(tag.getInt("State"));
     }
 
     @Override
@@ -460,10 +368,9 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         tag.putInt("Cooldown", this.cooldown);
         tag.putInt("FiringTick", this.firingTick);
         tag.putDouble("Amplitude", this.amplitude);
-        tag.putDouble("Thrust", this.thrust);
         tag.putDouble("MaxThrust", this.maxThrust);
-        tag.putBoolean("Armed", this.armed);
-        tag.putBoolean("Firing", this.firing);
+        tag.putDouble("Thrust", this.thrust);
+        tag.putInt("State", this.tickState != null ? this.tickState.getKey() : TickState.IDLE.getKey());
     }
 
     @Override
@@ -471,28 +378,26 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         super.loadAdditional(tag, registries);
         this.charge = tag.getInt("Charge");
         this.cooldown = tag.getInt("Cooldown");
-        this.firingTick = tag.getInt("FiringTick");
+        this.firingTick = Math.clamp(tag.getInt("FiringTick"), 0, FIRING_DURATION - 1);
         this.amplitude = tag.getDouble("Amplitude");
-        this.thrust = tag.getDouble("Thrust");
         this.maxThrust = tag.getDouble("MaxThrust");
-        this.armed = tag.getBoolean("Armed");
-        this.firing = tag.getBoolean("Firing");
+        this.thrust = tag.getDouble("Thrust");
+        this.tickState = TickState.get(tag.getInt("State"));
     }
 
 
     // GETTERS & SETTERS
-    public int getCharge()                     { return charge;                }
-    public void setCharge(int charge)          { this.charge = charge;         }
-    public int getCooldown()                   { return cooldown;              }
-    public void setCooldown(int cooldown)      { this.cooldown = cooldown;     }
-    public int getFiringTick()                 { return firingTick;            }
-    public void setFiringTick(int firingTick)  { this.firingTick = firingTick; }
-    public double getAmplitude()               { return amplitude;             }
-    public double getThrust()                  { return thrust;                }
-    public void setThrust(double thrust)       { this.thrust = thrust;         }
-    public void setMaxThrust(double maxThrust) { this.maxThrust = maxThrust;   }
-    public boolean getArmed()                  { return armed;                 }
-    public void setArmed(boolean armed)        { this.armed = armed;           }
-    public void setFiring(boolean firing)      { this.firing = firing;         }
-    public TickState getTickState()            { return tickState;             }
+    public int getCharge()                        { return charge;                }
+    public void setCharge(int charge)             { this.charge = charge;         }
+    public int getCooldown()                      { return cooldown;              }
+    public void setCooldown(int cooldown)         { this.cooldown = cooldown;     }
+    public int getFiringTick()                    { return firingTick;            }
+    public void setFiringTick(int firingTick)     { this.firingTick = firingTick; }
+    public double getAmplitude()                  { return amplitude;             }
+    public double getMaxThrust()                  { return maxThrust;             }
+    public void setMaxThrust(double maxThrust)    { this.maxThrust = maxThrust;   }
+    public double getThrust()                     { return thrust;                }
+    public void setThrust(double thrust)          { this.thrust = thrust;         }
+    public TickState getTickState()               { return tickState;             }
+    public void setTickState(TickState tickState) { this.tickState = tickState;   }
 }

@@ -26,6 +26,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.warden.Warden;
@@ -374,11 +376,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     public void defaultUpdateLongs(ServerLevel serverLevel) {
         // Change state
         switch (tickState) {
-            case IDLE -> tickState = TickState.ARMED;
-            case ARMED -> tickState = TickState.FIRING_INIT;
+            case IDLE -> {
+                serverLevel.playSound(null, worldPosition, SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
+                setTickState(TickState.ARMED);
+            }
+            case ARMED -> setTickState(TickState.FIRING_INIT);
             case COOLDOWN -> {
                 setCooldown(0);
-                tickState = TickState.IDLE;
+                setTickState(TickState.IDLE);
             }
         }
 
@@ -390,7 +395,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     public void shiftUpdateLongs(ServerLevel serverLevel) {
         // Set state to FIRING_INIT
         setCooldown(0);
-        tickState = TickState.FIRING_INIT;
+        setTickState(TickState.FIRING_INIT);
 
         // Send update packet
         this.setChanged();

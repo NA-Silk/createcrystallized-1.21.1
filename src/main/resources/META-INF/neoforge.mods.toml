@@ -19,7 +19,7 @@ license="${mod_license}"
     displayName="${mod_name}" #mandatory
 
 # A URL to refer people to when problems occur with this mod
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+issueTrackerURL="https://github.com/NA-Silk/createcrystallized-1.21.1/issues"
 
 # A URL to query for updates for this mod. See here https://docs.neoforged.net/docs/misc/updatechecker/
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
@@ -28,7 +28,7 @@ license="${mod_license}"
 displayURL="https://github.com/NA-Silk/createcrystallized-1.21.1" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="createcrystallized-logo.png" #optional
 
 # A text field displayed in the mod UI
 #credits="" #optional
@@ -59,7 +59,7 @@ Create Crystallized
     # Optional field describing why the dependency is required or why it is incompatible
     # reason="..."
     # The version range of the dependency
-    versionRange="[${neo_version},)" #mandatory
+    versionRange="${neo_version_range}" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT, or SERVER

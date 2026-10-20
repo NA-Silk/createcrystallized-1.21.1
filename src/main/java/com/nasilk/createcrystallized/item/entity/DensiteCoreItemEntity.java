@@ -27,7 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -47,6 +46,7 @@ public class DensiteCoreItemEntity extends ThrowableItemProjectile {
         !(entity instanceof AbstractContraptionEntity) &&
         !AirCurrent.isPlayerCreativeFlying(entity) &&
         !DivingBootsItem.isWornBy(entity);
+    private static final DustParticleOptions DENSITE_CORE_DUST = new DustParticleOptions(new Vector3f(0.20f, 0.0f, 0.310f),1.0f);
 
     // Tick constants (config)
     private static double FIELD_RADIUS;
@@ -250,9 +250,8 @@ public class DensiteCoreItemEntity extends ThrowableItemProjectile {
                 );
                 break;
             case 4:
-                DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.20f, 0.0f, 0.310f),1.0f);
                 for (int i = 0; i < 8; i++) this.level().addParticle(
-                    dust,
+                    DENSITE_CORE_DUST,
                     nextPos(this.getX()), nextPos(this.getY()), nextPos(this.getZ()),
                     0.4d, 0.4d, 0.4d
                 );

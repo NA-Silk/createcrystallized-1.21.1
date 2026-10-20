@@ -25,6 +25,7 @@ public class AeroliteOreBlock extends Block {
     public static final BooleanProperty DISARMED = BlockStateProperties.DISARMED;
     private static final int THRUST_DELAY = 2;
     private static final double THRUST = 10.0d;
+    private static final DustParticleOptions AEROLITE_ORE_DUST = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.2f);
 
     public AeroliteOreBlock(Properties properties) {
         super(properties);
@@ -97,9 +98,8 @@ public class AeroliteOreBlock extends Block {
         );
 
         // Play effects
-        DustParticleOptions dust = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.2f);
         serverLevel.sendParticles(
-            dust,
+            AEROLITE_ORE_DUST,
             pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
             10,
             0.4d, 0.4d, 0.4d, 0.1d

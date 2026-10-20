@@ -23,6 +23,9 @@ import java.util.function.Predicate;
 public class PropulsiteThrusterBehavior {
     private final PropulsiteThrusterEntity be;
 
+    // Variables (unsaved)
+    private final int worldPositionHash;
+
     // Tick constants
     public static final int MAX_COOLDOWN = 100;   // How long it takes for the block to be able to be charged again in ticks
     public static final int MAX_CHARGE = 60;      // How long it takes for the burst to be ready after receiving redstone power in ticks
@@ -32,14 +35,13 @@ public class PropulsiteThrusterBehavior {
     public static final int SIMPLE_PARTICLE_RATE = 20;
     public static final int CHARGING_PARTICLE_RATE = 2;
     public static final double AMBIENT_RATE = 8e-5d;
-    public static final double FACE_OFFSET = 1.6d;
+    public static final double FACE_OFFSET = 1.4d;
 
     // Tick constants (config)
     public static double NORM_STANDARD_DEVIATION; // Curve spread
     public static double NORM_MEAN;               // Curve middle
     public static double NORM_DENOMINATOR;        // Precomputed denominator
     public static double FIRING_AMPLITUDE;         // How much total thrust is output over the length of the burst
-    public static double VELOCITY_SENSITIVITY;
     public static double VELOCITY_THRESHOLD;
     public static final double[] NORM_CURVE = new double[FIRING_DURATION];
 
@@ -87,7 +89,6 @@ public class PropulsiteThrusterBehavior {
             NORM_CURVE[i] = Math.exp(-0.5d * diff * diff) / NORM_DENOMINATOR;
         }
         FIRING_AMPLITUDE = thrusterConfig.thrusterFiringAmplitude.get();
-        VELOCITY_SENSITIVITY = thrusterConfig.thrusterVelocitySensitivity.get();
         VELOCITY_THRESHOLD = thrusterConfig.thrusterVelocityThreshold.get();
         CLUSTER_BONUS_SCALE = thrusterConfig.thrusterClusterBonusScale.get();
         MAX_ENTITY_KNOCKBACK = thrusterConfig.thrusterMaxEntityKnockback.get();
@@ -101,6 +102,7 @@ public class PropulsiteThrusterBehavior {
 
     public PropulsiteThrusterBehavior(PropulsiteThrusterEntity be) {
         this.be = be;
+        this.worldPositionHash = be.getBlockPos().hashCode();
     }
 
 
@@ -115,7 +117,7 @@ public class PropulsiteThrusterBehavior {
     // FIRING -> COOLDOWN (firingTick >= FIRING_DURATION)
     // COOLDOWN -> IDLE (cooldown <= 0)
     public void tick(ServerLevel serverLevel, RigidBodyHandle handle, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
-        boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
+        boolean randTick = (serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0;
         if (randTick) be.updateAmplitude(serverLevel, be.getBlockPos());
         switch (be.getTickState()) {
             case IDLE -> idle(serverLevel, canCharge);
@@ -221,7 +223,7 @@ public class PropulsiteThrusterBehavior {
         // Run firing effects
         cache.thrusterForce.set(cache.facing.step()).mul(-be.getThrust());
         handle.applyImpulseAtPoint(cache.thrusterPositionLocal, cache.thrusterForce);
-        be.pushEntities(serverLevel, cache);
+        be.pushAndDamageEntities(serverLevel, cache);
         addFiringParticles(serverLevel, cache);
 
         // FIRING -> COOLDOWN (firingTick >= FIRING_DURATION)

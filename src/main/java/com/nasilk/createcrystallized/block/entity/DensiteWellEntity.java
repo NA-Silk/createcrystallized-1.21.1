@@ -12,7 +12,6 @@ import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -31,7 +30,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 // TODO Tune constants with config
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
@@ -42,7 +40,8 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private double fieldRadiusSquared = 0.0d;
 
     // Tick variables (unsaved)
-    private final List<SubLevel> targets = new ArrayList<>();
+    private final int worldPositionHash;
+    private final List<ServerSubLevel> targets = new ArrayList<>();
 
     // Tick constants
     private static final int RANDOM_TICK_RATE = 20;
@@ -61,8 +60,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static double DAMPEN_SCALE;
 
     // Config constants
-    private final AtomicLong currentID = new AtomicLong();
-    private static final AtomicLong configID = new AtomicLong();
     public static void updateConstants() {
         WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
         double MIN_RADIUS = wellConfig.wellMinRadius.get();
@@ -78,7 +75,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
         DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
         DAMPEN_SCALE = wellConfig.wellDampenScale.get();
-        configID.getAndIncrement();
     }
 
     // Cache
@@ -95,6 +91,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     public DensiteWellEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        this.worldPositionHash = pos.hashCode();
     }
 
 
@@ -104,10 +101,10 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             // Get block power
             BlockState state = getBlockState();
             int newPower = state.getValue(DensiteWellBlock.POWER);
-            if (power != newPower || currentID.get() != configID.get()) {
+            boolean powerChanged = power != newPower;
+            if (powerChanged) {
                 updateFieldVariables(newPower);
-                currentID.set(configID.get());
-                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+                serverLevel.sendBlockUpdated(worldPosition, state, state, 2);
                 this.setChanged();
             }
 
@@ -131,7 +128,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run effects
-            if ((serverLevel.getGameTime() + worldPosition.hashCode()) % RANDOM_TICK_RATE == 0) updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
+            if ((serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0 || powerChanged) updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
             if (!targets.isEmpty()) applyGravity(cache);
             if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
         }
@@ -152,24 +149,24 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         );
 
         // Populate the target list
-        container.queryIntersecting(cache.searchBox).forEach(targetSubLevel -> {
-            if (targetSubLevel != wellSubLevel) targets.add(targetSubLevel);
+        container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel) targets.add(targetSubLevel);
         });
     }
 
     private void applyGravity(Cache cache) {
         // Iterate backwards for safe removals
         for (int i = targets.size() - 1; i >= 0; i--) {
-            SubLevel targetSubLevel = targets.get(i);
+            ServerSubLevel targetSubLevel = targets.get(i);
 
             // If the sublevel was destroyed or unloaded, remove it from the list
-            if (!(targetSubLevel instanceof ServerSubLevel subLevel) || targetSubLevel.isRemoved()) {
+            if (targetSubLevel.isRemoved()) {
                 targets.remove(i);
                 continue;
             }
 
             // Get the physics handle
-            RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
+            RigidBodyHandle handle = RigidBodyHandle.of(targetSubLevel);
             if (!handle.isValid()) continue;
 
             // Get sublevel position, impulse velocity, and current distance^2
@@ -196,19 +193,17 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 continue;
             }
 
-            // double distance = Math.sqrt(distanceSquared);
+            // Handle dampened and standard linear impulse (inverse square impulse feels choppy)
             if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
-                // Handle dampening when within well radius
+                // Apply dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, zeroVector);
 
-                // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^3
-                // cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_CUBED);
+                // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^2
                 cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_SQUARED);
             } else {
-                // Handle standard pull impulse: F = fieldStrength / distance^2
-                // cache.impulseVelocity.mul(fieldStrength / (distanceSquared * distance));
+                // Handle standard pull impulse: F = fieldStrength * distance / distance^2
                 cache.impulseVelocity.mul(fieldStrength / distanceSquared);
             }
 
@@ -219,14 +214,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     }
 
 
-    // PARTICLES
+    // PARTICLES TODO Basically completely change this, Gaussians are expensive and that's a lot of particles
     private void addEffectParticles(ServerLevel serverLevel, Cache cache) {
         // Compute each particle
+        final double radiusFactor = fieldRadius / 2.5758293d;
         for (int i = 0; i < power; i++) {
             // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
-            double ySpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
-            double zSpeed = Math.clamp(serverLevel.random.nextGaussian() * fieldRadius / 2.5758293, -fieldRadius, fieldRadius);
+            double xSpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
+            double ySpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
+            double zSpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
 
             // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
@@ -312,7 +308,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     // UTIL
     private void updateFieldVariables(int newPower) {
-        this.power = newPower;
+        power = newPower;
         if (power == 0) {
             fieldStrength = 0.0d;
             fieldRadius = 0.0d;

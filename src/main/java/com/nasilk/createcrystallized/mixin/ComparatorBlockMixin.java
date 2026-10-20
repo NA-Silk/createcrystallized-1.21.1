@@ -20,7 +20,7 @@ public class ComparatorBlockMixin {
         Direction direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos facePos = pos.relative(direction);
         BlockState faceState = level.getBlockState(facePos);
-        if (faceState.is(ModBlocks.DENSITE_BLOCK)) {
+        if (ModBlocks.DENSITE_BLOCK.has(faceState)) {
             cir.setReturnValue(faceState.getValue(DensiteBlock.POWER));
         }
     }

@@ -7,7 +7,6 @@ public class ThrusterConfig extends ConfigBase {
     public final ConfigFloat thrusterNormMean              = this.f(Constants.thrusterNormMean,              0.0f, "thruster_norm_mean",               Comments.thrusterNormMean);
     public final ConfigFloat thrusterNormStandardDeviation = this.f(Constants.thrusterNormStandardDeviation, 0.0f, "thruster_norm_standard_deviation", Comments.thrusterNormStandardDeviation);
     public final ConfigFloat thrusterFiringAmplitude       = this.f(Constants.thrusterFiringAmplitude,       0.0f, "thruster_firing_amplitude",        Comments.thrusterFiringAmplitude);
-    public final ConfigFloat thrusterVelocitySensitivity   = this.f(Constants.thrusterVelocitySensitivity,   0.0f, "thruster_velocity_sensitivity",    Comments.thrusterVelocitySensitivity);
     public final ConfigFloat thrusterVelocityThreshold     = this.f(Constants.thrusterVelocityThreshold,     0.0f, "thruster_velocity_threshold",      Comments.thrusterVelocityThreshold);
     public final ConfigFloat thrusterClusterBonusScale     = this.f(Constants.thrusterClusterBonusScale,     0.0f, "thruster_cluster_bonus_scale",     Comments.thrusterClusterBonusScale);
     public final ConfigFloat thrusterMaxEntityKnockback    = this.f(Constants.thrusterMaxEntityKnockback,    0.0f, "thruster_max_entity_knockback",    Comments.thrusterMaxEntityKnockback);
@@ -40,12 +39,11 @@ public class ThrusterConfig extends ConfigBase {
         private static final float thrusterNormMean = 3.0f;
         private static final float thrusterNormStandardDeviation = 1.5f;
         private static final float thrusterFiringAmplitude = 100.0f;
-        private static final float thrusterVelocitySensitivity = 15.0f;
-        private static final float thrusterVelocityThreshold = 1.0f;
+        private static final float thrusterVelocityThreshold = 0.0625f;
         private static final float thrusterClusterBonusScale = 2.0f;
         private static final float thrusterMaxEntityKnockback = 6.0f;
         private static final float thrusterMaxPushRange = 8.0f;
-        private static final float thrusterMaxPushRadius = 0.75f;
+        private static final float thrusterMaxPushRadius = 1.0f;
         private static final float thrusterPushScale = 0.1f;
         private static final float thrusterPushShiftReduction = 8.0f;
         private static final float thrusterDamageScale = 5.0f;
@@ -55,7 +53,6 @@ public class ThrusterConfig extends ConfigBase {
         private static final String thrusterNormMean = "Propulsite Thruster firing curve center.";
         private static final String thrusterNormStandardDeviation = "Propulsite Thruster firing curve spread.";
         private static final String thrusterFiringAmplitude = "Propulsite Thruster firing curve total thrust output.";
-        private static final String thrusterVelocitySensitivity = "Propulsite Thruster charging velocity sensitivity.";
         private static final String thrusterVelocityThreshold = "Propulsite Thruster charging velocity threshold.";
         private static final String thrusterClusterBonusScale = "Propulsite Thruster cluster bonus multiplier.";
         private static final String thrusterMaxEntityKnockback = "Propulsite Thruster maximum entity knockback.";

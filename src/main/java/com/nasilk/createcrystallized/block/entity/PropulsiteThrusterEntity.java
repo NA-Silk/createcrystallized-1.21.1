@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import java.util.List;
 import static com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior.*;
@@ -67,11 +66,12 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // BFS
         final long[] queue = new long[16];
         final LongOpenHashSet cluster = new LongOpenHashSet(16);
+        final BlockPos.MutableBlockPos currentPos = new BlockPos.MutableBlockPos();
+        final BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
         // Entity pushing
         final BoundingBox3d searchBox = new BoundingBox3d();
         final Vector3d relEntityPosition = new Vector3d();
-        final Vector3d relEntityRadialDistance = new Vector3d();
 
         // Particles
         public final Vector3d spawnPosition = new Vector3d();
@@ -93,7 +93,6 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
             if (!handle.isValid()) return;
             Cache cache = CACHE.get();
-            BlockState blockState = getBlockState();
 
             // Get global position
             cache.thrusterPositionLocal.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
@@ -104,20 +103,14 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             Sable.HELPER.getVelocity(serverLevel, subLevel, cache.thrusterPositionLocal, cache.thrusterVelocity);
             cache.thrusterVelocity.mul(1.0d / 20.0d); // bps -> bpt
 
-            // Get velocitySquared
-            double velocitySquared = cache.thrusterVelocity.lengthSquared();
-            if (velocitySquared > 1e-3d) velocitySquared *= VELOCITY_SENSITIVITY; // Set velocitySquared = LINEAR_SCALE*||-linearVelocity||^2
-            else velocitySquared = 0.0d;
-
             // Transform local to global vectors and get face position
-            cache.facing = blockState.getValue(PropulsiteThrusterBlock.FACING);
+            cache.facing = getBlockState().getValue(PropulsiteThrusterBlock.FACING);
             cache.thrusterDirection.set(cache.facing.step());
             subLevel.logicalPose().transformNormal(cache.thrusterDirection);
             cache.thrusterFace.set(cache.thrusterPosition).fma(FACE_OFFSET, cache.thrusterDirection);
 
             // Select state and run tick
-            boolean canCharge = velocitySquared >= VELOCITY_THRESHOLD;
-            behavior.tick(serverLevel, handle, canCharge, cache);
+            behavior.tick(serverLevel, handle, cache.thrusterVelocity.lengthSquared() >= VELOCITY_THRESHOLD, cache);
         }
     }
 
@@ -141,7 +134,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         BFS:
         while (head < tail) {
             // Dequeue a block position
-            BlockPos currentPos = BlockPos.of(cache.queue[head++]); // Dequeue
+            cache.currentPos.set(cache.queue[head++]); // Dequeue
 
             // Search each direction around currentPos for Propulsite and other Propulsite Thruster blocks
             for (Direction direction : DIRECTIONS) {
@@ -149,14 +142,14 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 if (tail >= 16) break BFS;
 
                 // Get position and skip if unloaded || already counted
-                BlockPos neighborPos = currentPos.relative(direction);
-                long neighborLong = neighborPos.asLong();
-                if (cache.cluster.contains(neighborLong) || !serverLevel.isLoaded(neighborPos)) continue;
+                cache.neighborPos.setWithOffset(cache.currentPos, direction);
+                long neighborLong = cache.neighborPos.asLong();
+                if (cache.cluster.contains(neighborLong) || !serverLevel.isLoaded(cache.neighborPos)) continue;
 
                 // Update counts, cluster, and queue
-                BlockState neighborState = serverLevel.getBlockState(neighborPos);
-                if (neighborState.is(ModBlocks.PROPULSITE_BLOCK)) propulsiteCount++;
-                else if (neighborState.is(ModBlocks.PROPULSITE_THRUSTER)) thrusterCount++;
+                BlockState neighborState = serverLevel.getBlockState(cache.neighborPos);
+                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) propulsiteCount++;
+                else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) thrusterCount++;
                 else continue;
                 cache.cluster.add(neighborLong);
                 cache.queue[tail++] = neighborLong; // Enqueue
@@ -173,15 +166,15 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Only trigger saves and network packets if the cluster actually changed
         if (oldAmplitude != amplitude) {
             this.setChanged();
-            if (!serverLevel.isClientSide) serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+            serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
         }
     }
 
-    public void pushEntities(ServerLevel serverLevel, Cache cache) {
+    public void pushAndDamageEntities(ServerLevel serverLevel, Cache cache) {
         // Exit if thrust is too low
         if (thrust < 0.1d) return;
 
-        // Set bounding box
+        // Set bounding box TODO Shrink this like the cannon's
         cache.searchBox.setUnchecked(
             cache.thrusterPosition.x - MAX_PUSH_RANGE, cache.thrusterPosition.y - MAX_PUSH_RANGE, cache.thrusterPosition.z - MAX_PUSH_RANGE,
             cache.thrusterPosition.x + MAX_PUSH_RANGE, cache.thrusterPosition.y + MAX_PUSH_RANGE, cache.thrusterPosition.z + MAX_PUSH_RANGE
@@ -198,55 +191,49 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
             double entityY = (entityBoundingBox.minY + entityBoundingBox.maxY) * 0.5d;
             double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
-            cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.thrusterPosition);
+            cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.thrusterFace);
 
-            // Length distance scalar
-            double relEntityLengthScalar = cache.thrusterDirection.dot(cache.relEntityPosition);
-            if (relEntityLengthScalar < 0.5d || relEntityLengthScalar > 0.5d + MAX_PUSH_RANGE) continue;
+            // Longitudinal distance
+            double longitudinalDistance = cache.thrusterDirection.dot(cache.relEntityPosition);
+            if (longitudinalDistance < 0.0d || longitudinalDistance > 0.5d + MAX_PUSH_RANGE) continue;
 
-            // Radial distance scalar
-            cache.relEntityRadialDistance.set(cache.relEntityPosition).fma(-relEntityLengthScalar, cache.thrusterDirection);
-            if (cache.relEntityRadialDistance.lengthSquared() > MAX_PUSH_RADIUS_SQUARED) continue;
+            // Radial distance
+            double distanceSquared = cache.relEntityPosition.lengthSquared();
+            double radialDistanceSquared = distanceSquared - longitudinalDistance * longitudinalDistance;
+            if (radialDistanceSquared > MAX_PUSH_RADIUS_SQUARED) continue;
 
-            // Acceleration scalar
-            double accelerationScalar = getAccelerationScalar(entity, relEntityLengthScalar);
-            if (accelerationScalar < 0.1d) continue;
+            // Knockback scale
+            double knockback = getKnockback(entity, longitudinalDistance);
+            if (knockback < 0.1d) continue;
 
-            // Handle acceleration effect
-            Vec3 entityVelocity = entity.getDeltaMovement(); // Internal minecraft reference, no extra allocation (yay)
-            entity.setDeltaMovement(
-                entityVelocity.add(
-                    Math.clamp(accelerationScalar * cache.thrusterDirection.x, -MAX_ENTITY_KNOCKBACK, MAX_ENTITY_KNOCKBACK),
-                    Math.clamp(accelerationScalar * cache.thrusterDirection.y, -MAX_ENTITY_KNOCKBACK, MAX_ENTITY_KNOCKBACK),
-                    Math.clamp(accelerationScalar * cache.thrusterDirection.z, -MAX_ENTITY_KNOCKBACK, MAX_ENTITY_KNOCKBACK)
-                )
-            );
+            // Apply knockback
+            cache.relEntityPosition.set(cache.thrusterDirection).mul(Math.min(knockback, MAX_ENTITY_KNOCKBACK));
+            entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
+            boolean isServerPlayer = entity instanceof ServerPlayer;
+            if (isServerPlayer) entity.hurtMarked = true;
             entity.fallDistance = 0.0f;
 
-            // Sync client-side (player) motion
-            if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
-
-            // Handle damage effect
-            float appliedDamage = (float) (accelerationScalar * DAMAGE_SCALE);
+            // Apply damage, scale with thrust and distance
+            float appliedDamage = (float) (knockback * DAMAGE_SCALE);
             if (appliedDamage < 0.5d) continue;
             if (thrusterDamageSource == null) thrusterDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.PROPULSITE_THRUSTER);
             boolean wasAlive = entity.isAlive();
             entity.hurt(thrusterDamageSource, appliedDamage);
 
             // Handle "Crystal Cremation" Advancement
-            if (wasAlive && !entity.isAlive() && entity instanceof ServerPlayer player) AdvancementHelper.yoinkerSploinker(
-                player,
+            if (wasAlive && !entity.isAlive() && isServerPlayer) AdvancementHelper.yoinkerSploinker(
+                (ServerPlayer) entity,
                 "crystal_cremation"
             );
         }
     }
 
-    private double getAccelerationScalar(Entity entity, double relEntityLengthScalar) {
-        double inverseDistanceRatio = 1.0d - (relEntityLengthScalar - 0.5d) / MAX_PUSH_RANGE; // 1.0 - [0.0 to 1.0] distance ratio
+    private double getKnockback(Entity entity, double longitudinalDistance) {
+        double inverseDistanceRatio = 1.0d - (longitudinalDistance - 0.5d) / MAX_PUSH_RANGE; // 1.0 - [0.0 to 1.0] distance ratio
         double decay = inverseDistanceRatio * inverseDistanceRatio * inverseDistanceRatio; // (1 - x)^3 approximates e^(-3x) from [0.0 to 1.0] and is cheaper on CPU
-        double accelerationScalar = thrust * PUSH_SCALE * decay;
-        if (entity.isShiftKeyDown()) accelerationScalar /= PUSH_SHIFT_REDUCTION;
-        return accelerationScalar;
+        double knockback = thrust * PUSH_SCALE * decay;
+        if (entity.isShiftKeyDown()) knockback /= PUSH_SHIFT_REDUCTION;
+        return knockback;
     }
 
 

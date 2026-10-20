@@ -10,6 +10,7 @@ import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +24,7 @@ public class OscilliteCannonBehavior {
     private final OscilliteCannonEntity be;
 
     // Variables (unsaved)
+    private final int worldPositionHash;
     private final BlockPos.MutableBlockPos fuelPos = new BlockPos.MutableBlockPos();
 
     // Tick constants
@@ -68,6 +70,7 @@ public class OscilliteCannonBehavior {
 
     public OscilliteCannonBehavior(OscilliteCannonEntity be) {
         this.be = be;
+        this.worldPositionHash = be.getBlockPos().hashCode();
     }
 
 
@@ -78,14 +81,13 @@ public class OscilliteCannonBehavior {
     // FIRING_INIT -> FIRING (*)
     // FIRING -> COOLDOWN (*)
     // COOLDOWN -> IDLE (cooldown <= 0)
-    public void tick(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
-        boolean randTick = (serverLevel.getGameTime() + be.getBlockPos().hashCode()) % RANDOM_TICK_RATE == 0;
+    public void tick(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, OscilliteCannonEntity.Cache cache) {
         switch (be.getTickState()) {
-            case IDLE -> idle(serverLevel, randTick, cache);
+            case IDLE -> idle(serverLevel, cache);
             case ARMED -> armed(serverLevel);
             case FIRING_INIT -> firingInit(serverLevel);
-            case FIRING -> firing(serverLevel, cache);
-            case COOLDOWN -> cooldown(serverLevel, randTick, cache);
+            case FIRING -> firing(serverLevel, cannonSubLevel, cache);
+            case COOLDOWN -> cooldown(serverLevel, cache);
             default -> {
                 be.setTickState(TickState.IDLE);
                 be.setChanged();
@@ -96,7 +98,7 @@ public class OscilliteCannonBehavior {
 
 
     /// STATE HANDLERS
-    private void idle(ServerLevel serverLevel, boolean randTick, OscilliteCannonEntity.Cache cache) {
+    private void idle(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
         // Play spooky listening noise on occasion
         if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
             null, be.getBlockPos(),
@@ -105,7 +107,7 @@ public class OscilliteCannonBehavior {
         );
 
         // IDLE -> ARMED (randTick && hasCrystalFuel)
-        if (randTick && hasCrystalFuel(serverLevel, cache)) {
+        if ((serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0 && hasCrystalFuel(serverLevel, cache)) {
             serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
             addChargingParticles(serverLevel, cache);
             be.setTickState(TickState.ARMED);
@@ -149,10 +151,10 @@ public class OscilliteCannonBehavior {
         serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
-    private void firing(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
+    private void firing(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, OscilliteCannonEntity.Cache cache) {
         // Set cooldown and run firing effects
         be.setCooldown(MAX_COOLDOWN);
-        be.fireCannon(serverLevel, cache);
+        be.fireCannon(serverLevel, cannonSubLevel, cache);
 
         // FIRING -> COOLDOWN (*)
         be.setTickState(TickState.COOLDOWN);
@@ -160,9 +162,9 @@ public class OscilliteCannonBehavior {
         serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
     }
 
-    private void cooldown(ServerLevel serverLevel, boolean randTick, OscilliteCannonEntity.Cache cache) {
+    private void cooldown(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
         // Sometimes create some smoke particles to show something is happening
-        if (randTick) serverLevel.sendParticles(
+        if ((serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0) serverLevel.sendParticles(
             ParticleTypes.SMOKE,
             cache.cannonPosition.x, cache.cannonPosition.y, cache.cannonPosition.z,
             1, 0.5d, 0.5d, 0.5d, 0.1d

@@ -14,7 +14,6 @@ import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -68,7 +67,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Firing
         final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         final BoundingBox3d searchBox = new BoundingBox3d();
-        final List<SubLevel> targets = new ArrayList<>();
+        final List<ServerSubLevel> targets = new ArrayList<>();
         final Vector3d relEntityPosition = new Vector3d();
         final Vector3d globalBeamPosition = new Vector3d();
         final Vector3d localBeamPosition = new Vector3d();
@@ -100,8 +99,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             BlockState blockState = getBlockState();
 
             // Handle sublevels
-            ServerSubLevel subLevel = null;
-            if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel serverSubLevel) subLevel = serverSubLevel;
+            ServerSubLevel cannonSubLevel = null;
+            if (Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel serverSubLevel) cannonSubLevel = serverSubLevel;
 
             // Get position, I, J, cannonDirection/K vectors
             cache.cannonPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d); // Local position
@@ -114,36 +113,35 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             cache.cannonFace.set(cache.cannonPosition).fma(FACE_OFFSET, cache.cannonDirection);
 
             // Transform local to global vectors and get face position
-            if (subLevel != null) {
-                Sable.HELPER.getVelocity(serverLevel, subLevel, cache.cannonPosition, cache.cannonVelocity);
+            if (cannonSubLevel != null) {
+                Sable.HELPER.getVelocity(serverLevel, cannonSubLevel, cache.cannonPosition, cache.cannonVelocity);
                 cache.cannonVelocity.mul(1.0d / 20.0d); // bps -> bpt
-                subLevel.logicalPose().transformPosition(cache.cannonPosition);
-                subLevel.logicalPose().transformNormal(cache.cannonDirection);
-                subLevel.logicalPose().transformNormal(cache.cannonI);
-                subLevel.logicalPose().transformNormal(cache.cannonJ);
-                subLevel.logicalPose().transformPosition(cache.cannonFace);
+                cannonSubLevel.logicalPose().transformPosition(cache.cannonPosition);
+                cannonSubLevel.logicalPose().transformNormal(cache.cannonDirection);
+                cannonSubLevel.logicalPose().transformNormal(cache.cannonI);
+                cannonSubLevel.logicalPose().transformNormal(cache.cannonJ);
+                cannonSubLevel.logicalPose().transformPosition(cache.cannonFace);
             } else {
                 cache.cannonVelocity.zero();
             }
 
             // Run tick
-            behavior.tick(serverLevel, cache);
+            behavior.tick(serverLevel, cannonSubLevel, cache);
         }
     }
 
 
     /// FIRING
-    public void fireCannon(ServerLevel serverLevel, Cache cache) {
+    public void fireCannon(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
         // Set bounding box to query subLevels
         cache.targets.clear();
         setSearchBox(MAX_RANGE, cache);
 
-        // Populate the target sublevel list
-        SubLevel cannonSubLevel = Sable.HELPER.getContaining(serverLevel, worldPosition);
+        // Populate the target sublevel list TODO Make sure cannons affect their own sublevels
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
-            container.queryIntersecting(cache.searchBox).forEach(targetSubLevel -> {
-                if (targetSubLevel != cannonSubLevel) cache.targets.add(targetSubLevel);
+            container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
+                if (subLevel instanceof ServerSubLevel targetSubLevel) cache.targets.add(targetSubLevel);
             });
         }
 
@@ -153,9 +151,10 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             for (int v = -1; v <= 1; v++) {
                 // Set starting position
                 cache.beamOrigin.set(cache.cannonFace).fma(u, cache.cannonI).fma(v, cache.cannonJ);
+
                 // Destroy blocks and update total range
-                double currentRange = destroyBlocksAndGetRange(serverLevel, cache);
-                if (range < currentRange) range = currentRange;
+                double newRange = destroyBlocksAndGetRange(serverLevel, cache);
+                if (newRange > range) range = newRange;
             }
         }
         if (range <= 0.0d) return;
@@ -173,12 +172,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         );
 
         // Apply knockback
-        if (cannonSubLevel instanceof ServerSubLevel cannonServerSubLevel) {
-            RigidBodyHandle handle = RigidBodyHandle.of(cannonServerSubLevel);
+        if (cannonSubLevel != null) {
+            RigidBodyHandle handle = RigidBodyHandle.of(cannonSubLevel);
             if (handle.isValid()) {
                 cache.localBeamPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
                 cache.tempVector.set(cache.cannonDirection).mul(-RECOIL);
-                cannonServerSubLevel.logicalPose().orientation().transformInverse(cache.tempVector); // Use local orientation
+                cannonSubLevel.logicalPose().orientation().transformInverse(cache.tempVector); // Use local orientation
                 handle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
             }
         }
@@ -192,7 +191,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Iterate through entities
         for (Entity entity : entities) {
-            damageEntity(entity, range, serverLevel, cache);
+            pushAndDamageEntity(entity, range, serverLevel, cache);
         }
     }
 
@@ -232,42 +231,55 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // - Subtract current from origin in negative directions
         // - Double.POSITIVE_INFINITY prevents null errors for unreachable directions
         double tMaxX = (stepX > 0) ? (currentX + 1.0d - cache.beamOrigin.x) * tDeltaX :
-                       (stepX < 0) ? (cache.beamOrigin.x - currentX) * tDeltaX :
+                       (stepX < 0) ? (cache.beamOrigin.x - currentX) * tDeltaX        :
                        Double.POSITIVE_INFINITY;
         double tMaxY = (stepY > 0) ? (currentY + 1.0d - cache.beamOrigin.y) * tDeltaY :
-                       (stepY < 0) ? (cache.beamOrigin.y - currentY) * tDeltaY :
+                       (stepY < 0) ? (cache.beamOrigin.y - currentY) * tDeltaY        :
                        Double.POSITIVE_INFINITY;
         double tMaxZ = (stepZ > 0) ? (currentZ + 1.0d - cache.beamOrigin.z) * tDeltaZ :
-                       (stepZ < 0) ? (cache.beamOrigin.z - currentZ) * tDeltaZ :
+                       (stepZ < 0) ? (cache.beamOrigin.z - currentZ) * tDeltaZ        :
                        Double.POSITIVE_INFINITY;
 
         // Initialize current range
         double t = 0.0d;
 
         // DDA traversal
+        BlockState blockState;
         while (t < MAX_RANGE) {
-            // Check non-sublevel blocks
+            /// Check non-sublevel blocks
             cache.mutablePos.set(currentX, currentY, currentZ);
-            BlockState blockState = serverLevel.getBlockState(cache.mutablePos);
-            if (!blockState.isAir() && !blockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, blockState)) return t;
+            blockState = serverLevel.getBlockState(cache.mutablePos);
+            if (!(blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState))) return t;
 
-            // Check sublevel blocks
-            if (!cache.targets.isEmpty()) cache.globalBeamPosition.set(cache.beamOrigin).fma(t, cache.cannonDirection);
-            for (SubLevel targetSubLevel : cache.targets) {
-                if (!(targetSubLevel instanceof ServerSubLevel targetServerSubLevel) || targetSubLevel.isRemoved()) continue;
-                // Convert to sublevel coordinates
-                cache.localBeamPosition.set(cache.globalBeamPosition);
-                targetServerSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
+            /// Check sublevel blocks
+            if (!cache.targets.isEmpty()) {
+                cache.globalBeamPosition.set(cache.beamOrigin).fma(t, cache.cannonDirection);
+                // Iterate backwards for safe removals
+                for (int i = cache.targets.size() - 1; i >= 0; i--) {
+                    ServerSubLevel targetSubLevel = cache.targets.get(i);
 
-                // Check states
-                cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
-                BlockState subLevelBlockState = serverLevel.getBlockState(cache.mutablePos);
-                if (!subLevelBlockState.isAir() && !subLevelBlockState.canBeReplaced() && tryPierceBlock(serverLevel, cache.mutablePos, subLevelBlockState)) {
-                    RigidBodyHandle targetHandle = RigidBodyHandle.of(targetServerSubLevel);
+                    // If the sublevel was destroyed or unloaded, remove it from the list
+                    if (targetSubLevel.isRemoved()) {
+                        cache.targets.remove(i);
+                        continue;
+                    }
+
+                    // Convert to sublevel coordinates
+                    cache.localBeamPosition.set(cache.globalBeamPosition);
+                    targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
+
+                    // Check block
+                    cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
+                    blockState = serverLevel.getBlockState(cache.mutablePos);
+                    if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState)) continue;
+
+                    // Apply knockback
+                    RigidBodyHandle targetHandle = RigidBodyHandle.of(targetSubLevel);
                     if (targetHandle.isValid()) {
                         // Get local direction
                         cache.tempVector.set(cache.cannonDirection);
-                        targetServerSubLevel.logicalPose().transformNormalInverse(cache.tempVector);
+                        targetSubLevel.logicalPose().transformNormalInverse(cache.tempVector);
+
                         // Scale and apply impulse
                         cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
                         targetHandle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
@@ -276,27 +288,13 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 }
             }
 
-            // Update DDA variables
+            /// Update DDA variables
             if (tMaxX < tMaxY) {
-                if (tMaxX < tMaxZ) {
-                    t = tMaxX;
-                    tMaxX += tDeltaX;
-                    currentX += stepX;
-                } else {
-                    t = tMaxZ;
-                    tMaxZ += tDeltaZ;
-                    currentZ += stepZ;
-                }
+                if (tMaxX < tMaxZ) { t = tMaxX; tMaxX += tDeltaX; currentX += stepX; }
+                else               { t = tMaxZ; tMaxZ += tDeltaZ; currentZ += stepZ; }
             } else {
-                if (tMaxY < tMaxZ) {
-                    t = tMaxY;
-                    tMaxY += tDeltaY;
-                    currentY += stepY;
-                } else {
-                    t = tMaxZ;
-                    tMaxZ += tDeltaZ;
-                    currentZ += stepZ;
-                }
+                if (tMaxY < tMaxZ) { t = tMaxY; tMaxY += tDeltaY; currentY += stepY; }
+                else               { t = tMaxZ; tMaxZ += tDeltaZ; currentZ += stepZ; }
             }
         }
 
@@ -309,15 +307,15 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         float resistance = blockState.getBlock().getExplosionResistance();
         if (resistance <= 5.0f) {
             serverLevel.destroyBlock(blockPos, true);
-            return false;
+            return true;
         } else if (resistance <= 6.0f) {
             serverLevel.destroyBlock(blockPos, true);
-            return true;
+            return false;
         }
-        return true;
+        return false;
     }
 
-    private void damageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
+    private void pushAndDamageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
         // Get entity position relative to the thruster
         AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
         double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
@@ -325,13 +323,21 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         double entityZ = (entityBoundingBox.minZ + entityBoundingBox.maxZ) * 0.5d;
         cache.relEntityPosition.set(entityX, entityY, entityZ).sub(cache.cannonFace);
 
-        // Linear distance
-        double entityLinearDistance = cache.cannonDirection.dot(cache.relEntityPosition);
-        if (entityLinearDistance < 0.0d || entityLinearDistance > range) return;
+        // Longitudinal distance
+        double longitudinalDistance = cache.cannonDirection.dot(cache.relEntityPosition);
+        if (longitudinalDistance < 0.0d || longitudinalDistance > range) return;
 
         // Radial distance
-        double entityRadialDistanceSquared = cache.relEntityPosition.lengthSquared() - entityLinearDistance * entityLinearDistance;
-        if (entityRadialDistanceSquared > MAX_RADIUS_SQUARED) return;
+        double distanceSquared = cache.relEntityPosition.lengthSquared();
+        double radialDistanceSquared = distanceSquared - longitudinalDistance * longitudinalDistance;
+        if (radialDistanceSquared > MAX_RADIUS_SQUARED) return;
+
+        // Apply Knockback
+        if (distanceSquared > 1e-3d) cache.relEntityPosition.normalize().mul(ENTITY_KNOCKBACK);
+        else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(ENTITY_KNOCKBACK);
+        entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
+        if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
+        entity.fallDistance = 0.0f;
 
         // Apply damage, Warden takes additional damage
         if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
@@ -345,12 +351,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             entity.blockPosition(),
             "hair_of_the_dog"
         );
-
-        // Apply Knockback
-        if (cache.relEntityPosition.lengthSquared() > 1e-3d) cache.relEntityPosition.normalize().mul(ENTITY_KNOCKBACK);
-        else cache.relEntityPosition.set(cache.cannonDirection).normalize().mul(ENTITY_KNOCKBACK);
-        entity.push(cache.relEntityPosition.x, cache.relEntityPosition.y, cache.relEntityPosition.z);
-        if (entity instanceof ServerPlayer serverPlayer) serverPlayer.hurtMarked = true;
     }
 
     private void setSearchBox(double range, Cache cache) {

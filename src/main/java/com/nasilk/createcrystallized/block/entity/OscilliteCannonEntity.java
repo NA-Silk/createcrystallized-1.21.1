@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.entity;
 
+import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
@@ -137,12 +138,18 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         cache.targets.clear();
         setSearchBox(MAX_RANGE, cache);
 
-        // Populate the target sublevel list TODO Make sure cannons affect their own sublevels
+        // Populate the target sublevel list TODO Fix own-sublevel handling
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
                 if (subLevel instanceof ServerSubLevel targetSubLevel) cache.targets.add(targetSubLevel);
             });
+
+            // TODO REMOVE DEBUG
+            if (cannonSubLevel != null && !cannonSubLevel.isRemoved() && !cache.targets.contains(cannonSubLevel)) {
+                cache.targets.add(cannonSubLevel);
+                CreateCrystallized.LOGGER.info("DEBUG: CANNON NOT IN SUBLEVEL LIST");
+            }
         }
 
         // Move along beam paths and find nearest block
@@ -153,7 +160,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 cache.beamOrigin.set(cache.cannonFace).fma(u, cache.cannonI).fma(v, cache.cannonJ);
 
                 // Destroy blocks and update total range
-                double newRange = destroyBlocksAndGetRange(serverLevel, cache);
+                double newRange = destroyBlocksAndGetRange(serverLevel, cannonSubLevel, cache);
                 if (newRange > range) range = newRange;
             }
         }
@@ -167,11 +174,11 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         );
         PacketDistributor.sendToPlayersTrackingChunk(
             serverLevel,
-            new ChunkPos(worldPosition),
+            new ChunkPos(worldPosition), // TODO DOUBLE CHECK: Make sure players "track" nearby sublevels (it seems to work that way in testing)
             payload
         );
 
-        // Apply knockback
+        // Apply recoil
         if (cannonSubLevel != null) {
             RigidBodyHandle handle = RigidBodyHandle.of(cannonSubLevel);
             if (handle.isValid()) {
@@ -195,7 +202,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
     }
 
-    private double destroyBlocksAndGetRange(ServerLevel serverLevel, Cache cache) {
+    private double destroyBlocksAndGetRange(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
         // Get initial voxel (block) coordinates
         int currentX = (int) Math.floor(cache.beamOrigin.x);
         int currentY = (int) Math.floor(cache.beamOrigin.y);
@@ -253,7 +260,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             /// Check sublevel blocks
             if (!cache.targets.isEmpty()) {
-                cache.globalBeamPosition.set(cache.beamOrigin).fma(t, cache.cannonDirection);
+                cache.globalBeamPosition.set(cache.beamOrigin).fma(t + 1.0e-5d, cache.cannonDirection); // Tiny offset to make sure we're inside the block
                 // Iterate backwards for safe removals
                 for (int i = cache.targets.size() - 1; i >= 0; i--) {
                     ServerSubLevel targetSubLevel = cache.targets.get(i);
@@ -268,12 +275,30 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                     cache.localBeamPosition.set(cache.globalBeamPosition);
                     targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
 
-                    // Check block
+                    // Check and try to destroy block
                     cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
                     blockState = serverLevel.getBlockState(cache.mutablePos);
+
+                    // TODO REMOVE DEBUG
+                    if (targetSubLevel == cannonSubLevel) {
+                        System.out.printf(
+                                "CANNON RAY: t=%.3f global=(%.3f, %.3f, %.3f) "
+                                    + "local=(%.3f, %.3f, %.3f) blockPos=%s state=%s%n",
+                                t,
+                                cache.globalBeamPosition.x,
+                                cache.globalBeamPosition.y,
+                                cache.globalBeamPosition.z,
+                                cache.localBeamPosition.x,
+                                cache.localBeamPosition.y,
+                                cache.localBeamPosition.z,
+                                cache.mutablePos,
+                                blockState
+                        );
+                    }
+
                     if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState)) continue;
 
-                    // Apply knockback
+                    // Apply knockback to surviving block
                     RigidBodyHandle targetHandle = RigidBodyHandle.of(targetSubLevel);
                     if (targetHandle.isValid()) {
                         // Get local direction
@@ -281,7 +306,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         targetSubLevel.logicalPose().transformNormalInverse(cache.tempVector);
 
                         // Scale and apply impulse
-                        cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
+                        if(targetSubLevel == cannonSubLevel) cache.tempVector.mul(RECOIL); // Undo recoil if self-hit // TODO Remove this part if not necessary
+                        else cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
                         targetHandle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
                     }
                     return t;

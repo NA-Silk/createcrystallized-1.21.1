@@ -13,8 +13,8 @@ import org.joml.Vector3dc;
 
 public class OscilliteBlockEntity extends BlockEntity {
     // Constants
-    private static final double DAMPING_SCALE = -0.9d;
-    private static final double TORQUE_SCALE = 2.0d;
+    private static final double TORQUE_SCALE = 2.0d; // How hard we move up
+    private static final double DAMPING_SCALE = -0.9d; // How much we chill the block rotation
     private static final Vector3dc zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Cache

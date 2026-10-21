@@ -60,7 +60,8 @@ public class PropulsiteThrusterBehavior {
 
     // Entity pushing constants (config)
     public static double MAX_ENTITY_KNOCKBACK;    // Maximum acceleration allowed in blocks per tick
-    public static double MAX_PUSH_RANGE;          // Length effectiveness distance
+    public static double MAX_PUSH_RANGE;          // Longitudinal effectiveness distance
+    public static double MAX_PUSH_RANGE_2;                 // Half longitudinal effectiveness distance
     public static double MAX_PUSH_RADIUS;         // Radial effectiveness distance
     public static double MAX_PUSH_RADIUS_SQUARED; // MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; // Precomputed radial distance squared
     public static double PUSH_SCALE;              // Acceleration multiplier
@@ -93,6 +94,7 @@ public class PropulsiteThrusterBehavior {
         CLUSTER_BONUS_SCALE = thrusterConfig.thrusterClusterBonusScale.get();
         MAX_ENTITY_KNOCKBACK = thrusterConfig.thrusterMaxEntityKnockback.get();
         MAX_PUSH_RANGE = thrusterConfig.thrusterMaxPushRange.get();
+        MAX_PUSH_RANGE_2 = MAX_PUSH_RANGE * 0.5d;
         MAX_PUSH_RADIUS = thrusterConfig.thrusterMaxPushRadius.get();
         MAX_PUSH_RADIUS_SQUARED = MAX_PUSH_RADIUS * MAX_PUSH_RADIUS;
         PUSH_SCALE = thrusterConfig.thrusterPushScale.get();

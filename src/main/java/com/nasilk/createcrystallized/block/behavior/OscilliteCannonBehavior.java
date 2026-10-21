@@ -64,7 +64,7 @@ public class OscilliteCannonBehavior {
         FUEL_RADIUS = cannonConfig.cannonCrystalRadius.get();
         DAMAGE = cannonConfig.cannonDamage.getF();
         RECOIL = cannonConfig.cannonRecoil.get();
-        RECOIL_9 = RECOIL / 9;
+        RECOIL_9 = RECOIL / 9.0d;
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();
         SUBLEVEL_KNOCKBACK = cannonConfig.cannonSublevelKnockback.get();
         MAX_RANGE = cannonConfig.cannonMaxRange.get();

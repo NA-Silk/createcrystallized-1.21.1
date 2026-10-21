@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior.*;
 
+// TODO Villager angry particle
+// TODO Fix Create sublevel interaction (mechanical bearing)
 public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick state
     private TickState tickState = TickState.IDLE;
@@ -355,15 +357,23 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private void setSearchBox(double range, Cache cache) {
+        // Get direction components
+        double dx = cache.cannonDirection.x;
+        double dy = cache.cannonDirection.y;
+        double dz = cache.cannonDirection.z;
+
         // Find beam center
-        double xCenter = cache.cannonFace.x + range * cache.cannonDirection.x * 0.5d;
-        double yCenter = cache.cannonFace.y + range * cache.cannonDirection.y * 0.5d;
-        double zCenter = cache.cannonFace.z + range * cache.cannonDirection.z * 0.5d;
+        double xCenter = cache.cannonFace.x + range * dx * 0.5d;
+        double yCenter = cache.cannonFace.y + range * dy * 0.5d;
+        double zCenter = cache.cannonFace.z + range * dz * 0.5d;
 
         // Get beam range offsets
-        double xOffset = range * Math.abs(cache.cannonDirection.x) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.x) + Math.abs(cache.cannonJ.x));
-        double yOffset = range * Math.abs(cache.cannonDirection.y) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.y) + Math.abs(cache.cannonJ.y));
-        double zOffset = range * Math.abs(cache.cannonDirection.z) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.z) + Math.abs(cache.cannonJ.z));
+        double xOffset = range * Math.abs(dx) * 0.5d                  // X longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dx * dx)); // X radial component
+        double yOffset = range * Math.abs(dy) * 0.5d                  // Y longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dy * dy)); // X radial component
+        double zOffset = range * Math.abs(dz) * 0.5d                  // Z longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dz * dz)); // Z radial component
 
         // Set search box
         cache.searchBox.setUnchecked(

@@ -16,6 +16,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.joml.Vector3f;
 
+// TODO Sound on power texture state change (V2)
+// TODO Make angry hamburger advancement
 public class DensiteBlock extends Block {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
     private static final int MAX_CLUSTER_SIZE = 512;

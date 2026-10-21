@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.entity;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
@@ -138,18 +137,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         cache.targets.clear();
         setSearchBox(MAX_RANGE, cache);
 
-        // Populate the target sublevel list TODO Fix own-sublevel handling
+        // Populate the target sublevel list
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
                 if (subLevel instanceof ServerSubLevel targetSubLevel) cache.targets.add(targetSubLevel);
             });
-
-            // TODO REMOVE DEBUG
-            if (cannonSubLevel != null && !cannonSubLevel.isRemoved() && !cache.targets.contains(cannonSubLevel)) {
-                cache.targets.add(cannonSubLevel);
-                CreateCrystallized.LOGGER.info("DEBUG: CANNON NOT IN SUBLEVEL LIST");
-            }
         }
 
         // Move along beam paths and find nearest block
@@ -174,7 +167,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         );
         PacketDistributor.sendToPlayersTrackingChunk(
             serverLevel,
-            new ChunkPos(worldPosition), // TODO DOUBLE CHECK: Make sure players "track" nearby sublevels (it seems to work that way in testing)
+            new ChunkPos(worldPosition),
             payload
         );
 
@@ -278,24 +271,6 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                     // Check and try to destroy block
                     cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
                     blockState = serverLevel.getBlockState(cache.mutablePos);
-
-                    // TODO REMOVE DEBUG
-                    if (targetSubLevel == cannonSubLevel) {
-                        System.out.printf(
-                                "CANNON RAY: t=%.3f global=(%.3f, %.3f, %.3f) "
-                                    + "local=(%.3f, %.3f, %.3f) blockPos=%s state=%s%n",
-                                t,
-                                cache.globalBeamPosition.x,
-                                cache.globalBeamPosition.y,
-                                cache.globalBeamPosition.z,
-                                cache.localBeamPosition.x,
-                                cache.localBeamPosition.y,
-                                cache.localBeamPosition.z,
-                                cache.mutablePos,
-                                blockState
-                        );
-                    }
-
                     if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState)) continue;
 
                     // Apply knockback to surviving block
@@ -306,7 +281,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         targetSubLevel.logicalPose().transformNormalInverse(cache.tempVector);
 
                         // Scale and apply impulse
-                        if(targetSubLevel == cannonSubLevel) cache.tempVector.mul(RECOIL); // Undo recoil if self-hit // TODO Remove this part if not necessary
+                        if(targetSubLevel == cannonSubLevel) cache.tempVector.mul(RECOIL_9); // Undo recoil if self-hit
                         else cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
                         targetHandle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
                     }

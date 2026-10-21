@@ -49,6 +49,7 @@ public class OscilliteCannonBehavior {
     // Firing constants (config)
     public static float DAMAGE;
     public static double RECOIL;
+    public static double RECOIL_9; // Single impact recoil: RECOIL / 9
     public static double ENTITY_KNOCKBACK;
     public static double SUBLEVEL_KNOCKBACK;
     public static double MAX_RANGE; // Length effectiveness distance
@@ -63,6 +64,7 @@ public class OscilliteCannonBehavior {
         FUEL_RADIUS = cannonConfig.cannonCrystalRadius.get();
         DAMAGE = cannonConfig.cannonDamage.getF();
         RECOIL = cannonConfig.cannonRecoil.get();
+        RECOIL_9 = RECOIL / 9;
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();
         SUBLEVEL_KNOCKBACK = cannonConfig.cannonSublevelKnockback.get();
         MAX_RANGE = cannonConfig.cannonMaxRange.get();

@@ -49,6 +49,7 @@ public class OscilliteCannonBehavior {
     // Firing constants (config)
     public static float DAMAGE;
     public static double RECOIL;
+    public static double RECOIL_9; // Single impact recoil: RECOIL / 9
     public static double ENTITY_KNOCKBACK;
     public static double SUBLEVEL_KNOCKBACK;
     public static double MAX_RANGE; // Length effectiveness distance
@@ -63,6 +64,7 @@ public class OscilliteCannonBehavior {
         FUEL_RADIUS = cannonConfig.cannonCrystalRadius.get();
         DAMAGE = cannonConfig.cannonDamage.getF();
         RECOIL = cannonConfig.cannonRecoil.get();
+        RECOIL_9 = RECOIL / 9.0d;
         ENTITY_KNOCKBACK = cannonConfig.cannonEntityKnockback.get();
         SUBLEVEL_KNOCKBACK = cannonConfig.cannonSublevelKnockback.get();
         MAX_RANGE = cannonConfig.cannonMaxRange.get();
@@ -84,7 +86,7 @@ public class OscilliteCannonBehavior {
     public void tick(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, OscilliteCannonEntity.Cache cache) {
         switch (be.getTickState()) {
             case IDLE -> idle(serverLevel, cache);
-            case ARMED -> armed(serverLevel);
+            case ARMED -> armed(serverLevel, cache);
             case FIRING_INIT -> firingInit(serverLevel);
             case FIRING -> firing(serverLevel, cannonSubLevel, cache);
             case COOLDOWN -> cooldown(serverLevel, cache);
@@ -108,7 +110,11 @@ public class OscilliteCannonBehavior {
 
         // IDLE -> ARMED (randTick && hasCrystalFuel)
         if ((serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0 && hasCrystalFuel(serverLevel, cache)) {
-            serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
+            serverLevel.playSound(
+                null, be.getBlockPos(),
+                SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
+                1.5f, 0.8f
+            );
             addChargingParticles(serverLevel, cache);
             be.setTickState(TickState.ARMED);
             be.setChanged();
@@ -116,7 +122,7 @@ public class OscilliteCannonBehavior {
         }
     }
 
-    private void armed(ServerLevel serverLevel) {
+    private void armed(ServerLevel serverLevel, OscilliteCannonEntity.Cache cache) {
         // Play even spookier angry noise on occasion
         if (serverLevel.getRandom().nextDouble() < AMBIENT_RATE) serverLevel.playSound(
             null, be.getBlockPos(),
@@ -129,7 +135,16 @@ public class OscilliteCannonBehavior {
         if (be.getBlockState().getValue(OscilliteCannonBlock.POWERED)) {
             if (tryConsumeCrystalFuel(serverLevel)) be.setTickState(TickState.FIRING_INIT);
             else {
-                serverLevel.playSound(null, be.getBlockPos(), SoundEvents.WARDEN_AGITATED, SoundSource.BLOCKS, 1.5f, 0.8f);
+                serverLevel.sendParticles(
+                    ParticleTypes.ANGRY_VILLAGER,
+                    cache.cannonPosition.x, cache.cannonPosition.y, cache.cannonPosition.z,
+                    5, 0.5d, 0.5d, 0.5d, 0.5d
+                );
+                serverLevel.playSound(
+                    null, be.getBlockPos(),
+                    SoundEvents.WARDEN_AGITATED, SoundSource.BLOCKS,
+                    1.5f, 0.8f
+                );
                 be.setTickState(TickState.IDLE);
             }
             be.setChanged();

@@ -174,11 +174,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Exit if thrust is too low
         if (thrust < 0.1d) return;
 
-        // Set bounding box TODO Shrink this like the cannon's
-        cache.searchBox.setUnchecked(
-            cache.thrusterPosition.x - MAX_PUSH_RANGE, cache.thrusterPosition.y - MAX_PUSH_RANGE, cache.thrusterPosition.z - MAX_PUSH_RANGE,
-            cache.thrusterPosition.x + MAX_PUSH_RANGE, cache.thrusterPosition.y + MAX_PUSH_RANGE, cache.thrusterPosition.z + MAX_PUSH_RANGE
-        );
+        // Set bounding box
+        setSearchBox(cache);
 
         // Get entities within the bounding box
         List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), PUSH_PREDICATE); // toMojang() allocates a new Mojang AABB...
@@ -226,6 +223,32 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 "crystal_cremation"
             );
         }
+    }
+
+    private void setSearchBox(Cache cache) {
+        // Get direction components
+        double dx = cache.thrusterDirection.x;
+        double dy = cache.thrusterDirection.y;
+        double dz = cache.thrusterDirection.z;
+
+        // Find beam center
+        double xCenter = cache.thrusterFace.x + MAX_PUSH_RANGE_2 * dx;
+        double yCenter = cache.thrusterFace.y + MAX_PUSH_RANGE_2 * dy;
+        double zCenter = cache.thrusterFace.z + MAX_PUSH_RANGE_2 * dz;
+
+        // Get beam range offsets
+        double xOffset = MAX_PUSH_RANGE_2 * Math.abs(dx)                   // X longitudinal component
+            + MAX_PUSH_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dx * dx)); // X radial component
+        double yOffset = MAX_PUSH_RANGE_2 * Math.abs(dy)                   // Y longitudinal component
+            + MAX_PUSH_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dy * dy)); // X radial component
+        double zOffset = MAX_PUSH_RANGE_2 * Math.abs(dz)                   // Z longitudinal component
+            + MAX_PUSH_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dz * dz)); // Z radial component
+
+        // Set search box
+        cache.searchBox.setUnchecked(
+            xCenter - xOffset, yCenter - yOffset, zCenter - zOffset,
+            xCenter + xOffset, yCenter + yOffset, zCenter + zOffset
+        );
     }
 
     private double getKnockback(Entity entity, double longitudinalDistance) {

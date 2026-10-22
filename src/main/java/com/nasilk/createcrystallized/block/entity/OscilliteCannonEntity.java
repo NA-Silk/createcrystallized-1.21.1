@@ -137,7 +137,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         cache.targets.clear();
         setSearchBox(MAX_RANGE, cache);
 
-        // Populate the target sublevel list TODO Make sure cannons affect their own sublevels
+        // Populate the target sublevel list
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
@@ -153,7 +153,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 cache.beamOrigin.set(cache.cannonFace).fma(u, cache.cannonI).fma(v, cache.cannonJ);
 
                 // Destroy blocks and update total range
-                double newRange = destroyBlocksAndGetRange(serverLevel, cache);
+                double newRange = destroyBlocksAndGetRange(serverLevel, cannonSubLevel, cache);
                 if (newRange > range) range = newRange;
             }
         }
@@ -171,7 +171,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             payload
         );
 
-        // Apply knockback
+        // Apply recoil
         if (cannonSubLevel != null) {
             RigidBodyHandle handle = RigidBodyHandle.of(cannonSubLevel);
             if (handle.isValid()) {
@@ -195,7 +195,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         }
     }
 
-    private double destroyBlocksAndGetRange(ServerLevel serverLevel, Cache cache) {
+    private double destroyBlocksAndGetRange(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
         // Get initial voxel (block) coordinates
         int currentX = (int) Math.floor(cache.beamOrigin.x);
         int currentY = (int) Math.floor(cache.beamOrigin.y);
@@ -253,7 +253,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
             /// Check sublevel blocks
             if (!cache.targets.isEmpty()) {
-                cache.globalBeamPosition.set(cache.beamOrigin).fma(t, cache.cannonDirection);
+                cache.globalBeamPosition.set(cache.beamOrigin).fma(t + 1.0e-5d, cache.cannonDirection); // Tiny offset to make sure we're inside the block
                 // Iterate backwards for safe removals
                 for (int i = cache.targets.size() - 1; i >= 0; i--) {
                     ServerSubLevel targetSubLevel = cache.targets.get(i);
@@ -268,12 +268,12 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                     cache.localBeamPosition.set(cache.globalBeamPosition);
                     targetSubLevel.logicalPose().transformPositionInverse(cache.localBeamPosition);
 
-                    // Check block
+                    // Check and try to destroy block
                     cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
                     blockState = serverLevel.getBlockState(cache.mutablePos);
                     if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState)) continue;
 
-                    // Apply knockback
+                    // Apply knockback to surviving block
                     RigidBodyHandle targetHandle = RigidBodyHandle.of(targetSubLevel);
                     if (targetHandle.isValid()) {
                         // Get local direction
@@ -281,7 +281,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                         targetSubLevel.logicalPose().transformNormalInverse(cache.tempVector);
 
                         // Scale and apply impulse
-                        cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
+                        if(targetSubLevel == cannonSubLevel) cache.tempVector.mul(RECOIL_9); // Undo recoil if self-hit
+                        else cache.tempVector.mul(SUBLEVEL_KNOCKBACK);
                         targetHandle.applyImpulseAtPoint(cache.localBeamPosition, cache.tempVector);
                     }
                     return t;
@@ -354,15 +355,23 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     private void setSearchBox(double range, Cache cache) {
+        // Get direction components
+        double dx = cache.cannonDirection.x;
+        double dy = cache.cannonDirection.y;
+        double dz = cache.cannonDirection.z;
+
         // Find beam center
-        double xCenter = cache.cannonFace.x + range * cache.cannonDirection.x * 0.5d;
-        double yCenter = cache.cannonFace.y + range * cache.cannonDirection.y * 0.5d;
-        double zCenter = cache.cannonFace.z + range * cache.cannonDirection.z * 0.5d;
+        double xCenter = cache.cannonFace.x + range * dx * 0.5d;
+        double yCenter = cache.cannonFace.y + range * dy * 0.5d;
+        double zCenter = cache.cannonFace.z + range * dz * 0.5d;
 
         // Get beam range offsets
-        double xOffset = range * Math.abs(cache.cannonDirection.x) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.x) + Math.abs(cache.cannonJ.x));
-        double yOffset = range * Math.abs(cache.cannonDirection.y) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.y) + Math.abs(cache.cannonJ.y));
-        double zOffset = range * Math.abs(cache.cannonDirection.z) * 0.5d + MAX_RADIUS * (Math.abs(cache.cannonI.z) + Math.abs(cache.cannonJ.z));
+        double xOffset = range * Math.abs(dx) * 0.5d                  // X longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dx * dx)); // X radial component
+        double yOffset = range * Math.abs(dy) * 0.5d                  // Y longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dy * dy)); // X radial component
+        double zOffset = range * Math.abs(dz) * 0.5d                  // Z longitudinal component
+            + MAX_RADIUS * Math.sqrt(Math.max(0.0d, 1.0d - dz * dz)); // Z radial component
 
         // Set search box
         cache.searchBox.setUnchecked(

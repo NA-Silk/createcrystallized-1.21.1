@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior.*;
 
-// TODO Villager angry particle
-// TODO Fix Create sublevel interaction (mechanical bearing)
 public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick state
     private TickState tickState = TickState.IDLE;

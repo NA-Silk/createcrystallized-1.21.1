@@ -112,7 +112,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
     }
 
     // SHAPE (see BedBlock.class)
-    /* Evil updateShape method. Create doesn't like you. Go to space. (Replaced with onRemove extension)
+    /* Evil updateShape method. Create doesn't like you. Go to space. (Replaced with onRemove extension, kept for now for reference)
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         // Handle non-player breaking

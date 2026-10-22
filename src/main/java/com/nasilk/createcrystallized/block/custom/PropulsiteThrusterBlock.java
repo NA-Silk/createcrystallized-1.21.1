@@ -5,6 +5,9 @@ import com.nasilk.createcrystallized.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.simibubi.create.api.contraption.BlockMovementChecks;
+import com.simibubi.create.api.contraption.transformable.TransformableBlock;
+import com.simibubi.create.content.contraptions.StructureTransform;
 import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import net.minecraft.core.BlockPos;
@@ -16,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -33,8 +35,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiPredicate;
 
-public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<PropulsiteThrusterEntity>, IHaveLongs {
+public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<PropulsiteThrusterEntity>, IHaveLongs, TransformableBlock {
     public static final MapCodec<PropulsiteThrusterBlock> CODEC = simpleCodec(PropulsiteThrusterBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -46,15 +49,34 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
     private static final VoxelShape WEST_BARREL_SHAPE = Block.box(3.0d, 0.0d, 0.0d, 16.0d, 16.0d, 16.0d);
     private static final VoxelShape UP_BARREL_SHAPE = Block.box(0.0d, 0.0d, 0.0d, 16.0d, 13.0d, 16.0d);
     private static final VoxelShape DOWN_BARREL_SHAPE = Block.box(0.0d, 3.0d, 0.0d, 16.0d, 16.0d, 16.0d);
+    private static final BiPredicate<BlockState, BlockState> IS_CONNECTED = (state, neighborState) ->
+        neighborState.getBlock() instanceof PropulsiteThrusterBlock &&
+        state.getValue(IS_BARREL) != neighborState.getValue(IS_BARREL) &&
+        state.getValue(FACING) == neighborState.getValue(FACING);
 
-    // Simulated Assembly Integration
     static {
+        // Simulated assembly integration
         SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
             if (state.getBlock() instanceof PropulsiteThrusterBlock) {
-                BlockPos connectedPos = pos.relative(getNeighborDirection(state));
-                if (!visited.contains(connectedPos)) return List.of(connectedPos);
+                BlockPos neighborPos = pos.relative(getNeighborDirection(state));
+                if (!visited.contains(neighborPos) && IS_CONNECTED.test(state, level.getBlockState(neighborPos)))
+                    return List.of(neighborPos);
             }
             return Collections.emptyList();
+        });
+
+        // Create assembly integration
+        BlockMovementChecks.registerAttachedCheck((state, level, pos, direction) -> {
+            if (state.getBlock() instanceof PropulsiteThrusterBlock && direction == getNeighborDirection(state))
+                return BlockMovementChecks.CheckResult.of(IS_CONNECTED.test(state, level.getBlockState(pos.relative(direction))));
+            return BlockMovementChecks.CheckResult.PASS;
+        });
+
+        // Create assembly integration (preventing orphaned sections, yes we need this twice, I think)
+        BlockMovementChecks.registerMovementAllowedCheck((state, level, pos) -> {
+            if (state.getBlock() instanceof PropulsiteThrusterBlock)
+                return BlockMovementChecks.CheckResult.of(IS_CONNECTED.test(state, level.getBlockState(pos.relative(getNeighborDirection(state)))));
+            return BlockMovementChecks.CheckResult.PASS;
         });
     }
 
@@ -79,10 +101,15 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
 
     // SHAPE (see BedBlock.class)
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        // Handle non-player breaking
-        if (getNeighborDirection(state) == direction && !neighborState.is(this)) return Blocks.AIR.defaultBlockState();
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!level.isClientSide && !state.is(newState.getBlock()) && !isMoving) {
+            if (!state.getValue(IS_BARREL)) addParticles(level, pos);
+
+            // Handle non-player breaking
+            BlockPos neighborPos = pos.relative(getNeighborDirection(state));
+            if (IS_CONNECTED.test(state, level.getBlockState(neighborPos))) level.setBlockAndUpdate(neighborPos, Blocks.AIR.defaultBlockState());
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     private static Direction getNeighborDirection(BlockState state) {
@@ -138,6 +165,12 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
         // Set non-player placement state to BARREL
         super.setPlacedBy(level, pos, state, placer, stack);
         level.setBlockAndUpdate(pos.relative(state.getValue(FACING)), state.setValue(IS_BARREL, true));
+    }
+
+    // WHY CREATE, WHY
+    @Override
+    public BlockState transform(BlockState state, StructureTransform transform) {
+        return state.setValue(FACING, transform.rotateFacing(transform.mirrorFacing(state.getValue(FACING))));
     }
 
     // CLUSTERS
@@ -205,12 +238,6 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
     }
 
     // PARTICLES
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !isMoving && !state.getValue(IS_BARREL)) addParticles(level, pos);
-        super.onRemove(state, level, pos, newState, isMoving);
-    }
-
     private void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(

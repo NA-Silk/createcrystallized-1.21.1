@@ -90,6 +90,20 @@
   "item.createcrystallized.aerolite_shovel.tooltip.condition2": "On heavy craft",
   "item.createcrystallized.aerolite_shovel.tooltip.behaviour2": "High _Mass_ and _Drag_ greatly reduce effectiveness.",
 
+  "block.createcrystallized.densite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
+  "block.createcrystallized.densite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
+  "block.createcrystallized.densite_block.tooltip.behaviour1": "Weight _increases_ with power supplied.",
+
+  "block.createcrystallized.propulsite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
+  "block.createcrystallized.propulsite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
+  "block.createcrystallized.propulsite_block.tooltip.behaviour1": "_reinforces_ motion at low speeds. Weightless.",
+  "block.createcrystallized.propulsite_block.tooltip.condition2": "When Placed Adjacent to Propulsite Thrusters",
+  "block.createcrystallized.propulsite_block.tooltip.behaviour2": "_Increases_ thrust power up to additional 16 blocks.",
+
+  "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
+  "block.createcrystallized.oscillite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
+  "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by normalizing them to _90° rotations_.",
+
   "item.createcrystallized.densite_core.tooltip.summary": "A heavily compressed cube of Densite.",
   "item.createcrystallized.densite_core.tooltip.condition1": "",
   "item.createcrystallized.densite_core.tooltip.behaviour1": "Can be _thrown_ at foes.",

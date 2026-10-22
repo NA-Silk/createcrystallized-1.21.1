@@ -3,8 +3,8 @@
   "scale_friction_with_gravity":false,
   "lift_strength": 1.0,
   "transition_speed": 4,
-  "slow_vertical_friction": -1.6,
+  "slow_vertical_friction": -5.6,
   "fast_vertical_friction": 0.0,
-  "slow_horizontal_friction": -1.6,
+  "slow_horizontal_friction": -5.6,
   "fast_horizontal_friction": 0.0
 }

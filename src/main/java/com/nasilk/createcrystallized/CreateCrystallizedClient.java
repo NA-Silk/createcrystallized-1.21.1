@@ -67,6 +67,9 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.register(ModBlocks.OSCILLITE_CANNON.get());
             CreateTooltipHelper.register(ModBlocks.PROPULSITE_THRUSTER.get());
             CreateTooltipHelper.register(ModBlocks.DENSITE_WELL.get());
+            CreateTooltipHelper.register(ModBlocks.DENSITE_BLOCK.get());
+            CreateTooltipHelper.register(ModBlocks.PROPULSITE_BLOCK.get());
+            CreateTooltipHelper.register(ModBlocks.OSCILLITE_BLOCK.get());
 
             // Ponders
             PonderIndex.addPlugin(new ModPonderPlugin());

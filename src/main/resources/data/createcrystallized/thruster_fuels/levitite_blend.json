@@ -1,7 +1,7 @@
 {
-  "fluid": "createcrystallized:propulsite_flurry",
+  "fluid": "aeronautics:levitite_blend",
   "thrust_multiplier": 1.0,
   "consumption_multiplier": 0.5,
   "particle": "plasma",
-  "use_fluid_color": true
+  "override_color" : "0x08765F"
 }

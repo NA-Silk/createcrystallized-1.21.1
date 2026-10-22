@@ -9,7 +9,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-// TODO Improve this
 public class DensiteWellParticle extends TerrainParticle {
     private final double xi, yi, zi;
     private final double xf, yf, zf;

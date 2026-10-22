@@ -36,7 +36,6 @@ import org.joml.Vector3d;
 import java.util.List;
 import static com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior.*;
 
-// TODO Fix Create sublevel interaction (mechanical bearing)
 public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick state
     private TickState tickState = TickState.IDLE;

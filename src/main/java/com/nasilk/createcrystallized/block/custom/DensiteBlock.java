@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,8 +17,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.joml.Vector3f;
 
-// TODO Sound on power texture state change (V2)
-// TODO Make angry hamburger advancement
 public class DensiteBlock extends Block {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
     private static final int MAX_CLUSTER_SIZE = 512;
@@ -153,6 +152,9 @@ public class DensiteBlock extends Block {
             pos.getZ() + 0.5d,
             5,0.5d,0.5d,0.5d,0.5d
         );
+
+        // Send advancement to nearby players
+        AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
     }
 
     private int getBoundarySamplesAndDropPower(ServerLevel level, Cache cache, int tail, RandomSource random) {

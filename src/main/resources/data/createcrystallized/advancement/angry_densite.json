@@ -1,0 +1,24 @@
+{
+  "parent": "createcrystallized:mass_production",
+  "display": {
+    "icon": {
+      "id": "createcrystallized:densite_block"
+    },
+    "title": {
+      "translate": "advancement.createcrystallized.angry_densite.title"
+    },
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createcrystallized.angry_densite.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

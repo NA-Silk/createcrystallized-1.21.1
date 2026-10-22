@@ -138,7 +138,7 @@ public class OscilliteCannonBehavior {
                 serverLevel.sendParticles(
                     ParticleTypes.ANGRY_VILLAGER,
                     cache.cannonPosition.x, cache.cannonPosition.y, cache.cannonPosition.z,
-                    4, 0.5d, 0.5d, 0.5d, 0.5d
+                    5, 0.5d, 0.5d, 0.5d, 0.5d
                 );
                 serverLevel.playSound(
                     null, be.getBlockPos(),

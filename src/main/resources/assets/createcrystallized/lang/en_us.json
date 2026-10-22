@@ -191,5 +191,8 @@
   "advancement.createcrystallized.hair_of_the_dog.title": "Hair of the Dog",
   "advancement.createcrystallized.hair_of_the_dog.description": "Give the Warden a taste of its own medicine\n§7(Hidden Advancement)",
   "advancement.createcrystallized.crystal_cremation.title": "Crystal Cremation",
-  "advancement.createcrystallized.crystal_cremation.description": "Get Obliterated by the Propulsite Thrusters backblast. Maybe take a few steps back next time...\n§7(Hidden Advancement)"
+  "advancement.createcrystallized.crystal_cremation.description": "Get Obliterated by the Propulsite Thrusters backblast. Maybe take a few steps back next time...\n§7(Hidden Advancement)",
+  "advancement.createcrystallized.angry_densite.title": "Heaviest Matter In The Universe",
+  "advancement.createcrystallized.angry_densite.description": "Create a mass of Densite over 512 blocks and watch it overload. that's over 8100kpg while powered!\n§7(Hidden Advancement)"
+
 }

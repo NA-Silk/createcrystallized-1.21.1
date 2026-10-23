@@ -6,6 +6,7 @@ import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,9 +16,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
+    private static final VoxelShape BASE_SHAPE = Block.box(1.0d, 1.0d, 1.0d, 15.0d, 15.0d, 15.0d);
 
     public DensiteWellBlock(Properties properties) {
         super(properties);
@@ -27,6 +31,16 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWER);
+    }
+
+    // NO PLACE ON WELL
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return BASE_SHAPE;
+    }
+
+    public static VoxelShape getBaseShape() {
+        return BASE_SHAPE;
     }
 
     // POWER LEVELS

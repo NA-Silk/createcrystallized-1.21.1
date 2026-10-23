@@ -15,7 +15,7 @@ public class OscilliteBlockEntity extends BlockEntity {
     // Constants
     private static final double TORQUE_SCALE = 2.0d; // How hard we move up
     private static final double DAMPING_SCALE = -0.9d; // How much we chill the block rotation
-    private static final Vector3dc zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
+    private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Cache
     private static class Cache {
@@ -83,6 +83,6 @@ public class OscilliteBlockEntity extends BlockEntity {
         cache.rotation.fma(DAMPING_SCALE, cache.angularVelocity);
 
         // Apply rotation
-        handle.addLinearAndAngularVelocity(zeroVector, cache.rotation);
+        handle.addLinearAndAngularVelocity(ZERO_VECTOR, cache.rotation);
     }
 }

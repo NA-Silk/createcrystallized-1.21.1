@@ -41,13 +41,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     // Tick variables (unsaved)
     private final int worldPositionHash;
-    private final List<ServerSubLevel> targets = new ArrayList<>();
+    private final List<ServerSubLevel> contactTargets = new ArrayList<>();
+    private final List<ServerSubLevel> fieldTargets = new ArrayList<>();
 
     // Tick constants
     private static final int RANDOM_TICK_RATE = 20;
     private static final double PARTICLE_RATE = 0.025d;
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final Vector3dc zeroVector = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
+    private static final double CONTACT_RADIUS = 0.5 * DensiteWellBlock.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
+    private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Tick constants (config)
     private static final double[] FIELD_STRENGTH_CURVE = new double[16];
@@ -55,7 +57,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
 
     // Physics constants (config)
-    private static double IMPACT_RADIUS_SQUARED;
     private static double DAMPEN_RADIUS_SQUARED;
     private static double DAMPEN_SCALE;
 
@@ -70,9 +71,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
-        double IMPACT_RADIUS = wellConfig.wellImpactRadius.get();
         double DAMPEN_RADIUS = wellConfig.wellDampenRadius.get();
-        IMPACT_RADIUS_SQUARED = IMPACT_RADIUS * IMPACT_RADIUS;
         DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
         DAMPEN_SCALE = wellConfig.wellDampenScale.get();
     }
@@ -116,7 +115,11 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             );
 
             // Exit if unpowered
-            if (power == 0) return;
+            if (power == 0) {
+                contactTargets.clear();
+                fieldTargets.clear();
+                return;
+            }
 
             // Get global position
             Cache cache = CACHE.get();
@@ -128,15 +131,75 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run effects
-            if ((serverLevel.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0 || powerChanged) updateTargets(serverLevel, wellSubLevel, cache); // Run gravity effect
-            if (!targets.isEmpty()) applyGravity(cache);
+            long randTickModulo = Math.floorMod(serverLevel.getGameTime() + worldPositionHash, RANDOM_TICK_RATE);
+            if (powerChanged) {
+                updateContactTargets(serverLevel, wellSubLevel, cache);
+                updateFieldTargets(serverLevel, wellSubLevel, cache);
+            }
+            else if (randTickModulo == 0) updateContactTargets(serverLevel, wellSubLevel, cache);
+            else if (randTickModulo == 1) updateFieldTargets(serverLevel, wellSubLevel, cache);
+            if (!contactTargets.isEmpty()) applyContactGravity(cache);
+            if (!fieldTargets.isEmpty()) applyFieldGravity(cache);
             if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
         }
     }
 
-    private void updateTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+
+    /// CONTACT
+    private void updateContactTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
         // Reset the target list
-        targets.clear();
+        contactTargets.clear();
+
+        // Get Sable's SubLevel container for this dimension
+        ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
+        if (container == null) return;
+
+        // Set the bounding box
+        cache.searchBox.setUnchecked(
+            cache.wellPosition.x - CONTACT_RADIUS, cache.wellPosition.y - CONTACT_RADIUS, cache.wellPosition.z - CONTACT_RADIUS,
+            cache.wellPosition.x + CONTACT_RADIUS, cache.wellPosition.y + CONTACT_RADIUS, cache.wellPosition.z + CONTACT_RADIUS
+        );
+
+        // Populate the target list
+        container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel) contactTargets.add(targetSubLevel);
+        });
+    }
+
+    private void applyContactGravity(Cache cache) {
+        // Iterate backwards for safe removals
+        for (int i = contactTargets.size() - 1; i >= 0; i--) {
+            ServerSubLevel targetSubLevel = contactTargets.get(i);
+
+            // If the sublevel was destroyed or unloaded, remove it from the list
+            if (targetSubLevel.isRemoved()) {
+                contactTargets.remove(i);
+                continue;
+            }
+
+            // Get the physics handle
+            RigidBodyHandle handle = RigidBodyHandle.of(targetSubLevel);
+            if (!handle.isValid()) {
+                contactTargets.remove(i);
+                continue;
+            }
+
+            // Get current linear and angular velocity
+            handle.getLinearVelocity(cache.currentLinearVelocity);
+            handle.getAngularVelocity(cache.currentAngularVelocity);
+
+            // Apply opposite vectors to negate current motion
+            cache.currentLinearVelocity.negate();
+            cache.currentAngularVelocity.mul(-DAMPEN_SCALE);
+            handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
+        }
+    }
+
+
+    /// FIELD
+    private void updateFieldTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        // Reset the target list
+        fieldTargets.clear();
 
         // Get Sable's SubLevel container for this dimension
         ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
@@ -150,24 +213,27 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
         // Populate the target list
         container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
-            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel) targets.add(targetSubLevel);
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel && !contactTargets.contains(targetSubLevel)) fieldTargets.add(targetSubLevel);
         });
     }
 
-    private void applyGravity(Cache cache) {
+    private void applyFieldGravity(Cache cache) {
         // Iterate backwards for safe removals
-        for (int i = targets.size() - 1; i >= 0; i--) {
-            ServerSubLevel targetSubLevel = targets.get(i);
+        for (int i = fieldTargets.size() - 1; i >= 0; i--) {
+            ServerSubLevel targetSubLevel = fieldTargets.get(i);
 
             // If the sublevel was destroyed or unloaded, remove it from the list
             if (targetSubLevel.isRemoved()) {
-                targets.remove(i);
+                fieldTargets.remove(i);
                 continue;
             }
 
             // Get the physics handle
             RigidBodyHandle handle = RigidBodyHandle.of(targetSubLevel);
-            if (!handle.isValid()) continue;
+            if (!handle.isValid()) {
+                fieldTargets.remove(i);
+                continue;
+            }
 
             // Get sublevel position, impulse velocity, and current distance^2
             cache.targetPosition.set(targetSubLevel.logicalPose().position());
@@ -176,20 +242,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
             // Handle out of range sublevels
             if (distanceSquared > fieldRadiusSquared) {
-                targets.remove(i);
-                continue;
-            }
-
-            // Handle impact when very close
-            if (distanceSquared < IMPACT_RADIUS_SQUARED) {
-                // Get current linear and angular velocity
-                handle.getLinearVelocity(cache.currentLinearVelocity);
-                handle.getAngularVelocity(cache.currentAngularVelocity);
-
-                // Apply opposite vectors to negate current motion
-                cache.currentLinearVelocity.negate();
-                cache.currentAngularVelocity.negate();
-                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
+                fieldTargets.remove(i);
                 continue;
             }
 
@@ -198,12 +251,12 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
                 // Apply dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
-                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, zeroVector);
+                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, ZERO_VECTOR);
 
                 // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^2
                 cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_SQUARED);
             } else {
-                // Handle standard pull impulse: F = fieldStrength * distance / distance^2
+                // Handle standard pull impulse: F = fieldStrength * distance / distance^2 = fieldStrength / distance
                 cache.impulseVelocity.mul(fieldStrength / distanceSquared);
             }
 
@@ -302,7 +355,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     @Override
     public void setRemoved() {
         super.setRemoved();
-        this.targets.clear();
+        this.fieldTargets.clear();
     }
 
 
@@ -313,7 +366,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             fieldStrength = 0.0d;
             fieldRadius = 0.0d;
             fieldRadiusSquared = 0.0d;
-            targets.clear();
+            fieldTargets.clear();
         } else {
             fieldStrength = FIELD_STRENGTH_CURVE[power];
             fieldRadius = FIELD_RADIUS_CURVE[power];

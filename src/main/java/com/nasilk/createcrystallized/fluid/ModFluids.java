@@ -13,8 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import org.joml.Vector3f;
 import java.util.List;
@@ -33,12 +31,6 @@ public class ModFluids {
             new BaseFluidType(stillTexture, flowTexture, null, 0xE6FFFFFF, new Vector3f(0.20f, 0.086f, 0.322f), properties)
     ).properties(properties ->
         properties.lightLevel(2).viscosity(2500).density(2500).canSwim(false)
-        .sound( // TODO Make this not terrible (proof of concept, but there's definitely a better way)
-            SoundActions.BUCKET_EMPTY,
-            new DeferredSoundType(1.0f, 0.1f,
-                null, null, () -> SoundEvents.ANVIL_BREAK, null, null
-            ).getPlaceSound()
-        )
     ).fluidProperties(properties ->
         properties.slopeFindDistance(1).levelDecreasePerBlock(1).tickRate(15)
     ).source(

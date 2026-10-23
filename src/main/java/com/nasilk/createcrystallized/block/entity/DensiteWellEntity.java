@@ -1,9 +1,9 @@
 package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.block.custom.DensiteWellBlock;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.config.server.block.WellConfig;
-import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;
@@ -46,10 +46,13 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     // Tick constants
     private static final int RANDOM_TICK_RATE = 20;
-    private static final double PARTICLE_RATE = 0.025d;
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double CONTACT_RADIUS = 0.5 * DensiteWellBlock.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
+
+    // Particle constants
+    private static final int PULL_PARTICLE_TICK_RATE = 30;
+    private static final int[] PULL_PARTICLE_COUNT = {0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4};
 
     // Tick constants (config)
     private static final double[] FIELD_STRENGTH_CURVE = new double[16];
@@ -131,16 +134,16 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
             }
 
             // Run effects
-            long randTickModulo = Math.floorMod(serverLevel.getGameTime() + worldPositionHash, RANDOM_TICK_RATE);
+            int randomTickModulo = Math.floorMod(serverLevel.getGameTime() + worldPositionHash, RANDOM_TICK_RATE);
             if (powerChanged) {
                 updateContactTargets(serverLevel, wellSubLevel, cache);
                 updateFieldTargets(serverLevel, wellSubLevel, cache);
             }
-            else if (randTickModulo == 0) updateContactTargets(serverLevel, wellSubLevel, cache);
-            else if (randTickModulo == 1) updateFieldTargets(serverLevel, wellSubLevel, cache);
+            else if (randomTickModulo == 0) updateContactTargets(serverLevel, wellSubLevel, cache);
+            else if (randomTickModulo == 1) updateFieldTargets(serverLevel, wellSubLevel, cache);
             if (!contactTargets.isEmpty()) applyContactGravity(cache);
             if (!fieldTargets.isEmpty()) applyFieldGravity(cache);
-            if (serverLevel.getRandom().nextDouble() < PARTICLE_RATE) addEffectParticles(serverLevel, cache);
+            if ((serverLevel.getGameTime() + worldPositionHash) % PULL_PARTICLE_TICK_RATE == 0) addPullParticles(serverLevel, cache);
         }
     }
 
@@ -267,26 +270,39 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     }
 
 
-    // PARTICLES TODO Basically completely change this, Gaussians are expensive and that's a lot of particles
-    private void addEffectParticles(ServerLevel serverLevel, Cache cache) {
+    // PARTICLES
+    private static final double PULL_PARTICLE_TRAVEL_TICKS = 100.0d;
+    private void addPullParticles(ServerLevel level, Cache cache) {
         // Compute each particle
-        final double radiusFactor = fieldRadius / 2.5758293d;
-        for (int i = 0; i < power; i++) {
-            // Get initial speeds: a*PARTICLE_RADIUS, where a ∈ [-1, 1)
-            double xSpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
-            double ySpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
-            double zSpeed = Math.clamp(serverLevel.random.nextGaussian() * radiusFactor, -fieldRadius, fieldRadius);
+        for (int i = 0; i < PULL_PARTICLE_COUNT[power]; i++) {
+            // Uniformly sample a direction on a sphere.
+            double yUnit = level.random.nextDouble() * 2.0d - 1.0d; // yUnit ∈ [-1.0, 1.0)
+            double azimuth = level.random.nextDouble() * (Math.PI * 2.0d); // Ooh, vocab! So this is the circumferential angle, cool name right? azimuth ∈ [0.0, 2.0*PI)
+            double xzComp = Math.sqrt(Math.max(0.0d, 1.0d - yUnit * yUnit)); // Get x & z component along the azimuth, basically a partial radius
+            double xUnit = xzComp * Math.cos(azimuth);
+            double zUnit = xzComp * Math.sin(azimuth);
 
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
-            serverLevel.sendParticles(
-                ModParticleTypes.DENSITE_WELL_PARTICLES.get(),
-                cache.wellPosition.x, cache.wellPosition.y, cache.wellPosition.z,
-                0, // Count = 0 (Crucial for passing custom payloads)
-                xSpeed, ySpeed, zSpeed,
-                1.0d // Use above speed values
+            // Spawn within the outer 45% of the field radius
+            double distance = fieldRadius * (0.55d + 0.45d * level.random.nextDouble()); // distance = fieldRadius * s : s ∈ [0.55, 1.0)
+            double x = cache.wellPosition.x + xUnit * distance;
+            double y = cache.wellPosition.y + yUnit * distance;
+            double z = cache.wellPosition.z + zUnit * distance;
+
+            // Scale speed with the distance from the well
+            double speed = distance / PULL_PARTICLE_TRAVEL_TICKS;
+
+            // By setting particleCount to 0, xOffset, yOffset, and zOffset act as speed
+            level.sendParticles(
+                ModParticleTypes.DENSITE_WELL_PULL_PARTICLES.get(),
+                x, y, z,
+                0,
+                -xUnit * speed, -yUnit * speed, -zUnit * speed,
+                1.0d
             );
         }
     }
+
+    // TODO Write addRadiusEffect (maybe V2)
 
 
     // GOGGLE TOOLTIPS

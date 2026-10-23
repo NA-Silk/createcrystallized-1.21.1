@@ -124,7 +124,7 @@ public class CreateCrystallizedClient {
     @SubscribeEvent
     public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticleTypes.DENSITE_PARTICLES.get(), DensiteParticle.Provider::new);
-        event.registerSpriteSet(ModParticleTypes.DENSITE_WELL_PARTICLES.get(), DensiteWellParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.DENSITE_WELL_PULL_PARTICLES.get(), DensiteWellPullParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.DENSITE_CORE_PARTICLES.get(), DensiteCoreParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.PROPULSITE_PARTICLES.get(), PropulsiteParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticle.Provider::new);

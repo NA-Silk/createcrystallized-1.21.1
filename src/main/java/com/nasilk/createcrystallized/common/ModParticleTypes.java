@@ -14,8 +14,8 @@ public class ModParticleTypes {
         "densite_particles"
     );
 
-    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_WELL_PARTICLES = registerParticle(
-        "densite_well_particles"
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_WELL_PULL_PARTICLES = registerParticle(
+        "densite_well_pull_particles"
     );
 
     public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_CORE_PARTICLES = registerParticle(

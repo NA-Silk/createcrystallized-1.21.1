@@ -22,6 +22,11 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreItemEnt
     }
 
     @Override
+    public ResourceLocation getTextureLocation(DensiteCoreItemEntity entity) {
+        return TEXTURE;
+    }
+
+    @Override
     public void render(DensiteCoreItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0.0d, 0.15d, 0.0d); // uh he go
@@ -36,10 +41,5 @@ public class ThrownDensiteCoreRenderer extends EntityRenderer<DensiteCoreItemEnt
             0xFFFFFFFF
         );
         poseStack.popPose();
-    }
-
-    @Override
-    public ResourceLocation getTextureLocation(DensiteCoreItemEntity entity) {
-        return TEXTURE;
     }
 }

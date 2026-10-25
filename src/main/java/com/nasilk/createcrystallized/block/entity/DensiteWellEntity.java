@@ -69,7 +69,10 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         double MIN_RADIUS = wellConfig.wellMinRadius.get();
         double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
         double FIELD_SCALE = wellConfig.wellFieldScale.get();
-        for (int i = 0; i < 16; i++) {
+        FIELD_STRENGTH_CURVE[0] = 0.0d;
+        FIELD_RADIUS_CURVE[0] = 0.0d;
+        FIELD_RADIUS_SQUARED_CURVE[0] = 0.0d;
+        for (int i = 1; i < 16; i++) {
             FIELD_STRENGTH_CURVE[i] = FIELD_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
@@ -102,7 +105,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         if (level instanceof ServerLevel serverLevel) {
             // Get block power
             BlockState state = getBlockState();
-            int newPower = state.getValue(DensiteWellBlock.POWER);
+            int newPower = Math.clamp(state.getValue(DensiteWellBlock.POWER), 0, 15);
             boolean powerChanged = power != newPower;
             if (powerChanged) {
                 updateFieldVariables(newPower);
@@ -302,8 +305,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         }
     }
 
-    // TODO Write addRadiusEffect (maybe V2)
-
 
     // GOGGLE TOOLTIPS
     @Override
@@ -371,6 +372,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     @Override
     public void setRemoved() {
         super.setRemoved();
+        this.contactTargets.clear();
         this.fieldTargets.clear();
     }
 
@@ -379,14 +381,17 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private void updateFieldVariables(int newPower) {
         power = newPower;
         if (power == 0) {
-            fieldStrength = 0.0d;
-            fieldRadius = 0.0d;
-            fieldRadiusSquared = 0.0d;
+            contactTargets.clear();
             fieldTargets.clear();
-        } else {
-            fieldStrength = FIELD_STRENGTH_CURVE[power];
-            fieldRadius = FIELD_RADIUS_CURVE[power];
-            fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
         }
+        fieldStrength = FIELD_STRENGTH_CURVE[power];
+        fieldRadius = FIELD_RADIUS_CURVE[power];
+        fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
     }
+
+
+    // GETTERS
+    public boolean isPowered()     { return power > 0;   }
+    public int getPower()          { return power;       }
+    public double getFieldRadius() { return fieldRadius; }
 }

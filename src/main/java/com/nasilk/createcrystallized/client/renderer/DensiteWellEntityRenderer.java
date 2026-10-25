@@ -9,17 +9,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWellEntity> {
-    public static final ResourceLocation TEXTURE_0 = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
-    public static final ResourceLocation TEXTURE_1 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_1.png");
-    public static final ResourceLocation TEXTURE_2 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_2.png");
-    public static final ResourceLocation TEXTURE_3 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_3.png");
-    public static final ResourceLocation TEXTURE_4 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_4.png");
+    private static final ResourceLocation TEXTURE_0 = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
+    private static final ResourceLocation TEXTURE_1 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_1.png");
+    private static final ResourceLocation TEXTURE_2 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_2.png");
+    private static final ResourceLocation TEXTURE_3 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_3.png");
+    private static final ResourceLocation TEXTURE_4 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_4.png");
     private final DensiteWellCubeModel cube;
 
     public DensiteWellEntityRenderer(BlockEntityRendererProvider.Context context) {
-        cube = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
+        this.cube = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
     }
 
     private ResourceLocation getTextureForPower(int power) { //texture change based on power
@@ -33,10 +35,12 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
     @Override
     public void render(DensiteWellEntity densiteWellEntity, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         if (densiteWellEntity.getLevel() == null) return;
-        float spinny = (densiteWellEntity.getLevel().getGameTime() + partialTick) * 1.5f;
-        int power = densiteWellEntity.getLevel().getBestNeighborSignal(densiteWellEntity.getBlockPos());
+        long gameTime = densiteWellEntity.getLevel().getGameTime();
+        float spinny = (gameTime + partialTick) * 1.5f;
+        //int power = densiteWellEntity.getLevel().getBestNeighborSignal(densiteWellEntity.getBlockPos());
+        int power = densiteWellEntity.getPower();
 
-        // CUBE
+        /// CUBE
         stack.pushPose(); //starts the chain
         stack.translate(0.5d, 0.5d, 0.5d); //moves cube to center
         stack.mulPose(Axis.XP.rotationDegrees(30)); //tilts the child
@@ -51,5 +55,30 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
             0xFFFFFFFF //color tinting
         );
         stack.popPose(); //ends the chain
+
+        /// SPHERE
+        double radius = densiteWellEntity.getFieldRadius();
+        if (isWellDisabled(densiteWellEntity, radius)) return;
+        long positionHash = densiteWellEntity.getBlockPos().asLong();
+        SphereRendererHelper.renderSphere(partialTick, stack, bufferSource, gameTime, positionHash, radius);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(DensiteWellEntity densiteWellEntity) {
+        double radius = densiteWellEntity.getFieldRadius();
+        if (isWellDisabled(densiteWellEntity, radius)) return BlockEntityRenderer.super.getRenderBoundingBox(densiteWellEntity);
+        return new AABB(densiteWellEntity.getBlockPos()).inflate(Math.max(0.0d, radius - 0.25d)); // 1x1 with 0.25 padding
+    }
+
+    @Override
+    public boolean shouldRender(DensiteWellEntity blockEntity, Vec3 cameraPos) {
+        double radius = blockEntity.getFieldRadius();
+        if (isWellDisabled(blockEntity, radius)) return BlockEntityRenderer.super.shouldRender(blockEntity, cameraPos);
+        return Vec3.atCenterOf(blockEntity.getBlockPos()).closerThan(cameraPos, this.getViewDistance() + radius);
+
+    }
+
+    private static boolean isWellDisabled(DensiteWellEntity densiteWellEntity, double radius) {
+        return !densiteWellEntity.isPowered() || !Double.isFinite(radius) || radius <= 0.0d;
     }
 }

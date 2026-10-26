@@ -186,6 +186,9 @@ dependencies {
     implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
     implementation("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_version}") { transitive = false }
 
+    // Veil
+    implementation("foundry.veil:veil-common-${minecraft_version}:${veil_version}")
+
     // Flywheel
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")

@@ -21,7 +21,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 
 @Mod(CreateCrystallized.MOD_ID)
@@ -42,17 +41,17 @@ public class CreateCrystallized {
         // REGISTRATE initializations
         ModBlocks.init();
         ModBlockEntities.init();
-        ModCreativeModeTabs.init();
         ModItemEntities.init();
         ModFluids.init();
         ModItems.init();
         ModParticleTypes.init(); // Types are common, factories are client
         ModSounds.init();
+        ModCreativeModeTabs.init();
 
         // ModBus registrations
         REGISTRATE.registerEventListeners(modEventBus);
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
-        modEventBus.addListener(this::addCreative); // Register the items to a creative tab
+        //modEventBus.addListener(this::addCreative); // Register the items to a creative tab
         //NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events (retained for reference)
     }
 
@@ -72,73 +71,73 @@ public class CreateCrystallized {
     }
 
     // Add block items to creative tabs
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTab() == ModCreativeModeTabs.CREATECRYSTALLIZED_TAB.get()) {
-            // Buckets
-            event.accept(ModFluids.VOID_SEA_SLURRY.getBucket().orElseThrow());
-            event.accept(ModFluids.DENSITE_EMULSION.getBucket().orElseThrow());
-            event.accept(ModFluids.DRIFT_CONDENSATE.getBucket().orElseThrow());
-            event.accept(ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow());
-            event.accept(ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow());
-
-            // Transformation Items
-            event.accept(ModItems.OSCILLITE_RESONATOR);
-
-            // Uncategorized Items
-            event.accept(ModItems.CHORA_INGOT);
-            event.accept(ModItems.CRUSHED_RAW_AEROLITE);
-            event.accept(ModItems.RAW_AEROLITE);
-            event.accept(ModItems.AEROLITE_INGOT);
-            if (ModConfigs.common().creativeConfig.enableUnusedItems.get().equals(true)) {
-                event.accept(ModItems.AEROLITE_SHEET);
-            }
-            event.accept(ModItems.DENSITE_CORE);
-            event.accept(ModItems.AEROLITE_SHOVEL);
-
-            // Uncategorized Blocks
-            event.accept(ModBlocks.AEROLITE_ORE);
-            event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
-            event.accept(ModBlocks.AEROLITE_BLOCK);
-            event.accept(ModBlocks.PROPULSITE_CRYSTAL);
-            event.accept(ModBlocks.DENSITE_CRYSTAL);
-            event.accept(ModBlocks.LEVITITE_CRYSTAL);
-
-            // Echo Shard Blocks
-            event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);
-            event.accept(ModBlocks.BUDDING_ECHO_CRYSTAL);
-            event.accept(ModBlocks.ECHO_CRYSTAL_CLUSTER);
-            event.accept(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
-            event.accept(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
-            event.accept(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
-
-            // Chora Blocks
-            event.accept(ModBlocks.CHORA_BLOCK);
-            event.accept(ModBlocks.CHORA_CASING);
-            event.accept(ModBlocks.DENSE_CHORA_CASING);
-            event.accept(ModBlocks.PROPULSED_CHORA_CASING);
-            event.accept(ModBlocks.OSCILLATING_CHORA_CASING);
-            event.accept(ModBlocks.LEVITATING_CHORA_CASING);
-
-            // Crystal Blocks
-            event.accept(ModBlocks.DENSITE_BLOCK);
-            event.accept(ModBlocks.ENCASED_DENSITE_BLOCK);
-            event.accept(ModBlocks.DENSITE_WELL);
-            event.accept(ModBlocks.PROPULSITE_BLOCK);
-            event.accept(ModBlocks.ENCASED_PROPULSITE_BLOCK);
-            event.accept(ModBlocks.PROPULSITE_THRUSTER);
-            event.accept(ModBlocks.OSCILLITE_BLOCK);
-            event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
-            event.accept(ModBlocks.OSCILLITE_CANNON);
-            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
-
-            // Development Items and Blocks
-            if (ModConfigs.common().creativeConfig.enableDevItems.get().equals(true)) {
-                event.accept(ModItems.CREATIVE_FLUID_ERASER);
-                event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
-                event.accept(ModBlocks.PEBBLE);
-            }
-        }
-    }
+//    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+//        if(event.getTab() == ModCreativeModeTabs.CREATE_CRYSTALLIZED_TAB.get()) {
+//            // Buckets
+//            event.accept(ModFluids.VOID_SEA_SLURRY.getBucket().orElseThrow());
+//            event.accept(ModFluids.DENSITE_EMULSION.getBucket().orElseThrow());
+//            event.accept(ModFluids.DRIFT_CONDENSATE.getBucket().orElseThrow());
+//            event.accept(ModFluids.PROPULSITE_FLURRY.getBucket().orElseThrow());
+//            event.accept(ModFluids.OSCILLITE_SUSPENSION.getBucket().orElseThrow());
+//
+//            // Transformation Items
+//            event.accept(ModItems.OSCILLITE_RESONATOR);
+//
+//            // Uncategorized Items
+//            event.accept(ModItems.CHORA_INGOT);
+//            event.accept(ModItems.CRUSHED_RAW_AEROLITE);
+//            event.accept(ModItems.RAW_AEROLITE);
+//            event.accept(ModItems.AEROLITE_INGOT);
+//            if (ModConfigs.common().creativeConfig.enableUnusedItems.get().equals(true)) {
+//                event.accept(ModItems.AEROLITE_SHEET);
+//            }
+//            event.accept(ModItems.DENSITE_CORE);
+//            event.accept(ModItems.AEROLITE_SHOVEL);
+//
+//            // Uncategorized Blocks
+//            event.accept(ModBlocks.AEROLITE_ORE);
+//            event.accept(ModBlocks.DEEPSLATE_AEROLITE_ORE);
+//            event.accept(ModBlocks.AEROLITE_BLOCK);
+//            event.accept(ModBlocks.PROPULSITE_CRYSTAL);
+//            event.accept(ModBlocks.DENSITE_CRYSTAL);
+//            event.accept(ModBlocks.LEVITITE_CRYSTAL);
+//
+//            // Echo Shard Blocks
+//            event.accept(ModBlocks.ECHO_CRYSTAL_BLOCK);
+//            event.accept(ModBlocks.BUDDING_ECHO_CRYSTAL);
+//            event.accept(ModBlocks.ECHO_CRYSTAL_CLUSTER);
+//            event.accept(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
+//            event.accept(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
+//            event.accept(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
+//
+//            // Chora Blocks
+//            event.accept(ModBlocks.CHORA_BLOCK);
+//            event.accept(ModBlocks.CHORA_CASING);
+//            event.accept(ModBlocks.DENSE_CHORA_CASING);
+//            event.accept(ModBlocks.PROPULSED_CHORA_CASING);
+//            event.accept(ModBlocks.OSCILLATING_CHORA_CASING);
+//            event.accept(ModBlocks.LEVITATING_CHORA_CASING);
+//
+//            // Crystal Blocks
+//            event.accept(ModBlocks.DENSITE_BLOCK);
+//            event.accept(ModBlocks.ENCASED_DENSITE_BLOCK);
+//            event.accept(ModBlocks.DENSITE_WELL);
+//            event.accept(ModBlocks.PROPULSITE_BLOCK);
+//            event.accept(ModBlocks.ENCASED_PROPULSITE_BLOCK);
+//            event.accept(ModBlocks.PROPULSITE_THRUSTER);
+//            event.accept(ModBlocks.OSCILLITE_BLOCK);
+//            event.accept(ModBlocks.ENCASED_OSCILLITE_BLOCK);
+//            event.accept(ModBlocks.OSCILLITE_CANNON);
+//            event.accept(ModBlocks.ENCASED_LEVITITE_BLOCK);
+//
+//            // Development Items and Blocks
+//            if (ModConfigs.common().creativeConfig.enableDevItems.get().equals(true)) {
+//                event.accept(ModItems.CREATIVE_FLUID_ERASER);
+//                event.accept(ModItems.CREATIVE_BAG_OF_LONGS);
+//                event.accept(ModBlocks.PEBBLE);
+//            }
+//        }
+//    }
 
     @SuppressWarnings("SameReturnValue")
     public static CreateRegistrate getRegistrate() {

@@ -92,8 +92,7 @@ public class CreateCrystallizedClient {
                 return true; // Cancel default particles
             }
         };
-        event.registerBlock(
-            noDefaultParticles,
+        event.registerBlock(noDefaultParticles,
             ModBlocks.DENSITE_BLOCK.get(),
             ModBlocks.ENCASED_DENSITE_BLOCK.get(),
             ModBlocks.DENSITE_WELL.get(),

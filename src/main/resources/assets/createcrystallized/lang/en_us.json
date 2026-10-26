@@ -2,7 +2,8 @@
   "createcrystallized.configuration.title": "Create Crystallized Config",
   "createcrystallized.configuration.section.createcrystallized.server.toml": "Create Crystallized Config",
   "createcrystallized.configuration.section.createcrystallized.server.toml.title": "Create Crystallized Config",
-  "creativetab.createcrystallized.createcrystallized_tab": "Create Crystallized",
+  "creativetab.createcrystallized.create_crystallized_tab": "Create Crystallized",
+  "simulated.simulated_section.main_section": "Create Crystallized",
 
   "fluid.createcrystallized.void_sea_slurry": "Void Sea Slurry",
   "fluid.createcrystallized.densite_emulsion": "Densite Emulsion",

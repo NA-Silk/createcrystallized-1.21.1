@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ComparatorBlockMixin",
+    "CreativeModeTabMixin",
     "FluidDrainingBehaviourMixin",
     "ItemApplicationAdvancementsMixin",
     "OpenEndedPipeMixin",

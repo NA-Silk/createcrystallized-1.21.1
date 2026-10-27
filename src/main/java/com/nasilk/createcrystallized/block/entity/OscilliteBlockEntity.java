@@ -13,7 +13,7 @@ import org.joml.Vector3dc;
 
 public class OscilliteBlockEntity extends BlockEntity {
     // Constants
-    private static final double TORQUE_SCALE = 0.76d; // This value PERFECTLY holds 4kpg on a swivel without tipping. TODO Figure out a unique tool tip like how aero displays weight with goggles
+    private static final double TORQUE_SCALE = 0.76d; // This value PERFECTLY holds 4kpg on a swivel without tipping TODO Figure out a unique tool tip like how aero displays weight with goggles
     private static final double DAMPING_SCALE = -0.96d;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 

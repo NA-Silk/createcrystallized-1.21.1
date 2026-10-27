@@ -52,7 +52,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
     // Particle constants
     private static final int PULL_PARTICLE_TICK_RATE = 30;
-    private static final int[] PULL_PARTICLE_COUNT = {0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4};
+    private static final int[] PULL_PARTICLE_COUNT = {0, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5};
 
     // Tick constants (config)
     private static final double[] FIELD_STRENGTH_CURVE = new double[16];
@@ -66,14 +66,15 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     // Config constants
     public static void updateConstants() {
         WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
+        double MIN_STRENGTH = wellConfig.wellMinStrength.get();
+        double STRENGTH_SCALE = wellConfig.wellStrengthScale.get();
         double MIN_RADIUS = wellConfig.wellMinRadius.get();
         double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
-        double FIELD_SCALE = wellConfig.wellFieldScale.get();
         FIELD_STRENGTH_CURVE[0] = 0.0d;
         FIELD_RADIUS_CURVE[0] = 0.0d;
         FIELD_RADIUS_SQUARED_CURVE[0] = 0.0d;
         for (int i = 1; i < 16; i++) {
-            FIELD_STRENGTH_CURVE[i] = FIELD_SCALE * i;
+            FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i + MIN_STRENGTH;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }

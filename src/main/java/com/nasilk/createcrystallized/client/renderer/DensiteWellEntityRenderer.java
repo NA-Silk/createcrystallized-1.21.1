@@ -5,10 +5,14 @@ import com.mojang.math.Axis;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
+import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -34,10 +38,10 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
 
     @Override
     public void render(DensiteWellEntity densiteWellEntity, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        if (densiteWellEntity.getLevel() == null) return;
-        long gameTime = densiteWellEntity.getLevel().getGameTime();
+        Level level = densiteWellEntity.getLevel();
+        if (level == null) return;
+        long gameTime = level.getGameTime();
         float spinny = (gameTime + partialTick) * 1.5f;
-        //int power = densiteWellEntity.getLevel().getBestNeighborSignal(densiteWellEntity.getBlockPos());
         int power = densiteWellEntity.getPower();
 
         /// CUBE
@@ -57,10 +61,12 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
         stack.popPose(); //ends the chain
 
         /// SPHERE
-        double radius = densiteWellEntity.getFieldRadius();
-        if (isWellDisabled(densiteWellEntity, radius)) return;
-        long positionHash = densiteWellEntity.getBlockPos().asLong();
-        SphereRendererHelper.renderSphere(partialTick, stack, bufferSource, gameTime, positionHash, radius);
+        if (isLocalPlayerWearingGoggles()) {
+            double radius = densiteWellEntity.getFieldRadius();
+            if (isWellDisabled(densiteWellEntity, radius)) return;
+            long positionHash = densiteWellEntity.getBlockPos().asLong();
+            SphereRendererHelper.renderSphere(partialTick, stack, bufferSource, gameTime, positionHash, radius);
+        }
     }
 
     @Override
@@ -80,5 +86,10 @@ public class DensiteWellEntityRenderer implements BlockEntityRenderer<DensiteWel
 
     private static boolean isWellDisabled(DensiteWellEntity densiteWellEntity, double radius) {
         return !densiteWellEntity.isPowered() || !Double.isFinite(radius) || radius <= 0.0d;
+    }
+
+    private static boolean isLocalPlayerWearingGoggles() {
+        Player player = Minecraft.getInstance().player;
+        return player != null && GogglesItem.isWearingGoggles(player);
     }
 }

@@ -34,7 +34,7 @@ public class ModCreativeModeTabs {
             .build()
     );
 
-    public static final ResourceLocation MAIN_SECTION = CreateCrystallized.getRL("tab_main_section");
+    public static final ResourceLocation CRYSTALLIZED_SECTION = CreateCrystallized.getRL("crystallized_section");
     private static final List<Supplier<Item>> TAB_ITEMS = new ArrayList<>();
 
     private static boolean sectionsInitialized = false;
@@ -42,85 +42,89 @@ public class ModCreativeModeTabs {
         if (sectionsInitialized) return;
         CreativeConfig creativeConfig = ModConfigs.common().creativeConfig;
 
-        // Buckets
-        registerMainSectionFluid(ModFluids.VOID_SEA_SLURRY);
-        registerMainSectionFluid(ModFluids.DENSITE_EMULSION);
-        registerMainSectionFluid(ModFluids.DRIFT_CONDENSATE);
-        registerMainSectionFluid(ModFluids.PROPULSITE_FLURRY);
-        registerMainSectionFluid(ModFluids.OSCILLITE_SUSPENSION);
+        // Fluid Buckets
+        registerFluid(ModFluids.VOID_SEA_SLURRY);
+        registerFluid(ModFluids.DENSITE_EMULSION);
+        registerFluid(ModFluids.DRIFT_CONDENSATE);
+        registerFluid(ModFluids.PROPULSITE_FLURRY);
+        registerFluid(ModFluids.OSCILLITE_SUSPENSION);
 
-        // Transformation Items
-        registerMainSectionItem(ModItems.OSCILLITE_RESONATOR);
-
-        // Uncategorized Items
-        registerMainSectionItem(ModItems.CHORA_INGOT);
-        registerMainSectionItem(ModItems.CRUSHED_RAW_AEROLITE);
-        registerMainSectionItem(ModItems.RAW_AEROLITE);
-        registerMainSectionItem(ModItems.AEROLITE_INGOT);
+        // Aerolite Items and Blocks
+        registerBlock(ModBlocks.AEROLITE_ORE);
+        registerBlock(ModBlocks.DEEPSLATE_AEROLITE_ORE);
+        registerItem(ModItems.RAW_AEROLITE);
+        registerItem(ModItems.CRUSHED_RAW_AEROLITE);
+        registerItem(ModItems.AEROLITE_INGOT);
         if (creativeConfig.enableUnusedItems.get().equals(true)) {
-            registerMainSectionItem(ModItems.AEROLITE_SHEET);
+            registerItem(ModItems.AEROLITE_SHEET);
         }
-        registerMainSectionItem(ModItems.DENSITE_CORE);
-        registerMainSectionItem(ModItems.AEROLITE_SHOVEL);
+        registerBlock(ModBlocks.AEROLITE_BLOCK);
+        registerItem(ModItems.AEROLITE_SHOVEL);
 
-        // Uncategorized Blocks
-        registerMainSectionBlock(ModBlocks.AEROLITE_ORE);
-        registerMainSectionBlock(ModBlocks.DEEPSLATE_AEROLITE_ORE);
-        registerMainSectionBlock(ModBlocks.AEROLITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.PROPULSITE_CRYSTAL);
-        registerMainSectionBlock(ModBlocks.DENSITE_CRYSTAL);
-        registerMainSectionBlock(ModBlocks.LEVITITE_CRYSTAL);
+        // Chora Items and Blocks
+        registerItem(ModItems.CHORA_INGOT);
+        registerBlock(ModBlocks.CHORA_BLOCK);
+        registerBlock(ModBlocks.CHORA_CASING);
+        registerBlock(ModBlocks.DENSE_CHORA_CASING);
+        registerBlock(ModBlocks.PROPULSED_CHORA_CASING);
+        registerBlock(ModBlocks.OSCILLATING_CHORA_CASING);
+        registerBlock(ModBlocks.LEVITATING_CHORA_CASING);
 
-        // Echo Shard Blocks
-        registerMainSectionBlock(ModBlocks.ECHO_CRYSTAL_BLOCK);
-        registerMainSectionBlock(ModBlocks.BUDDING_ECHO_CRYSTAL);
-        registerMainSectionBlock(ModBlocks.ECHO_CRYSTAL_CLUSTER);
-        registerMainSectionBlock(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
-        registerMainSectionBlock(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
-        registerMainSectionBlock(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
+        // Crystals and Echo Shard Blocks
+        registerBlock(ModBlocks.DENSITE_CRYSTAL);
+        registerBlock(ModBlocks.PROPULSITE_CRYSTAL);
+        registerBlock(ModBlocks.ECHO_CRYSTAL_BLOCK);
+        registerBlock(ModBlocks.BUDDING_ECHO_CRYSTAL);
+        registerBlock(ModBlocks.ECHO_CRYSTAL_CLUSTER);
+        registerBlock(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
+        registerBlock(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
+        registerBlock(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
+        registerBlock(ModBlocks.LEVITITE_CRYSTAL);
 
-        // Chora Blocks
-        registerMainSectionBlock(ModBlocks.CHORA_BLOCK);
-        registerMainSectionBlock(ModBlocks.CHORA_CASING);
-        registerMainSectionBlock(ModBlocks.DENSE_CHORA_CASING);
-        registerMainSectionBlock(ModBlocks.PROPULSED_CHORA_CASING);
-        registerMainSectionBlock(ModBlocks.OSCILLATING_CHORA_CASING);
-        registerMainSectionBlock(ModBlocks.LEVITATING_CHORA_CASING);
+        // Crystal Crafting Items
+        registerItem(ModItems.DENSITE_CORE);
+        registerItem(ModItems.OSCILLITE_RESONATOR);
 
         // Crystal Blocks
-        registerMainSectionBlock(ModBlocks.DENSITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.ENCASED_DENSITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.DENSITE_WELL);
-        registerMainSectionBlock(ModBlocks.PROPULSITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.ENCASED_PROPULSITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.PROPULSITE_THRUSTER);
-        registerMainSectionBlock(ModBlocks.OSCILLITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.ENCASED_OSCILLITE_BLOCK);
-        registerMainSectionBlock(ModBlocks.OSCILLITE_CANNON);
-        registerMainSectionBlock(ModBlocks.ENCASED_LEVITITE_BLOCK);
+        registerBlock(ModBlocks.DENSITE_BLOCK);
+        registerBlock(ModBlocks.PROPULSITE_BLOCK);
+        registerBlock(ModBlocks.OSCILLITE_BLOCK);
 
-        // Development Items and Blocks
+        // Encased Crystal Blocks
+        registerBlock(ModBlocks.ENCASED_DENSITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_PROPULSITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_OSCILLITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_LEVITITE_BLOCK);
+
+        // Machined Crystal Blocks
+        registerBlock(ModBlocks.DENSITE_WELL);
+        registerBlock(ModBlocks.PROPULSITE_THRUSTER);
+        registerBlock(ModBlocks.OSCILLITE_CANNON);
+
+        // Special Blocks
+        registerBlock(ModBlocks.PEBBLE);
+
+        // Development Items
         if (creativeConfig.enableDevItems.get().equals(true)) {
-            registerMainSectionItem(ModItems.CREATIVE_FLUID_ERASER);
-            registerMainSectionItem(ModItems.CREATIVE_BAG_OF_LONGS);
-            registerMainSectionBlock(ModBlocks.PEBBLE);
+            registerItem(ModItems.CREATIVE_FLUID_ERASER);
+            registerItem(ModItems.CREATIVE_BAG_OF_LONGS);
         }
 
         sectionsInitialized = true;
     }
 
-    private static void registerMainSectionBlock(BlockEntry<?> blockEntry) {
-        SimulatedRegistrate.ITEM_TO_SECTION.put(blockEntry.getId(), ModCreativeModeTabs.MAIN_SECTION);
+    private static void registerBlock(BlockEntry<?> blockEntry) {
+        SimulatedRegistrate.ITEM_TO_SECTION.put(blockEntry.getId(), ModCreativeModeTabs.CRYSTALLIZED_SECTION);
         TAB_ITEMS.add(blockEntry::asItem);
     }
 
-    private static void registerMainSectionItem(ItemEntry<?> itemEntry) {
-        SimulatedRegistrate.ITEM_TO_SECTION.put(itemEntry.getId(), ModCreativeModeTabs.MAIN_SECTION);
+    private static void registerItem(ItemEntry<?> itemEntry) {
+        SimulatedRegistrate.ITEM_TO_SECTION.put(itemEntry.getId(), ModCreativeModeTabs.CRYSTALLIZED_SECTION);
         TAB_ITEMS.add(itemEntry::get);
     }
 
-    private static void registerMainSectionFluid(FluidEntry<?> fluidEntry) {
-        SimulatedRegistrate.ITEM_TO_SECTION.put(fluidEntry.getId().withSuffix("_bucket"), ModCreativeModeTabs.MAIN_SECTION);
+    private static void registerFluid(FluidEntry<?> fluidEntry) {
+        SimulatedRegistrate.ITEM_TO_SECTION.put(fluidEntry.getId().withSuffix("_bucket"), ModCreativeModeTabs.CRYSTALLIZED_SECTION);
         TAB_ITEMS.add(() -> fluidEntry.getBucket().orElseThrow());
     }
 

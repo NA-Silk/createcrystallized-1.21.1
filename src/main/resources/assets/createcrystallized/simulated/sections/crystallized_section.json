@@ -2,12 +2,12 @@
   "priority": 100000,
   "title": {
     "text": {
-      "translate": "simulated.simulated_section.tab_main_section_banner"
+      "translate": "simulated.simulated_section.crystallized_section_banner"
     },
     "background": "#aa1f2f3a",
     "color": "#ffffffff",
     "secondary_color": "#ffcfd8dc"
   },
-  "sprite": "createcrystallized:tab_main_section_banner",
+  "sprite": "createcrystallized:crystallized_section_banner",
   "only_animate_on_hover": true
 }

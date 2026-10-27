@@ -3,8 +3,8 @@
   "createcrystallized.configuration.section.createcrystallized.server.toml": "Create Crystallized Config",
   "createcrystallized.configuration.section.createcrystallized.server.toml.title": "Create Crystallized Config",
   "creativetab.createcrystallized.create_crystallized_tab": "Create Crystallized",
-  "simulated.simulated_section.tab_main_section": "Create Crystallized",
-  "simulated.simulated_section.tab_main_section_banner": "Create Crystallized",
+  "simulated.simulated_section.crystallized_section": "Create Crystallized",
+  "simulated.simulated_section.crystallized_section_banner": "Crystallized",
 
   "fluid.createcrystallized.void_sea_slurry": "Void Sea Slurry",
   "fluid.createcrystallized.densite_emulsion": "Densite Emulsion",
@@ -210,5 +210,4 @@
   "advancement.createcrystallized.crystal_cremation.description": "Get Obliterated by the Propulsite Thrusters backblast. Maybe take a few steps back next time...\n§7(Hidden Advancement)",
   "advancement.createcrystallized.angry_densite.title": "Heaviest Matter In The Universe",
   "advancement.createcrystallized.angry_densite.description": "Create a mass of Densite over 512 blocks and watch it overload. that's over 8100kpg while powered!\n§7(Hidden Advancement)"
-
 }

@@ -21,7 +21,7 @@ public class ModCreativeTabRenderer {
 
     public static void render(CreativeModeInventoryScreen screen, GuiGraphics graphics, int mouseX, int mouseY) {
         // Validate section
-        SimulatedSection section = SimResourceManagers.SIMULATED_SECTION.get(ModCreativeModeTabs.MAIN_SECTION);
+        SimulatedSection section = SimResourceManagers.SIMULATED_SECTION.get(ModCreativeModeTabs.CRYSTALLIZED_SECTION);
         if (section == null) return;
 
         // Validate scroll position

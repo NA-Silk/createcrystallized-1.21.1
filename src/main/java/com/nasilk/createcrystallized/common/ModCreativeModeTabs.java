@@ -2,6 +2,8 @@ package com.nasilk.createcrystallized.common;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.config.common.CreativeConfig;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -17,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -34,13 +35,12 @@ public class ModCreativeModeTabs {
     );
 
     private static final ResourceLocation MAIN_SECTION = CreateCrystallized.getRL("main_section");
-    private static final Map<ResourceLocation, Integer> SECTION_ROWS = new HashMap<>();
     private static final List<Supplier<Item>> TAB_ITEMS = new ArrayList<>();
 
     private static boolean sectionsInitialized = false;
-    public static synchronized void init() {
+    public static void register() {
         if (sectionsInitialized) return;
-        //CreativeConfig creativeConfig = ModConfigs.common().creativeConfig;
+        CreativeConfig creativeConfig = ModConfigs.common().creativeConfig;
 
         // Buckets
         registerMainSectionFluid(ModFluids.VOID_SEA_SLURRY);
@@ -57,9 +57,9 @@ public class ModCreativeModeTabs {
         registerMainSectionItem(ModItems.CRUSHED_RAW_AEROLITE);
         registerMainSectionItem(ModItems.RAW_AEROLITE);
         registerMainSectionItem(ModItems.AEROLITE_INGOT);
-        //if (creativeConfig.enableUnusedItems.get().equals(true)) {
+        if (creativeConfig.enableUnusedItems.get().equals(true)) {
             registerMainSectionItem(ModItems.AEROLITE_SHEET);
-        //}
+        }
         registerMainSectionItem(ModItems.DENSITE_CORE);
         registerMainSectionItem(ModItems.AEROLITE_SHOVEL);
 
@@ -100,14 +100,13 @@ public class ModCreativeModeTabs {
         registerMainSectionBlock(ModBlocks.ENCASED_LEVITITE_BLOCK);
 
         // Development Items and Blocks
-        //if (creativeConfig.enableDevItems.get().equals(true)) {
+        if (creativeConfig.enableDevItems.get().equals(true)) {
             registerMainSectionItem(ModItems.CREATIVE_FLUID_ERASER);
             registerMainSectionItem(ModItems.CREATIVE_BAG_OF_LONGS);
             registerMainSectionBlock(ModBlocks.PEBBLE);
-        //}
+        }
 
         sectionsInitialized = true;
-        CreateCrystallized.LOGGER.info("Creative Mode Tabs initialized");
     }
 
     private static void registerMainSectionBlock(BlockEntry<?> blockEntry) {
@@ -125,16 +124,13 @@ public class ModCreativeModeTabs {
         TAB_ITEMS.add(() -> fluidEntry.getBucket().orElseThrow());
     }
 
-    /// Newest version
     public static void buildContents(List<ItemStack> displayItems, Set<ItemStack> searchItems) {
         // Empty first row
         displayItems.clear();
         searchItems.clear();
-        //SECTION_ROWS.clear();
         for (int i = 0; i < 9; i++) displayItems.add(ItemStack.EMPTY);
 
         // Fill main section
-        //SECTION_ROWS.put(MAIN_SECTION, 0);
         for (Supplier<Item> itemSupplier : TAB_ITEMS) {
             // Handle restrictions
             Item item = itemSupplier.get();
@@ -157,5 +153,9 @@ public class ModCreativeModeTabs {
                 searchItems.size()
             );
         }
+    }
+
+    public static void init() {
+        CreateCrystallized.LOGGER.info("Creative Mode Tabs initialized");
     }
 }

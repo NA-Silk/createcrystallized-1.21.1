@@ -34,7 +34,7 @@ public class ModCreativeModeTabs {
             .build()
     );
 
-    private static final ResourceLocation MAIN_SECTION = CreateCrystallized.getRL("main_section");
+    public static final ResourceLocation MAIN_SECTION = CreateCrystallized.getRL("tab_main_section");
     private static final List<Supplier<Item>> TAB_ITEMS = new ArrayList<>();
 
     private static boolean sectionsInitialized = false;

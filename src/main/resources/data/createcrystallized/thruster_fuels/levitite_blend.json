@@ -3,5 +3,5 @@
   "thrust_multiplier": 1.0,
   "consumption_multiplier": 0.5,
   "particle": "plasma",
-  "override_color" : "0x08765F"
+  "override_color": 554591
 }

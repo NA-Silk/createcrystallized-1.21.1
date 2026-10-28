@@ -1,7 +1,7 @@
 {
   "fluid": "createcrystallized:oscillite_suspension",
-  "thrust_multiplier": 1.2,
+  "thrust_multiplier": 1.5,
   "consumption_multiplier": 1.0,
   "particle": "plume",
-  "override_color" : "0x102638"
+  "override_color": 1058360
 }

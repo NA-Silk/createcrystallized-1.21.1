@@ -105,6 +105,7 @@
   "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.oscillite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
   "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by normalizing them to _90° rotations_.",
+  "createcrystallized.oscillite_block.goggles_tooltip.0": "Super cool custom tooltip line that only appears with Goggles equipped. You can also add more of these lines really easily with the registry method.",
 
   "item.createcrystallized.densite_core.tooltip.summary": "A heavily compressed cube of Densite.",
   "item.createcrystallized.densite_core.tooltip.condition1": "",

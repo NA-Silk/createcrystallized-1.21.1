@@ -59,17 +59,17 @@ public class CreateCrystallizedClient {
             }
 
             // Custom Tooltips, add them in the lang file
-            CreateTooltipHelper.register(ModItems.AEROLITE_SHOVEL.get());
-            CreateTooltipHelper.register(ModItems.DENSITE_CORE.get());
-            CreateTooltipHelper.register(ModItems.CREATIVE_FLUID_ERASER.get());
-            CreateTooltipHelper.register(ModItems.CREATIVE_BAG_OF_LONGS.get());
-            CreateTooltipHelper.register(ModBlocks.PEBBLE.get());
-            CreateTooltipHelper.register(ModBlocks.OSCILLITE_CANNON.get());
-            CreateTooltipHelper.register(ModBlocks.PROPULSITE_THRUSTER.get());
-            CreateTooltipHelper.register(ModBlocks.DENSITE_WELL.get());
-            CreateTooltipHelper.register(ModBlocks.DENSITE_BLOCK.get());
-            CreateTooltipHelper.register(ModBlocks.PROPULSITE_BLOCK.get());
-            CreateTooltipHelper.register(ModBlocks.OSCILLITE_BLOCK.get());
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_SHOVEL);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.DENSITE_CORE);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.CREATIVE_FLUID_ERASER);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.CREATIVE_BAG_OF_LONGS);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PEBBLE);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.OSCILLITE_CANNON);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_THRUSTER);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_WELL);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_BLOCK);
+            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_BLOCK);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 1);
 
             // Ponders
             PonderIndex.addPlugin(new ModPonderPlugin());

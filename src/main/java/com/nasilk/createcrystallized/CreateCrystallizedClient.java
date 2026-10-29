@@ -69,7 +69,7 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_WELL);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_BLOCK);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_BLOCK);
-            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 1);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 0);
 
             // Ponders
             PonderIndex.addPlugin(new ModPonderPlugin());

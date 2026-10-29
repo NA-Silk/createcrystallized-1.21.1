@@ -16,15 +16,15 @@ Adds new fluids, blocks, and items inspired by *Create Aeronautics*' features, i
 
 **Machined Blocks**
 1. Densite Well - A variable gravity well that pulls in Simulated Contraptions. Attracts Simulated Contraptions within a scalable radius, area, and pull strength when power is supplied. 
-2. Propusite Thruster - Powerful burst of propulsion with the power of crystals. Begins to charge at high velocity, loses charge when not moving fast enough, and releases a powerful burst of thrust when powered. 
-3. Oscillite Cannon - Violent resonance in one convenient package (not suitable for home defence). Charges by absorbing nearby Echo Crystalls; releases a immensely powerful beam of focused sound waves to tear through blocks and entities alike when powered. 
+2. Propulsite Thruster - Powerful burst of propulsion with the power of crystals. Begins to charge at high velocity, loses charge when not moving fast enough, and releases a powerful burst of thrust when powered. 
+3. Oscillite Cannon - Violent resonance in one convenient package (not suitable for home defense). Charges by absorbing nearby Echo Crystals; releases an immensely powerful beam of focused sound waves to tear through blocks and entities alike when powered. 
 
 **Fluids**:
 1. Void Sea Slurry - Find some hiding in the End Sea. 
 2. Densite Emulsion - Refined slurry with high density and a cold and spacey vibe. 
 3. Drift Condensate - Find it high in the sky. Caution: it may try to go back. 
 4. Propulsite Flurry - Refined condensate with lightning quick flow. 
-5. Oscillite Suspension - Liquid sound? Very sensistive to additional noises. 
+5. Oscillite Suspension - Liquid sound? Very sensitive to additional noises. 
 
 Additional *Create* and *Create Aeronautics* compatible items are also added, including a new shovel for paddling your (air)ships! 
 

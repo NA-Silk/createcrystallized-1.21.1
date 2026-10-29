@@ -242,7 +242,7 @@ public class OscilliteCannonBehavior {
             // Handle motion
             cache.spawnPosition.set(cache.cannonFace).fma(i, cache.cannonVelocity);
 
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            // By setting sampleCount to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
                 ModParticleTypes.OSCILLITE_CANNON_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,

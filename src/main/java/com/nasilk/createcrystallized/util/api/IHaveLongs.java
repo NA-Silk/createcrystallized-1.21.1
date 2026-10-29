@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.api;
+package com.nasilk.createcrystallized.util.api;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.util.helper.SphereRendererHelper;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

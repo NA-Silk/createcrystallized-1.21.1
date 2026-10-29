@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import com.nasilk.createcrystallized.api.IHaveLongs;
+import com.nasilk.createcrystallized.util.api.IHaveLongs;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.simibubi.create.api.contraption.BlockMovementChecks;

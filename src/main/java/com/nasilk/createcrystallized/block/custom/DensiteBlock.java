@@ -1,45 +1,47 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.network.custom.DensiteBlockOverloadPayload;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import org.joml.Vector3f;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DensiteBlock extends Block {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
+    public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
+    public static final int MAX_BOUNDARY_SAMPLES = 64;
     private static final int MAX_CLUSTER_SIZE = 512;
-    private static final int MAX_BOUNDARY_SAMPLES = 64;
     private static final Direction[] DIRECTIONS = Direction.values();
-    private static final DustParticleOptions OVERFLOW_DUST = new DustParticleOptions(new Vector3f(0.20f, 0.0f, 0.310f),1.0f);
 
     // BFS cache
     private static class Cache {
         final LongOpenHashSet set = new LongOpenHashSet(MAX_CLUSTER_SIZE);
         final long[] array = new long[MAX_CLUSTER_SIZE];
-        final long[] boundarySamples = new long[MAX_BOUNDARY_SAMPLES];
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
     public DensiteBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(POWER, 0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(POWER, 0).setValue(TRIGGERED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWER);
+        builder.add(TRIGGERED);
     }
 
     // POWER LEVELS
@@ -111,7 +113,7 @@ public class DensiteBlock extends Block {
         }
 
         // Apply maximum power to the cluster
-        applyPower(level, cache, tail, maxPower);
+        applyMaxPower(level, cache, tail, maxPower);
     }
 
     private int getExternalPower(ServerLevel level, BlockPos pos) {
@@ -129,51 +131,18 @@ public class DensiteBlock extends Block {
     }
 
     private void applyOverflow(ServerLevel level, Cache cache, int tail, RandomSource random, BlockPos pos) {
-        // Get overflowArray length
-        int count = getBoundarySamplesAndDropPower(level, cache, tail, random);
-
-        // Spawn particles on boundaries
-        for (int i = 0; i < count; i++) {
-            BlockPos currentPos = BlockPos.of(cache.boundarySamples[i]);
-            level.sendParticles(
-                OVERFLOW_DUST,
-                currentPos.getX() + 0.5d,
-                currentPos.getY() + 0.5d,
-                currentPos.getZ() + 0.5d,
-                2,0.2d,0.2d,0.2d,0.2d
-            );
-        }
-
-        // Spawn particles on current position too
-        level.sendParticles(
-            OVERFLOW_DUST,
-            pos.getX() + 0.5d,
-            pos.getY() + 0.5d,
-            pos.getZ() + 0.5d,
-            5,0.5d,0.5d,0.5d,0.5d
-        );
-
-        // Send advancement to nearby players
-        AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
-    }
-
-    private int getBoundarySamplesAndDropPower(ServerLevel level, Cache cache, int tail, RandomSource random) {
         // Cache setup
         int boundaryCount = 0;
         int sampleCount = 0;
         long[] queue = cache.array;
-        long[] samples = cache.boundarySamples;
 
         // Iterate over queue searching for boundaries
+        long[] boundarySamples = new long[MAX_BOUNDARY_SAMPLES];
         for (int i = 0; i < tail; i++) {
+            // Set Densite power to zero
             long currentLong = queue[i];
             BlockPos currentPos = BlockPos.of(currentLong);
-            BlockState currentState = level.getBlockState(currentPos);
-
-            // Set Densite power to zero
-            if (currentState.is(this) && currentState.getValue(POWER) != 0) {
-                level.setBlock(currentPos, currentState.setValue(POWER, 0), 2);
-            }
+            setPowerAndUpdate(level, currentPos, 0);
 
             // Check neighbors for air
             for (Direction direction : DIRECTIONS) {
@@ -182,38 +151,53 @@ public class DensiteBlock extends Block {
                 // Store boundary samples, overwriting randomly
                 if (level.isLoaded(neighborPos) && level.getBlockState(neighborPos).isAir()) {
                     boundaryCount++;
-                    if (sampleCount < MAX_BOUNDARY_SAMPLES) samples[sampleCount++] = neighborPos.asLong();
+                    if (sampleCount < MAX_BOUNDARY_SAMPLES) boundarySamples[sampleCount++] = neighborPos.asLong();
                     else {
                         int index = random.nextInt(boundaryCount);
-                        if (index < MAX_BOUNDARY_SAMPLES) samples[index] = neighborPos.asLong();
+                        if (index < MAX_BOUNDARY_SAMPLES) boundarySamples[index] = neighborPos.asLong();
                     }
                     break;
                 }
             }
         }
-        return sampleCount;
+
+        // Send particles
+        DensiteBlockOverloadPayload payload = new DensiteBlockOverloadPayload(
+            pos.asLong(),
+            boundarySamples,
+            sampleCount
+        );
+        PacketDistributor.sendToPlayersTrackingChunk(
+            level,
+            new ChunkPos(pos),
+            payload
+        );
+
+        // Send advancement to nearby players
+        AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
     }
 
-    private void applyPower(Level level, Cache cache, int tail, int maxPower) {
+    private void applyMaxPower(Level level, Cache cache, int tail, int maxPower) {
         // Cache setup
         long[] queue = cache.array;
 
         // Iterate over queue applying new power
-        for (int i = 0; i < tail; i++) {
-            BlockPos currentPos = BlockPos.of(queue[i]);
-            BlockState currentState = level.getBlockState(currentPos);
+        for (int i = 0; i < tail; i++) setPowerAndUpdate(level, BlockPos.of(queue[i]), maxPower);
+    }
 
-            // Safety check: still Densite & power level is actually different
-            if (currentState.is(this) && currentState.getValue(POWER) != maxPower) {
-                level.setBlock(currentPos, currentState.setValue(POWER, maxPower), 2);
+    private void setPowerAndUpdate(Level level, BlockPos pos, int power) {
+        // Safety check: still Densite & power level is actually different
+        BlockState state = level.getBlockState(pos);
+        if (!state.is(this) ||
+            state.getValue(POWER) == power ||
+            !level.setBlock(pos, state.setValue(POWER, power), Block.UPDATE_CLIENTS)
+        ) return;
 
-                // Manually update loaded neighbors (more careful than setBlockAndUpdate() / flag 3) (only needed for the comparator mixin)
-                for (Direction direction : DIRECTIONS) {
-                    BlockPos neighborPos = currentPos.relative(direction);
-                    if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
-                        level.neighborChanged(neighborPos, this, currentPos);
-                    }
-                }
+        // Manually update loaded neighbors (more careful than setBlockAndUpdate() / flag 3) (only needed for the comparator mixin)
+        for (Direction direction : DIRECTIONS) {
+            BlockPos neighborPos = pos.relative(direction);
+            if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
+                level.neighborChanged(neighborPos, this, pos);
             }
         }
     }

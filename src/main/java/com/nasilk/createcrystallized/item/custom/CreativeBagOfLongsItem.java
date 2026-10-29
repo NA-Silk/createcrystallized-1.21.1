@@ -1,6 +1,6 @@
 package com.nasilk.createcrystallized.item.custom;
 
-import com.nasilk.createcrystallized.api.IHaveLongs;
+import com.nasilk.createcrystallized.util.api.IHaveLongs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;

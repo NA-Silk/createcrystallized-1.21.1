@@ -275,7 +275,7 @@ public class PropulsiteThrusterBehavior {
             // Handle motion
             cache.spawnPosition.set(cache.thrusterFace).fma(i, cache.thrusterVelocity);
 
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            // By setting sampleCount to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
                 ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(),
                 cache.spawnPosition.x, cache.spawnPosition.y, cache.spawnPosition.z,
@@ -304,7 +304,7 @@ public class PropulsiteThrusterBehavior {
             // Normalize the direction and scale by baseVelocity
             cache.spawnVelocity.set(dirX, dirY, dirZ).normalize().mul(baseVelocity);
 
-            // By setting count to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
+            // By setting sampleCount to 0, xOffset, yOffset, and zOffset act as xSpeed, ySpeed, and zSpeed
             serverLevel.sendParticles(
                 ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(),
                 cache.thrusterFace.x, cache.thrusterFace.y, cache.thrusterFace.z,

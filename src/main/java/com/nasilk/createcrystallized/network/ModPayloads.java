@@ -1,10 +1,7 @@
 package com.nasilk.createcrystallized.network;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
-import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayloadHandler;
-import com.nasilk.createcrystallized.network.custom.SkyPaddlePayload;
-import com.nasilk.createcrystallized.network.custom.SkyPaddlePayloadHandler;
+import com.nasilk.createcrystallized.network.custom.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -20,6 +17,12 @@ public class ModPayloads {
             OscilliteCannonBeamPayload.TYPE,
             OscilliteCannonBeamPayload.STREAM_CODEC,
             OscilliteCannonBeamPayloadHandler::handleDataOnMain
+        );
+
+        registrar.playToClient(
+            DensiteBlockOverloadPayload.TYPE,
+            DensiteBlockOverloadPayload.STREAM_CODEC,
+            DensiteBlockOverloadPayloadHandler::handleDataOnMain
         );
 
         registrar.playToServer(

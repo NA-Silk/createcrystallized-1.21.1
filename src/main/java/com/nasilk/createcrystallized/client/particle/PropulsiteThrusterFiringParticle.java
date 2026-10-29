@@ -20,7 +20,7 @@ public class PropulsiteThrusterFiringParticle extends SimpleAnimatedParticle {
         this.oRoll = this.random.nextFloat() * ((float)Math.PI * 2f); // Random particle rotation
         this.roll = this.oRoll; // Random particle rotation
 
-        // Explicit speeds induced by 0-count spawning
+        // Explicit speeds induced by 0-sampleCount spawning
         this.xd = xSpeed; // x starting speed
         this.yd = ySpeed; // y starting speed
         this.zd = zSpeed; // z starting speed

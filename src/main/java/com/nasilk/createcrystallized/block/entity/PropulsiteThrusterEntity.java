@@ -167,6 +167,18 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         if (oldAmplitude != amplitude) {
             this.setChanged();
             serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+            if (tail >= 16) {
+                serverLevel.sendParticles(
+                    PROPULSITE_OVERLOAD_DUST,
+                    worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d,
+                    8, 0.5d, 0.5d, 0.5d, 1.0d
+                );
+                serverLevel.playSound(
+                    null, pos,
+                    SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS,
+                    1.0f, 1.2f
+                );
+            }
         }
     }
 

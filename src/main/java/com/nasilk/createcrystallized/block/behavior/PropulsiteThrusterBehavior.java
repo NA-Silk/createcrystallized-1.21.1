@@ -12,11 +12,14 @@ import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import org.joml.Vector3f;
+
 import java.util.function.Predicate;
 
 // TODO Tune constants with config
@@ -41,12 +44,13 @@ public class PropulsiteThrusterBehavior {
     public static double NORM_STANDARD_DEVIATION; // Curve spread
     public static double NORM_MEAN;               // Curve middle
     public static double NORM_DENOMINATOR;        // Precomputed denominator
-    public static double FIRING_AMPLITUDE;         // How much total thrust is output over the length of the burst
+    public static double FIRING_AMPLITUDE;        // How much total thrust is output over the length of the burst
     public static double VELOCITY_THRESHOLD;
     public static final double[] NORM_CURVE = new double[FIRING_DURATION];
 
     // BFS constants
     public static final Direction[] DIRECTIONS = Direction.values();
+    public static final DustParticleOptions PROPULSITE_OVERLOAD_DUST = new DustParticleOptions(new Vector3f(0.788f, 0.722f, 0.498f),1.0f);
 
     // BFS constants (config)
     public static double CLUSTER_BONUS_SCALE;
@@ -61,7 +65,7 @@ public class PropulsiteThrusterBehavior {
     // Entity pushing constants (config)
     public static double MAX_ENTITY_KNOCKBACK;    // Maximum acceleration allowed in blocks per tick
     public static double MAX_PUSH_RANGE;          // Longitudinal effectiveness distance
-    public static double MAX_PUSH_RANGE_2;                 // Half longitudinal effectiveness distance
+    public static double MAX_PUSH_RANGE_2;        // Half longitudinal effectiveness distance
     public static double MAX_PUSH_RADIUS;         // Radial effectiveness distance
     public static double MAX_PUSH_RADIUS_SQUARED; // MAX_PUSH_RADIUS * MAX_PUSH_RADIUS; // Precomputed radial distance squared
     public static double PUSH_SCALE;              // Acceleration multiplier

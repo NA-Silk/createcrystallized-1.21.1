@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.joml.Vector3f;
 
@@ -34,6 +36,11 @@ public class DensiteBlockOverloadPayloadHandler {
                 OVERFLOW_DUST,
                 pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
                 0.2,0.2d,0.2d
+            );
+            clientLevel.playLocalSound(
+                pos,
+                SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,
+                1.0f, 0.5f, true
             );
         });
     }

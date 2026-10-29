@@ -26,7 +26,7 @@ Adds new fluids, blocks, and items inspired by *Create Aeronautics*' features, i
 4. Propulsite Flurry - Refined condensate with lightning quick flow. 
 5. Oscillite Suspension - Liquid sound? Very sensistive to additional noises. 
 
-Additional *Create* and *Create Aeronautics* compatible Contraptions are also added, including a new shovel for paddling your (air)ships! 
+Additional *Create* and *Create Aeronautics* compatible items are also added, including a new shovel for paddling your (air)ships! 
 
 
 ## Additional Resources:

@@ -1,7 +1,7 @@
 # Create Crystallized
-*Current Version: 0.0.1 (pre-release development)*
+*Current Version: 1.0.0*
 
-*Last README Update: 9/23/2026*
+*Last README Update: 10/29/2026*
 
 
 ## Mod Description:

@@ -139,18 +139,18 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // Search each direction around currentPos for Propulsite and other Propulsite Thruster blocks
             for (Direction direction : DIRECTIONS) {
-                // Exit BFS if queue is filled
-                if (tail >= 16) {
-                    overflow = true;
-                    break BFS;
-                }
-
                 // Get position and skip if unloaded || already counted
                 cache.neighborPos.setWithOffset(cache.currentPos, direction);
                 long neighborLong = cache.neighborPos.asLong();
                 if (cache.cluster.contains(neighborLong) ||
                     !serverLevel.isLoaded(cache.neighborPos)
                 ) continue;
+
+                // Exit BFS if queue is filled
+                if (tail >= 16) {
+                    overflow = true;
+                    break BFS;
+                }
 
                 // Update counts, cluster, and queue
                 BlockState neighborState = serverLevel.getBlockState(cache.neighborPos);

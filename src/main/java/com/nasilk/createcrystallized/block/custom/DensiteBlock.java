@@ -88,12 +88,6 @@ public class DensiteBlock extends Block {
 
             // Search each direction around currentPos for other Densite blocks
             for (Direction direction : DIRECTIONS) {
-                // Exit BFS if queue is filled
-                if (tail >= MAX_CLUSTER_SIZE) {
-                    overflow = true; // Angry Densite
-                    break BFS;
-                }
-
                 // Get position and skip if unloaded || already counted || not Densite
                 cache.neighborPos.setWithOffset(cache.currentPos, direction);
                 long neighborLong = cache.neighborPos.asLong();
@@ -101,6 +95,12 @@ public class DensiteBlock extends Block {
                     !level.isLoaded(cache.neighborPos) ||
                     !level.getBlockState(cache.neighborPos).is(this)
                 ) continue;
+
+                // Exit BFS if queue is filled
+                if (tail >= MAX_CLUSTER_SIZE) {
+                    overflow = true; // Angry Densite
+                    break BFS;
+                }
 
                 // Update cluster and queue
                 cache.cluster.add(neighborLong);

@@ -48,30 +48,31 @@ public class DensiteBlock extends Block {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         // Make sure the block was not just updated (i.e. powered)
-        if (!level.isClientSide && !state.is(oldState.getBlock())) {
+        if (level instanceof ServerLevel serverLevel && !state.is(oldState.getBlock())) {
+            clearTriggers(serverLevel, pos);
             level.scheduleTick(pos, this, 1);
         }
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block oldNeighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         // Make sure the new neighbor is not Densite (the new one will check for updates)
-        if (!level.isClientSide && !level.getBlockState(neighborPos).is(this)) {
+        if (level instanceof ServerLevel serverLevel && !level.getBlockState(neighborPos).is(this)) {
+            if (oldNeighborBlock == this && state.is(this)) clearTriggers(serverLevel, pos);
             level.scheduleTick(pos, this, 1);
         }
     }
 
-    @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    private void powerCluster(ServerLevel level, BlockPos pos, RandomSource random) {
         // Using specialized set and primitive array for long efficiency
         Cache cache = CACHE.get();
         LongOpenHashSet cluster = cache.set;
         long[] queue = cache.array;
 
         // Cache setup
-        cluster.clear(); // cluster must be manually emptied, queue will be overwritten
-        int head = 0; // Front of the queue, increment to dequeue
-        int tail = 0; // Back of the queue, increment to enqueue
+        cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
+        int head = 0;    // Front of the queue, increment to dequeue
+        int tail = 0;    // Back of the queue, increment to enqueue
 
         // Start fill
         long startLong = pos.asLong();
@@ -94,7 +95,10 @@ public class DensiteBlock extends Block {
                 // Get position and skip if unloaded || already counted || not Densite
                 BlockPos neighborPos = currentPos.relative(direction);
                 long neighborLong = neighborPos.asLong();
-                if (cluster.contains(neighborLong) || !level.isLoaded(neighborPos) || !level.getBlockState(neighborPos).is(this)) continue;
+                if (cluster.contains(neighborLong) ||
+                    !level.isLoaded(neighborPos) ||
+                    !level.getBlockState(neighborPos).is(this)
+                ) continue;
 
                 // Update cluster and queue if space is available, else exit BFS
                 if (tail == MAX_CLUSTER_SIZE) {
@@ -108,12 +112,73 @@ public class DensiteBlock extends Block {
 
         // Run overflow effects and terminate tick
         if  (overflow) {
-            applyOverflow(level, cache, tail, random, pos);
+            // Iterate over cluster to see if overflow has already triggered
+            boolean triggered = false;
+            for (int i = 0; i < tail; i++) {
+                BlockState currentState = level.getBlockState(BlockPos.of(queue[i]));
+                if (currentState.is(this) && currentState.getValue(TRIGGERED)) {
+                    triggered = true;
+                    break;
+                }
+            }
+            applyOverflow(level, cache, tail, random, pos, triggered);
             return;
         }
 
         // Apply maximum power to the cluster
-        applyMaxPower(level, cache, tail, maxPower);
+        for (int i = 0; i < tail; i++) setStateAndUpdate(level, BlockPos.of(queue[i]), maxPower, false);
+    }
+
+    private void clearTriggers(ServerLevel level, BlockPos pos) {
+        // Using specialized set and primitive array for long efficiency
+        Cache cache = CACHE.get();
+        LongOpenHashSet cluster = cache.set;
+        long[] queue = cache.array;
+
+        // Cache setup
+        cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
+        int head = 0;    // Front of the queue, increment to dequeue
+        int tail = 0;    // Back of the queue, increment to enqueue
+
+        // Start fill
+        long startLong = pos.asLong();
+        cluster.add(startLong);
+        queue[tail++] = startLong; // Enqueue
+
+        // Perform breadth-first search (BFS) on cluster blocks and reset trigger state
+        BFS:
+        while (head < tail) {
+            // Dequeue a block position
+            BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
+
+            // Search each direction around currentPos for other Densite blocks
+            for (Direction direction : DIRECTIONS) {
+                // Get position and skip if unloaded || already counted || not Densite
+                BlockPos neighborPos = currentPos.relative(direction);
+                long neighborLong = neighborPos.asLong();
+                if (cluster.contains(neighborLong) ||
+                    !level.isLoaded(neighborPos) ||
+                    !level.getBlockState(neighborPos).is(this)
+                ) continue;
+
+                // Update cluster and queue if space is available, else exit BFS
+                if (tail == MAX_CLUSTER_SIZE) break BFS;
+                cluster.add(neighborLong);
+                queue[tail++] = neighborLong; // Enqueue
+            }
+        }
+
+        // Iterate over cluster to deactivate triggers
+        for (int i = 0; i < tail; i++) {
+            BlockPos currentPos = BlockPos.of(queue[i]);
+            BlockState currentState = level.getBlockState(BlockPos.of(queue[i]));
+            if (currentState.is(this) && currentState.getValue(TRIGGERED)) level.setBlock(currentPos, currentState.setValue(TRIGGERED, false), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        powerCluster(level, pos, random);
     }
 
     private int getExternalPower(ServerLevel level, BlockPos pos) {
@@ -130,19 +195,24 @@ public class DensiteBlock extends Block {
         return maxPower;
     }
 
-    private void applyOverflow(ServerLevel level, Cache cache, int tail, RandomSource random, BlockPos pos) {
+    private void applyOverflow(ServerLevel level, Cache cache, int tail, RandomSource random, BlockPos pos, boolean triggered) {
         // Cache setup
         int boundaryCount = 0;
         int sampleCount = 0;
         long[] queue = cache.array;
 
         // Iterate over queue searching for boundaries
-        long[] boundarySamples = new long[MAX_BOUNDARY_SAMPLES];
+        long[] boundarySamples = triggered ? null : new long[MAX_BOUNDARY_SAMPLES];
         for (int i = 0; i < tail; i++) {
             // Set Densite power to zero
-            long currentLong = queue[i];
-            BlockPos currentPos = BlockPos.of(currentLong);
-            setPowerAndUpdate(level, currentPos, 0);
+            BlockPos currentPos = BlockPos.of(queue[i]);
+            BlockState currentState = level.getBlockState(currentPos);
+
+            // Update trigger
+            setStateAndUpdate(level, currentPos, 0, currentState.is(this) && !currentState.getValue(TRIGGERED));
+
+            // Skipped the boundary check if running from a triggered cluster
+            if (triggered) continue;
 
             // Check neighbors for air
             for (Direction direction : DIRECTIONS) {
@@ -160,6 +230,7 @@ public class DensiteBlock extends Block {
                 }
             }
         }
+        if (triggered) return;
 
         // Send particles
         DensiteBlockOverloadPayload payload = new DensiteBlockOverloadPayload(
@@ -177,21 +248,15 @@ public class DensiteBlock extends Block {
         AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
     }
 
-    private void applyMaxPower(Level level, Cache cache, int tail, int maxPower) {
-        // Cache setup
-        long[] queue = cache.array;
-
-        // Iterate over queue applying new power
-        for (int i = 0; i < tail; i++) setPowerAndUpdate(level, BlockPos.of(queue[i]), maxPower);
-    }
-
-    private void setPowerAndUpdate(Level level, BlockPos pos, int power) {
-        // Safety check: still Densite & power level is actually different
+    private void setStateAndUpdate(ServerLevel level, BlockPos pos, int power, boolean disableTrigger) {
+        // Safety check: still Densite
         BlockState state = level.getBlockState(pos);
-        if (!state.is(this) ||
-            state.getValue(POWER) == power ||
-            !level.setBlock(pos, state.setValue(POWER, power), Block.UPDATE_CLIENTS)
-        ) return;
+        if (!state.is(this)) return;
+
+        // Apply state changes
+        if (state.getValue(POWER) != power) state = state.setValue(POWER, power);
+        if (disableTrigger) state = state.setValue(TRIGGERED, true);
+        if (!level.setBlock(pos, state, Block.UPDATE_CLIENTS)) return;
 
         // Manually update loaded neighbors (more careful than setBlockAndUpdate() / flag 3) (only needed for the comparator mixin)
         for (Direction direction : DIRECTIONS) {

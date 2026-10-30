@@ -8,12 +8,22 @@
     "createcrystallized:chora_casing_oscillite",
     "createcrystallized:chora_casing_levitite",
 
+    "createcrystallized:encased_densite_block",
+    "createcrystallized:encased_levitite_block",
+    "createcrystallized:encased_oscillite_block",
+    "createcrystallized:encased_propulsite_block",
+
     "createcrystallized:echo_crystal_block",
     "createcrystallized:budding_echo_crystal",
     "createcrystallized:echo_crystal_cluster",
     "createcrystallized:large_echo_crystal_bud",
     "createcrystallized:medium_echo_crystal_bud",
     "createcrystallized:small_echo_crystal_bud",
+
+    "createcrystallized:propulsite_crystal",
+    "createcrystallized:levitite_crystal",
+    "createcrystallized:densite_crystal",
+    "createcrystallized:oscillite_crystal",
 
     "createcrystallized:aerolite_block",
     "createcrystallized:aerolite_ore",

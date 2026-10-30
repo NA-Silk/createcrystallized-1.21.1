@@ -134,4 +134,5 @@ public class CreateCrystallizedClient {
 
     // @SubscribeEvent lets the Event Bus discover methods to call
     // @EventBusSubscriber automatically registers all static methods in the class annotated with @SubscribeEvent
+    // @4amPeanutButterSandwhich makes me not wanna eat my monitor
 }

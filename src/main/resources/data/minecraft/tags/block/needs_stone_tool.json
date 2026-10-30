@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "createcrystallized:chora_block",
+    "createcrystallized:chora_casing",
+    "createcrystallized:chora_casing_densite",
+    "createcrystallized:chora_casing_propulsite",
+    "createcrystallized:chora_casing_oscillite",
+    "createcrystallized:chora_casing_levitite",
+
+    "createcrystallized:aerolite_block",
+
+    "createcrystallized:propulsite_thruster",
+    "createcrystallized:oscillite_cannon",
+    "createcrystallized:densite_well"
+  ]
+}

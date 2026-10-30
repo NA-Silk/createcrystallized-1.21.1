@@ -64,8 +64,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         public final Vector3d thrusterForce =  new Vector3d();
 
         // BFS
-        final long[] queue = new long[16];
         final LongOpenHashSet cluster = new LongOpenHashSet(16);
+        final long[] queue = new long[16];
         final BlockPos.MutableBlockPos currentPos = new BlockPos.MutableBlockPos();
         final BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
@@ -131,6 +131,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Perform breadth-first search (BFS) on cluster blocks for block counts
         int propulsiteCount = 0;
         int thrusterCount = 1;
+        boolean overflow = false;
         BFS:
         while (head < tail) {
             // Dequeue a block position
@@ -138,13 +139,18 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
             // Search each direction around currentPos for Propulsite and other Propulsite Thruster blocks
             for (Direction direction : DIRECTIONS) {
-                // Exit loop if queue is filled
-                if (tail >= 16) break BFS;
+                // Exit BFS if queue is filled
+                if (tail >= 16) {
+                    overflow = true;
+                    break BFS;
+                }
 
                 // Get position and skip if unloaded || already counted
                 cache.neighborPos.setWithOffset(cache.currentPos, direction);
                 long neighborLong = cache.neighborPos.asLong();
-                if (cache.cluster.contains(neighborLong) || !serverLevel.isLoaded(cache.neighborPos)) continue;
+                if (cache.cluster.contains(neighborLong) ||
+                    !serverLevel.isLoaded(cache.neighborPos)
+                ) continue;
 
                 // Update counts, cluster, and queue
                 BlockState neighborState = serverLevel.getBlockState(cache.neighborPos);
@@ -156,28 +162,18 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             }
         }
 
-        // Set updated amplitude
+        // Set updated amplitude and maxThrust
         double oldAmplitude = amplitude;
         amplitude = (1.0d + (CLUSTER_BONUS_SCALE * propulsiteCount) / thrusterCount) * FIRING_AMPLITUDE;
-
-        // Recalculate maxThrust whenever amplitude components change
         this.setMaxThrust((Double.isNaN(NORM_DENOMINATOR) || NORM_DENOMINATOR == 0) ? 0.0d : amplitude / NORM_DENOMINATOR);
 
         // Only trigger saves and network packets if the cluster actually changed
         if (oldAmplitude != amplitude) {
             this.setChanged();
             serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-            if (tail >= 16) {
-                serverLevel.sendParticles(
-                    PROPULSITE_OVERLOAD_DUST,
-                    worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d,
-                    8, 0.5d, 0.5d, 0.5d, 1.0d
-                );
-                serverLevel.playSound(
-                    null, pos,
-                    SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS,
-                    1.0f, 1.2f
-                );
+            if (overflow) {
+                serverLevel.sendParticles(PROPULSITE_OVERLOAD_DUST, worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d, 8, 0.5d, 0.5d, 0.5d, 1.0d);
+                serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1.0f, 1.2f);
             }
         }
     }

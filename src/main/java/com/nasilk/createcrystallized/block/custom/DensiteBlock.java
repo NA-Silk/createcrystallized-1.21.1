@@ -28,8 +28,10 @@ public class DensiteBlock extends Block {
 
     // BFS cache
     private static class Cache {
-        final LongOpenHashSet set = new LongOpenHashSet(MAX_CLUSTER_SIZE);
-        final long[] array = new long[MAX_CLUSTER_SIZE];
+        final LongOpenHashSet cluster = new LongOpenHashSet(MAX_CLUSTER_SIZE);
+        final long[] queue = new long[MAX_CLUSTER_SIZE];
+        final BlockPos.MutableBlockPos currentPos = new BlockPos.MutableBlockPos();
+        final BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
@@ -64,49 +66,45 @@ public class DensiteBlock extends Block {
     }
 
     private void powerCluster(ServerLevel level, BlockPos pos, RandomSource random) {
-        // Using specialized set and primitive array for long efficiency
-        Cache cache = CACHE.get();
-        LongOpenHashSet cluster = cache.set;
-        long[] queue = cache.array;
-
         // Cache setup
-        cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
+        Cache cache = CACHE.get();
+        cache.cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
         int head = 0;    // Front of the queue, increment to dequeue
         int tail = 0;    // Back of the queue, increment to enqueue
 
         // Start fill
         long startLong = pos.asLong();
-        cluster.add(startLong);
-        queue[tail++] = startLong; // Enqueue
+        cache.cluster.add(startLong);
+        cache.queue[tail++] = startLong; // Enqueue
 
         // Perform breadth-first search (BFS) on cluster blocks for maximum power
         int maxPower = 0;
         boolean overflow = false;
         BFS:
         while (head < tail) {
-            // Dequeue a block position
-            BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
-
-            // Update maxPower
-            if (maxPower < 15) maxPower = Math.max(maxPower, getExternalPower(level, currentPos));
+            // Dequeue a block position and update maxPower
+            cache.currentPos.set(cache.queue[head++]); // Dequeue
+            if (maxPower < 15) maxPower = Math.max(maxPower, getExternalPower(level, cache.currentPos, cache.neighborPos));
 
             // Search each direction around currentPos for other Densite blocks
             for (Direction direction : DIRECTIONS) {
-                // Get position and skip if unloaded || already counted || not Densite
-                BlockPos neighborPos = currentPos.relative(direction);
-                long neighborLong = neighborPos.asLong();
-                if (cluster.contains(neighborLong) ||
-                    !level.isLoaded(neighborPos) ||
-                    !level.getBlockState(neighborPos).is(this)
-                ) continue;
-
-                // Update cluster and queue if space is available, else exit BFS
-                if (tail == MAX_CLUSTER_SIZE) {
+                // Exit BFS if queue is filled
+                if (tail >= MAX_CLUSTER_SIZE) {
                     overflow = true; // Angry Densite
                     break BFS;
                 }
-                cluster.add(neighborLong);
-                queue[tail++] = neighborLong; // Enqueue
+
+                // Get position and skip if unloaded || already counted || not Densite
+                cache.neighborPos.setWithOffset(cache.currentPos, direction);
+                long neighborLong = cache.neighborPos.asLong();
+                if (cache.cluster.contains(neighborLong) ||
+                    !level.isLoaded(cache.neighborPos) ||
+                    !level.getBlockState(cache.neighborPos).is(this)
+                ) continue;
+
+                // Update cluster and queue
+                cache.cluster.add(neighborLong);
+                cache.queue[tail++] = neighborLong; // Enqueue
             }
         }
 
@@ -115,7 +113,7 @@ public class DensiteBlock extends Block {
             // Iterate over cluster to see if overflow has already triggered
             boolean triggered = false;
             for (int i = 0; i < tail; i++) {
-                BlockState currentState = level.getBlockState(BlockPos.of(queue[i]));
+                BlockState currentState = level.getBlockState(cache.currentPos.set(cache.queue[i]));
                 if (currentState.is(this) && currentState.getValue(TRIGGERED)) {
                     triggered = true;
                     break;
@@ -126,53 +124,51 @@ public class DensiteBlock extends Block {
         }
 
         // Apply maximum power to the cluster
-        for (int i = 0; i < tail; i++) setStateAndUpdate(level, BlockPos.of(queue[i]), maxPower, false);
+        for (int i = 0; i < tail; i++) setStateAndUpdate(level, cache.currentPos.set(cache.queue[i]), cache.neighborPos, maxPower, false);
     }
 
     private void clearTriggers(ServerLevel level, BlockPos pos) {
-        // Using specialized set and primitive array for long efficiency
-        Cache cache = CACHE.get();
-        LongOpenHashSet cluster = cache.set;
-        long[] queue = cache.array;
-
         // Cache setup
-        cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
+        Cache cache = CACHE.get();
+        cache.cluster.clear(); // Cluster must be manually emptied, queue will be overwritten
         int head = 0;    // Front of the queue, increment to dequeue
         int tail = 0;    // Back of the queue, increment to enqueue
 
         // Start fill
         long startLong = pos.asLong();
-        cluster.add(startLong);
-        queue[tail++] = startLong; // Enqueue
+        cache.cluster.add(startLong);
+        cache.queue[tail++] = startLong; // Enqueue
 
         // Perform breadth-first search (BFS) on cluster blocks and reset trigger state
         BFS:
         while (head < tail) {
             // Dequeue a block position
-            BlockPos currentPos = BlockPos.of(queue[head++]); // Dequeue
+            cache.currentPos.set(cache.queue[head++]); // Dequeue
 
             // Search each direction around currentPos for other Densite blocks
             for (Direction direction : DIRECTIONS) {
+                // Exit BFS if queue is filled
+                if (tail >= MAX_CLUSTER_SIZE) break BFS;
+
                 // Get position and skip if unloaded || already counted || not Densite
-                BlockPos neighborPos = currentPos.relative(direction);
-                long neighborLong = neighborPos.asLong();
-                if (cluster.contains(neighborLong) ||
-                    !level.isLoaded(neighborPos) ||
-                    !level.getBlockState(neighborPos).is(this)
+                cache.neighborPos.setWithOffset(cache.currentPos, direction);
+                long neighborLong = cache.neighborPos.asLong();
+                if (cache.cluster.contains(neighborLong) ||
+                    !level.isLoaded(cache.neighborPos) ||
+                    !level.getBlockState(cache.neighborPos).is(this)
                 ) continue;
 
                 // Update cluster and queue if space is available, else exit BFS
-                if (tail == MAX_CLUSTER_SIZE) break BFS;
-                cluster.add(neighborLong);
-                queue[tail++] = neighborLong; // Enqueue
+                cache.cluster.add(neighborLong);
+                cache.queue[tail++] = neighborLong; // Enqueue
             }
         }
 
         // Iterate over cluster to deactivate triggers
         for (int i = 0; i < tail; i++) {
-            BlockPos currentPos = BlockPos.of(queue[i]);
-            BlockState currentState = level.getBlockState(BlockPos.of(queue[i]));
-            if (currentState.is(this) && currentState.getValue(TRIGGERED)) level.setBlock(currentPos, currentState.setValue(TRIGGERED, false), Block.UPDATE_CLIENTS);
+            cache.currentPos.set(cache.queue[i]);
+            BlockState currentState = level.getBlockState(cache.currentPos);
+            if (currentState.is(this) && currentState.getValue(TRIGGERED)) level.setBlock(cache.currentPos, currentState.setValue(TRIGGERED, false), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -181,11 +177,11 @@ public class DensiteBlock extends Block {
         powerCluster(level, pos, random);
     }
 
-    private int getExternalPower(ServerLevel level, BlockPos pos) {
+    private int getExternalPower(ServerLevel level, BlockPos pos, BlockPos.MutableBlockPos neighborPos) {
         // Search each direction for maximum power
         int maxPower = 0;
         for (Direction direction : DIRECTIONS) {
-            BlockPos neighborPos = pos.relative(direction);
+            neighborPos.setWithOffset(pos, direction);
 
             // Update maxPower if the neighbor block is loaded and not Densite
             if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
@@ -199,32 +195,31 @@ public class DensiteBlock extends Block {
         // Cache setup
         int boundaryCount = 0;
         int sampleCount = 0;
-        long[] queue = cache.array;
 
         // Iterate over queue searching for boundaries
         long[] boundarySamples = triggered ? null : new long[MAX_BOUNDARY_SAMPLES];
         for (int i = 0; i < tail; i++) {
             // Set Densite power to zero
-            BlockPos currentPos = BlockPos.of(queue[i]);
-            BlockState currentState = level.getBlockState(currentPos);
+            cache.currentPos.set(cache.queue[i]);
+            BlockState currentState = level.getBlockState(cache.currentPos);
 
             // Update trigger
-            setStateAndUpdate(level, currentPos, 0, currentState.is(this) && !currentState.getValue(TRIGGERED));
+            setStateAndUpdate(level, cache.currentPos, cache.neighborPos, 0, currentState.is(this) && !currentState.getValue(TRIGGERED));
 
             // Skipped the boundary check if running from a triggered cluster
             if (triggered) continue;
 
             // Check neighbors for air
             for (Direction direction : DIRECTIONS) {
-                BlockPos neighborPos = currentPos.relative(direction);
+                cache.neighborPos.setWithOffset(cache.currentPos, direction);
 
                 // Store boundary samples, overwriting randomly
-                if (level.isLoaded(neighborPos) && level.getBlockState(neighborPos).isAir()) {
+                if (level.isLoaded(cache.neighborPos) && level.getBlockState(cache.neighborPos).isAir()) {
                     boundaryCount++;
-                    if (sampleCount < MAX_BOUNDARY_SAMPLES) boundarySamples[sampleCount++] = neighborPos.asLong();
+                    if (sampleCount < MAX_BOUNDARY_SAMPLES) boundarySamples[sampleCount++] = cache.neighborPos.asLong();
                     else {
                         int index = random.nextInt(boundaryCount);
-                        if (index < MAX_BOUNDARY_SAMPLES) boundarySamples[index] = neighborPos.asLong();
+                        if (index < MAX_BOUNDARY_SAMPLES) boundarySamples[index] = cache.neighborPos.asLong();
                     }
                     break;
                 }
@@ -248,7 +243,7 @@ public class DensiteBlock extends Block {
         AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
     }
 
-    private void setStateAndUpdate(ServerLevel level, BlockPos pos, int power, boolean disableTrigger) {
+    private void setStateAndUpdate(ServerLevel level, BlockPos pos, BlockPos.MutableBlockPos neighborPos, int power, boolean disableTrigger) {
         // Safety check: still Densite
         BlockState state = level.getBlockState(pos);
         if (!state.is(this)) return;
@@ -260,7 +255,7 @@ public class DensiteBlock extends Block {
 
         // Manually update loaded neighbors (more careful than setBlockAndUpdate() / flag 3) (only needed for the comparator mixin)
         for (Direction direction : DIRECTIONS) {
-            BlockPos neighborPos = pos.relative(direction);
+            neighborPos.setWithOffset(pos, direction);
             if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
                 level.neighborChanged(neighborPos, this, pos);
             }

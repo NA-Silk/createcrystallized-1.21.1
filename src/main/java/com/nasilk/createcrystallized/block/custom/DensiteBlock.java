@@ -177,7 +177,7 @@ public class DensiteBlock extends Block {
         powerCluster(level, pos, random);
     }
 
-    private int getExternalPower(ServerLevel level, BlockPos pos, BlockPos.MutableBlockPos neighborPos) {
+    private int getExternalPower(ServerLevel level, BlockPos.MutableBlockPos pos, BlockPos.MutableBlockPos neighborPos) {
         // Search each direction for maximum power
         int maxPower = 0;
         for (Direction direction : DIRECTIONS) {
@@ -243,7 +243,7 @@ public class DensiteBlock extends Block {
         AdvancementHelper.hitEmWithTheOlSwitcheroo(level, pos, "angry_densite");
     }
 
-    private void setStateAndUpdate(ServerLevel level, BlockPos pos, BlockPos.MutableBlockPos neighborPos, int power, boolean disableTrigger) {
+    private void setStateAndUpdate(ServerLevel level, BlockPos.MutableBlockPos pos, BlockPos.MutableBlockPos neighborPos, int power, boolean disableTrigger) {
         // Safety check: still Densite
         BlockState state = level.getBlockState(pos);
         if (!state.is(this)) return;

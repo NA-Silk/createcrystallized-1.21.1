@@ -5,6 +5,7 @@ import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import com.nasilk.createcrystallized.block.custom.PropulsiteThrusterBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
+import com.nasilk.createcrystallized.util.helper.BFSHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -116,51 +117,30 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
 
     /// FIRING
-    public void updateAmplitude(ServerLevel serverLevel, BlockPos pos) {
+    public void updateAmplitude(ServerLevel level, BlockPos pos) {
         // Cache setup
         Cache cache = CACHE.get(); // Get fresh cache since this method may be called from outside this class
-        cache.cluster.clear(); // cluster must be manually emptied, queue will be overwritten
-        int head = 0; // Front of the queue, increment to dequeue
-        int tail = 0; // Back of the queue, increment to enqueue
 
-        // Start fill
-        long startLong = pos.asLong();
-        cache.cluster.add(startLong);
-        cache.queue[tail++] = startLong; // Enqueue
+        // Run BFS
+        final int[] counts = {0, 1};
+        BFSHelper.BFSResult result = BFSHelper.run(
+                cache.cluster, cache.queue, 16,
+                (currentPos, neighborPos) -> {},
+                (neighborPos) -> {
+                    // Check if loaded
+                    BlockState neighborState = level.getBlockState(neighborPos);
+                    if (!level.isLoaded(neighborPos)) return false;
 
-        // Perform breadth-first search (BFS) on cluster blocks for block counts
-        int propulsiteCount = 0;
-        int thrusterCount = 1;
-        boolean overflow = false;
-        BFS:
-        while (head < tail) {
-            // Dequeue a block position
-            cache.currentPos.set(cache.queue[head++]); // Dequeue
-
-            // Search each direction around currentPos for Propulsite and other Propulsite Thruster blocks
-            for (Direction direction : DIRECTIONS) {
-                // Get position and skip if unloaded || already counted
-                cache.neighborPos.setWithOffset(cache.currentPos, direction);
-                long neighborLong = cache.neighborPos.asLong();
-                if (cache.cluster.contains(neighborLong) ||
-                    !serverLevel.isLoaded(cache.neighborPos)
-                ) continue;
-
-                // Exit BFS if queue is filled
-                if (tail >= 16) {
-                    overflow = true;
-                    break BFS;
-                }
-
-                // Update counts, cluster, and queue
-                BlockState neighborState = serverLevel.getBlockState(cache.neighborPos);
-                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) propulsiteCount++;
-                else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) thrusterCount++;
-                else continue;
-                cache.cluster.add(neighborLong);
-                cache.queue[tail++] = neighborLong; // Enqueue
-            }
-        }
+                    // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster
+                    if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0]++;
+                    else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) counts[1]++;
+                    else return false;
+                    return true;
+                },
+                pos, cache.currentPos, cache.neighborPos
+        );
+        int propulsiteCount = counts[0];
+        int thrusterCount = counts[1];
 
         // Set updated amplitude and maxThrust
         double oldAmplitude = amplitude;
@@ -170,10 +150,10 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Only trigger saves and network packets if the cluster actually changed
         if (oldAmplitude != amplitude) {
             this.setChanged();
-            serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-            if (overflow) {
-                serverLevel.sendParticles(PROPULSITE_OVERLOAD_DUST, worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d, 8, 0.5d, 0.5d, 0.5d, 1.0d);
-                serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1.0f, 1.2f);
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+            if (result.overflow()) {
+                level.sendParticles(PROPULSITE_OVERLOAD_DUST, worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d, 8, 0.5d, 0.5d, 0.5d, 1.0d);
+                level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1.0f, 1.2f);
             }
         }
     }

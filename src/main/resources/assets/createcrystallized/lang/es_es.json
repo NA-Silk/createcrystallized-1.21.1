@@ -100,7 +100,7 @@
   "block.createcrystallized.propulsite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.propulsite_block.tooltip.condition1": "Al colocarlo sobre Simulated Contraptions",
   "block.createcrystallized.propulsite_block.tooltip.behaviour1": "_reinforces_ movimiento a bajas velocidades. Ingrávido.",
-  "block.createcrystallized.propulsite_block.tooltip.condition2": Cuando se coloca junto a Propulsite Thrusters",
+  "block.createcrystallized.propulsite_block.tooltip.condition2": "Cuando se coloca junto a Propulsite Thrusters",
   "block.createcrystallized.propulsite_block.tooltip.behaviour2": "_Aumentos_ potencia de empuje adicional de hasta 16 bloques.",
 
   "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
@@ -119,7 +119,7 @@
 
   "item.createcrystallized.creative_fluid_eraser.tooltip.summary": "_DEV ITEM_ Elimina un tipo de líquido en un radio amplio.",
   "item.createcrystallized.creative_fluid_eraser.tooltip.condition1": "R-clic en el fluido",
-  "item.createcrystallized.creative_fluid_eraser.tooltip.behaviour1": Elimina el fluido de _only that type_ in a large radius.",
+  "item.createcrystallized.creative_fluid_eraser.tooltip.behaviour1": "Elimina el fluido de _only that type_ in a large radius.",
 
   "item.createcrystallized.creative_bag_of_longs.tooltip.summary": "_DEV ITEM_ Cambia los estados de _Bloques de cristal mecanizados_.",
   "item.createcrystallized.creative_bag_of_longs.tooltip.condition1": "R-clic en el bloque de cristal mecanizado",

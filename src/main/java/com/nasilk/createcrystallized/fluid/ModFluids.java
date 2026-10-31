@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import org.joml.Vector3f;
 import java.util.List;
@@ -49,6 +50,8 @@ public class ModFluids {
         (properties) -> new TransformBaseFlowingFluid.Flowing(properties, List.of(DENSITE_EMULSION_SETTINGS_1))
     ).properties(properties ->
         properties.lightLevel(2).viscosity(5000).density(5000).canSwim(false)
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)
+            .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
     ).fluidProperties(properties ->
         properties.slopeFindDistance(1).levelDecreasePerBlock(1).tickRate(25)
     ).source(properties ->
@@ -65,7 +68,7 @@ public class ModFluids {
             new BaseFluidType(stillTexture, flowTexture, null, 0xAAFFFFFF, new Vector3f(1.0f, 0.867f, 0.729f), properties),
         (properties) -> new UpwardBaseFlowingFluid.Flowing(properties, DRIFT_CONDENSATE_SETTINGS)
     ).properties(properties ->
-        properties.lightLevel(6).viscosity(200).density(-1000).motionScale(0.002D).temperature(250).canSwim(false)
+        properties.lightLevel(6).viscosity(200).density(-1000).motionScale(0.002d).temperature(250).canSwim(false)
     ).source(properties ->
         new UpwardBaseFlowingFluid.Source(properties, DRIFT_CONDENSATE_SETTINGS)
     ).block().build().bucket().build().register();
@@ -80,14 +83,13 @@ public class ModFluids {
             new BaseFluidType(stillTexture, flowTexture, null, 0xEEFFFFFF, new Vector3f(1.0f, 0.867f, 0.729f), properties),
         (properties) -> new TransformBaseFlowingFluid.Flowing(properties, List.of(PROPULSITE_FLURRY_SETTINGS))
     ).properties(properties ->
-        properties.lightLevel(8).viscosity(300).density(0).motionScale(0.03D).temperature(250).canSwim(false)
+        properties.lightLevel(8).viscosity(300).density(0).motionScale(0.03d).temperature(250).canSwim(false)
     ).fluidProperties(properties ->
         properties.slopeFindDistance(8).levelDecreasePerBlock(1).tickRate(2)
     ).source(properties ->
         new TransformBaseFlowingFluid.Source(properties, List.of(PROPULSITE_FLURRY_SETTINGS))
     ).block().build().bucket().build().register();
 
-    // TODO Tweak values
     /// OSCILLITE SUSPENSION
     public static final FluidTransformSettings OSCILLITE_SUSPENSION_SETTINGS = new FluidTransformSettings(ModBlocks.OSCILLITE_BLOCK, 0.01f, 15, new FluidTransformSettings.YRange(-64, 319), false, false, false, false, true, Set.of(), Set.of(Level.OVERWORLD, Level.NETHER, Level.END), new FluidTransformSettings.LightningSettings(false, null), new FluidTransformSettings.VibrationSettings(true, 6, 10), Optional.of(() -> ParticleTypes.SCULK_SOUL), Optional.of(() -> SoundEvents.GLASS_PLACE), true, "a_stable_arrangement");
     public static final FluidEntry<TransformBaseFlowingFluid.Flowing> OSCILLITE_SUSPENSION = REGISTRATE.fluid(
@@ -98,9 +100,11 @@ public class ModFluids {
             new BaseFluidType(stillTexture, flowTexture, null, 0xEEFFFFFF, new Vector3f(0.271f, 0.804f, 1.0f), properties),
         (properties) -> new TransformBaseFlowingFluid.Flowing(properties, List.of(OSCILLITE_SUSPENSION_SETTINGS))
     ).properties(properties ->
-        properties.lightLevel(8).viscosity(300).density(0).motionScale(0.03D).temperature(250).canSwim(false)
+        properties.lightLevel(4).viscosity(1500).density(1500).canSwim(false)
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)
+            .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
     ).fluidProperties(properties ->
-        properties.slopeFindDistance(8).levelDecreasePerBlock(1).tickRate(2)
+        properties.slopeFindDistance(4).levelDecreasePerBlock(1).tickRate(8)
     ).source(properties ->
         new TransformBaseFlowingFluid.Source(properties, List.of(OSCILLITE_SUSPENSION_SETTINGS))
     ).block().build().bucket().build().register();
@@ -117,7 +121,7 @@ public class ModFluids {
         String suffix = source ? "_still" : "_flow";
         return CreateCrystallized.getRL("fluid/" + name + suffix);
     }
-// TODO nick please god give sounds to the fluids, and their buckets spilling/scooping, along with changing the actual properties to anything that make some sense, looking at these gives me a headache. everything can use the lava sounds, but give the slurry/drift water sounds.
+
     public static void init() {
         CreateCrystallized.LOGGER.info("Fluids initialized");
     }

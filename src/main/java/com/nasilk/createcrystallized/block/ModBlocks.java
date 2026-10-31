@@ -33,7 +33,7 @@ public class ModBlocks {
         (properties) -> new DensiteBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
             .isRedstoneConductor((state, level, pos) -> true)
-            .strength(2.0f, 9.0f)
+            .strength(7.0f, 20.0f)
             .jumpFactor(0.5f)
             .friction(0.8f)
             .lightLevel(state -> state.getValue(DensiteBlock.POWER))
@@ -57,8 +57,8 @@ public class ModBlocks {
         (properties) -> new PropulsiteBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
-            .lightLevel(state -> 6)
+            .strength(7.0f, 20.0f)
+            .lightLevel(state -> 10)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -81,8 +81,8 @@ public class ModBlocks {
         (properties) -> new OscilliteBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
-            .lightLevel(state -> 6)
+            .strength(7.0f, 20.0f)
+            .lightLevel(state -> 10)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -106,7 +106,7 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
             .isRedstoneConductor((state, level, pos) -> true)
-            .strength(1.0f, 9.0f)
+            .strength(5.0f, 20.0f)
             .lightLevel(state -> 4)
             .hasPostProcess((state, pos, level) -> true)
             .emissiveRendering((state, pos, level) -> true)
@@ -132,8 +132,8 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
-            .lightLevel(state -> 4)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -160,8 +160,8 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
-            .lightLevel(state -> 4)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -188,8 +188,8 @@ public class ModBlocks {
         (properties) -> new EncasedBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
-            .lightLevel(state -> 4)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -219,9 +219,9 @@ public class ModBlocks {
         "densite_well",
         (properties) -> new DensiteWellBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
-            .strength(1.0f, 9.0f)
+            .strength(3.0f, 6.0f)
             .noOcclusion()
-            .lightLevel(state -> 4)
+            .lightLevel(state -> state.getValue(DensiteWellBlock.POWER))
             .isValidSpawn((state, level, pos, value) -> false)
             .isRedstoneConductor((state, level, pos) -> false)
             .isSuffocating((state, level, pos) -> false)
@@ -245,7 +245,7 @@ public class ModBlocks {
         (properties) -> new PropulsiteThrusterBlock(properties
             .mapColor(MapColor.COLOR_YELLOW)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
+            .strength(3.0f, 6.0f)
             .noOcclusion()
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
@@ -269,7 +269,7 @@ public class ModBlocks {
         (properties) -> new OscilliteCannonBlock(properties
             .mapColor(MapColor.COLOR_BLUE)
             .instrument(NoteBlockInstrument.HAT)
-            .strength(0.3f)
+            .strength(3.0f, 6.0f)
             .noOcclusion()
             .lightLevel(state -> 6)
             .isValidSpawn((state, level, pos, value) -> false)
@@ -296,7 +296,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(2.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
@@ -310,7 +310,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(2.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
@@ -324,7 +324,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(2.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
@@ -338,7 +338,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(2.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
@@ -352,7 +352,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(2.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
@@ -448,7 +448,7 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.BASS)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
-            .strength(0.9f)
+            .strength(0.9f, 1000)
             .sound(new DeferredSoundType(
                 1.0f, 1.0f,
                 () -> SoundEvents.STONE_BREAK,
@@ -532,7 +532,7 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_GRAY)
             .instrument(NoteBlockInstrument.HAT)
             .requiresCorrectToolForDrops()
-            .strength(3.0f)
+            .strength(4.5f, 3.0f)
             .isValidSpawn((state, level, pos, value) -> true)
             .isRedstoneConductor((state, level, pos) -> true)
             .isSuffocating((state, level, pos) -> true)

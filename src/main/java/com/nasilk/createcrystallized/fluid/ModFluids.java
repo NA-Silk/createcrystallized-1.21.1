@@ -117,7 +117,7 @@ public class ModFluids {
         String suffix = source ? "_still" : "_flow";
         return CreateCrystallized.getRL("fluid/" + name + suffix);
     }
-
+// TODO nick please god give sounds to the fluids, and their buckets spilling/scooping, along with changing the actual properties to anything that make some sense, looking at these gives me a headache. everything can use the lava sounds, but give the slurry/drift water sounds.
     public static void init() {
         CreateCrystallized.LOGGER.info("Fluids initialized");
     }

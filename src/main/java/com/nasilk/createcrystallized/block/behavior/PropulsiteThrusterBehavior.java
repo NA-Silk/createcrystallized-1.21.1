@@ -11,7 +11,6 @@ import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +18,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import org.joml.Vector3f;
-
 import java.util.function.Predicate;
 
 // TODO Tune constants with config
@@ -49,7 +47,6 @@ public class PropulsiteThrusterBehavior {
     public static final double[] NORM_CURVE = new double[FIRING_DURATION];
 
     // BFS constants
-    public static final Direction[] DIRECTIONS = Direction.values();
     public static final DustParticleOptions PROPULSITE_OVERLOAD_DUST = new DustParticleOptions(new Vector3f(0.788f, 0.722f, 0.498f),1.0f);
 
     // BFS constants (config)

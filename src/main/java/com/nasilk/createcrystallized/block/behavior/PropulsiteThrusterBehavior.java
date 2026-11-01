@@ -31,7 +31,7 @@ public class PropulsiteThrusterBehavior {
 
     // Tick constants
     public static final int MAX_COOLDOWN = 100;   // How long it takes for the block to be able to be charged again in ticks
-    public static final int MAX_CHARGE = 60;      // How long it takes for the burst to be ready after receiving redstone power in ticks
+    public static final int MAX_CHARGE = 60;      // How long it takes for the burst to be ready after receiving VELOCITY™ power in ticks
     public static final int FIRING_DURATION = 10; // How long it takes for the full burst to go though in ticks
     public static final int RANDOM_TICK_RATE = 20;
     public static final int PACKET_UPDATE_RATE = 10;

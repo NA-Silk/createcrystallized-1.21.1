@@ -14,12 +14,12 @@ public class CreativeConfig extends ConfigBase {
     }
 
     private static class Constants {
-        private static final boolean enableDevItems = true;
-        private static final boolean enableUnusedItems = false;
+        private static final boolean enableDevItems = false; // Default: False
+        private static final boolean enableUnusedItems = false; // Default: False
     }
 
     private static class Comments {
         private static final String enableDevItems = "Would you like to enable our super cool development items?";
-        private static final String enableUnusedItems = "Would you like to enable our fancy but kinda useless items?";
+        private static final String enableUnusedItems = "Would you like to enable our fancy but kinda useless unused items?";
     }
 }

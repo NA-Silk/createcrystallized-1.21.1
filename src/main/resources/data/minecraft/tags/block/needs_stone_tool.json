@@ -12,6 +12,9 @@
 
     "createcrystallized:propulsite_thruster",
     "createcrystallized:oscillite_cannon",
-    "createcrystallized:densite_well"
+    "createcrystallized:densite_well",
+
+    "createcrystallized:echo_crystal_block",
+    "createcrystallized:budding_echo_crystal"
   ]
 }

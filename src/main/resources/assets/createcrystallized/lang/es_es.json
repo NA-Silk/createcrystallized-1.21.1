@@ -90,7 +90,6 @@
   "item.createcrystallized.aerolite_shovel.tooltip.condition1": "L-clic mientras esté activado Simulated Contraption",
   "item.createcrystallized.aerolite_shovel.tooltip.behaviour1": "_Empujes_ Artefacto en el_dirección opuestan_.",
   "item.createcrystallized.aerolite_shovel.tooltip.condition2": "En embarcaciones pesadas",
-  "item.createcrystallized.aerolite_shovel.tooltip.condition2":"?",
   "item.createcrystallized.aerolite_shovel.tooltip.behaviour2": "High _Mass_ y _Drag_ reducir considerablemente la eficacia.",
 
   "block.createcrystallized.densite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
@@ -108,7 +107,7 @@
   "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_estabiliza_ artilugios normalizándolos a _90° rotaciones_.",
 
   "item.createcrystallized.densite_core.tooltip.summary": "Cubo fuertemente comprimido de Densite.",
-  "item.createcrystallized.densite_core.tooltip.condition1": "al colocarse",
+  "item.createcrystallized.densite_core.tooltip.condition1": "",
   "item.createcrystallized.densite_core.tooltip.behaviour1": "Puede ser _lanzado_ en enemigos.",
   "item.createcrystallized.densite_core.tooltip.condition2": "",
   "item.createcrystallized.densite_core.tooltip.behaviour2": "_Bastante emocionante_.",

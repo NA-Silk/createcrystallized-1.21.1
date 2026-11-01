@@ -20,41 +20,38 @@ public class AeroliteShovelItem extends ShovelItem {
     }
 
     // oh my johd is that a sky paddle
-    public static BlockHitResult getSkyPaddle(Player player) {
+    public static BlockHitResult getSkyPaddleHitResult(Player player) {
         Vec3 hitPosition = player.getEyePosition().add(player.getLookAngle().scale(2.5d));
         return new BlockHitResult(hitPosition, Direction.DOWN, BlockPos.containing(hitPosition), false);
     }
 
-    // Durability loss on use
-    public static void damageSkyPaddle(Player player) {
+    public static void doSkyPaddleEffects(Player player) {
+        // Durability loss on use
         player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         player.getCooldowns().addCooldown(ModItems.AEROLITE_SHOVEL.get(), 1);
-    }
 
-    // PARTICLES
-    public static void skyPaddleParticles(ServerLevel serverLevel, Player player, BlockHitResult hitResult) {
-        Vec3 pos = hitResult.getLocation();
-        Vec3 particleVelocity = player.getLookAngle().scale(0.2d);
+        // Particles
+        ServerLevel serverLevel = (ServerLevel) player.level();
+        Vec3 lookAngle = player.getLookAngle();
+        Vec3 hitPosition = player.getEyePosition().add(lookAngle.scale(2.5d));
+        Vec3 particleVelocity = lookAngle.scale(0.2d);
         for (int i = 0; i < 4; i++) {
             double offsetX = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
             double offsetY = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
             double offsetZ = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
             serverLevel.sendParticles(
                 ParticleTypes.CLOUD,
-                pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ,
+                hitPosition.x + offsetX, hitPosition.y + offsetY, hitPosition.z + offsetZ,
                 0,
                 particleVelocity.x, particleVelocity.y, particleVelocity.z,
                 1.0d
             );
         }
-    }
 
-    // SOUNDS
-    public static void skyPaddleSound(ServerLevel serverLevel, BlockHitResult hitResult) {
-        Vec3 pos = hitResult.getLocation();
+        // Sound
         serverLevel.playSound(
             null,
-            pos.x, pos.y, pos.z,
+            hitPosition.x, hitPosition.y, hitPosition.z,
             SoundEvents.BREEZE_DEFLECT, SoundSource.PLAYERS,
             0.2f, 1.0f
         );

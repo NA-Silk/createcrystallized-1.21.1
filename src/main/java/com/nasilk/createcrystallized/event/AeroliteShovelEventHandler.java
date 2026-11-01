@@ -6,8 +6,7 @@ import com.nasilk.createcrystallized.item.custom.AeroliteShovelItem;
 import com.nasilk.createcrystallized.network.custom.SkyPaddlePayload;
 import dev.ryanhcode.sable.network.client.ClientSubLevelPunchHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,24 +16,23 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
 public class AeroliteShovelEventHandler {
-
     @SubscribeEvent
     public static void onInteraction(InputEvent.InteractionKeyMappingTriggered event) {
+        // Check attack
         if (!event.isAttack()) return;
 
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null
-            || !(minecraft.player instanceof LocalPlayer player)
-            || !player.getMainHandItem().is(ModItems.AEROLITE_SHOVEL.get())
-            || !(minecraft.hitResult instanceof HitResult hitResult)
-            || !(hitResult.getType() == HitResult.Type.MISS)
-        ) return;
+        // Check item
+        Player player = Minecraft.getInstance().player;
+        if (player == null || !ModItems.AEROLITE_SHOVEL.isIn(player.getMainHandItem())) return;
 
-        //Dude Sables are so cool
-        BlockHitResult blockHitResult = AeroliteShovelItem.getSkyPaddle(minecraft.player);
-        ClientSubLevelPunchHelper.clientTryPunch(blockHitResult, minecraft.level, false);
+        // Check hitResult
+        HitResult hitResult = Minecraft.getInstance().hitResult;
+        if (hitResult == null || hitResult.getType() != HitResult.Type.MISS) return;
 
-        //Tell server that we lost the baby
+        // Dude Sables are so cool
+        ClientSubLevelPunchHelper.clientTryPunch(AeroliteShovelItem.getSkyPaddleHitResult(player), player.level(), false);
+
+        // Tell server that we lost the baby
         PacketDistributor.sendToServer(new SkyPaddlePayload());
     }
 }

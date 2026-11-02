@@ -28,9 +28,8 @@ public class AdvancementHelper {
 
         // Iterate over players
         for (ServerPlayer player : serverLevel.players()) {
-            if (player.blockPosition().distSqr(realPos) <= RADIUS_SQUARED) {
+            if (player.blockPosition().distSqr(realPos) <= RADIUS_SQUARED)
                 player.getAdvancements().award(advancement, CRITERION_KEY);
-            }
         }
     }
 

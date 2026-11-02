@@ -11,12 +11,12 @@ public class CCLangHelper {
         return Lang.builder(CreateCrystallized.MOD_ID);
     }
 
-    public static LangBuilder text(final String text) {
-        return builder().text(text);
-    }
-
     public static LangBuilder translate(final String key, final Object... args) {
         return builder().translate(key, args);
+    }
+
+    public static LangBuilder text(final String text) {
+        return builder().text(text);
     }
 
     public static LangBuilder number(final double number) {
@@ -30,6 +30,7 @@ public class CCLangHelper {
     public static LangBuilder pixelNewton(final double value) {
         return pixelNewton(value, "%,.2f");
     }
+
     public static LangBuilder pixelNewton(final double value, final String format) {
         return getPrefixedUnit("pn", value, format);
     }
@@ -37,6 +38,7 @@ public class CCLangHelper {
     public static LangBuilder meter(final double value) {
         return meter(value, "%,.2f");
     }
+
     public static LangBuilder meter(final double value, final String format) {
         return getPrefixedUnit("m", value, format);
     }
@@ -48,9 +50,7 @@ public class CCLangHelper {
             value /= 1000;
             index++;
         }
-        if(index >= 0)
-            unit = prefixes[index] + unit;
-
+        if(index >= 0) unit = prefixes[index] + unit;
         return translate("unit." + unit, format.formatted(value));
     }
 }

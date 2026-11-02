@@ -7,7 +7,7 @@ import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.item.behavior.ModDispenserBehavior;
+import com.nasilk.createcrystallized.common.behavior.ModDispenserBehavior;
 import com.nasilk.createcrystallized.item.ModTiers;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
@@ -63,7 +63,6 @@ public class CreateCrystallized {
         //LOGGER.info("HELLO from common setup");
     }
 
-    @SuppressWarnings("SameReturnValue")
     public static CreateRegistrate getRegistrate() {
         return REGISTRATE;
     }

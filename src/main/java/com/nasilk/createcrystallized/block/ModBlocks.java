@@ -359,7 +359,7 @@ public class ModBlocks {
         LevitatingChoraCasingCTBehavior::new
     );
 
-    /// ECHO BLOCKS - Copied Amethyst registries in Blocks.class
+    /// ECHO BLOCKS - Copied Amethyst registries in {@link Blocks}
     public static final BlockEntry<Block> ECHO_CRYSTAL_BLOCK = registerBlock(
         "echo_crystal_block",
         (properties) -> new AmethystBlock(properties

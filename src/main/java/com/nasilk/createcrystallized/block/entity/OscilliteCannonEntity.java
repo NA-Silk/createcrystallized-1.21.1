@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.entity;
 import com.nasilk.createcrystallized.block.behavior.OscilliteCannonBehavior;
 import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.common.ModDamageTypes;
-import com.nasilk.createcrystallized.network.custom.OscilliteCannonBeamPayload;
+import com.nasilk.createcrystallized.network.payload.OscilliteCannonBeamPayload;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.nasilk.createcrystallized.util.type.TickState;
@@ -141,7 +141,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
-                if (subLevel instanceof ServerSubLevel targetSubLevel) cache.targets.add(targetSubLevel);
+                if (subLevel instanceof ServerSubLevel targetSubLevel)
+                    cache.targets.add(targetSubLevel);
             });
         }
 
@@ -425,11 +426,9 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 
-        if (cooldown > 0) {
-            CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0).text("s").component())
-                .style(ChatFormatting.RED)
-                .forGoggles(tooltip, 1);
-        }
+        if (cooldown > 0) CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0).text("s").component())
+            .style(ChatFormatting.RED)
+            .forGoggles(tooltip, 1);
 
         return true;
     }

@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.item.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -22,23 +23,25 @@ public class CreativeFluidEraserItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        // Server side
         ItemStack itemStack = player.getItemInHand(usedHand);
-        BlockHitResult blockhitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResultHolder.pass(itemStack);
 
         // Only use on BLOCK action
+        BlockHitResult blockhitresult = getPlayerPOVHitResult(serverLevel, player, ClipContext.Fluid.ANY);
         if (blockhitresult.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(itemStack);
 
         // Get Fluid at targetPos
         BlockPos targetPos = blockhitresult.getBlockPos();
-        FluidState fluidState = level.getFluidState(targetPos);
-        if (!level.isClientSide() && !fluidState.isEmpty()) {
+        FluidState fluidState = serverLevel.getFluidState(targetPos);
+        if (!fluidState.isEmpty()) {
             // Delete logic
             for (BlockPos currentPos : BlockPos.betweenClosed(
                 targetPos.offset(-RADIUS, -RADIUS, -RADIUS),
                 targetPos.offset(RADIUS, RADIUS, RADIUS)
             )) {
-                if (level.getFluidState(currentPos).getType().isSame(fluidState.getType())) {
-                    level.setBlockAndUpdate(currentPos, Blocks.AIR.defaultBlockState());
+                if (serverLevel.getFluidState(currentPos).getType().isSame(fluidState.getType())) {
+                    serverLevel.setBlockAndUpdate(currentPos, Blocks.AIR.defaultBlockState());
                 }
             }
             return InteractionResultHolder.success(itemStack);

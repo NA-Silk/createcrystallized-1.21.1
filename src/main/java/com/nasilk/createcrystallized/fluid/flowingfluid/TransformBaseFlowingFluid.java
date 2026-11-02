@@ -39,9 +39,8 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     @Override
     public void randomTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
         super.randomTick(level, pos, state, random);
-        if (level instanceof ServerLevel serverLevel) {
+        if (level instanceof ServerLevel serverLevel)
             tryTransform(serverLevel, pos, state, FluidTransformTriggerType.RANDOM_TICK);
-        }
     }
 
     // TOOLS
@@ -58,9 +57,8 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
 
     public void tryEventTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger, FluidTransformSettings settings) {
         // Check transformation conditions
-        if (settings.canTransform(serverLevel, pos, state, trigger)) {
+        if (settings.canTransform(serverLevel, pos, state, trigger))
             performTransformation(serverLevel, pos, settings);
-        }
     }
 
     private void performTransformation(ServerLevel level, BlockPos pos, FluidTransformSettings settings) {
@@ -79,9 +77,8 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
             if (!level.getBlockState(castPos).is(AeroTags.BlockTags.LEVITITE_BREAKABLE)) continue;
 
             // Skip current iteration if fluid would flow
-            for (Direction freeFluidPos : Direction.values()) {
+            for (Direction freeFluidPos : Direction.values())
                 if (level.getFluidState(castPos.relative(freeFluidPos)).is(this)) continue CAST;
-            }
 
             // Break cast block
             BlockHelper.destroyBlock(level, castPos, 1.0f);
@@ -110,7 +107,7 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
                 FluidState targetState = level.getFluidState(targetPos);
 
                 // Check if the nearby fluid is valid and apply catalysis on a later tick
-                if (!targetState.isEmpty() && targetState.isSource() && targetState.is(this)) {
+                if (!targetState.isEmpty() && targetState.isSource() && targetState.is(this))
                     TaskEventScheduler.schedule(
                         level.getServer(),
                         level.random.nextInt(20,200),
@@ -119,7 +116,6 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
                             AdvancementHelper.hitEmWithTheOlSwitcheroo(level, targetPos, settings.advancementID());
                         }
                     );
-                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.network.custom;
+package com.nasilk.createcrystallized.network.payload;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import io.netty.buffer.ByteBuf;

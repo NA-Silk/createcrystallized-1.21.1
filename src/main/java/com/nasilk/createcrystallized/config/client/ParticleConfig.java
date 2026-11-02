@@ -3,6 +3,7 @@ package com.nasilk.createcrystallized.config.client;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ParticleConfig extends ConfigBase {
+    public final ConfigInt wellParticleTravelTicks = this.i(Constants.wellParticleTravelTicks, "well_particle_travel_ticks", Comments.wellParticleTravelTicks);
     public final ConfigFloat coreParticleSpeedScale = this.f(Constants.coreParticleSpeedScale, 0.1f, "core_particle_speed_scale", Comments.coreParticleSpeedScale);
 
     public ParticleConfig() {}
@@ -13,10 +14,12 @@ public class ParticleConfig extends ConfigBase {
     }
 
     private static class Constants {
-        private static final float coreParticleSpeedScale = 1.5f ;
+        private static final int wellParticleTravelTicks = 100;
+        private static final float coreParticleSpeedScale = 1.5f;
     }
 
     private static class Comments {
+        private static final String wellParticleTravelTicks = "Densite Well pulling particle travel time in ticks.";
         private static final String coreParticleSpeedScale = "Densite Core particle speed scale.";
     }
 }

@@ -12,7 +12,7 @@ public class BFSHelper {
 
     /**
      * @param cluster           Store all visited positions for membership (internal use)
-     * @param queue             Store all visited positions for iteration (internal use)
+     * @param queue             Store all visited positions for iteration (internal use, pass by reference)
      * @param MAX_CLUSTER_SIZE  Maximum size of cluster and queue
      * @param ON_VISIT          (current_pos, mutable_pos) -> Post-dequeue operation
      * @param IS_MEMBER         (neighbor_pos) -> Pre-enqueue check

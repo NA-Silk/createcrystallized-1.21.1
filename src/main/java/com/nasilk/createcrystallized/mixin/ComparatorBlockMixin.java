@@ -3,7 +3,6 @@ package com.nasilk.createcrystallized.mixin;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.block.custom.DensiteBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ComparatorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,11 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ComparatorBlockMixin {
     @Inject(method = "getInputSignal", at = @At("HEAD"), cancellable = true)
     private void getInputSignalMixin(Level level, BlockPos pos, BlockState state, CallbackInfoReturnable<Integer> cir) {
-        Direction direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        BlockPos facePos = pos.relative(direction);
+        BlockPos facePos = pos.relative(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
         BlockState faceState = level.getBlockState(facePos);
-        if (ModBlocks.DENSITE_BLOCK.has(faceState)) {
+        if (ModBlocks.DENSITE_BLOCK.has(faceState))
             cir.setReturnValue(faceState.getValue(DensiteBlock.POWER));
-        }
     }
 }

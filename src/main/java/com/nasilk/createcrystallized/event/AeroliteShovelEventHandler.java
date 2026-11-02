@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.event;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.custom.AeroliteShovelItem;
-import com.nasilk.createcrystallized.network.custom.SkyPaddlePayload;
+import com.nasilk.createcrystallized.network.payload.SkyPaddlePayload;
 import dev.ryanhcode.sable.network.client.ClientSubLevelPunchHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;

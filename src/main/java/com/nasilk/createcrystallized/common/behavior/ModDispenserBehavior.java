@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.item.behavior;
+package com.nasilk.createcrystallized.common.behavior;
 
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import net.minecraft.core.BlockPos;

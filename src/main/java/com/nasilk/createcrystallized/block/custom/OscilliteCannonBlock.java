@@ -213,7 +213,7 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
 
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
-        if (level.isClientSide() || state.getValue(IS_BARREL) || type != getBlockEntityType()) return null;
+        if (level.isClientSide || state.getValue(IS_BARREL) || type != getBlockEntityType()) return null;
         return (lvl, bp, bs, be) -> {
             if (be instanceof OscilliteCannonEntity cannon) cannon.tick();
         };
@@ -236,14 +236,12 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
 
     // PARTICLES
     private void addParticles(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                ParticleTypes.SCULK_SOUL,
-                pos.getX() + 0.5d,
-                pos.getY() + 0.5d,
-                pos.getZ() + 0.5d,
-                8,0.5d,0.5d,0.5d,0.5d
-            );
-        }
+        if (level instanceof ServerLevel serverLevel) serverLevel.sendParticles(
+            ParticleTypes.SCULK_SOUL,
+            pos.getX() + 0.5d,
+            pos.getY() + 0.5d,
+            pos.getZ() + 0.5d,
+            8,0.5d,0.5d,0.5d,0.5d
+        );
     }
 }

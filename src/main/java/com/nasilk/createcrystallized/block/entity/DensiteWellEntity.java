@@ -63,6 +63,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static double DAMPEN_RADIUS_SQUARED;
     private static double DAMPEN_SCALE;
 
+    // Particle constants (config)
+    private static double PULL_PARTICLE_TRAVEL_TICKS;
+
     // Config constants
     public static void updateConstants() {
         WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
@@ -81,6 +84,7 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
         double DAMPEN_RADIUS = wellConfig.wellDampenRadius.get();
         DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
         DAMPEN_SCALE = wellConfig.wellDampenScale.get();
+        PULL_PARTICLE_TRAVEL_TICKS = (double) ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
     }
 
     // Cache
@@ -220,7 +224,8 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
         // Populate the target list
         container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
-            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel && !contactTargets.contains(targetSubLevel)) fieldTargets.add(targetSubLevel);
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel && !contactTargets.contains(targetSubLevel))
+                fieldTargets.add(targetSubLevel);
         });
     }
 
@@ -275,7 +280,6 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
 
 
     // PARTICLES
-    private static final double PULL_PARTICLE_TRAVEL_TICKS = 100.0d;
     private void addPullParticles(ServerLevel level, Cache cache) {
         // Compute each particle
         for (int i = 0; i < PULL_PARTICLE_COUNT[power]; i++) {

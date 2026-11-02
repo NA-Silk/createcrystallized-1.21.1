@@ -15,7 +15,9 @@ public class ItemApplicationAdvancementsMixin {
     @Inject(method = "awardAdvancements", at = @At("HEAD"))
     private static void addAdvancements(Player player, BlockState placed, CallbackInfo ci) {
         // ADD ADVANCEMENTS HERE
-        if (ModBlocks.CHORA_CASING.has(placed)) AdvancementHelper.yoinkerSploinker(player, "the_chora_age");
+        if (ModBlocks.CHORA_CASING.has(placed))
+            AdvancementHelper.yoinkerSploinker(player, "the_chora_age");
+
         if (ModBlocks.ENCASED_DENSITE_BLOCK.has(placed) ||
             ModBlocks.ENCASED_PROPULSITE_BLOCK.has(placed) ||
             ModBlocks.ENCASED_OSCILLITE_BLOCK.has(placed) ||

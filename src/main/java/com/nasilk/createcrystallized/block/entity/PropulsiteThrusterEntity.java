@@ -124,20 +124,20 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Run BFS
         final int[] counts = {0, 1};
         BFSHelper.BFSResult result = BFSHelper.run(
-                cache.cluster, cache.queue, 16,
-                (currentPos, neighborPos) -> {},
-                (neighborPos) -> {
-                    // Check if loaded
-                    BlockState neighborState = level.getBlockState(neighborPos);
-                    if (!level.isLoaded(neighborPos)) return false;
+            cache.cluster, cache.queue, 16,
+            (currentPos, neighborPos) -> {},
+            (neighborPos) -> {
+                // Check if loaded
+                BlockState neighborState = level.getBlockState(neighborPos);
+                if (!level.isLoaded(neighborPos)) return false;
 
-                    // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster
-                    if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0]++;
-                    else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) counts[1]++;
-                    else return false;
-                    return true;
-                },
-                pos, cache.currentPos, cache.neighborPos
+                // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster
+                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0]++;
+                else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) counts[1]++;
+                else return false;
+                return true;
+            },
+            pos, cache.currentPos, cache.neighborPos
         );
         int propulsiteCount = counts[0];
         int thrusterCount = counts[1];
@@ -313,11 +313,9 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 
-        if (cooldown > 0) {
-            CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0d).text("s").component())
-                .style(ChatFormatting.RED)
-                .forGoggles(tooltip, 1);
-        }
+        if (cooldown > 0) CCLangHelper.translate("goggles.cooling_down", CCLangHelper.number(cooldown / 20.0d).text("s").component())
+            .style(ChatFormatting.RED)
+            .forGoggles(tooltip, 1);
 
         return true;
     }

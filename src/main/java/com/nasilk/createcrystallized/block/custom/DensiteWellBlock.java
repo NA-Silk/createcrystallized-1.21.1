@@ -46,11 +46,10 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     // POWER LEVELS
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
-        if (!level.isClientSide) {
-            int currentPower = state.getValue(BlockStateProperties.POWER);
-            int newPower = level.getBestNeighborSignal(pos);
-            if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
-        }
+        if (level.isClientSide) return;
+        int currentPower = state.getValue(BlockStateProperties.POWER);
+        int newPower = level.getBestNeighborSignal(pos);
+        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
     }
 
     // ENTITIES
@@ -71,7 +70,7 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
 
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
-        if (level.isClientSide() || type != getBlockEntityType()) return null;
+        if (level.isClientSide || type != getBlockEntityType()) return null;
         return (lvl, bp, bs, be) -> {
             if (be instanceof DensiteWellEntity well) well.tick();
         };
@@ -85,14 +84,12 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
     }
 
     private void addParticles(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                ModParticleTypes.DENSITE_PARTICLES.get(),
-                pos.getX() + 0.5d,
-                pos.getY() + 0.5d,
-                pos.getZ() + 0.5d,
-                8,0.3d,0.2d,0.3d,0.05d
-            );
-        }
+        if (level instanceof ServerLevel serverLevel) serverLevel.sendParticles(
+            ModParticleTypes.DENSITE_PARTICLES.get(),
+            pos.getX() + 0.5d,
+            pos.getY() + 0.5d,
+            pos.getZ() + 0.5d,
+            8,0.3d,0.2d,0.3d,0.05d
+        );
     }
 }

@@ -216,7 +216,7 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
 
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
-        if (level.isClientSide() || state.getValue(IS_BARREL) || type != getBlockEntityType()) return null;
+        if (level.isClientSide || state.getValue(IS_BARREL) || type != getBlockEntityType()) return null;
         return (lvl, bp, bs, be) -> {
             if (be instanceof PropulsiteThrusterEntity thruster) thruster.tick();
         };
@@ -239,14 +239,12 @@ public class PropulsiteThrusterBlock extends DirectionalBlock implements IBE<Pro
 
     // PARTICLES
     private void addParticles(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                ModParticleTypes.PROPULSITE_PARTICLES.get(),
-                pos.getX() + 0.5d,
-                pos.getY() + 0.5d,
-                pos.getZ() + 0.5d,
-                32,0.5d,0.5d,0.5d,0.35d
-            );
-        }
+        if (level instanceof ServerLevel serverLevel) serverLevel.sendParticles(
+            ModParticleTypes.PROPULSITE_PARTICLES.get(),
+            pos.getX() + 0.5d,
+            pos.getY() + 0.5d,
+            pos.getZ() + 0.5d,
+            32,0.5d,0.5d,0.5d,0.35d
+        );
     }
 }

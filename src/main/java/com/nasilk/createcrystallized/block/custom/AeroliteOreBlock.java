@@ -51,8 +51,7 @@ public class AeroliteOreBlock extends Block {
 
     private void move(ServerLevel serverLevel, BlockPos pos, Player player) {
         // Compute thrust (unnormalized)
-        Vector3d thrust =
-            new Vector3d(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d) // Block position
+        Vector3d thrust = new Vector3d(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d) // Block position
             .sub(player.getX(), player.getY(), player.getZ()); // Player position
 
         // Handle reflections for each axis
@@ -85,7 +84,7 @@ public class AeroliteOreBlock extends Block {
         } catch (final AssemblyException ignoredError) {
             return;
         }
-        if (!(result.subLevel() instanceof  ServerSubLevel subLevel)) return;
+        if (!(result.subLevel() instanceof ServerSubLevel subLevel)) return;
 
         // Apply thrust on a later tick
         TaskEventScheduler.schedule(

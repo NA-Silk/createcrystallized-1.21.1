@@ -44,7 +44,7 @@ public class EncasedBlock extends Block implements IWrenchable {
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide()) return InteractionResult.PASS;
+        if (level.isClientSide) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();
         Block.popResource(level, pos, dropStack.get().getDefaultInstance());
         level.setBlockAndUpdate(pos, transformBlock.get().defaultBlockState());
@@ -64,7 +64,6 @@ public class EncasedBlock extends Block implements IWrenchable {
                 level.levelEvent(2001, pos, Block.getId(blockParticle.getState()));
                 return;
             }
-
             serverLevel.sendParticles(
                 particleOptions,
                 pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,

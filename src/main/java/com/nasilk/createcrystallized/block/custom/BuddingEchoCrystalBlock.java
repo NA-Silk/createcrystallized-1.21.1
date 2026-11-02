@@ -27,20 +27,17 @@ public class BuddingEchoCrystalBlock extends BuddingAmethystBlock {
             BlockState blockState = level.getBlockState(blockPos);
 
             Block block = null;
-            if (canClusterGrowAtState(blockState)) {
-                block = ModBlocks.SMALL_ECHO_CRYSTAL_BUD.get();
-            } else if (blockState.hasProperty(AmethystClusterBlock.FACING) && blockState.getValue(AmethystClusterBlock.FACING) == direction) {
+            if (canClusterGrowAtState(blockState)) block = ModBlocks.SMALL_ECHO_CRYSTAL_BUD.get();
+            else if (blockState.hasProperty(AmethystClusterBlock.FACING) && blockState.getValue(AmethystClusterBlock.FACING) == direction) {
                 if (blockState.is(ModBlocks.SMALL_ECHO_CRYSTAL_BUD.get())) block = ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD.get();
                 else if (blockState.is(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD.get())) block = ModBlocks.LARGE_ECHO_CRYSTAL_BUD.get();
                 else if (blockState.is(ModBlocks.LARGE_ECHO_CRYSTAL_BUD.get())) block = ModBlocks.ECHO_CRYSTAL_CLUSTER.get();
             }
 
-            if (block != null) {
-                level.setBlockAndUpdate(
-                    blockPos,
-                    block.defaultBlockState().setValue(AmethystClusterBlock.FACING, direction).setValue(AmethystClusterBlock.WATERLOGGED, blockState.getFluidState().getType() == Fluids.WATER)
-                );
-            }
+            if (block != null) level.setBlockAndUpdate(
+                blockPos,
+                block.defaultBlockState().setValue(AmethystClusterBlock.FACING, direction).setValue(AmethystClusterBlock.WATERLOGGED, blockState.getFluidState().getType() == Fluids.WATER)
+            );
         }
     }
 }

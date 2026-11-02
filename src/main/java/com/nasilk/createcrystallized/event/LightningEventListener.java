@@ -18,10 +18,8 @@ public class LightningEventListener {
 
     @SubscribeEvent
     public static void onLightningStrike(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof LightningBolt bolt && event.getLevel() instanceof ServerLevel serverLevel) {
-            BlockPos lightningPos = bolt.blockPosition();
-            lightningEvent(serverLevel, lightningPos);
-        }
+        if (event.getEntity() instanceof LightningBolt bolt && event.getLevel() instanceof ServerLevel serverLevel)
+            lightningEvent(serverLevel, bolt.blockPosition());
     }
 
     private static void lightningEvent(ServerLevel serverLevel, BlockPos lightningPos) {
@@ -38,9 +36,8 @@ public class LightningEventListener {
                     if (!settings.lightningSettings().requireLightning()) continue;
 
                     // Check if the lightning is in the fluid radius
-                    if (pos.closerThan(lightningPos, settings.lightningSettings().radius() + 0.5d)) {
+                    if (pos.closerThan(lightningPos, settings.lightningSettings().radius() + 0.5d))
                         fluid.tryEventTransform(serverLevel, pos, state, FluidTransformTriggerType.LIGHTNING, settings);
-                    }
                 }
             }
         }

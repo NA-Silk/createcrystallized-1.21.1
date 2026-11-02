@@ -154,7 +154,6 @@ public class PropulsiteThrusterBehavior {
             be.setChanged();
             serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
         }
-
     }
 
     private void charging(ServerLevel serverLevel, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
@@ -170,7 +169,6 @@ public class PropulsiteThrusterBehavior {
         } else if (!canCharge) be.setTickState(TickState.DISCHARGING);
         be.setChanged();
         if (be.getCharge() % PACKET_UPDATE_RATE == 0 || !TickState.CHARGING.equals(be.getTickState())) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
-
     }
 
     private void discharging(ServerLevel serverLevel, boolean canCharge, PropulsiteThrusterEntity.Cache cache) {
@@ -237,7 +235,6 @@ public class PropulsiteThrusterBehavior {
         }
         be.setChanged();
         if (be.getCharge() % PACKET_UPDATE_RATE == 0 || !TickState.FIRING.equals(be.getTickState())) serverLevel.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
-
     }
 
     private void cooldown(ServerLevel serverLevel, boolean randTick, PropulsiteThrusterEntity.Cache cache) {

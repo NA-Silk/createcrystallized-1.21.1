@@ -24,24 +24,22 @@ public class DensiteCoreItem extends Item implements ProjectileItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (level instanceof ServerLevel serverLevel) {
+            DensiteCoreItemEntity entity = new DensiteCoreItemEntity(serverLevel, player);
+            entity.setItem(stack);
+            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 0.5f);
+            serverLevel.addFreshEntity(entity);
+        }
+
         level.playSound(
             null,
             player.getX(), player.getY(), player.getZ(),
             SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL,
             0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f)
         );
-
-        if (level instanceof ServerLevel serverLevel) {
-            DensiteCoreItemEntity entity = new DensiteCoreItemEntity(serverLevel, player);
-            //entity.setPos(player.getX() + player.getLookAngle().x * 0.6d, player.getEyeY() - 0.1d, player.getZ() + player.getLookAngle().z * 0.6d);
-            entity.setItem(stack);
-            entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 0.5f);
-            serverLevel.addFreshEntity(entity);
-        }
-
         player.awardStat(Stats.ITEM_USED.get(this));
         stack.consume(1, player);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
     @Override

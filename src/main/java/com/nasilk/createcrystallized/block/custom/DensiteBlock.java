@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.block.custom;
 
 import com.nasilk.createcrystallized.common.ModParticleTypes;
-import com.nasilk.createcrystallized.network.custom.DensiteBlockOverloadPayload;
+import com.nasilk.createcrystallized.network.payload.DensiteBlockOverloadPayload;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;
 import com.nasilk.createcrystallized.util.helper.BFSHelper;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -123,7 +123,8 @@ public class DensiteBlock extends Block {
         for (int i = 0; i < tail; i++) {
             cache.currentPos.set(cache.queue[i]);
             BlockState currentState = level.getBlockState(cache.currentPos);
-            if (currentState.is(this) && currentState.getValue(TRIGGERED)) level.setBlock(cache.currentPos, currentState.setValue(TRIGGERED, false), Block.UPDATE_CLIENTS);
+            if (currentState.is(this) && currentState.getValue(TRIGGERED))
+                level.setBlock(cache.currentPos, currentState.setValue(TRIGGERED, false), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -139,9 +140,8 @@ public class DensiteBlock extends Block {
             neighborPos.setWithOffset(pos, direction);
 
             // Update maxPower if the neighbor block is loaded and not Densite
-            if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
+            if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this))
                 maxPower = Math.max(maxPower, level.getSignal(neighborPos, direction));
-            }
         }
         return maxPower;
     }
@@ -211,9 +211,8 @@ public class DensiteBlock extends Block {
         // Manually update loaded neighbors (more careful than setBlockAndUpdate() / flag 3) (only needed for the comparator mixin)
         for (Direction direction : DIRECTIONS) {
             neighborPos.setWithOffset(pos, direction);
-            if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this)) {
+            if (level.isLoaded(neighborPos) && !level.getBlockState(neighborPos).is(this))
                 level.neighborChanged(neighborPos, this, pos);
-            }
         }
     }
 
@@ -225,14 +224,12 @@ public class DensiteBlock extends Block {
     }
 
     private void addParticles(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                ModParticleTypes.DENSITE_PARTICLES.get(),
-                pos.getX() + 0.5d,
-                pos.getY() + 0.5d,
-                pos.getZ() + 0.5d,
-                8,0.3d,0.2d,0.3d,0.05d
-            );
-        }
+        if (level instanceof ServerLevel serverLevel) serverLevel.sendParticles(
+            ModParticleTypes.DENSITE_PARTICLES.get(),
+            pos.getX() + 0.5d,
+            pos.getY() + 0.5d,
+            pos.getZ() + 0.5d,
+            8,0.3d,0.2d,0.3d,0.05d
+        );
     }
 }

@@ -34,9 +34,7 @@ public class VibrationEventListener {
             Holder<GameEvent> gameEvent = event.getVanillaEvent();
             if (!gameEvent.is(GameEventTags.VIBRATIONS)) return;
             int frequency = VibrationSystem.getGameEventFrequency(gameEvent);
-            if (frequency > 2) {
-                vibrationEventLevel(serverLevel, BlockPos.containing(event.getEventPosition()), frequency, gameEvent);
-            }
+            if (frequency > 2) vibrationEventLevel(serverLevel, BlockPos.containing(event.getEventPosition()), frequency, gameEvent);
         }
     }
 
@@ -78,8 +76,8 @@ public class VibrationEventListener {
             FluidState state = serverLevel.getFluidState(pos);
             if (state.getType() instanceof TransformBaseFlowingFluid fluid) {
                 // Skip self-triggering on placement.
-                if (pos.equals(vibrationPos)
-                    && (gameEvent.value() == GameEvent.BLOCK_PLACE.value() || gameEvent.value() == GameEvent.FLUID_PLACE.value())
+                if (pos.equals(vibrationPos) &&
+                    (gameEvent.value() == GameEvent.BLOCK_PLACE.value() || gameEvent.value() == GameEvent.FLUID_PLACE.value())
                 ) continue;
 
                 // Get settings for current TransformBaseFlowingFluid fluid
@@ -88,11 +86,9 @@ public class VibrationEventListener {
                     if (!settings.vibrationSettings().requireVibration()) continue;
 
                     // Check if the vibration is in the fluid radius and if the frequency matches
-                    if (pos.closerThan(vibrationPos, settings.vibrationSettings().radius() + 0.5d)
-                        && frequency >= settings.vibrationSettings().minimumFrequency()
-                    ) {
-                        fluid.tryEventTransform(serverLevel, pos, state, FluidTransformTriggerType.VIBRATION, settings);
-                    }
+                    if (pos.closerThan(vibrationPos, settings.vibrationSettings().radius() + 0.5d) &&
+                        frequency >= settings.vibrationSettings().minimumFrequency()
+                    ) fluid.tryEventTransform(serverLevel, pos, state, FluidTransformTriggerType.VIBRATION, settings);
                 }
             }
         }

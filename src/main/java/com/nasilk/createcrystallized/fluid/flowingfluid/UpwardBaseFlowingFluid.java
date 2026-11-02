@@ -58,8 +58,7 @@ public abstract class UpwardBaseFlowingFluid extends BaseFlowingFluid {
         }
 
         // 3. Target Calculation
-        long time = level.getGameTime();
-        double wave = (time * timeFactor) - (pos.getY() * yFactor);
+        double wave = (level.getGameTime() * timeFactor) - (pos.getY() * yFactor);
         int offsetX = (Math.sin(wave) > threshold) ? 1 : (Math.sin(wave) < -threshold ? -1 : 0);
         int offsetZ = (Math.cos(wave) > threshold) ? 1 : (Math.cos(wave) < -threshold ? -1 : 0);
         BlockPos targetPos = pos.above().offset(offsetX, 0, offsetZ);

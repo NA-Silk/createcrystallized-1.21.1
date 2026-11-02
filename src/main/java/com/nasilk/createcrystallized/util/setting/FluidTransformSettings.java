@@ -63,27 +63,17 @@ public record FluidTransformSettings(
     boolean chainCatalyzes,
     String advancementID
 ) {
-    public record YRange(
-        int minYLevel,
-        int maxYLevel
-    ) {}
+    public record YRange(int minYLevel, int maxYLevel) {}
 
-    public record LightningSettings(
-        boolean requireLightning,
-        Integer radius
-    ) {}
+    public record LightningSettings(boolean requireLightning, Integer radius) {}
 
-    public record VibrationSettings(
-        boolean requireVibration,
-        Integer radius,
-        Integer minimumFrequency
-    ) {}
+    public record VibrationSettings(boolean requireVibration, Integer radius, Integer minimumFrequency) {}
 
     public boolean canTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
-        return passesRandomCheck(serverLevel)
-            && passesEnvironmentChecks(serverLevel, pos)
-            && passesContextChecks(serverLevel, pos, state)
-            && passesTriggerChecks(trigger);
+        return passesRandomCheck(serverLevel) &&
+            passesEnvironmentChecks(serverLevel, pos) &&
+            passesContextChecks(serverLevel, pos, state) &&
+            passesTriggerChecks(trigger);
     }
 
     private boolean passesRandomCheck(ServerLevel serverLevel) {
@@ -91,33 +81,30 @@ public record FluidTransformSettings(
     }
 
     private boolean passesEnvironmentChecks(ServerLevel serverLevel, BlockPos pos) {
-        return (!requireColdBiome || serverLevel.getBiome(pos).value().coldEnoughToSnow(pos))
-            && (!requireRaining || serverLevel.isRaining())
-            && (!requireThundering || serverLevel.isThundering())
-            && (!requireNight || serverLevel.isNight())
-            && (allowedDimensions.isEmpty() || allowedDimensions.contains(serverLevel.dimension()));
+        return (!requireColdBiome || serverLevel.getBiome(pos).value().coldEnoughToSnow(pos)) &&
+            (!requireRaining || serverLevel.isRaining()) &&
+            (!requireThundering || serverLevel.isThundering()) &&
+            (!requireNight || serverLevel.isNight()) &&
+            (allowedDimensions.isEmpty() || allowedDimensions.contains(serverLevel.dimension()));
     }
 
     private boolean passesContextChecks(ServerLevel serverLevel, BlockPos pos, FluidState state) {
-        return (serverLevel.getBrightness(LightLayer.SKY, pos) <= maxSkyLight)
-            && (pos.getY() >= yRange.minYLevel() && pos.getY() <= yRange.maxYLevel())
-            && (!requireSourceBlock || state.isSource())
-            && (requireAdjacentBlocks.isEmpty() || hasAdjacentBlocks(serverLevel, pos));
-
+        return (serverLevel.getBrightness(LightLayer.SKY, pos) <= maxSkyLight) &&
+            (pos.getY() >= yRange.minYLevel() && pos.getY() <= yRange.maxYLevel()) &&
+            (!requireSourceBlock || state.isSource()) &&
+            (requireAdjacentBlocks.isEmpty() || hasAdjacentBlocks(serverLevel, pos));
     }
 
     private boolean passesTriggerChecks(FluidTransformTriggerType trigger) {
-        return (!lightningSettings.requireLightning() || trigger == FluidTransformTriggerType.LIGHTNING)
-            && (!vibrationSettings.requireVibration() || trigger == FluidTransformTriggerType.VIBRATION || trigger == FluidTransformTriggerType.LIGHTNING);
+        return (!lightningSettings.requireLightning() || trigger == FluidTransformTriggerType.LIGHTNING) &&
+            (!vibrationSettings.requireVibration() || trigger == FluidTransformTriggerType.VIBRATION || trigger == FluidTransformTriggerType.LIGHTNING);
     }
 
     private boolean hasAdjacentBlocks(ServerLevel level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             Block adjacentBlock = level.getBlockState(pos.relative(direction)).getBlock();
-
-            for (Supplier<Block> blockSupplier : requireAdjacentBlocks) {
+            for (Supplier<Block> blockSupplier : requireAdjacentBlocks)
                 if (adjacentBlock == blockSupplier.get()) return true;
-            }
         }
         return false;
     }

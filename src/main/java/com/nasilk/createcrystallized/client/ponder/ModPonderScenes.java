@@ -33,10 +33,9 @@ public class ModPonderScenes {
         */
 
         /// MACHINED CRYSTAL BLOCKS
-        if (ModConfigs.client().ponderConfig.enableExperimentalPonders.get()) {
+        if (ModConfigs.client().ponderConfig.enableExperimentalPonders.get())
             registry.forComponents(ModBlocks.DENSITE_WELL.getId())
                 .addStoryBoard("machined_crystal_blocks/densite_well", MachinedCrystalBlockScenes::densiteWell);
-        }
         /* V2
         registry.forComponents(ModBlocks.PROPULSITE_THRUSTER.getId())
             .addStoryBoard("machined_crystal_blocks/propulsite_thruster", MachinedCrystalBlockScenes::propulsiteThruster);

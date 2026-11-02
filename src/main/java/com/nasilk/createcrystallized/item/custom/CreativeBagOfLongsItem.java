@@ -20,9 +20,9 @@ public class CreativeBagOfLongsItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         // Server side
-        ItemStack itemStack = player.getItemInHand(hand);
+        ItemStack itemStack = player.getItemInHand(usedHand);
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResultHolder.pass(itemStack);
 
         // Only use on BLOCK action
@@ -35,8 +35,8 @@ public class CreativeBagOfLongsItem extends Item {
         if (blockState.isEmpty()) return InteractionResultHolder.pass(itemStack);
 
         // Use longBlock
-        if (blockState.getBlock() instanceof IHaveLongs longBlock
-            && ((player.isShiftKeyDown() && longBlock.shiftUpdateLongs(serverLevel, blockState, blockPos)) || longBlock.defaultUpdateLongs(serverLevel, blockState, blockPos))
+        if (blockState.getBlock() instanceof IHaveLongs longBlock &&
+            ((player.isShiftKeyDown() && longBlock.shiftUpdateLongs(serverLevel, blockState, blockPos)) || longBlock.defaultUpdateLongs(serverLevel, blockState, blockPos))
         ) return InteractionResultHolder.success(itemStack);
         return InteractionResultHolder.pass(itemStack);
     }

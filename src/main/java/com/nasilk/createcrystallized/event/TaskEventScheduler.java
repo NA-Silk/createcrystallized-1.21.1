@@ -17,7 +17,8 @@ public class TaskEventScheduler {
     @SubscribeEvent
     public static synchronized void onServerTick(ServerTickEvent.Post event) {
         long currentTick = event.getServer().getTickCount();
-        while (!TASKS.isEmpty() && TASKS.peek().targetTick() <= currentTick) TASKS.poll().action.run();
+        while (!TASKS.isEmpty() && TASKS.peek().targetTick() <= currentTick)
+            TASKS.poll().action.run();
     }
 
     // Memory cleaning handler

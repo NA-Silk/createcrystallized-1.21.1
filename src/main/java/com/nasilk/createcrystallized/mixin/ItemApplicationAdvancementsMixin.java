@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ManualApplicationRecipe.class)
 public class ItemApplicationAdvancementsMixin {
     @Inject(method = "awardAdvancements", at = @At("HEAD"))
-    private static void addAdvancements(Player player, BlockState placed, CallbackInfo ci) {
+    private static void awardAdvancementsMixin(Player player, BlockState placed, CallbackInfo ci) {
         // ADD ADVANCEMENTS HERE
         if (ModBlocks.CHORA_CASING.has(placed))
             AdvancementHelper.yoinkerSploinker(player, "the_chora_age");

@@ -16,7 +16,7 @@ public class CreativeModeInventoryScreenMixin {
     @Shadow private static CreativeModeTab selectedTab;
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderSections(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void renderSectionsMixin(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (selectedTab != ModCreativeModeTabs.CREATE_CRYSTALLIZED_TAB.get()) return;
         ModCreativeTabRenderer.render((CreativeModeInventoryScreen) (Object) this, graphics, mouseX, mouseY);
     }

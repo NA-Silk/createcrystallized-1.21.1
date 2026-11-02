@@ -12,7 +12,7 @@ import java.util.List;
 @Mixin(value = SimulatedCreativeTab.class, remap = false)
 public class SimulatedCreativeTabMixin {
     @ModifyVariable(method = "renderBanners", at = @At("STORE"), name = "sections")
-    private static List<SimulatedSection> hideSection(List<SimulatedSection> sections) {
+    private static List<SimulatedSection> hideSectionMixin(List<SimulatedSection> sections) {
         return sections.stream().filter(
             section -> !SimResourceManagers.SIMULATED_SECTION.getId(section).equals(ModCreativeModeTabs.CRYSTALLIZED_SECTION)
         ).toList();

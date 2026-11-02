@@ -16,7 +16,7 @@ public class CreativeModeTabMixin {
     @Shadow private Set<ItemStack> displayItemsSearchTab;
 
     @Inject(method = "buildContents", at = @At("HEAD"), cancellable = true)
-    private void buildContents(CreativeModeTab.ItemDisplayParameters parameters, CallbackInfo ci) {
+    private void buildContentsMixin(CreativeModeTab.ItemDisplayParameters parameters, CallbackInfo ci) {
         if ((Object) this != ModCreativeModeTabs.CREATE_CRYSTALLIZED_TAB.get()) return;
         List<ItemStack> tabItems = new LinkedList<>();
         Set<ItemStack> searchItems = new LinkedHashSet<>();

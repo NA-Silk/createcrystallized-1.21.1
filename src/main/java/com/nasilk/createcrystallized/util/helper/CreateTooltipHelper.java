@@ -6,7 +6,6 @@ import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import net.createmod.catnip.lang.FontHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -53,7 +52,7 @@ public class CreateTooltipHelper {
             // Add tooltips
             String path = CreateCrystallized.MOD_ID + "." + itemId.getPath();
             for (int i = 0; i < lines; i++) context.getToolTip().add(
-                Component.translatable(path + ".goggles_tooltip." + i).withStyle(ChatFormatting.AQUA)
+                Component.translatable(path + ".goggles_tooltip." + i)
             );
         }
     }

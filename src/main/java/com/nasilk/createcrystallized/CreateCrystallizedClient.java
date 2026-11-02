@@ -13,6 +13,7 @@ import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.client.particle.*;
 import com.nasilk.createcrystallized.client.ponder.ModPonderPlugin;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
+import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
@@ -69,7 +70,11 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_WELL);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_BLOCK);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_BLOCK);
-            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 0);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 1);
+
+            // CREATE PLS DON'T ROTATE (currently broken, probably won't fix ever)
+            RadialWrenchMenu.registerBlacklistedBlock(ModBlocks.PROPULSITE_THRUSTER.getId());
+            RadialWrenchMenu.registerBlacklistedBlock(ModBlocks.OSCILLITE_CANNON.getId());
 
             // Ponders
             PonderIndex.addPlugin(new ModPonderPlugin());

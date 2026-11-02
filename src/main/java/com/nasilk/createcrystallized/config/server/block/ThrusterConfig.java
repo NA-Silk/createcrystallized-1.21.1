@@ -36,17 +36,17 @@ public class ThrusterConfig extends ConfigBase {
     }
 
     private static class Constants {
-        private static final float thrusterNormMean = 3.0f;
-        private static final float thrusterNormStandardDeviation = 1.5f;
-        private static final float thrusterFiringAmplitude = 100.0f;
-        private static final float thrusterVelocityThreshold = 0.0625f;
+        private static final float thrusterNormMean = 0.5f;
+        private static final float thrusterNormStandardDeviation = 0.8f;
+        private static final float thrusterFiringAmplitude = 150.0f;
+        private static final float thrusterVelocityThreshold = 0.06f;
         private static final float thrusterClusterBonusScale = 2.0f;
         private static final float thrusterMaxEntityKnockback = 6.0f;
         private static final float thrusterMaxPushRange = 8.0f;
         private static final float thrusterMaxPushRadius = 1.0f;
         private static final float thrusterPushScale = 0.1f;
         private static final float thrusterPushShiftReduction = 8.0f;
-        private static final float thrusterDamageScale = 5.0f;
+        private static final float thrusterDamageScale = 10.0f;
     }
 
     private static class Comments {

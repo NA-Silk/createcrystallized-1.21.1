@@ -389,6 +389,7 @@ public class ModBlocks {
             .forceSolidOn()
             .noOcclusion()
             .strength(1.5f)
+            .requiresCorrectToolForDrops()
             .pushReaction(PushReaction.DESTROY)
             .sound(SoundType.AMETHYST_CLUSTER)
             .lightLevel((l) -> 5)

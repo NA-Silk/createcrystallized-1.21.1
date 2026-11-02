@@ -32,9 +32,9 @@ public class WellConfig extends ConfigBase {
 
     private static class Constants {
         private static final float wellMinStrength = 0.0f;
-        private static final float wellStrengthScale = 0.5f;
+        private static final float wellStrengthScale = 2.5f;
         private static final float wellMinRadius = 0.0f;
-        private static final float wellRadiusScale = 2.0f;
+        private static final float wellRadiusScale = 1.3f;
         private static final float wellDampenRadius = 2.0f;
         private static final float wellDampenScale = 0.2f;
     }

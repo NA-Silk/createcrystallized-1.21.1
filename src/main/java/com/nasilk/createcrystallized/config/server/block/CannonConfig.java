@@ -31,7 +31,7 @@ public class CannonConfig extends ConfigBase {
     }
 
     private static class Constants {
-        private static final int   cannonCrystalRadius = 1;
+        private static final int   cannonCrystalRadius = 5;
         private static final float cannonDamage = 50.0f;
         private static final float cannonRecoil = 25.0f;
         private static final float cannonEntityKnockback = 3.0f;

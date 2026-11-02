@@ -31,7 +31,6 @@ import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO Tune constants with config
 public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInformation {
     // Tick variables (saved)
     private int power = 0;

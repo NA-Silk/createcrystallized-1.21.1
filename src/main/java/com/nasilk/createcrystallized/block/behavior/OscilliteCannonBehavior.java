@@ -19,7 +19,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import java.util.function.Predicate;
 
-// TODO Tune constants with config
 public class OscilliteCannonBehavior {
     private final OscilliteCannonEntity be;
 

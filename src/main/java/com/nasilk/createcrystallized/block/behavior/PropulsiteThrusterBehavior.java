@@ -20,7 +20,6 @@ import net.minecraft.world.entity.Entity;
 import org.joml.Vector3f;
 import java.util.function.Predicate;
 
-// TODO Tune constants with config
 public class PropulsiteThrusterBehavior {
     private final PropulsiteThrusterEntity be;
 
@@ -39,6 +38,8 @@ public class PropulsiteThrusterBehavior {
     public static final double FACE_OFFSET = 1.4d;
 
     // Tick constants (config)
+    public static int MAX_THRUST_LIMIT;
+    public static double MAX_THRUST_SCALE;
     public static double FIRING_INITIAL_AMPLITUDE;
     public static double FIRING_DECAY_RATE;
     public static double VELOCITY_THRESHOLD;
@@ -85,6 +86,8 @@ public class PropulsiteThrusterBehavior {
         FIRING_DECAY_RATE = thrusterConfig.thrusterFiringDecayRate.get();
         for (int i = 0; i < FIRING_DURATION; i++)
             THRUST_CURVE[i] = Math.exp(-FIRING_DECAY_RATE * i);
+        MAX_THRUST_SCALE = (1 - Math.exp(-FIRING_DURATION * FIRING_DECAY_RATE)) / FIRING_DECAY_RATE; // Oh, no, an integral!
+        MAX_THRUST_LIMIT = (int) Math.ceil(16 * FIRING_INITIAL_AMPLITUDE * MAX_THRUST_SCALE);
         VELOCITY_THRESHOLD = thrusterConfig.thrusterVelocityThreshold.get();
         CLUSTER_BONUS_SCALE = thrusterConfig.thrusterClusterBonusScale.get();
         MAX_ENTITY_KNOCKBACK = thrusterConfig.thrusterMaxEntityKnockback.get();
@@ -279,7 +282,7 @@ public class PropulsiteThrusterBehavior {
     }
 
 
-    /// FIRING {@link PropulsiteThrusterEntity:___}
+    /// FIRING {@link PropulsiteThrusterEntity}
     public void addFiringParticles(ServerLevel serverLevel, PropulsiteThrusterEntity.Cache cache) {
         // Get starting values
         double thrustRatio = Math.max(0.0d, be.getThrust() / be.getMaxThrust()); // [0.0 to 1.0] multiplier based on current thrust strength

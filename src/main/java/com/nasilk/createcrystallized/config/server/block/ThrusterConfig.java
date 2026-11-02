@@ -35,8 +35,8 @@ public class ThrusterConfig extends ConfigBase {
     }
 
     private static class Constants {
-        private static final float thrusterFiringInitialAmplitude = 90f;
-        private static final float thrusterFiringDecayRate = 0.8f;
+        private static final float thrusterFiringInitialAmplitude = 100f;
+        private static final float thrusterFiringDecayRate = 1.0f;
         private static final float thrusterVelocityThreshold = 0.06f;
         private static final float thrusterClusterBonusScale = 2.0f;
         private static final float thrusterMaxEntityKnockback = 6.0f;

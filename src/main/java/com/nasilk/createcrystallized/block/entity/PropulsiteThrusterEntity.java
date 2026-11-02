@@ -145,7 +145,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Set updated amplitude and maxThrust
         double oldAmplitude = amplitude;
         amplitude = (1.0d + (CLUSTER_BONUS_SCALE * propulsiteCount) / thrusterCount) * FIRING_INITIAL_AMPLITUDE;
-        this.setMaxThrust(amplitude * (1 - Math.exp(-8.0d * FIRING_DECAY_RATE)) / FIRING_DECAY_RATE); // Oh, no, an integral!
+        this.setMaxThrust(amplitude * MAX_THRUST_SCALE);
 
         // Only trigger saves and network packets if the cluster actually changed
         if (oldAmplitude != amplitude) {
@@ -305,9 +305,10 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip, 1);
 
+        int maxThrustInt = (int) Math.ceil(maxThrust);
         final MutableComponent maximumThrust = CCLangHelper
-            .pixelNewton(maxThrust)
-            .style(ChatFormatting.AQUA)
+            .translate("unit.pn", "%,d".formatted(maxThrustInt)) // Java is starting to drive me crazy
+            .style(maxThrustInt == MAX_THRUST_LIMIT ? ChatFormatting.YELLOW : ChatFormatting.AQUA) // Pretty colors
             .component();
         CCLangHelper.translate("goggles.maximum_thrust", maximumThrust)
             .style(ChatFormatting.GRAY)

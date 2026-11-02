@@ -46,7 +46,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
     private int charge = 0;
     private int cooldown = 0;
     private int firingTick = 0;
-    private double amplitude = FIRING_AMPLITUDE;
+    private double amplitude = FIRING_INITIAL_AMPLITUDE;
     private double maxThrust = 0.0d;
     private double thrust = 0.0d;
 
@@ -144,8 +144,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
         // Set updated amplitude and maxThrust
         double oldAmplitude = amplitude;
-        amplitude = (1.0d + (CLUSTER_BONUS_SCALE * propulsiteCount) / thrusterCount) * FIRING_AMPLITUDE;
-        this.setMaxThrust((Double.isNaN(NORM_DENOMINATOR) || NORM_DENOMINATOR == 0) ? 0.0d : amplitude / NORM_DENOMINATOR);
+        amplitude = (1.0d + (CLUSTER_BONUS_SCALE * propulsiteCount) / thrusterCount) * FIRING_INITIAL_AMPLITUDE;
+        this.setMaxThrust(amplitude * (1 - Math.exp(-8.0d * FIRING_DECAY_RATE)) / FIRING_DECAY_RATE); // Oh, no, an integral!
 
         // Only trigger saves and network packets if the cluster actually changed
         if (oldAmplitude != amplitude) {

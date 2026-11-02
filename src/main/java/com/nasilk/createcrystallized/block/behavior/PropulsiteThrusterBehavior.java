@@ -28,9 +28,9 @@ public class PropulsiteThrusterBehavior {
     private final int worldPositionHash;
 
     // Tick constants
-    public static final int MAX_COOLDOWN = 100;   // How long it takes for the block to be able to be charged again in ticks
-    public static final int MAX_CHARGE = 60;      // How long it takes for the burst to be ready after receiving VELOCITY™ power in ticks
-    public static final int FIRING_DURATION = 10; // How long it takes for the full burst to go though in ticks
+    public static final int MAX_COOLDOWN = 100;  // How long it takes for the block to be able to be charged again in ticks
+    public static final int MAX_CHARGE = 60;     // How long it takes for the burst to be ready after receiving VELOCITY™ power in ticks
+    public static final int FIRING_DURATION = 8; // How long it takes for the full burst to go though in ticks
     public static final int RANDOM_TICK_RATE = 20;
     public static final int PACKET_UPDATE_RATE = 10;
     public static final int SIMPLE_PARTICLE_RATE = 20;
@@ -39,12 +39,10 @@ public class PropulsiteThrusterBehavior {
     public static final double FACE_OFFSET = 1.4d;
 
     // Tick constants (config)
-    public static double NORM_STANDARD_DEVIATION; // Curve spread
-    public static double NORM_MEAN;               // Curve middle
-    public static double NORM_DENOMINATOR;        // Precomputed denominator
-    public static double FIRING_AMPLITUDE;        // How much total thrust is output over the length of the burst
+    public static double FIRING_INITIAL_AMPLITUDE;
+    public static double FIRING_DECAY_RATE;
     public static double VELOCITY_THRESHOLD;
-    public static final double[] NORM_CURVE = new double[FIRING_DURATION];
+    public static final double[] THRUST_CURVE = new double[FIRING_DURATION];
 
     // BFS constants
     public static final DustParticleOptions PROPULSITE_OVERLOAD_DUST = new DustParticleOptions(new Vector3f(0.788f, 0.722f, 0.498f),1.0f);
@@ -83,14 +81,10 @@ public class PropulsiteThrusterBehavior {
     // Config constants
     public static void updateConstants() {
         ThrusterConfig thrusterConfig = ModConfigs.server().blockConfig.thrusterConfig;
-        NORM_STANDARD_DEVIATION = thrusterConfig.thrusterNormStandardDeviation.get();
-        NORM_MEAN = thrusterConfig.thrusterNormMean.get();
-        NORM_DENOMINATOR = NORM_STANDARD_DEVIATION * Math.sqrt(2.0d * Math.PI);
-        for (int i = 0; i < FIRING_DURATION; i++) {
-            double diff = (i - NORM_MEAN) / NORM_STANDARD_DEVIATION;
-            NORM_CURVE[i] = Math.exp(-0.5d * diff * diff) / NORM_DENOMINATOR;
-        }
-        FIRING_AMPLITUDE = thrusterConfig.thrusterFiringAmplitude.get();
+        FIRING_INITIAL_AMPLITUDE = thrusterConfig.thrusterFiringInitialAmplitude.get();
+        FIRING_DECAY_RATE = thrusterConfig.thrusterFiringDecayRate.get();
+        for (int i = 0; i < FIRING_DURATION; i++)
+            THRUST_CURVE[i] = Math.exp(-FIRING_DECAY_RATE * i);
         VELOCITY_THRESHOLD = thrusterConfig.thrusterVelocityThreshold.get();
         CLUSTER_BONUS_SCALE = thrusterConfig.thrusterClusterBonusScale.get();
         MAX_ENTITY_KNOCKBACK = thrusterConfig.thrusterMaxEntityKnockback.get();
@@ -218,7 +212,7 @@ public class PropulsiteThrusterBehavior {
 
     private void firing(ServerLevel serverLevel, RigidBodyHandle handle, PropulsiteThrusterEntity.Cache cache) {
         // Set thrust using norm curve and increment firing tick
-        be.setThrust(be.getAmplitude() * NORM_CURVE[be.getFiringTick()]);
+        be.setThrust(be.getAmplitude() * THRUST_CURVE[be.getFiringTick()]);
         be.setFiringTick(be.getFiringTick() + 1);
 
         // Run firing effects

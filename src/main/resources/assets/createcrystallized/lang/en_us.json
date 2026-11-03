@@ -95,17 +95,21 @@
   "block.createcrystallized.densite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.densite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
   "block.createcrystallized.densite_block.tooltip.behaviour1": "Weight _increases_ with power supplied.",
+  "createcrystallized.densite_block.goggles_tooltip.0": "§5 Variable §8(1-16kpg)",
+
 
   "block.createcrystallized.propulsite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.propulsite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
   "block.createcrystallized.propulsite_block.tooltip.behaviour1": "_reinforces_ motion at low speeds. Weightless.",
   "block.createcrystallized.propulsite_block.tooltip.condition2": "When Placed Adjacent to Propulsite Thrusters",
   "block.createcrystallized.propulsite_block.tooltip.behaviour2": "_Increases_ thrust power up to additional 16 blocks.",
+  "createcrystallized.propulsite_block.goggles_tooltip.0": "§e Drifting §8(1kpg)",
+
 
   "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.oscillite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
   "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by normalizing them to _90° rotations_.",
-  "createcrystallized.oscillite_block.goggles_tooltip.0": "§bSuper cool custom tooltip line that only appears with Goggles equipped. You can also add more of these lines really easily with the registry method.",
+  "createcrystallized.oscillite_block.goggles_tooltip.0": "§3 Normalizing §8(4kpg)",
 
   "item.createcrystallized.densite_core.tooltip.summary": "A heavily compressed cube of Densite.",
   "item.createcrystallized.densite_core.tooltip.condition1": "",

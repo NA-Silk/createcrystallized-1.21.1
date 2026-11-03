@@ -50,10 +50,10 @@ public class ThrusterConfig extends ConfigBase {
         private static final String thrusterFiringDecayRate = "Rate at which the Thruster's firing strength decreases.";
         private static final String thrusterVelocityThreshold = "How quickly the Thruster has to be moving before beginning to charge.";
         private static final String thrusterClusterBonusScale = "Strength bonus multiplier from connected Propulsite blocks.";
-        private static final String thrusterMaxPushRange = "Propulsite Thruster maximum effective push range.";
-        private static final String thrusterMaxPushRadius = "Propulsite Thruster maximum effective push radius.";
-        private static final String thrusterPushScale = "Propulsite Thruster push strength multiplier.";
-        private static final String thrusterPushShiftReduction = "Propulsite Thruster push strength reduction while holding shift.";
+        private static final String thrusterMaxPushRange = "Maximum distance of the Thruster backblast knockback effect";
+        private static final String thrusterMaxPushRadius = "Maximum radius of the Thruster backblast knockback effect";
+        private static final String thrusterPushScale = "Total strength of the Thruster backblast knockback effect ";
+        private static final String thrusterPushShiftReduction = "How much the Thruster backblast knockback effect is reduced when crouching";
         private static final String thrusterDamageScale = "How much damage the Thruster backblast does to entities.";
     }
 }

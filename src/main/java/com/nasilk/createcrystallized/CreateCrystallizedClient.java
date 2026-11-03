@@ -68,8 +68,8 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.OSCILLITE_CANNON);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_THRUSTER);
             CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_WELL);
-            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.DENSITE_BLOCK);
-            CreateTooltipHelper.registerSimpleTooltip(ModBlocks.PROPULSITE_BLOCK);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.DENSITE_BLOCK, 1);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.PROPULSITE_BLOCK, 1);
             CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 1);
 
             // CREATE PLS DON'T ROTATE (currently broken, probably won't fix ever)

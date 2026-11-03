@@ -4,7 +4,7 @@ import net.createmod.catnip.config.ConfigBase;
 
 public class ParticleConfig extends ConfigBase {
     public final ConfigInt wellParticleTravelTicks = this.i(Constants.wellParticleTravelTicks, "well_particle_travel_ticks", Comments.wellParticleTravelTicks);
-    public final ConfigFloat coreParticleSpeedScale = this.f(Constants.coreParticleSpeedScale, 0.1f, "core_particle_speed_scale", Comments.coreParticleSpeedScale);
+    public final ConfigFloat coreParticleSpeedScale = this.f(Constants.coreParticleSpeedScale, 0.5f, 5.0f, "core_particle_speed_scale", Comments.coreParticleSpeedScale);
 
     public ParticleConfig() {}
 

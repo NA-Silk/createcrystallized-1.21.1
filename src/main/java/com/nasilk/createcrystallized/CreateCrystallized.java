@@ -4,10 +4,11 @@ import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.common.behavior.ModFluidInteractions;
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.common.behavior.ModDispenserBehavior;
+import com.nasilk.createcrystallized.common.behavior.ModDispenserBehaviors;
 import com.nasilk.createcrystallized.item.ModTiers;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
@@ -58,7 +59,8 @@ public class CreateCrystallized {
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             ModCreativeModeTabs.register();
-            ModDispenserBehavior.register();
+            ModDispenserBehaviors.register();
+            ModFluidInteractions.register();
         });
         //LOGGER.info("HELLO from common setup");
     }

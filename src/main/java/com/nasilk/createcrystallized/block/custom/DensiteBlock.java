@@ -117,10 +117,9 @@ public class DensiteBlock extends Block {
             },
             pos, cache.currentPos, cache.neighborPos
         );
-        int tail = result.tail();
 
         // Iterate over cluster to deactivate triggers
-        for (int i = 0; i < tail; i++) {
+        for (int i = 0; i < result.tail(); i++) {
             cache.currentPos.set(cache.queue[i]);
             BlockState currentState = level.getBlockState(cache.currentPos);
             if (currentState.is(this) && currentState.getValue(TRIGGERED))

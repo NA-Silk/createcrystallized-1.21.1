@@ -46,6 +46,7 @@ public class PropulsiteThrusterBehavior {
     public static final double[] THRUST_CURVE = new double[FIRING_DURATION];
 
     // BFS constants
+    public static final int MAX_CLUSTER_SIZE = 16;
     public static final DustParticleOptions PROPULSITE_OVERLOAD_DUST = new DustParticleOptions(new Vector3f(0.788f, 0.722f, 0.498f),1.0f);
 
     // BFS constants (config)

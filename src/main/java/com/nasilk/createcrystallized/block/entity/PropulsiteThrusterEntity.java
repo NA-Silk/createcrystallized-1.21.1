@@ -65,8 +65,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         public final Vector3d thrusterForce =  new Vector3d();
 
         // BFS
-        final LongOpenHashSet cluster = new LongOpenHashSet(16);
-        final long[] queue = new long[16];
+        final LongOpenHashSet cluster = new LongOpenHashSet(MAX_CLUSTER_SIZE + 1);
+        final long[] queue = new long[MAX_CLUSTER_SIZE + 1];
         final BlockPos.MutableBlockPos currentPos = new BlockPos.MutableBlockPos();
         final BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
@@ -124,7 +124,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         // Run BFS
         final int[] counts = {0, 1};
         BFSHelper.BFSResult result = BFSHelper.run(
-            cache.cluster, cache.queue, 16,
+            cache.cluster, cache.queue, MAX_CLUSTER_SIZE + 1, // Handle Thruster on end
             (currentPos, neighborPos) -> {},
             (neighborPos) -> {
                 // Check if loaded
@@ -132,7 +132,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 if (!level.isLoaded(neighborPos)) return false;
 
                 // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster
-                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0]++;
+                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0] = Math.min(counts[0] + 1, MAX_CLUSTER_SIZE - 1); // Don't add 16th Propulsite
                 else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) counts[1]++;
                 else return false;
                 return true;
@@ -151,7 +151,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         if (oldAmplitude != amplitude) {
             this.setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
-            if (result.overflow()) {
+            if (result.tail() >= MAX_CLUSTER_SIZE) {
                 level.sendParticles(PROPULSITE_OVERLOAD_DUST, worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d, 8, 0.5d, 0.5d, 0.5d, 1.0d);
                 level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1.0f, 1.2f);
             }

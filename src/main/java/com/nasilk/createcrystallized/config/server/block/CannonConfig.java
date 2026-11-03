@@ -40,11 +40,11 @@ public class CannonConfig extends ConfigBase {
     }
 
     private static class Comments {
-        private static final String cannonCrystalRadius = "Oscillite Cannon crystal consumption radius.";
-        private static final String cannonDamage = "Oscillite Cannon firing effect damage.";
-        private static final String cannonRecoil = "Oscillite Cannon firing effect recoil.";
-        private static final String cannonEntityKnockback = "Oscillite Cannon firing effect entity knockback.";
-        private static final String cannonSublevelKnockback = "Oscillite Cannon firing effect sublevel knockback.";
-        private static final String cannonMaxRange = "Oscillite Cannon firing effect maximum range.";
+        private static final String cannonCrystalRadius = "How far away the Cannon can consume crystals for ammo.";
+        private static final String cannonDamage = "How much damage the Cannon deals.";
+        private static final String cannonRecoil = "How much Sublevel recoil the Cannon Has upon firing.";
+        private static final String cannonEntityKnockback = "How much entity knockback the Cannon deals.";
+        private static final String cannonSublevelKnockback = "How much Sublevel knockback the Cannon deals.";
+        private static final String cannonMaxRange = "The max range of the cannon blast (extremely high values can be performance heavy).";
     }
 }

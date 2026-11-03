@@ -47,6 +47,9 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final int RANDOM_TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double CONTACT_RADIUS = 0.5 * DensiteWellBlock.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
+    private static final double DAMPEN_RADIUS = 2.0d;
+    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
+    private static final double DAMPEN_SCALE = 0.2d;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Particle constants
@@ -58,31 +61,22 @@ public class DensiteWellEntity extends BlockEntity implements IHaveGoggleInforma
     private static final double[] FIELD_RADIUS_CURVE = new double[16];
     private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
 
-    // Physics constants (config)
-    private static double DAMPEN_RADIUS_SQUARED;
-    private static double DAMPEN_SCALE;
-
     // Particle constants (config)
     private static double PULL_PARTICLE_TRAVEL_TICKS;
 
     // Config constants
     public static void updateConstants() {
         WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
-        double MIN_STRENGTH = wellConfig.wellMinStrength.get();
         double STRENGTH_SCALE = wellConfig.wellStrengthScale.get();
-        double MIN_RADIUS = wellConfig.wellMinRadius.get();
         double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
         FIELD_STRENGTH_CURVE[0] = 0.0d;
         FIELD_RADIUS_CURVE[0] = 0.0d;
         FIELD_RADIUS_SQUARED_CURVE[0] = 0.0d;
         for (int i = 1; i < 16; i++) {
-            FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i + MIN_STRENGTH;
-            FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i + MIN_RADIUS;
+            FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i;
+            FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i;
             FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
-        double DAMPEN_RADIUS = wellConfig.wellDampenRadius.get();
-        DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
-        DAMPEN_SCALE = wellConfig.wellDampenScale.get();
         PULL_PARTICLE_TRAVEL_TICKS = (double) ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
     }
 

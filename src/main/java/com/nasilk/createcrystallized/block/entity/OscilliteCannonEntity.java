@@ -191,9 +191,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         if (entities.isEmpty()) return;
 
         // Iterate through entities
-        for (Entity entity : entities) {
-            pushAndDamageEntity(entity, range, serverLevel, cache);
-        }
+        for (Entity entity : entities) pushAndDamageEntity(entity, range, serverLevel, cache);
     }
 
     private double destroyBlocksAndGetRange(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
@@ -350,7 +348,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         // Handle "Hair of the Dog" Advancement
         if (wasAlive && !entity.isAlive() && isWarden) AdvancementHelper.hitEmWithTheOlSwitcheroo(
             serverLevel,
-            entity.blockPosition(),
+            worldPosition,
             "hair_of_the_dog"
         );
     }

@@ -8,6 +8,10 @@
     "createcrystallized:chora_casing_oscillite",
     "createcrystallized:chora_casing_levitite",
 
+    "createcrystallized:encased_densite_block",
+    "createcrystallized:encased_propulsite_block",
+    "createcrystallized:encased_oscillite_block",
+
     "createcrystallized:aerolite_block",
 
     "createcrystallized:propulsite_thruster",

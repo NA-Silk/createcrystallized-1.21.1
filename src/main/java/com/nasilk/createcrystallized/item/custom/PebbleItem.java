@@ -46,15 +46,8 @@ public class PebbleItem extends BlockItem implements Equipable {
         RandomSource random = level.random;
         if (random.nextDouble() < AMBIENT_RATE) {
             switch (random.nextInt(2)) {
-                case 0:
-                    clientLevel.playLocalSound(entity, ModSounds.PEBBLE_PLACE.get(), SoundSource.VOICE, 1.0f, 1.0f);
-                    break;
-                case 1:
-                    clientLevel.playLocalSound(entity, SoundEvents.BONE_MEAL_USE, SoundSource.VOICE, 1.0f, 1.0f);
-                    break;
-                default:
-                    clientLevel.playLocalSound(entity, SoundEvents.ANVIL_LAND, SoundSource.VOICE, 1.0f, 1.0f);
-                    break;
+                case 0 -> clientLevel.playLocalSound(entity, ModSounds.PEBBLE_PLACE.get(), SoundSource.VOICE, 1.0f, 1.0f);
+                case 1 -> clientLevel.playLocalSound(entity, SoundEvents.ANVIL_LAND, SoundSource.VOICE, 1.0f, 1.0f);
             }
         }
     }

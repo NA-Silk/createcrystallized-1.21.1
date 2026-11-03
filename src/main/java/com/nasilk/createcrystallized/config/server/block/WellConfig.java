@@ -32,7 +32,7 @@ public class WellConfig extends ConfigBase {
     }
 
     private static class Comments {
-        private static final String wellStrengthScale = "Densite Well gravity effect strength scale.";
-        private static final String wellRadiusScale = "Densite Well gravity effect radius scale.";
+        private static final String wellStrengthScale = "Pull effect strength scale.";
+        private static final String wellRadiusScale = "Pull effect radius scale.";
     }
 }

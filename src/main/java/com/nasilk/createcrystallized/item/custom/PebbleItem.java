@@ -1,19 +1,32 @@
 package com.nasilk.createcrystallized.item.custom;
 
+import com.nasilk.createcrystallized.common.ModSounds;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 public class PebbleItem extends BlockItem implements Equipable {
+    private static final double AMBIENT_RATE = 8e-5d;
+
     public PebbleItem(Block block, Properties properties) {
         super(block, properties);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
@@ -28,5 +41,25 @@ public class PebbleItem extends BlockItem implements Equipable {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         return swapWithEquipmentSlot(this, level, player, hand);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        if (!(level instanceof ClientLevel clientLevel)) return;
+        if (slotId != Inventory.SLOT_OFFHAND) return;
+        RandomSource random = level.random;
+        if (random.nextDouble() < AMBIENT_RATE) {
+            switch (random.nextInt(2)) {
+                case 0:
+                    clientLevel.playLocalSound(entity, ModSounds.PEBBLE_PLACE.get(), SoundSource.VOICE, 1.0f, 1.0f);
+                    break;
+                case 1:
+                    clientLevel.playLocalSound(entity, SoundEvents.BONE_MEAL_USE, SoundSource.VOICE, 1.0f, 1.0f);
+                    break;
+                default:
+                    clientLevel.playLocalSound(entity, SoundEvents.ANVIL_LAND, SoundSource.VOICE, 1.0f, 1.0f);
+                    break;
+            }
+        }
     }
 }

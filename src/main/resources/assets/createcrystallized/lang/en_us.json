@@ -137,7 +137,7 @@
   "block.createcrystallized.propulsite_thruster.tooltip.condition2": "After charging",
   "block.createcrystallized.propulsite_thruster.tooltip.behaviour2": "Becomes _energized_, Redstone input releases a powerful burst of thrust. must cool down _without Redstone power_ after firing.",
   "block.createcrystallized.propulsite_thruster.tooltip.condition3": "When adjacent to Propulsite",
-  "block.createcrystallized.propulsite_thruster.tooltip.behaviour3": "Becomes _overcharged_, allowing for a _larger burst_ and _longer cooldown_ for every attached _Propulsite block_. Multiple thrusters share additional power equally.",
+  "block.createcrystallized.propulsite_thruster.tooltip.behaviour3": "Becomes _overcharged_, allowing for a _larger burst_ for every attached _Propulsite block_. Multiple thrusters share additional power equally.",
 
   "block.createcrystallized.densite_well.tooltip.summary": "A variable gravity well that _pulls in_ Simulated Contraptions.",
   "block.createcrystallized.densite_well.tooltip.condition1": "When placed",

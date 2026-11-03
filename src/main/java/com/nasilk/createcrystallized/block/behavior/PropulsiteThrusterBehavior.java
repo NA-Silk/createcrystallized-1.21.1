@@ -52,6 +52,7 @@ public class PropulsiteThrusterBehavior {
     public static double CLUSTER_BONUS_SCALE;
 
     // Entity pushing constants
+    public static double MAX_ENTITY_KNOCKBACK = 6.0d; // Maximum acceleration allowed in blocks per tick
     public static final Predicate<Entity> PUSH_PREDICATE = entity ->
         !(entity instanceof AbstractContraptionEntity) &&
         !AirCurrent.isPlayerCreativeFlying(entity) &&
@@ -59,7 +60,6 @@ public class PropulsiteThrusterBehavior {
         !DivingBootsItem.isWornBy(entity);
 
     // Entity pushing constants (config)
-    public static double MAX_ENTITY_KNOCKBACK;    // Maximum acceleration allowed in blocks per tick
     public static double MAX_PUSH_RANGE;          // Longitudinal effectiveness distance
     public static double MAX_PUSH_RANGE_2;        // Half longitudinal effectiveness distance
     public static double MAX_PUSH_RADIUS;         // Radial effectiveness distance
@@ -90,7 +90,6 @@ public class PropulsiteThrusterBehavior {
         MAX_THRUST_LIMIT = (int) Math.ceil(16 * FIRING_INITIAL_AMPLITUDE * MAX_THRUST_SCALE);
         VELOCITY_THRESHOLD = thrusterConfig.thrusterVelocityThreshold.get();
         CLUSTER_BONUS_SCALE = thrusterConfig.thrusterClusterBonusScale.get();
-        MAX_ENTITY_KNOCKBACK = thrusterConfig.thrusterMaxEntityKnockback.get();
         MAX_PUSH_RANGE = thrusterConfig.thrusterMaxPushRange.get();
         MAX_PUSH_RANGE_2 = MAX_PUSH_RANGE * 0.5d;
         MAX_PUSH_RADIUS = thrusterConfig.thrusterMaxPushRadius.get();

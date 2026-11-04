@@ -13,11 +13,14 @@ import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import org.joml.Vector3f;
+
 import java.util.function.Predicate;
 
 public class OscilliteCannonBehavior {
@@ -57,6 +60,7 @@ public class OscilliteCannonBehavior {
     // Charging particle constants
     public static final int NUM_PARTICLES = 5;
     public static final double PARTICLE_RADIUS = 2.0d;
+    public static final DustParticleOptions CRYSTAL_TRIGGERED_DUST = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.0f);
 
     // Config constants
     public static void updateConstants() {
@@ -110,12 +114,6 @@ public class OscilliteCannonBehavior {
 
         // IDLE -> ARMED (randTick && hasCrystalFuel)
         if ((level.getGameTime() + worldPositionHash) % RANDOM_TICK_RATE == 0 && hasCrystalFuel(level, cache)) {
-            level.playSound(
-                null, be.getBlockPos(),
-                SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
-                1.5f, 0.8f
-            );
-            //addChargingParticles(level, cache); // TODO
             be.setTickState(TickState.ARMED);
             be.setChanged();
             level.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
@@ -219,7 +217,19 @@ public class OscilliteCannonBehavior {
             x2, y2, z2
         )) if (ModBlocks.ECHO_CRYSTAL_CLUSTER.has(level.getBlockState(pos))) {
             fuelPos.set(pos);
-            addChargingParticles(level, pos, cache); // TODO
+
+            // Play effects
+            level.sendParticles(
+                CRYSTAL_TRIGGERED_DUST,
+                pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
+                5, 0.35d, 0.35d, 0.35d, 1.0d
+            );
+            addChargingParticles(level, pos, cache);
+            level.playSound(
+                null, be.getBlockPos(),
+                SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS,
+                1.5f, 0.8f
+            );
             return true;
         }
         return false;

@@ -57,25 +57,29 @@ public class AeroliteOreBlock extends Block {
         // Handle reflections for each axis
         if (isColliding(level, pos.east()) && isColliding(level, pos.west())) {
             thrust.x = 0.0d;
-        } else if ((thrust.x > 0.0d && isColliding(level, pos.east()))
-            || (thrust.x < 0.0d && isColliding(level, pos.west()))
+        } else if (
+            thrust.x > 0.0d && isColliding(level, pos.east()) ||
+            thrust.x < 0.0d && isColliding(level, pos.west())
         ) thrust.x = -thrust.x;
 
         if (isColliding(level, pos.above()) && isColliding(level, pos.below())) {
             thrust.y = 0.0d;
-        } else if ((thrust.y > 0.0d && isColliding(level, pos.above()))
-            || (thrust.y < 0.0d && isColliding(level, pos.below()))
+        } else if (
+            thrust.y > 0.0d && isColliding(level, pos.above()) ||
+            thrust.y < 0.0d && isColliding(level, pos.below())
         ) thrust.y = -thrust.y;
 
         if (isColliding(level, pos.south()) && isColliding(level, pos.north())) {
             thrust.z = 0.0d;
-        } else if ((thrust.z > 0.0d && isColliding(level, pos.south()))
-            || (thrust.z < 0.0d && isColliding(level, pos.north()))
+        } else if (
+            thrust.z > 0.0d && isColliding(level, pos.south()) ||
+            thrust.z < 0.0d && isColliding(level, pos.north())
         ) thrust.z = -thrust.z;
 
         // Safely normalize and scale thrust
         if (thrust.lengthSquared() < 1e-3d) thrust.set(0.0d, 1.0d, 0.0d);
-        thrust.normalize().mul(THRUST);
+        else thrust.normalize();
+        thrust.mul(THRUST);
 
         // Convert to sublevel
         SimAssemblyHelper.AssemblyResult result;

@@ -3,6 +3,7 @@ package com.nasilk.createcrystallized.item.custom;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -20,8 +21,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 
+import java.util.*;
+
 public class PebbleItem extends BlockItem implements Equipable {
-    private static final double AMBIENT_RATE = 8e-5d;
+    private static final double AMBIENT_RATE = 8e-4d;
+
+    // TODO Place sounds here
+    private static final List<Sound> SOUNDS = List.of(
+        new Sound(ModSounds.PEBBLE_PLACE.get(), SoundSource.VOICE, 1.0f, 0.8f),
+        new Sound(SoundEvents.ANVIL_LAND, SoundSource.VOICE, 1.0f, 1.0f)
+    );
+    private record Sound(SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch) {}
 
     public PebbleItem(Block block, Properties properties) {
         super(block, properties);
@@ -45,10 +55,8 @@ public class PebbleItem extends BlockItem implements Equipable {
         if (slotId != Inventory.SLOT_OFFHAND) return;
         RandomSource random = level.random;
         if (random.nextDouble() < AMBIENT_RATE) {
-            switch (random.nextInt(2)) {
-                case 0 -> clientLevel.playLocalSound(entity, ModSounds.PEBBLE_PLACE.get(), SoundSource.VOICE, 1.0f, 1.0f);
-                case 1 -> clientLevel.playLocalSound(entity, SoundEvents.ANVIL_LAND, SoundSource.VOICE, 1.0f, 1.0f);
-            }
+            Sound sound = SOUNDS.get(random.nextInt(SOUNDS.size()));
+            clientLevel.playLocalSound(entity, sound.soundEvent(), sound.soundSource(), sound.volume(), sound.pitch());
         }
     }
 }

@@ -31,15 +31,15 @@ public class AeroliteShovelItem extends ShovelItem {
         player.getCooldowns().addCooldown(ModItems.AEROLITE_SHOVEL.get(), 1);
 
         // Particles
-        ServerLevel serverLevel = (ServerLevel) player.level();
+        ServerLevel level = (ServerLevel) player.level();
         Vec3 lookAngle = player.getLookAngle();
         Vec3 hitPosition = player.getEyePosition().add(lookAngle.scale(2.5d));
         Vec3 particleVelocity = lookAngle.scale(0.2d);
         for (int i = 0; i < 4; i++) {
-            double offsetX = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
-            double offsetY = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
-            double offsetZ = (serverLevel.random.nextDouble() - 0.5d) * 0.5d;
-            serverLevel.sendParticles(
+            double offsetX = (level.random.nextDouble() - 0.5d) * 0.5d;
+            double offsetY = (level.random.nextDouble() - 0.5d) * 0.5d;
+            double offsetZ = (level.random.nextDouble() - 0.5d) * 0.5d;
+            level.sendParticles(
                 ParticleTypes.CLOUD,
                 hitPosition.x + offsetX, hitPosition.y + offsetY, hitPosition.z + offsetZ,
                 0,
@@ -49,7 +49,7 @@ public class AeroliteShovelItem extends ShovelItem {
         }
 
         // Sound
-        serverLevel.playSound(
+        level.playSound(
             null,
             hitPosition.x, hitPosition.y, hitPosition.z,
             SoundEvents.BREEZE_DEFLECT, SoundSource.PLAYERS,

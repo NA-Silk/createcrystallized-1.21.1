@@ -6,8 +6,6 @@ import net.minecraft.core.particles.SimpleParticleType;
 import org.jetbrains.annotations.Nullable;
 
 public class OscilliteCannonChargingParticle extends SimpleAnimatedParticle {
-    private final double xi, yi, zi;
-    private final double xf, yf, zf;
 
     protected OscilliteCannonChargingParticle(
         ClientLevel level,
@@ -18,18 +16,13 @@ public class OscilliteCannonChargingParticle extends SimpleAnimatedParticle {
         super(level, x + xSpeed, y + ySpeed, z + zSpeed, spriteSet, 0.0f); // Start on the outside and stall, tick() handles the movement
         this.setSpriteFromAge(spriteSet);
 
-        // Store initial and final positions
-        this.xi = this.x;
-        this.yi = this.y;
-        this.zi = this.z;
-        this.xf = x;
-        this.yf = y;
-        this.zf = z;
-
         // Set behavior parameters
         this.hasPhysics = false; // Disable collision?
-        this.lifetime = 30 + this.random.nextInt(20); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
-        this.quadSize = 0.05f * this.random.nextFloat() + 0.05f; // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        this.lifetime = 60 + this.random.nextInt(20); // Particle lifetime in ticks, default (int) (4.0F / (this.random.nextFloat() * 0.9F + 0.1F));
+        this.quadSize = 0.08f * this.random.nextFloat() + 0.08f; // Particle size, default 0.1F * (this.random.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        this.xd = (x - this.x) / this.lifetime;
+        this.yd = (y - this.y) / this.lifetime;
+        this.zd = (z - this.z) / this.lifetime;
     }
 
     @Override
@@ -45,13 +38,6 @@ public class OscilliteCannonChargingParticle extends SimpleAnimatedParticle {
             return;
         }
 
-        // Handle acceleration (current change in velocity)
-        float progress = (float) this.age / this.lifetime; // Get current progress
-        float vScale = 0.5f * progress * progress; // Scale with progress^2
-        this.xd = this.xi + vScale * (this.xf - this.xi) - this.x; // x_d = x_i + v - x_n; v = v_scale * v_x_max; v_x_max = x_f - x_i
-        this.yd = this.yi + vScale * (this.yf - this.yi) - this.y;
-        this.zd = this.zi + vScale * (this.zf - this.zi) - this.z;
-
         // Move (no Sable physics or collision checks)
         this.x += this.xd;
         this.y += this.yd;
@@ -59,7 +45,7 @@ public class OscilliteCannonChargingParticle extends SimpleAnimatedParticle {
 
         // Fade out near final position
         if (this.age > this.lifetime * 0.8d) {
-            this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.2f);
+            this.alpha = (this.lifetime - this.age) / (this.lifetime * 0.8f);
         }
 
         // Update sprite

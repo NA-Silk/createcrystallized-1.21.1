@@ -39,9 +39,9 @@ public class AeroliteOreBlock extends Block {
 
     @Override
     protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
-        if (!state.getValue(DISARMED)
-            && level instanceof ServerLevel serverLevel
-            && Sable.HELPER.getContaining(serverLevel, pos) == null
+        if (!state.getValue(DISARMED) &&
+            level instanceof ServerLevel serverLevel &&
+            Sable.HELPER.getContaining(serverLevel, pos) == null
         ) {
             serverLevel.setBlockAndUpdate(pos, state.setValue(DISARMED, true));
             move(serverLevel, pos, player);
@@ -49,28 +49,28 @@ public class AeroliteOreBlock extends Block {
         super.attack(state, level, pos, player);
     }
 
-    private void move(ServerLevel serverLevel, BlockPos pos, Player player) {
+    private void move(ServerLevel level, BlockPos pos, Player player) {
         // Compute thrust (unnormalized)
         Vector3d thrust = new Vector3d(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d) // Block position
             .sub(player.getX(), player.getY(), player.getZ()); // Player position
 
         // Handle reflections for each axis
-        if (isColliding(serverLevel, pos.east()) && isColliding(serverLevel, pos.west())) {
+        if (isColliding(level, pos.east()) && isColliding(level, pos.west())) {
             thrust.x = 0.0d;
-        } else if ((thrust.x > 0.0d && isColliding(serverLevel, pos.east()))
-            || (thrust.x < 0.0d && isColliding(serverLevel, pos.west()))
+        } else if ((thrust.x > 0.0d && isColliding(level, pos.east()))
+            || (thrust.x < 0.0d && isColliding(level, pos.west()))
         ) thrust.x = -thrust.x;
 
-        if (isColliding(serverLevel, pos.above()) && isColliding(serverLevel, pos.below())) {
+        if (isColliding(level, pos.above()) && isColliding(level, pos.below())) {
             thrust.y = 0.0d;
-        } else if ((thrust.y > 0.0d && isColliding(serverLevel, pos.above()))
-            || (thrust.y < 0.0d && isColliding(serverLevel, pos.below()))
+        } else if ((thrust.y > 0.0d && isColliding(level, pos.above()))
+            || (thrust.y < 0.0d && isColliding(level, pos.below()))
         ) thrust.y = -thrust.y;
 
-        if (isColliding(serverLevel, pos.south()) && isColliding(serverLevel, pos.north())) {
+        if (isColliding(level, pos.south()) && isColliding(level, pos.north())) {
             thrust.z = 0.0d;
-        } else if ((thrust.z > 0.0d && isColliding(serverLevel, pos.south()))
-            || (thrust.z < 0.0d && isColliding(serverLevel, pos.north()))
+        } else if ((thrust.z > 0.0d && isColliding(level, pos.south()))
+            || (thrust.z < 0.0d && isColliding(level, pos.north()))
         ) thrust.z = -thrust.z;
 
         // Safely normalize and scale thrust
@@ -80,7 +80,7 @@ public class AeroliteOreBlock extends Block {
         // Convert to sublevel
         SimAssemblyHelper.AssemblyResult result;
         try {
-            result = SimAssemblyHelper.assembleFromSingleBlock(serverLevel, pos, pos, true, true);
+            result = SimAssemblyHelper.assembleFromSingleBlock(level, pos, pos, true, true);
         } catch (final AssemblyException ignoredError) {
             return;
         }
@@ -88,7 +88,7 @@ public class AeroliteOreBlock extends Block {
 
         // Apply thrust on a later tick
         TaskEventScheduler.schedule(
-            serverLevel.getServer(),
+            level.getServer(),
             THRUST_DELAY,
             () -> {
                 RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
@@ -97,14 +97,14 @@ public class AeroliteOreBlock extends Block {
         );
 
         // Play effects
-        serverLevel.sendParticles(
+        level.sendParticles(
             AEROLITE_ORE_DUST,
             pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
             10,
             0.4d, 0.4d, 0.4d, 0.1d
         );
 
-        serverLevel.playSound(
+        level.playSound(
             null, pos,
             SoundEvents.BREEZE_SLIDE,
             SoundSource.BLOCKS,
@@ -112,7 +112,7 @@ public class AeroliteOreBlock extends Block {
         );
     }
 
-    private boolean isColliding(ServerLevel serverLevel, BlockPos pos) {
-        return !serverLevel.getBlockState(pos).getCollisionShape(serverLevel, pos).isEmpty();
+    private boolean isColliding(ServerLevel level, BlockPos pos) {
+        return !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
     }
 }

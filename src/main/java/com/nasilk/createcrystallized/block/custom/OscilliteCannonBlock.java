@@ -221,16 +221,16 @@ public class OscilliteCannonBlock extends DirectionalBlock implements IBE<Oscill
 
     // LONGS
     @Override
-    public boolean defaultUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+    public boolean defaultUpdateLongs(ServerLevel level, BlockState state, BlockPos pos) {
         if (state.getValue(IS_BARREL)) return false;
-        withBlockEntityDo(serverLevel, pos, be -> be.defaultUpdateLongs(serverLevel));
+        withBlockEntityDo(level, pos, be -> be.defaultUpdateLongs(level));
         return true;
     }
 
     @Override
-    public boolean shiftUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+    public boolean shiftUpdateLongs(ServerLevel level, BlockState state, BlockPos pos) {
         if (state.getValue(IS_BARREL)) return false;
-        withBlockEntityDo(serverLevel, pos, be -> be.shiftUpdateLongs(serverLevel));
+        withBlockEntityDo(level, pos, be -> be.shiftUpdateLongs(level));
         return true;
     }
 

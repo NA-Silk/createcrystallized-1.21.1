@@ -44,21 +44,21 @@ public abstract class TransformBaseFlowingFluid extends BaseFlowingFluid {
     }
 
     // TOOLS
-    public void tryTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
+    public void tryTransform(ServerLevel level, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
         // Loop through settings
         for (FluidTransformSettings settings : this.settingsList) {
             // Check transformation conditions
-            if (settings.canTransform(serverLevel, pos, state, trigger)) {
-                performTransformation(serverLevel, pos, settings);
+            if (settings.canTransform(level, pos, state, trigger)) {
+                performTransformation(level, pos, settings);
                 return;
             }
         }
     }
 
-    public void tryEventTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger, FluidTransformSettings settings) {
+    public void tryEventTransform(ServerLevel level, BlockPos pos, FluidState state, FluidTransformTriggerType trigger, FluidTransformSettings settings) {
         // Check transformation conditions
-        if (settings.canTransform(serverLevel, pos, state, trigger))
-            performTransformation(serverLevel, pos, settings);
+        if (settings.canTransform(level, pos, state, trigger))
+            performTransformation(level, pos, settings);
     }
 
     private void performTransformation(ServerLevel level, BlockPos pos, FluidTransformSettings settings) {

@@ -5,11 +5,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface IHaveLongs {
-    default boolean shiftUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+    default boolean shiftUpdateLongs(ServerLevel level, BlockState state, BlockPos pos) {
         return false;
     }
 
-    default boolean defaultUpdateLongs(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+    default boolean defaultUpdateLongs(ServerLevel level, BlockState state, BlockPos pos) {
         return false;
     }
 }

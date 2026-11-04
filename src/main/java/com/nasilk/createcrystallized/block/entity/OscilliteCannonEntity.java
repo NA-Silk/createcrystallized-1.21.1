@@ -132,13 +132,13 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     /// FIRING
-    public void fireCannon(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
+    public void fireCannon(ServerLevel level, ServerSubLevel cannonSubLevel, Cache cache) {
         // Set bounding box to query subLevels
         cache.targets.clear();
         setSearchBox(MAX_RANGE, cache);
 
         // Populate the target sublevel list
-        ServerSubLevelContainer container = SubLevelContainer.getContainer(serverLevel);
+        ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
         if (container != null) {
             container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
                 if (subLevel instanceof ServerSubLevel targetSubLevel)
@@ -154,7 +154,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
                 cache.beamOrigin.set(cache.cannonFace).fma(u, cache.cannonI).fma(v, cache.cannonJ);
 
                 // Destroy blocks and update total range
-                double newRange = destroyBlocksAndGetRange(serverLevel, cannonSubLevel, cache);
+                double newRange = destroyBlocksAndGetRange(level, cannonSubLevel, cache);
                 if (newRange > range) range = newRange;
             }
         }
@@ -167,7 +167,7 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
             range
         );
         PacketDistributor.sendToPlayersTrackingChunk(
-            serverLevel,
+            level,
             new ChunkPos(worldPosition),
             payload
         );
@@ -187,14 +187,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         setSearchBox(range, cache);
 
         // Get entities within the bounding box
-        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), DAMAGE_PREDICATE); // toMojang() allocates a new Mojang AABB...
+        List<Entity> entities = level.getEntities((Entity) null, cache.searchBox.toMojang(), DAMAGE_PREDICATE); // toMojang() allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities
-        for (Entity entity : entities) pushAndDamageEntity(entity, range, serverLevel, cache);
+        for (Entity entity : entities) pushAndDamageEntity(entity, range, level, cache);
     }
 
-    private double destroyBlocksAndGetRange(ServerLevel serverLevel, ServerSubLevel cannonSubLevel, Cache cache) {
+    private double destroyBlocksAndGetRange(ServerLevel level, ServerSubLevel cannonSubLevel, Cache cache) {
         // Get initial voxel (block) coordinates
         int currentX = (int) Math.floor(cache.beamOrigin.x);
         int currentY = (int) Math.floor(cache.beamOrigin.y);
@@ -247,8 +247,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         while (t < MAX_RANGE) {
             /// Check non-sublevel blocks
             cache.mutablePos.set(currentX, currentY, currentZ);
-            blockState = serverLevel.getBlockState(cache.mutablePos);
-            if (!(blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState))) return t;
+            blockState = level.getBlockState(cache.mutablePos);
+            if (!(blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(level, cache.mutablePos, blockState))) return t;
 
             /// Check sublevel blocks
             if (!cache.targets.isEmpty()) {
@@ -269,8 +269,8 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
                     // Check and try to destroy block
                     cache.mutablePos.set(cache.localBeamPosition.x, cache.localBeamPosition.y, cache.localBeamPosition.z);
-                    blockState = serverLevel.getBlockState(cache.mutablePos);
-                    if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(serverLevel, cache.mutablePos, blockState)) continue;
+                    blockState = level.getBlockState(cache.mutablePos);
+                    if (blockState.isAir() || blockState.canBeReplaced() || tryPierceBlock(level, cache.mutablePos, blockState)) continue;
 
                     // Apply knockback to surviving block
                     RigidBodyHandle targetHandle = RigidBodyHandle.of(targetSubLevel);
@@ -303,19 +303,19 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
     }
 
     @SuppressWarnings("deprecation")
-    private boolean tryPierceBlock(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState) {
+    private boolean tryPierceBlock(ServerLevel level, BlockPos blockPos, BlockState blockState) {
         float resistance = blockState.getBlock().getExplosionResistance();
         if (resistance <= 5.0f) {
-            serverLevel.destroyBlock(blockPos, true);
+            level.destroyBlock(blockPos, true);
             return true;
         } else if (resistance <= 6.0f) {
-            serverLevel.destroyBlock(blockPos, true);
+            level.destroyBlock(blockPos, true);
             return false;
         }
         return false;
     }
 
-    private void pushAndDamageEntity(Entity entity, double range, ServerLevel serverLevel, Cache cache) {
+    private void pushAndDamageEntity(Entity entity, double range, ServerLevel level, Cache cache) {
         // Get entity position relative to the thruster
         AABB entityBoundingBox = entity.getBoundingBox(); // Avoids a Vec3 allocation from entity.getBoundingBox().getCenter()
         double entityX = (entityBoundingBox.minX + entityBoundingBox.maxX) * 0.5d;
@@ -340,14 +340,14 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
         entity.fallDistance = 0.0f;
 
         // Apply damage, Warden takes additional damage
-        if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.OSCILLITE_CANNON);
+        if (cannonDamageSource == null) cannonDamageSource = ModDamageTypes.getSource(level, ModDamageTypes.OSCILLITE_CANNON);
         boolean wasAlive = entity.isAlive();
         boolean isWarden = entity instanceof Warden;
         entity.hurt(cannonDamageSource, isWarden ? DAMAGE * 5.0f : DAMAGE); // Racism line
 
         // Handle "Hair of the Dog" Advancement
         if (wasAlive && !entity.isAlive() && isWarden) AdvancementHelper.hitEmWithTheOlSwitcheroo(
-            serverLevel,
+            level,
             worldPosition,
             "hair_of_the_dog"
         );
@@ -381,11 +381,11 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
 
     // LONGS
-    public void defaultUpdateLongs(ServerLevel serverLevel) {
+    public void defaultUpdateLongs(ServerLevel level) {
         // Change state
         switch (tickState) {
             case IDLE -> {
-                serverLevel.playSound(null, worldPosition, SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
+                level.playSound(null, worldPosition, SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 1.5f, 0.8f);
                 setTickState(TickState.ARMED);
             }
             case ARMED -> setTickState(TickState.FIRING_INIT);
@@ -397,17 +397,17 @@ public class OscilliteCannonEntity extends BlockEntity implements IHaveGoggleInf
 
         // Send update packet
         this.setChanged();
-        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
-    public void shiftUpdateLongs(ServerLevel serverLevel) {
+    public void shiftUpdateLongs(ServerLevel level) {
         // Set state to FIRING_INIT
         setCooldown(0);
         setTickState(TickState.FIRING_INIT);
 
         // Send update packet
         this.setChanged();
-        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
 

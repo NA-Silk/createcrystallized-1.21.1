@@ -158,7 +158,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         }
     }
 
-    public void pushAndDamageEntities(ServerLevel serverLevel, Cache cache) {
+    public void pushAndDamageEntities(ServerLevel level, Cache cache) {
         // Exit if thrust is too low
         if (thrust < 0.1d) return;
 
@@ -166,7 +166,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
         setSearchBox(cache);
 
         // Get entities within the bounding box
-        List<Entity> entities = serverLevel.getEntities((Entity) null, cache.searchBox.toMojang(), PUSH_PREDICATE); // toMojang() allocates a new Mojang AABB...
+        List<Entity> entities = level.getEntities((Entity) null, cache.searchBox.toMojang(), PUSH_PREDICATE); // toMojang() allocates a new Mojang AABB...
         if (entities.isEmpty()) return;
 
         // Iterate through entities to apply acceleration
@@ -201,7 +201,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
             // Apply damage, scale with thrust and distance
             float appliedDamage = (float) (knockback * DAMAGE_SCALE);
             if (appliedDamage < 0.5d) continue;
-            if (thrusterDamageSource == null) thrusterDamageSource = ModDamageTypes.getSource(serverLevel, ModDamageTypes.PROPULSITE_THRUSTER);
+            if (thrusterDamageSource == null) thrusterDamageSource = ModDamageTypes.getSource(level, ModDamageTypes.PROPULSITE_THRUSTER);
             boolean wasAlive = entity.isAlive();
             entity.hurt(thrusterDamageSource, appliedDamage);
 
@@ -249,14 +249,14 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
 
     // LONGS
-    public void defaultUpdateLongs(ServerLevel serverLevel) {
-        if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
+    public void defaultUpdateLongs(ServerLevel level) {
+        if (!(Sable.HELPER.getContaining(level, worldPosition) instanceof ServerSubLevel)) return;
 
         // Change state
         switch (tickState) {
             case IDLE -> {
                 setCharge(MAX_CHARGE);
-                serverLevel.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f,1.2f);
+                level.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f,1.2f);
                 setTickState(TickState.ARMED);
             }
             case ARMED -> setTickState(TickState.FIRING_INIT);
@@ -268,11 +268,11 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
         // Send update packet
         this.setChanged();
-        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
-    public void shiftUpdateLongs(ServerLevel serverLevel) {
-        if (!(Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel)) return;
+    public void shiftUpdateLongs(ServerLevel level) {
+        if (!(Sable.HELPER.getContaining(level, worldPosition) instanceof ServerSubLevel)) return;
 
         // Set state to FIRING_INIT
         setCooldown(0);
@@ -280,7 +280,7 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
 
         // Send update packet
         this.setChanged();
-        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
 

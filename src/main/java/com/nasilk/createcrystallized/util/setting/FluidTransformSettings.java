@@ -64,35 +64,33 @@ public record FluidTransformSettings(
     String advancementID
 ) {
     public record YRange(int minYLevel, int maxYLevel) {}
-
     public record LightningSettings(boolean requireLightning, Integer radius) {}
-
     public record VibrationSettings(boolean requireVibration, Integer radius, Integer minimumFrequency) {}
 
-    public boolean canTransform(ServerLevel serverLevel, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
-        return passesRandomCheck(serverLevel) &&
-            passesEnvironmentChecks(serverLevel, pos) &&
-            passesContextChecks(serverLevel, pos, state) &&
+    public boolean canTransform(ServerLevel level, BlockPos pos, FluidState state, FluidTransformTriggerType trigger) {
+        return passesRandomCheck(level) &&
+            passesEnvironmentChecks(level, pos) &&
+            passesContextChecks(level, pos, state) &&
             passesTriggerChecks(trigger);
     }
 
-    private boolean passesRandomCheck(ServerLevel serverLevel) {
-        return serverLevel.getRandom().nextFloat() <= transformRate;
+    private boolean passesRandomCheck(ServerLevel level) {
+        return level.getRandom().nextFloat() <= transformRate;
     }
 
-    private boolean passesEnvironmentChecks(ServerLevel serverLevel, BlockPos pos) {
-        return (!requireColdBiome || serverLevel.getBiome(pos).value().coldEnoughToSnow(pos)) &&
-            (!requireRaining || serverLevel.isRaining()) &&
-            (!requireThundering || serverLevel.isThundering()) &&
-            (!requireNight || serverLevel.isNight()) &&
-            (allowedDimensions.isEmpty() || allowedDimensions.contains(serverLevel.dimension()));
+    private boolean passesEnvironmentChecks(ServerLevel level, BlockPos pos) {
+        return (!requireColdBiome || level.getBiome(pos).value().coldEnoughToSnow(pos)) &&
+            (!requireRaining || level.isRaining()) &&
+            (!requireThundering || level.isThundering()) &&
+            (!requireNight || level.isNight()) &&
+            (allowedDimensions.isEmpty() || allowedDimensions.contains(level.dimension()));
     }
 
-    private boolean passesContextChecks(ServerLevel serverLevel, BlockPos pos, FluidState state) {
-        return (serverLevel.getBrightness(LightLayer.SKY, pos) <= maxSkyLight) &&
+    private boolean passesContextChecks(ServerLevel level, BlockPos pos, FluidState state) {
+        return (level.getBrightness(LightLayer.SKY, pos) <= maxSkyLight) &&
             (pos.getY() >= yRange.minYLevel() && pos.getY() <= yRange.maxYLevel()) &&
             (!requireSourceBlock || state.isSource()) &&
-            (requireAdjacentBlocks.isEmpty() || hasAdjacentBlocks(serverLevel, pos));
+            (requireAdjacentBlocks.isEmpty() || hasAdjacentBlocks(level, pos));
     }
 
     private boolean passesTriggerChecks(FluidTransformTriggerType trigger) {

@@ -16,7 +16,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 
 // He's not very smart, but he's got spirit
+@SuppressWarnings("all")
 public class DummyEntity extends BlockEntity {
+    // Variables
+    private int multiblockSize = 1;
+    private BlockPos controllerPos = null;
+    private boolean updateMultiblock = false;
+
+    // Constants
     private final int worldPositionHash;
     private static final int RANDOM_TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
@@ -99,4 +106,9 @@ public class DummyEntity extends BlockEntity {
     public void setRemoved() {
         super.setRemoved();
     }
+
+
+    // GETTERS
+    public boolean isMultiblock() { return this.multiblockSize > 1;    }
+    public boolean isController() { return this.controllerPos == null; }
 }

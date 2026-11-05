@@ -13,6 +13,10 @@ public class ModSounds {
         "block.pebble_place"
     );
 
+    public static final RegistryEntry<SoundEvent, SoundEvent> PEBBLE_AMBIENT = registerSound(
+        "item.pebble_ambient"
+    );
+
     public static final RegistryEntry<SoundEvent, SoundEvent> PROPULSITE_BREAK = registerSound(
         "block.propulsite_break"
     );

@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.block.dummy.DummyRegistry;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.common.behavior.ModFluidInteractions;
@@ -40,6 +41,7 @@ public class CreateCrystallized {
         ModTiers.init();
 
         // REGISTRATE initializations
+        DummyRegistry.init(); // Testing area
         ModBlocks.init();
         ModBlockEntities.init();
         ModItemEntities.init();

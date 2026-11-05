@@ -9,6 +9,33 @@
       }
     ]
   },
+  "item.pebble_ambient" : {
+    "sounds": [
+      "createcrystallized:block/pebble_place",
+      "createcrystallized:item/peb_ambient_1",
+      "createcrystallized:item/peb_ambient_2",
+      "createcrystallized:item/peb_ambient_3",
+      "createcrystallized:item/peb_ambient_4",
+      "createcrystallized:item/peb_ambient_5",
+      "createcrystallized:item/peb_ambient_6",
+      "createcrystallized:item/peb_ambient_7",
+      "createcrystallized:item/peb_ambient_8",
+      "createcrystallized:item/peb_ambient_9",
+      "createcrystallized:item/peb_ambient_10",
+      "createcrystallized:item/peb_ambient_11",
+      "createcrystallized:item/peb_ambient_12",
+      "createcrystallized:item/peb_ambient_13",
+      "createcrystallized:item/peb_ambient_14",
+      "createcrystallized:item/peb_ambient_15",
+      "createcrystallized:item/peb_ambient_16",
+      "createcrystallized:item/peb_ambient_17",
+      "createcrystallized:item/peb_ambient_18",
+      "createcrystallized:item/peb_ambient_19",
+      "createcrystallized:item/peb_ambient_20",
+      "createcrystallized:item/peb_ambient_21",
+      "createcrystallized:item/peb_ambient_22"
+    ]
+  },
   "block.propulsite_break": {
     "sounds": [
       "createcrystallized:block/propulsite_break_1",

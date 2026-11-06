@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 
 public class ModDispenserBehaviors {
     private static final DefaultDispenseItemBehavior defaultBehavior = new DefaultDispenseItemBehavior();
+
     private static void registerFluidBucket(BucketItem bucketItem) {
         DispenserBlock.registerBehavior(
             bucketItem,

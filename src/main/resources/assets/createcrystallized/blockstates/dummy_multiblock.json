@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "controller=false": {
+      "model": "createcrystallized:block/dummy_multiblock"
+    },
+    "controller=true": {
+      "model": "createcrystallized:block/dummy_multiblock_controller"
+    }
+  }
+}

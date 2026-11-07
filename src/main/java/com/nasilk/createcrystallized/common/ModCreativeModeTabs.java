@@ -29,7 +29,7 @@ public class ModCreativeModeTabs {
         "create_crystallized_tab",
         Registries.CREATIVE_MODE_TAB,
         () -> CreativeModeTab.builder()
-            .icon(() -> new ItemStack(ModBlocks.DENSITE_BLOCK.get()))
+            .icon(() -> new ItemStack(ModBlocks.CREATIVE_TAB_ICON.get()))
             .title(Component.translatable("creativetab.createcrystallized.create_crystallized_tab"))
             .build()
     );

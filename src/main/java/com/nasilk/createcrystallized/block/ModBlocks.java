@@ -591,6 +591,11 @@ public class ModBlocks {
         )
     );
 
+    ///Exists to occupy the creative tab icon, unobtainable.
+    public static final BlockEntry<Block> CREATIVE_TAB_ICON = registerBlock(
+            "creative_tab_icon", Block::new
+    );
+
     public static void init() {
         CreateCrystallized.LOGGER.info("Blocks initialized");
     }

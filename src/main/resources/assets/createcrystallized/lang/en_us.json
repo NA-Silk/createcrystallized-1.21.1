@@ -103,13 +103,14 @@
   "block.createcrystallized.propulsite_block.tooltip.behaviour1": "_reinforces_ motion at low speeds. Weightless.",
   "block.createcrystallized.propulsite_block.tooltip.condition2": "When Placed Adjacent to Propulsite Thrusters",
   "block.createcrystallized.propulsite_block.tooltip.behaviour2": "_Increases_ thrust power up to additional 16 blocks.",
-  "createcrystallized.propulsite_block.goggles_tooltip.0": "§e Drifting §8(1kpg)",
+  "createcrystallized.propulsite_block.goggles_tooltip.0": "§e Drifting §8(-2d)",
+  "createcrystallized.propulsite_block.goggles_tooltip.1": "§e Weightless §8(0kpg)",
 
 
   "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.oscillite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
   "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by normalizing them to _90° rotations_.",
-  "createcrystallized.oscillite_block.goggles_tooltip.0": "§3 Normalizing §8(4kpg)",
+  "createcrystallized.oscillite_block.goggles_tooltip.0": "§3 Normalizing §8(90°)",
 
   "item.createcrystallized.densite_core.tooltip.summary": "A heavily compressed cube of Densite.",
   "item.createcrystallized.densite_core.tooltip.condition1": "",

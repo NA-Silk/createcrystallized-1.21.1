@@ -18,7 +18,7 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     public DummyMultiblockBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-            .setValue(CONTROLLER, false)
+            .setValue(CONTROLLER, true)
         );
     }
 

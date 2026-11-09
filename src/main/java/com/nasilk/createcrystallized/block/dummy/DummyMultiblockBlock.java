@@ -11,20 +11,23 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyMultiblockEntity> {
     public static final BooleanProperty CONTROLLER = BooleanProperty.create("controller");
+    public static final IntegerProperty MULTIBLOCK_SIZE = IntegerProperty.create("multiblock_size", 1, 3);
 
     public DummyMultiblockBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(CONTROLLER, true)
+            .setValue(MULTIBLOCK_SIZE, 1)
         );
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(CONTROLLER);
+        builder.add(CONTROLLER).add(MULTIBLOCK_SIZE);
     }
 
     // ENTITIES

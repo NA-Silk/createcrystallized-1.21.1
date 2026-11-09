@@ -3,8 +3,14 @@
     "controller=false": {
       "model": "createcrystallized:block/dummy_multiblock"
     },
-    "controller=true": {
-      "model": "createcrystallized:block/dummy_multiblock_controller"
+    "controller=true,multiblock_size=1": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_1"
+    },
+    "controller=true,multiblock_size=2": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_2"
+    },
+    "controller=true,multiblock_size=3": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_3"
     }
   }
 }

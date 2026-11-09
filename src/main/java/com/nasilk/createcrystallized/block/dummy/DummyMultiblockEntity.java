@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,9 +71,9 @@ public class DummyMultiblockEntity extends BlockEntity {
         }
 
         // Reset stranded members to controllers
-        if (multiblockSize == Size.SINGLE &&
-            isController() &&
-            getBlockState().getValue(DummyMultiblockBlock.CONTROLLER)
+        if (multiblockSize == Size.SINGLE &&                          // Skip if single
+            isController() &&                                         // and a controller
+            getBlockState().getValue(DummyMultiblockBlock.CONTROLLER) // and the state agrees that it's a controller
         ) return;
         setMultiblockSize(1);
         setControllerPos(null);
@@ -94,7 +95,7 @@ public class DummyMultiblockEntity extends BlockEntity {
     }
 
     private boolean isValidOrigin(ServerLevel level, BlockPos originPos, int size) {
-        if (!level.isLoaded(originPos)) return false;                                                 // Skip if unloaded
+        if (!level.isLoaded(originPos)) return false;                                                 // Fail if unloaded
         if (!isValidBlock(originPos)) return false;                                                   // or an invalid block
         if (!(level.getBlockEntity(originPos) instanceof DummyMultiblockEntity origin)) return false; // or an invalid entity
         if (!origin.isController()) return false;                                                     // or not a current controller
@@ -105,7 +106,7 @@ public class DummyMultiblockEntity extends BlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = originPos.offset(x, y, z);
-                    if (!level.isLoaded(pos)) return false;                                             // Skip if unloaded
+                    if (!level.isLoaded(pos)) return false;                                             // Fail if unloaded
                     if (!isValidBlock(pos)) return false;                                               // or an invalid block
                     if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return false; // or an invalid entity
                     if (!be.isController() &&                                                           // or a member
@@ -119,14 +120,15 @@ public class DummyMultiblockEntity extends BlockEntity {
     }
 
     private boolean setMultiblockController(ServerLevel level, BlockPos controllerPos, int size) {
-        // Scan forward from origin
+        // Scan forward from origin and store detected members
         List<DummyMultiblockEntity> members = new ArrayList<>();
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = controllerPos.offset(x, y, z);
-                    if (!isValidBlock(pos)) return false;
-                    if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return false;
+                    if (!level.isLoaded(pos)) return false;                                             // Fail if unloaded
+                    if (!isValidBlock(pos)) return false;                                               // or an invalid block
+                    if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return false; // or an invalid entity
                     members.add(be);
                 }
             }
@@ -157,7 +159,7 @@ public class DummyMultiblockEntity extends BlockEntity {
     public void markUpdated() {
         if (level == null) return;
         BlockState state = this.getBlockState();
-        level.sendBlockUpdated(worldPosition, state, state, 2);
+        level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
         this.setChanged();
     }
 
@@ -195,6 +197,20 @@ public class DummyMultiblockEntity extends BlockEntity {
 
 
     // HELPERS
+    public BlockPos getControllerPos() {
+        return this.controllerPos;
+    }
+    public void setControllerPos(BlockPos controllerPos) {
+        if (this.worldPosition.equals(controllerPos)) controllerPos = null;
+        this.controllerPos = controllerPos;
+    }
+    public Size getMultiblockSize() {
+        return this.multiblockSize;
+    }
+    public void setMultiblockSize(int size) {
+        this.multiblockSize = Size.of(size);
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isValidBlock(BlockPos pos) {
         if (level == null) return false;
@@ -205,27 +221,20 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isController() {
         return controllerPos == null;
     }
-    public void setControllerPos(BlockPos controllerPos) {
-        if (this.worldPosition.equals(controllerPos)) controllerPos = null;
-        this.controllerPos = controllerPos;
-    }
+
     public void setControllerState(BlockPos pos, boolean value) {
         if (level == null) return;
         BlockState state = level.getBlockState(pos);
+        if (!state.hasProperty(DummyMultiblockBlock.CONTROLLER)) return;
         if (state.getValue(DummyMultiblockBlock.CONTROLLER) == value) return;
-        level.setBlockAndUpdate(pos, state.setValue(DummyMultiblockBlock.CONTROLLER, value));
+        //level.setBlockAndUpdate(pos, state.setValue(DummyMultiblockBlock.CONTROLLER, value));
+        level.setBlock(pos, state.setValue(DummyMultiblockBlock.CONTROLLER, value), Block.UPDATE_CLIENTS);
     }
-    public void setMultiblockSize(int size) {
-        this.multiblockSize = Size.of(size);
-    }
-    public Size getMultiblockSize() {
-        return multiblockSize;
-    }
-    @SuppressWarnings("unused")
-    public DummyMultiblockEntity getController() {
+    public DummyMultiblockEntity getControllerEntity() {
         if (level == null) return null;
-        BlockEntity be = controllerPos == null ? level.getBlockEntity(worldPosition) : level.getBlockEntity(controllerPos);
-        if (be instanceof DummyMultiblockEntity controller) return controller;
-        return null;
+        return isController() ? this :       // Get this if it's a controller
+            level.isLoaded(controllerPos) && // else get the controller if it's valid
+            level.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity be &&
+            be.getMultiblockSize() == multiblockSize ? be : null;
     }
 }

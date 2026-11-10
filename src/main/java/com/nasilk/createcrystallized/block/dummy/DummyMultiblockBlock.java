@@ -34,20 +34,7 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock()) && state.getValue(CONTROLLER)) {
-            int size = state.getValue(MULTIBLOCK_SIZE);
-            if (size == 1) return;
-            for (int x = 0; x < size; x++) {
-                for (int y = 0; y < size; y++) {
-                    for (int z = 0; z < size; z++) {
-                        BlockPos memberPos = pos.offset(x, y, z);
-                        if (memberPos.equals(pos)) continue;
-                        if (!level.isLoaded(memberPos)) continue;
-                        if (!level.getBlockState(memberPos).is(this)) continue;
-                        if (!(level.getBlockEntity(memberPos) instanceof DummyMultiblockEntity be)) continue;
-                        be.setUpdateConnectivity();
-                    }
-                }
-            }
+            DummyMultiblockEntity.propagateSetUpdateMultiblockStatic(level, pos, state.getValue(MULTIBLOCK_SIZE));
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -55,8 +42,8 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof DummyMultiblockEntity be) {
-            DummyMultiblockEntity controller = be.getControllerEntity();
-            if (controller != null) controller.propagateSetUpdateConnectivity();
+            DummyMultiblockEntity controller = be.getController();
+            if (controller != null) controller.propagateSetUpdateMultiblockController();
         }
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
     }

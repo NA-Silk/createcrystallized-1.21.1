@@ -1,10 +1,22 @@
 {
   "variants": {
-    "controller=false": {
-      "model": "createcrystallized:block/dummy_multiblock"
+    "controller=false,multiblock_size=1": {
+      "model": "createcrystallized:block/dummy_multiblock_member_1"
     },
-    "controller=true": {
-      "model": "createcrystallized:block/dummy_multiblock_controller"
+    "controller=false,multiblock_size=2": {
+      "model": "createcrystallized:block/dummy_multiblock_member_2"
+    },
+    "controller=false,multiblock_size=3": {
+      "model": "createcrystallized:block/dummy_multiblock_member_3"
+    },
+    "controller=true,multiblock_size=1": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_1"
+    },
+    "controller=true,multiblock_size=2": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_2"
+    },
+    "controller=true,multiblock_size=3": {
+      "model": "createcrystallized:block/dummy_multiblock_controller_3"
     }
   }
 }

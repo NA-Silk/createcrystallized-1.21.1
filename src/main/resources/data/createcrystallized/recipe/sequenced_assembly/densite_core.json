@@ -3,6 +3,7 @@
   "ingredient": {
     "item": "createcrystallized:encased_densite_block"
   },
+
   "sequence": [
     {
       "type": "create:filling",
@@ -10,6 +11,7 @@
         {
           "item": "createcrystallized:encased_densite_block"
         },
+
         {
           "type": "neoforge:single",
           "amount": 500,
@@ -22,8 +24,23 @@
         }
       ]
     },
+
     {
-      "type": "create:pressing",
+      "type": "create:cutting",
+      "ingredients": [
+        {
+          "item": "createcrystallized:encased_densite_block"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:encased_densite_block"
+        }
+      ]
+    },
+
+    {
+      "type": "create:cutting",
       "ingredients": [
         {
           "item": "createcrystallized:encased_densite_block"
@@ -36,13 +53,16 @@
       ]
     }
   ],
+
   "transitional_item": {
     "id": "createcrystallized:encased_densite_block"
   },
-  "loops": 5,
+
+  "loops": 1,
   "results": [
     {
-      "id": "createcrystallized:densite_core"
+      "id": "createcrystallized:densite_core",
+      "count": 4
     }
   ]
 }

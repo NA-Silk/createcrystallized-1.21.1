@@ -34,7 +34,7 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock()) && state.getValue(CONTROLLER)) {
-            DummyMultiblockEntity.propagateSetUpdateMultiblockStatic(level, pos, state.getValue(MULTIBLOCK_SIZE));
+            DummyMultiblockEntity.propagateMultiblockUpdate(level, pos, state.getValue(MULTIBLOCK_SIZE));
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -43,7 +43,7 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof DummyMultiblockEntity be) {
             DummyMultiblockEntity controller = be.getController();
-            if (controller != null) controller.propagateSetUpdateMultiblockController();
+            if (controller != null) controller.propagateMultiblockUpdate();
         }
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
     }

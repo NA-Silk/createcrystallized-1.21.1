@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.dummy;
 
+import com.nasilk.createcrystallized.CreateCrystallized;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,9 +22,11 @@ public class DummyMultiblockEntity extends BlockEntity {
     private Size multiblockSize = Size.SINGLE;
     private BlockPos controllerPos = null;
     private boolean multiblockUpdate = true;
+    private final int worldPositionHash;
 
     // Constants
     private static final double AMBIENT_RATE = 8e-5d;
+    private static final long STATE_VALIDATION_INTERVAL = 6000L;
     public enum Size {
         SINGLE(1), DOUBLE(2), TRIPLE(3);
         private final int size;
@@ -40,16 +43,58 @@ public class DummyMultiblockEntity extends BlockEntity {
 
     public DummyMultiblockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        //this.worldPositionHash = pos.hashCode();
+        this.worldPositionHash = pos.hashCode();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (!(level == null || level.isClientSide)) setMultiblockUpdate();
     }
 
 
     // MULTIBLOCK TICK HANDLING
     public void tick() {
+        // TODO Remove debug
+        if (level instanceof ServerLevel serverLevel &&
+            (serverLevel.getGameTime() % 20 == 0 || isRemoved() || multiblockUpdate) &&
+            worldPosition.getX() > 0 && worldPosition.getZ() > 0
+        ) {
+            CreateCrystallized.LOGGER.debug(
+                "Dummy BE tick: pos={}, removed={}, update={}",
+                worldPosition,
+                isRemoved(),
+                multiblockUpdate
+            );
+        }
+
         if (level == null) return;
-        if (level.isClientSide) clientTick(level);
-        else if (getMultiblockUpdate()) updateMultiblockTick((ServerLevel) level);
-        else serverTick((ServerLevel) level);
+        if (level.isClientSide) {
+            clientTick(level);
+            return;
+        }
+        else if (getMultiblockUpdate()) {
+            updateMultiblockTick((ServerLevel) level);
+            return;
+        }
+        else if (Math.floorMod(level.getGameTime() + worldPositionHash, STATE_VALIDATION_INTERVAL) == 0) {
+            stateValidationTick((ServerLevel) level);
+        }
+        serverTick((ServerLevel) level);
+    }
+
+    private void stateValidationTick(ServerLevel level) {
+        // Get BE values
+        boolean controller = isController();
+        int size = getMultiblockSize().getSize();
+
+        // Compare blockstate and BE
+        BlockState state = getBlockState();
+        boolean validController = state.getValue(DummyMultiblockBlock.CONTROLLER) == controller;
+        boolean validSize = state.getValue(DummyMultiblockBlock.MULTIBLOCK_SIZE) == size;
+
+        // Repair state if necessary
+        if (!validController || !validSize) setState(level, worldPosition, controller, size);
     }
 
     private void updateMultiblockTick(ServerLevel level) {
@@ -76,7 +121,7 @@ public class DummyMultiblockEntity extends BlockEntity {
         if (isMultiblockMember()) {
             // Evaluate current controller status
             if (!level.isLoaded(controllerPos)) return;
-            DummyMultiblockEntity controller = getController();
+            DummyMultiblockEntity controller = getControllerReference();
             if (controller != null && controller.isMultiblockController()) {
                 if (!controller.isLoadedMultiblockController()) return;
                 if (!controller.isValidMultiblockController()) {
@@ -233,6 +278,7 @@ public class DummyMultiblockEntity extends BlockEntity {
     }
 
     private void clientTick(Level level) {
+        if (!isController()) return;
         if (level.getRandom().nextDouble() < AMBIENT_RATE) level.playLocalSound(
             worldPosition,
             SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,
@@ -266,10 +312,16 @@ public class DummyMultiblockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.multiblockSize = Size.of(tag.getInt("multiblockSize"));
-        if (!tag.contains("controllerPos")) return;
-        BlockPos pos = BlockPos.of(tag.getLong("controllerPos"));
-        this.controllerPos = worldPosition.equals(pos) ? null : pos;
+
+        if (tag.contains("multiblockSize"))
+            this.multiblockSize = Size.of(tag.getInt("multiblockSize"));
+        else this.multiblockSize = Size.SINGLE;
+
+        if (tag.contains("controllerPos")) {
+            BlockPos pos = BlockPos.of(tag.getLong("controllerPos"));
+            this.controllerPos = worldPosition.equals(pos) ? null : pos;
+        }
+        else this.controllerPos = null;
     }
 
 
@@ -277,7 +329,6 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isController() {
         return this.controllerPos == null;
     }
-    @SuppressWarnings("unused")
     public boolean isSingleController() {
         return isController() && !isMultiblock();
     }
@@ -322,11 +373,10 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isMultiblockMember() {
         return !isController() && isMultiblock();
     }
-    @SuppressWarnings("unused")
     public boolean isValidMultiblockMember() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockMember()) return false;
-        DummyMultiblockEntity controller = getController();
+        DummyMultiblockEntity controller = getControllerReference();
         if (controller == null || controller == this) return false;
         return controller.isValidMultiblockController();
     }
@@ -334,9 +384,28 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isLoadedMultiblockMember() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockMember()) return false;
-        DummyMultiblockEntity controller = getController();
+        DummyMultiblockEntity controller = getControllerReference();
         if (controller == null || controller == this) return false;
         return controller.isLoadedMultiblockController();
+    }
+    public boolean isConnected(DummyMultiblockEntity other) {
+        if (other == null) return false;
+        return getControllerPos().equals(other.getControllerPos())
+            && getMultiblockSize() == other.getMultiblockSize();
+    }
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isValidBlock(Level level, BlockPos pos) {
+        if (level == null || level.isClientSide) return false;
+        return DummyRegistry.DUMMY_MULTIBLOCK_BLOCK.has(level.getBlockState(pos));
+    }
+    public static boolean inMultiblockRange(BlockPos pos, BlockPos controllerPos, int size) {
+        if (size == 1) return true;
+        int dx = pos.getX() - controllerPos.getX();
+        int dy = pos.getY() - controllerPos.getY();
+        int dz = pos.getZ() - controllerPos.getZ();
+        return dx >= 0 && dx < size
+                && dy >= 0 && dy < size
+                && dz >= 0 && dz < size;
     }
 
     public BlockPos getControllerPos() {
@@ -364,19 +433,33 @@ public class DummyMultiblockEntity extends BlockEntity {
         this.multiblockUpdate = true;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isValidBlock(Level level, BlockPos pos) {
-        if (level == null || level.isClientSide) return false;
-        return DummyRegistry.DUMMY_MULTIBLOCK_BLOCK.has(level.getBlockState(pos));
+    public DummyMultiblockEntity getControllerReference() {
+        if (level == null || level.isClientSide) return null;
+        if (isController()) return this; // Current block is a controller
+        if (!isMultiblock()) return null;
+        if (!level.isLoaded(controllerPos)) return null;
+        if (!isValidBlock(level, controllerPos)) return null;
+        if (!(level.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return null;
+        if (!controller.isController()) return null;
+        if (!inMultiblockRange(worldPosition, controllerPos, multiblockSize.getSize())) return null;
+        return controller;
     }
-    public static boolean inMultiblockRange(BlockPos pos, BlockPos controllerPos, int size) {
-        if (size == 1) return true;
-        int dx = pos.getX() - controllerPos.getX();
-        int dy = pos.getY() - controllerPos.getY();
-        int dz = pos.getZ() - controllerPos.getZ();
-        return dx >= 0 && dx < size
-            && dy >= 0 && dy < size
-            && dz >= 0 && dz < size;
+    @SuppressWarnings("unused")
+    public List<BlockPos> getFrontier() {
+        if (level == null || level.isClientSide) return Collections.emptyList();
+        DummyMultiblockEntity controller = getControllerReference();
+        if (controller == null) return Collections.emptyList();
+        if (!isValidMultiblockController()) return Collections.emptyList();
+        List<BlockPos> frontier = new ArrayList<>();
+        int size = controller.getMultiblockSize().getSize();
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    frontier.add(this.worldPosition.offset(x, y, z));
+                }
+            }
+        }
+        return frontier;
     }
     public static void setState(Level level, BlockPos pos, boolean controller, int size) {
         if (level == null || level.isClientSide) return;
@@ -389,17 +472,13 @@ public class DummyMultiblockEntity extends BlockEntity {
         state = state.setValue(DummyMultiblockBlock.MULTIBLOCK_SIZE, size);
         level.setBlock(pos, state, Block.UPDATE_CLIENTS);
     }
-
-    public DummyMultiblockEntity getController() {
-        if (level == null || level.isClientSide) return null;
-        if (isController()) return this; // Current block is a controller
-        if (!isMultiblock()) return null;
-        if (!level.isLoaded(controllerPos)) return null;
-        if (!isValidBlock(level, controllerPos)) return null;
-        if (!(level.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return null;
-        if (!controller.isController()) return null;
-        if (!inMultiblockRange(worldPosition, controllerPos, multiblockSize.getSize())) return null;
-        return controller;
+    public void reset() {
+        if (level == null || level.isClientSide) return;
+        setMultiblockSize(1);
+        setControllerPos(null);
+        setState(level, worldPosition, true, 1);
+        notifyBlockUpdate();
+        setMultiblockUpdate();
     }
     public void propagateMultiblockUpdate() {
         if (level == null || level.isClientSide) return;
@@ -420,14 +499,6 @@ public class DummyMultiblockEntity extends BlockEntity {
                 }
             }
         }
-    }
-    private void reset() {
-        if (level == null || level.isClientSide) return;
-        setMultiblockSize(1);
-        setControllerPos(null);
-        setState(level, worldPosition, true, 1);
-        notifyBlockUpdate();
-        setMultiblockUpdate();
     }
     public void notifyBlockUpdate() {
         setChanged();

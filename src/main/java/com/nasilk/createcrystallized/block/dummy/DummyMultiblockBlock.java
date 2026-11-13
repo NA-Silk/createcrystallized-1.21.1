@@ -1,8 +1,12 @@
 package com.nasilk.createcrystallized.block.dummy;
 
+import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.foundation.block.IBE;
+import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
+import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -17,9 +21,62 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DummyMultiblockBlock extends Block implements IBE<DummyMultiblockEntity> {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class DummyMultiblockBlock extends Block implements IBE<DummyMultiblockEntity>, BlockSubLevelAssemblyListener {
     public static final BooleanProperty CONTROLLER = BooleanProperty.create("controller");
     public static final IntegerProperty MULTIBLOCK_SIZE = IntegerProperty.create("multiblock_size", 1, 3);
+    private static final Direction[] DIRECTIONS = Direction.values();
+
+    static {
+        // Simulated assembly integration
+        SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
+            // Check self
+            if (!DummyMultiblockEntity.isValidBlock(level, pos)) return Collections.emptyList();
+            if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return Collections.emptyList();
+            // Check neighbors
+            List<BlockPos> connected = new ArrayList<>();
+            for (Direction direction : DIRECTIONS) {
+                BlockPos neighborPos = pos.relative(direction);
+                if (visited.contains(neighborPos)) continue;
+                if (!level.isLoaded(neighborPos)) continue;
+                if (!DummyMultiblockEntity.isValidBlock(level, neighborPos)) continue;
+                if (!(level.getBlockEntity(neighborPos) instanceof DummyMultiblockEntity neighbor)) continue;
+                if (be.isConnected(neighbor)) connected.add(neighborPos);
+            }
+            // Return list
+            return connected;
+        });
+
+        // Create assembly integration
+        BlockMovementChecks.registerAttachedCheck((state, level, pos, direction) -> {
+            // Check self
+            if (!DummyMultiblockEntity.isValidBlock(level, pos)) return BlockMovementChecks.CheckResult.FAIL;
+            if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return BlockMovementChecks.CheckResult.FAIL;
+            // Check neighbor
+            BlockPos neighborPos = pos.relative(direction);
+            if (!level.isLoaded(neighborPos)) return BlockMovementChecks.CheckResult.FAIL;
+            if (!DummyMultiblockEntity.isValidBlock(level, neighborPos)) return BlockMovementChecks.CheckResult.FAIL;
+            if (!(level.getBlockEntity(neighborPos) instanceof DummyMultiblockEntity neighbor)) return BlockMovementChecks.CheckResult.PASS;
+            // Return comparison
+            return BlockMovementChecks.CheckResult.of(be.isConnected(neighbor));
+        });
+
+        // Create assembly integration (preventing orphaned sections, yes we need this twice, I think)
+        BlockMovementChecks.registerMovementAllowedCheck((state, level, pos) -> {
+            // Check self
+            if (!DummyMultiblockEntity.isValidBlock(level, pos)) return BlockMovementChecks.CheckResult.FAIL;
+            if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) return BlockMovementChecks.CheckResult.FAIL;
+            // Return status
+            return BlockMovementChecks.CheckResult.of(
+                be.isSingleController() ||
+                be.isValidMultiblockController() ||
+                be.isValidMultiblockMember()
+            );
+        });
+    }
 
     public DummyMultiblockBlock(Properties properties) {
         super(properties);
@@ -57,6 +114,11 @@ public class DummyMultiblockBlock extends Block implements IBE<DummyMultiblockEn
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
     }
 
+    @Override
+    public void afterMove(ServerLevel originLevel, ServerLevel resultingLevel, BlockState newState, BlockPos oldPos, BlockPos newPos) {
+        if (resultingLevel.getBlockEntity(newPos) instanceof DummyMultiblockEntity be) be.reset();
+    }
+
     // ENTITIES
     @Override
     public Class<DummyMultiblockEntity> getBlockEntityClass() {
@@ -85,7 +147,7 @@ public class DummyMultiblockBlock extends Block implements IBE<DummyMultiblockEn
     }
     @Override
     protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
-        return 1.0F;
+        return 1.0f;
     }
     @Override
     protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {

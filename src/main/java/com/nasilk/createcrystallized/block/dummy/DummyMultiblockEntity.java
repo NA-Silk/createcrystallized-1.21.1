@@ -1,6 +1,5 @@
 package com.nasilk.createcrystallized.block.dummy;
 
-import com.nasilk.createcrystallized.CreateCrystallized;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,19 +54,6 @@ public class DummyMultiblockEntity extends BlockEntity {
 
     // MULTIBLOCK TICK HANDLING
     public void tick() {
-        // TODO Remove debug
-        if (level instanceof ServerLevel serverLevel &&
-            (serverLevel.getGameTime() % 20 == 0 || isRemoved() || multiblockUpdate) &&
-            worldPosition.getX() > 0 && worldPosition.getZ() > 0
-        ) {
-            CreateCrystallized.LOGGER.debug(
-                "Dummy BE tick: pos={}, removed={}, update={}",
-                worldPosition,
-                isRemoved(),
-                multiblockUpdate
-            );
-        }
-
         if (level == null) return;
         if (level.isClientSide) {
             clientTick(level);

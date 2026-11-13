@@ -47,6 +47,7 @@ public class TaskEventScheduler {
         KEYS.add(task.key());
         TASKS.add(task);
     }
+    @SuppressWarnings("unused")
     public static synchronized void schedule(MinecraftServer server, UUID key, int delayTicks, Runnable action) {
         // Synchronized to ensure thread-safety if scheduled from outside the main thread
         if (!KEYS.add(key)) return;

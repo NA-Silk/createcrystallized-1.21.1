@@ -3,9 +3,9 @@ package com.nasilk.createcrystallized.block.dummy;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,8 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyMultiblockEntity> {
+public class DummyMultiblockBlock extends Block implements IBE<DummyMultiblockEntity> {
     public static final BooleanProperty CONTROLLER = BooleanProperty.create("controller");
     public static final IntegerProperty MULTIBLOCK_SIZE = IntegerProperty.create("multiblock_size", 1, 3);
 
@@ -76,6 +79,18 @@ public class DummyMultiblockBlock extends TransparentBlock implements IBE<DummyM
     }
 
     // TRANSPARENCY
+    @Override
+    protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
+    }
+    @Override
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return 1.0F;
+    }
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true;
+    }
     @Override
     protected boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
         return false;

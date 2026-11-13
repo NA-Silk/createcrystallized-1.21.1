@@ -1,5 +1,7 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.dummy.imp;
 
+import com.nasilk.createcrystallized.block.dummy.AbstractMultiblockBlock;
+import com.nasilk.createcrystallized.block.dummy.MultiblockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -12,20 +14,20 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DummyMultiblockBlock extends AbstractMultiblockBlock<DummyMultiblockEntity> {
-    public DummyMultiblockBlock(Properties properties) {
+public class DummyMultiblock1Block extends AbstractMultiblockBlock<DummyMultiblock1Entity> {
+    public DummyMultiblock1Block(Properties properties) {
         super(properties);
     }
 
     // ENTITIES
     @Override
-    public Class<DummyMultiblockEntity> getBlockEntityClass() {
-        return DummyMultiblockEntity.class;
+    public Class<DummyMultiblock1Entity> getBlockEntityClass() {
+        return DummyMultiblock1Entity.class;
     }
 
     @Override
-    public BlockEntityType<? extends DummyMultiblockEntity> getBlockEntityType() {
-        return DummyRegistry.DUMMY_MULTIBLOCK_ENTITY.get();
+    public BlockEntityType<? extends DummyMultiblock1Entity> getBlockEntityType() {
+        return MultiblockRegistry.DUMMY_MULTIBLOCK_1_ENTITY.get();
     }
 
     @Override
@@ -34,7 +36,7 @@ public class DummyMultiblockBlock extends AbstractMultiblockBlock<DummyMultibloc
         //if (level.isClientSide || type != getBlockEntityType()) return null;
         if (type != getBlockEntityType()) return null;
         return (lvl, bp, bs, be) -> {
-            if (be instanceof DummyMultiblockEntity dummy) dummy.tick();
+            if (be instanceof DummyMultiblock1Entity dummy) dummy.tick();
         };
     }
 

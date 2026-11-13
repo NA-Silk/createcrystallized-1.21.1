@@ -1,5 +1,6 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.dummy.imp;
 
+import com.nasilk.createcrystallized.block.dummy.AbstractMultiblockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -8,14 +9,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import java.util.*;
 
 // He's not very smart, but he's got spirit
-public class DummyMultiblockEntity extends AbstractMultiblockEntity {
+public class DummyMultiblock1Entity extends AbstractMultiblockEntity {
     // Constants
     private static final double AMBIENT_RATE = 8e-5d;
 
-    public DummyMultiblockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public DummyMultiblock1Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 

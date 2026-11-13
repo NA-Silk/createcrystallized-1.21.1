@@ -1,13 +1,10 @@
 package com.nasilk.createcrystallized.block.dummy;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.*;
 
 // He's not very smart, but he's got spirit
@@ -59,32 +55,56 @@ public class DummyMultiblockEntity extends BlockEntity {
     //abstract void serverTick(ServerLevel level); // TODO Abstract serverTick
 
     private void updateMultiblockTick(ServerLevel level) {
-        //CreateCrystallized.LOGGER.info("Server Tick starting: {}", worldPosition); // TODO Remove debug line
-        // Skip if it is a valid multiblock member
-        if (isValidMultiblockMember()) return;
+        CreateCrystallized.LOGGER.debug("Update Multiblock Tick starting: {}", worldPosition); // TODO Remove debug line
 
-        // Get current multiblock controller validity and size (default 1)
-        boolean validMC = isValidMultiblockController();
-        int currentSize = validMC ? getMultiblockSize().getSize() : 1;
+        // CASE 1: Current multiblock controller
+        if (isMultiblockController()) {
+            // Evaluate current multiblock status
+            if (!isLoadedMultiblockController()) return;
+            if (!isValidMultiblockController()) {
+                disassemble(level, worldPosition);
+                return;
+            }
 
-        // Look for origin
-        for (int size = 3; size >= 2; size--) {
-            if (validMC && size <= currentSize) continue;
-            BlockPos originPos = findOrigin(level, size);
-            if (originPos == null) continue;
-            CreateCrystallized.LOGGER.info("Origin search of size {} successful: {}", size, worldPosition); // TODO DEBUG
-            if (setMultiblockController(level, originPos, size)) return;
+            // Look for upgrade
+            int currentSize = multiblockSize.getSize();
+            for (int size = 3; size > currentSize; size--) {
+                BlockPos originPos = findOrigin(level, size);
+                if (originPos == null) continue;
+                if (setMultiblockController(level, originPos, size)) return;
+            }
+            return;
         }
 
-        // Reset stranded members to controllers
-        if (validMC ||                        // Skip if already a valid multiblock controller
-            isController() && !isMultiblock() // or a single controller
-        ) return;
-        CreateCrystallized.LOGGER.info("Stranded BE resetting: {}", worldPosition); // TODO Remove debug line
-        setMultiblockSize(1);
-        setControllerPos(null);
-        setState(level, worldPosition, true, 1);
-        notifyBlockUpdate();
+        // CASE 2: Current multiblock member
+        if (isMultiblockMember()) {
+            // Evaluate current controller status
+            if (!level.isLoaded(controllerPos)) return;
+            DummyMultiblockEntity controller = getControllerReference();
+            if (controller != null && controller.isMultiblockController()) {
+                if (!controller.isLoadedMultiblockController()) return;
+                if (!controller.isValidMultiblockController()) {
+                    controller.setMultiblockUpdate();
+                    return;
+                }
+                return;
+            }
+            reset(level);
+            return;
+        }
+
+        // CASE 3: Broken member metadata
+        if (!isController()) {
+            reset(level);
+            return;
+        }
+
+        // CASE 4: Single controller
+        for (int size = 3; size >= 2; size--) {
+            BlockPos originPos = findOrigin(level, size);
+            if (originPos == null) continue;
+            if (setMultiblockController(level, originPos, size)) return;
+        }
     }
 
     private BlockPos findOrigin(ServerLevel level, int size) {
@@ -184,24 +204,35 @@ public class DummyMultiblockEntity extends BlockEntity {
         return true;
     }
 
+    private void reset(ServerLevel level) {
+        setMultiblockSize(1);
+        setControllerPos(null);
+        setState(level, worldPosition, true, 1);
+        notifyBlockUpdate();
+        setMultiblockUpdate();
+    }
+
     private static void disassemble(ServerLevel level, BlockPos controllerPos) {
         if (!level.isLoaded(controllerPos)) return;
         if (!isValidBlock(level, controllerPos)) return;
         if (!(level.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return;
         if (!controller.isMultiblockController()) return;
+        if (!controller.isLoadedMultiblockController()) return;
         int size = controller.getMultiblockSize().getSize();
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = controllerPos.offset(x, y, z);
+                    if (!level.isLoaded(pos)) continue;
+                    if (!isValidBlock(level, pos)) continue;
                     if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) continue;
                     if (!be.getControllerPos().equals(controllerPos)) continue;
-                    if (be.getMultiblockSize().getSize() != size) continue;
-                    be.setMultiblockSize(1);
-                    be.setControllerPos(null);
-                    setState(level, controllerPos, true, 1);
-                    be.notifyBlockUpdate();
-                    be.setMultiblockUpdate();
+                    be.reset(level);
+//                    be.setMultiblockSize(1);
+//                    be.setControllerPos(null);
+//                    setState(level, pos, true, 1);
+//                    be.notifyBlockUpdate();
+//                    be.setMultiblockUpdate();
                 }
             }
         }
@@ -265,6 +296,7 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isMultiblockController() {
         return isController() && isMultiblock();
     }
+    // Validate the entire group
     public boolean isValidMultiblockController() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockController()) return false;
@@ -283,6 +315,7 @@ public class DummyMultiblockEntity extends BlockEntity {
         }
         return true;
     }
+    // Check whether the entire group can be inspected
     public boolean isLoadedMultiblockController() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockController()) return false;
@@ -300,19 +333,21 @@ public class DummyMultiblockEntity extends BlockEntity {
     public boolean isMultiblockMember() {
         return !isController() && isMultiblock();
     }
+    // Validate this member through its controller
     public boolean isValidMultiblockMember() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockMember()) return false;
-        DummyMultiblockEntity controller = getController();
+        DummyMultiblockEntity controller = getControllerReference();
         if (controller == null || controller == this) return false;
         return controller.isValidMultiblockController();
     }
+    // Check whether its referenced controller's cube is loaded
     public boolean isLoadedMultiblockMember() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockMember()) return false;
-        DummyMultiblockEntity controller = getController();
+        DummyMultiblockEntity controller = getControllerReference();
         if (controller == null || controller == this) return false;
-        return controller.isMultiblockMember();
+        return controller.isLoadedMultiblockController();
     }
 
     public BlockPos getControllerPos() {
@@ -365,72 +400,110 @@ public class DummyMultiblockEntity extends BlockEntity {
         level.setBlock(pos, state, Block.UPDATE_CLIENTS);
     }
 
-    /// return this       - Current block is a controller
-    /// return controller - Current controller is valid
-    /// return null       - Current controller is invalid
+//    public DummyMultiblockEntity getController() {
+//        if (level == null || level.isClientSide) return null;
+//        if (isSingleController()) return this;          // Get this if it's a single controller
+//        if (isValidMultiblockController()) return this; // Get this if it's a valid multiblock controller
+//        if (isMultiblock() &&                                                                   // Get controller if it's a multiblock
+//            level.isLoaded(this.controllerPos) &&                                               // and the controller is loaded
+//            isInRange(this.worldPosition, this.controllerPos, this.multiblockSize.getSize()) && // and in range
+//            isValidBlock(level, this.controllerPos) &&                                          // and a valid block
+//            level.getBlockEntity(this.controllerPos) instanceof DummyMultiblockEntity be &&     // and a valid entity
+//            be.isValidMultiblockController()                                                    // and is a valid controller
+//        ) return be;
+//        return null;
+//    }
+    // TODO Review these
+    // Resolve a currently valid controller
     public DummyMultiblockEntity getController() {
         if (level == null || level.isClientSide) return null;
-        if (isSingleController()) return this;          // Get this if it's a single controller
-        if (isValidMultiblockController()) return this; // Get this if it's a valid multiblock controller
-        if (isMultiblock() &&                                                                   // Get controller if it's a multiblock
-            level.isLoaded(this.controllerPos) &&                                               // and the controller is loaded
-            isInRange(this.worldPosition, this.controllerPos, this.multiblockSize.getSize()) && // and in range
-            isValidBlock(level, this.controllerPos) &&                                          // and a valid block
-            level.getBlockEntity(this.controllerPos) instanceof DummyMultiblockEntity be &&     // and a valid entity
-            be.isValidMultiblockController()                                                    // and is a valid controller
-        ) return be;
-        return null;
+        if (isController()) { // Handle controllers explicitly
+            if (!isMultiblock()) return this;
+            return isValidMultiblockController() ? this : null;
+        }
+        DummyMultiblockEntity controller = getControllerReference(); // Resolve the referenced controller
+        if (controller == null) return null;
+        if (!controller.isMultiblock()) return null; // Members require a fully valid controller
+        if (controller.getMultiblockSize() != multiblockSize) return null;
+        return controller.isValidMultiblockController() ? controller : null;
     }
-    public void notifyBlockUpdate() {
-        setChanged();
-        if (level == null || level.isClientSide) return;
-        BlockState state = getBlockState();
-        level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+    // Resolve the stored controller, even if invalid
+    public DummyMultiblockEntity getControllerReference() {
+        if (level == null || level.isClientSide) return null;
+        if (isController()) return this; // A controller always references itself
+        if (!isMultiblockMember() || controllerPos == null) return null; // This must be a member with stored ownership
+        if (!level.isLoaded(controllerPos)) return null; // The referenced controller must be accessible
+        if (!isValidBlock(level, controllerPos)) return null;
+        if (!(level.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return null;
+        if (!controller.isController()) return null; // Check controller identity, but NOT group validity
+        if (!isInRange(worldPosition, controllerPos, multiblockSize.getSize())) return null; // The member must geometrically belong to this controller
+        return controller;
     }
 
     // TODO Try to consolidate these two
+//    public void propagateMultiblockUpdate() {
+//        if (level == null || level.isClientSide) return;
+//        if (!isController()) return;
+//
+//        // Update everything on the next tick
+//        BlockPos controllerPos = this.worldPosition;
+//        ResourceKey<Level> dimension = level.dimension();
+//        if (level.getServer() instanceof MinecraftServer server) {
+//            TaskEventScheduler.schedule(
+//                server,
+//                UUID.fromString(dimension + controllerPos.toString()),
+//                1,
+//                () -> {
+//                    ServerLevel currentLevel = server.getLevel(dimension);
+//                    if (currentLevel == null || !currentLevel.isLoaded(controllerPos)) return;
+//                    if (!(currentLevel.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return;
+//                    if (!controller.isController()) return;
+//                    int size = controller.getMultiblockSize().getSize();
+//                    for (int x = 0; x < size; x++) {
+//                        for (int y = 0; y < size; y++) {
+//                            for (int z = 0; z < size; z++) {
+//                                BlockPos pos = controllerPos.offset(x, y, z);
+//                                if (!currentLevel.isLoaded(pos)) continue;
+//                                if (!isValidBlock(currentLevel, pos)) continue;
+//                                if (!(currentLevel.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) continue;
+//                                be.setMultiblockUpdate();
+//                                CreateCrystallized.LOGGER.debug("updateConnectivity set: {}", pos); // TODO Remove debug line
+//                            }
+//                        }
+//                    }
+//                }
+//            );
+//        }
+//    }
+//    public static void propagateMultiblockUpdate(Level level, BlockPos controllerPos, int size) {
+//        if (level == null || level.isClientSide) return;
+//        if (size == 1) return;
+//        for (int x = 0; x < size; x++) {
+//            for (int y = 0; y < size; y++) {
+//                for (int z = 0; z < size; z++) {
+//                    BlockPos pos = controllerPos.offset(x, y, z);
+//                    if (pos.equals(controllerPos)) continue;
+//                    if (!level.isLoaded(pos)) continue;
+//                    if (!isValidBlock(level, pos)) continue;
+//                    if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) continue;
+//                    be.setMultiblockUpdate();
+//                }
+//            }
+//        }
+//    }
+    // TODO Review these
     public void propagateMultiblockUpdate() {
         if (level == null || level.isClientSide) return;
         if (!isController()) return;
-
-        // Update everything on the next tick
-        BlockPos controllerPos = this.worldPosition;
-        ResourceKey<Level> dimension = level.dimension();
-        if (level.getServer() instanceof MinecraftServer server) {
-            TaskEventScheduler.schedule(
-                server,
-                UUID.fromString(dimension + controllerPos.toString()),
-                1,
-                () -> {
-                    ServerLevel currentLevel = server.getLevel(dimension);
-                    if (currentLevel == null || !currentLevel.isLoaded(controllerPos)) return;
-                    if (!(currentLevel.getBlockEntity(controllerPos) instanceof DummyMultiblockEntity controller)) return;
-                    if (!controller.isController()) return;
-                    int size = controller.getMultiblockSize().getSize();
-                    for (int x = 0; x < size; x++) {
-                        for (int y = 0; y < size; y++) {
-                            for (int z = 0; z < size; z++) {
-                                BlockPos pos = controllerPos.offset(x, y, z);
-                                if (!currentLevel.isLoaded(pos)) continue;
-                                if (!isValidBlock(currentLevel, pos)) continue;
-                                if (!(currentLevel.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) continue;
-                                be.setMultiblockUpdate();
-                                CreateCrystallized.LOGGER.info("updateConnectivity set: {}", pos); // TODO Remove debug line
-                            }
-                        }
-                    }
-                }
-            );
-        }
+        propagateMultiblockUpdate(level, worldPosition, multiblockSize.getSize());
     }
     public static void propagateMultiblockUpdate(Level level, BlockPos controllerPos, int size) {
         if (level == null || level.isClientSide) return;
-        if (size == 1) return;
+        if (size < 1) return;
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = controllerPos.offset(x, y, z);
-                    if (pos.equals(controllerPos)) continue;
                     if (!level.isLoaded(pos)) continue;
                     if (!isValidBlock(level, pos)) continue;
                     if (!(level.getBlockEntity(pos) instanceof DummyMultiblockEntity be)) continue;
@@ -438,5 +511,11 @@ public class DummyMultiblockEntity extends BlockEntity {
                 }
             }
         }
+    }
+    public void notifyBlockUpdate() {
+        setChanged();
+        if (level == null || level.isClientSide) return;
+        BlockState state = getBlockState();
+        level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
     }
 }

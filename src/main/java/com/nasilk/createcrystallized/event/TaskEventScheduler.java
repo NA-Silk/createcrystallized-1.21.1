@@ -17,12 +17,17 @@ public class TaskEventScheduler {
     // Scheduled Task Queue
     private static final PriorityQueue<ScheduledTask> TASKS = new PriorityQueue<>();
     private static final Set<UUID> KEYS = new HashSet<>();
+    /// Example UUID:
+    /// UUID key = UUID.nameUUIDFromBytes(
+    ///     (dimension.location() + ":" + controllerPos.asLong())
+    ///         .getBytes(StandardCharsets.UTF_8)
+    /// );
 
     // Task execution handler
     @SubscribeEvent
     public static synchronized void onServerTick(ServerTickEvent.Post event) {
         long currentTick = event.getServer().getTickCount();
-        while (!TASKS.isEmpty() && !KEYS.isEmpty() && TASKS.peek().targetTick() <= currentTick) {
+        while (!TASKS.isEmpty() && TASKS.peek().targetTick() <= currentTick) {
             ScheduledTask task = TASKS.poll();
             if (KEYS.remove(task.key())) task.action().run();
         }
@@ -39,14 +44,13 @@ public class TaskEventScheduler {
     public static synchronized void schedule(MinecraftServer server, int delayTicks, Runnable action) {
         // Synchronized to ensure thread-safety if scheduled from outside the main thread
         ScheduledTask task = new ScheduledTask(server.getTickCount() + delayTicks, action);
-        TASKS.add(task);
         KEYS.add(task.key());
+        TASKS.add(task);
     }
     public static synchronized void schedule(MinecraftServer server, UUID key, int delayTicks, Runnable action) {
         // Synchronized to ensure thread-safety if scheduled from outside the main thread
-        ScheduledTask task = new ScheduledTask(key, server.getTickCount() + delayTicks, action);
-        TASKS.add(task);
-        KEYS.add(task.key());
+        if (!KEYS.add(key)) return;
+        TASKS.add(new ScheduledTask(key, server.getTickCount() + delayTicks, action));
     }
 
     // Scheduled task definition

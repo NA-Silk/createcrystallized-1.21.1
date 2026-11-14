@@ -1,10 +1,6 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.multiblock.imp;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.block.dummy.imp.DummyMultiblock1Block;
-import com.nasilk.createcrystallized.block.dummy.imp.DummyMultiblock1Entity;
-import com.nasilk.createcrystallized.block.dummy.imp.DummyMultiblock2Block;
-import com.nasilk.createcrystallized.block.dummy.imp.DummyMultiblock2Entity;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -14,7 +10,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 
 import static com.nasilk.createcrystallized.util.helper.BlockRegistryHelper.registerBlock;
 
-public class MultiblockRegistry {
+public class DummyRegistry {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final BlockEntry<Block> DUMMY_MULTIBLOCK_1_BLOCK = registerBlock(

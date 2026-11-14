@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.multiblock;
 
 import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.foundation.block.IBE;
@@ -6,9 +6,12 @@ import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
 import dev.simulated_team.simulated.index.SimBlockMovementChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -18,26 +21,27 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractMultiblockBlock<E extends AbstractMultiblockEntity> extends Block implements IBE<E>, BlockSubLevelAssemblyListener {
     public static final BooleanProperty CONTROLLER = BooleanProperty.create("controller");
     public static final IntegerProperty MULTIBLOCK_SIZE = IntegerProperty.create("multiblock_size", 1, 3);
-    private static final Direction[] DIRECTIONS = Direction.values();
+    protected static final Direction[] DIRECTIONS = Direction.values();
+    protected final ResourceLocation MULTIBLOCK_TYPE;
 
     static {
         // Simulated assembly integration
         SimBlockMovementChecks.registerAdditionalBlocks((state, level, pos, visited) -> {
             // Check self
-            if (!AbstractMultiblockEntity.isValidBlock(level, pos)) return Collections.emptyList();
-            if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return Collections.emptyList();
+            AbstractMultiblockEntity be = AbstractMultiblockEntity.getMultiblockEntity(level, pos);
+            if (be == null) return Collections.emptyList();
             // Check neighbors
             List<BlockPos> connected = new ArrayList<>();
             for (Direction direction : DIRECTIONS) {
                 BlockPos neighborPos = pos.relative(direction);
                 if (visited.contains(neighborPos)) continue;
-                if (!level.isLoaded(neighborPos)) continue;
-                if (!AbstractMultiblockEntity.isValidBlock(level, neighborPos)) continue;
-                if (!(level.getBlockEntity(neighborPos) instanceof AbstractMultiblockEntity neighbor)) continue;
+                AbstractMultiblockEntity neighbor = AbstractMultiblockEntity.getMultiblockEntity(level, neighborPos);
+                if (neighbor == null) continue;
                 if (be.isConnected(neighbor)) connected.add(neighborPos);
             }
             // Return list
@@ -47,22 +51,25 @@ public abstract class AbstractMultiblockBlock<E extends AbstractMultiblockEntity
         // Create assembly integration
         BlockMovementChecks.registerAttachedCheck((state, level, pos, direction) -> {
             // Check self
-            if (!AbstractMultiblockEntity.isValidBlock(level, pos)) return BlockMovementChecks.CheckResult.PASS;
-            if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return BlockMovementChecks.CheckResult.PASS;
+            if (!(state.getBlock() instanceof AbstractMultiblockBlock<?>)) return BlockMovementChecks.CheckResult.PASS; // Ignore unrelated blocks
+            AbstractMultiblockEntity be = AbstractMultiblockEntity.getMultiblockEntity(level, pos);
+            if (be == null) return BlockMovementChecks.CheckResult.FAIL; // Fail invalid multiblocks
             // Check neighbor
             BlockPos neighborPos = pos.relative(direction);
-            if (!level.isLoaded(neighborPos)) return BlockMovementChecks.CheckResult.PASS;
-            if (!AbstractMultiblockEntity.isValidBlock(level, neighborPos)) return BlockMovementChecks.CheckResult.PASS;
-            if (!(level.getBlockEntity(neighborPos) instanceof AbstractMultiblockEntity neighbor)) return BlockMovementChecks.CheckResult.PASS;
+            if (!level.isLoaded(neighborPos)) return BlockMovementChecks.CheckResult.PASS; // Ignore unloaded blocks
+            if (!(level.getBlockState(neighborPos).getBlock() instanceof AbstractMultiblockBlock<?>)) return BlockMovementChecks.CheckResult.PASS; // Ignore unrelated blocks
+            AbstractMultiblockEntity neighbor = AbstractMultiblockEntity.getMultiblockEntity(level, neighborPos);
+            if (neighbor == null) return BlockMovementChecks.CheckResult.FAIL; // Fail invalid multiblocks
             // Return comparison
             return BlockMovementChecks.CheckResult.of(be.isConnected(neighbor));
         });
 
-        // Create assembly integration (preventing orphaned sections, yes we need this twice, I think)
+        // Create assembly integration (preventing orphaned sections, yes we need this twice)
         BlockMovementChecks.registerMovementAllowedCheck((state, level, pos) -> {
             // Check self
-            if (!AbstractMultiblockEntity.isValidBlock(level, pos)) return BlockMovementChecks.CheckResult.PASS;
-            if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return BlockMovementChecks.CheckResult.PASS;
+            if (!(state.getBlock() instanceof AbstractMultiblockBlock<?>)) return BlockMovementChecks.CheckResult.PASS; // Ignore unrelated blocks
+            AbstractMultiblockEntity be = AbstractMultiblockEntity.getMultiblockEntity(level, pos);
+            if (be == null) return BlockMovementChecks.CheckResult.FAIL; // Fail invalid multiblocks
             // Return status
             return BlockMovementChecks.CheckResult.of(
                 be.isSingleController() ||
@@ -72,18 +79,27 @@ public abstract class AbstractMultiblockBlock<E extends AbstractMultiblockEntity
         });
     }
 
-    public AbstractMultiblockBlock(Properties properties) {
+    protected AbstractMultiblockBlock(Properties properties, ResourceLocation multiblockType) {
         super(properties);
+        this.MULTIBLOCK_TYPE = Objects.requireNonNull(multiblockType);
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(CONTROLLER, true)
             .setValue(MULTIBLOCK_SIZE, 1)
         );
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(CONTROLLER).add(MULTIBLOCK_SIZE);
+    public final ResourceLocation getMultiblockType() {
+        return this.MULTIBLOCK_TYPE;
     }
+
+    @Override
+    protected final void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(CONTROLLER).add(MULTIBLOCK_SIZE);
+        addBlockstateProperties(builder);
+    }
+
+    @SuppressWarnings("unused")
+    protected void addBlockstateProperties(StateDefinition.Builder<Block, BlockState> builder) {}
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
@@ -119,4 +135,12 @@ public abstract class AbstractMultiblockBlock<E extends AbstractMultiblockEntity
 
     @Override
     public abstract BlockEntityType<? extends E> getBlockEntityType();
+
+    @Override
+    public final <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (type != getBlockEntityType()) return null;
+        return (lvl, pos, bs, be) -> {
+            if (be instanceof AbstractMultiblockEntity entity) entity.tick();
+        };
+    }
 }

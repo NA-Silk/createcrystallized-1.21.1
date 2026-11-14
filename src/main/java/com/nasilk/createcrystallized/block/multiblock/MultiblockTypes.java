@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.multiblock;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import net.minecraft.resources.ResourceLocation;

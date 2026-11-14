@@ -1,6 +1,6 @@
-package com.nasilk.createcrystallized.block.dummy.imp;
+package com.nasilk.createcrystallized.block.multiblock.imp;
 
-import com.nasilk.createcrystallized.block.dummy.AbstractMultiblockEntity;
+import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -11,16 +11,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 // He's not very smart, but he's got spirit
-public class DummyMultiblock2Entity extends AbstractMultiblockEntity {
+public class DummyMultiblock1Entity extends AbstractMultiblockEntity {
     // Constants
     private static final double AMBIENT_RATE = 8e-5d;
 
-    public DummyMultiblock2Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public DummyMultiblock1Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
 
     // CUSTOM TICKS
+    @Override
     protected void serverTick(ServerLevel level) {
         if (!isController()) return;
         if (level.getRandom().nextDouble() < AMBIENT_RATE) level.sendParticles(
@@ -30,6 +31,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity {
         );
     }
 
+    @Override
     protected void clientTick(Level level) {
         if (!isController()) return;
         if (level.getRandom().nextDouble() < AMBIENT_RATE) level.playLocalSound(

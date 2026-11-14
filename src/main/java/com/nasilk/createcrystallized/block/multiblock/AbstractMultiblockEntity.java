@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.dummy;
+package com.nasilk.createcrystallized.block.multiblock;
 
 import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
 import com.simibubi.create.content.contraptions.StructureTransform;
@@ -23,7 +23,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
 
     // Constants
     private static final long STATE_VALIDATION_INTERVAL = 6000L;
-    private final int worldPositionHash;
+    protected final int worldPositionHash;
     public enum Size {
         SINGLE(1), DOUBLE(2), TRIPLE(3);
         private final int size;
@@ -56,7 +56,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
 
 
     // MULTIBLOCK TICK HANDLING
-    public void tick() {
+    public final void tick() {
         if (level == null) return;
         if (level.isClientSide) {
             clientTick(level);
@@ -151,22 +151,21 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     }
 
     private static boolean isValidOrigin(ServerLevel level, BlockPos originPos, int size) {
-        if (!level.isLoaded(originPos)) return false;                                                    // Fail if unloaded
-        if (!isValidBlock(level, originPos)) return false;                                               // or an invalid block
-        if (!(level.getBlockEntity(originPos) instanceof AbstractMultiblockEntity origin)) return false; // or an invalid entity
-        if (!origin.isController()) return false;                                                        // or not a current controller
-        if (origin.getMultiblockSize().getSize() > size) return false;                                   // or in a larger or equal multiblock
+        AbstractMultiblockEntity origin = getMultiblockEntity(level, originPos);
+        if (origin == null) return false;                              // Fail if invalid
+        if (!origin.isController()) return false;                      // or not a current controller
+        if (origin.getMultiblockSize().getSize() > size) return false; // or in a larger or equal multiblock
 
         // Scan forward and return true if all blocks match
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = originPos.offset(x, y, z);
-                    if (!level.isLoaded(pos)) return false;                                                // Fail if unloaded
-                    if (!isValidBlock(level, pos)) return false;                                           // or an invalid block
-                    if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return false; // or an invalid entity
-                    if (!be.getControllerPos().equals(originPos) &&                                        // or part of another multiblock
-                        be.getMultiblockSize().getSize() >= size                                           // with larger or equal size
+                    AbstractMultiblockEntity be = getMultiblockEntity(level, pos);
+                    if (be == null) return false;                   // Fail if invalid
+                    if (!origin.isCompatibleWith(be)) return false; // or an incompatible multiblock
+                    if (!be.getControllerPos().equals(originPos) && // or part of another multiblock
+                        be.getMultiblockSize().getSize() >= size    // with larger or equal size
                     ) return false;
                 }
             }
@@ -175,6 +174,11 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     }
 
     private static boolean setMultiblockController(ServerLevel level, BlockPos originPos, int size) {
+        // Check origin entity
+        AbstractMultiblockEntity origin = getMultiblockEntity(level, originPos);
+        if (origin == null) return false;
+        if (!origin.isController()) return false;
+
         // Scan forward from origin and store detected members
         List<AbstractMultiblockEntity> members = new ArrayList<>();
         Set<BlockPos> conflicts = new HashSet<>();
@@ -184,21 +188,20 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
                     BlockPos pos = originPos.offset(x, y, z);
 
                     // Normal validation cycle to add new members
-                    if (!level.isLoaded(pos)) return false;                                                // Fail if unloaded
-                    if (!isValidBlock(level, pos)) return false;                                           // or an invalid block
-                    if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return false; // or an invalid entity
+                    AbstractMultiblockEntity be = getMultiblockEntity(level, pos);
+                    if (be == null) return false;                   // Fail if invalid
+                    if (!origin.isCompatibleWith(be)) return false; // or an incompatible multiblock
                     members.add(be);
 
                     // Extra validation to avoid conflicting blocks
+                    if (!be.isMultiblock()) continue;
                     BlockPos controllerPos = be.getControllerPos();
                     if (controllerPos.equals(originPos)) continue;
-                    if (!be.isMultiblock()) continue;
                     if (!level.isLoaded(controllerPos)) return false; // Don't mess with unloaded stuff
                     if (!isValidBlock(level, controllerPos)) continue;
                     if (!(level.getBlockEntity(controllerPos) instanceof AbstractMultiblockEntity controller)) continue;
-                    if (!controller.isController()) continue;
-                    if (!controller.isMultiblock()) continue;
-                    if (controller.getMultiblockSize().getSize() >= size) return false; // Don't mess with big stuff
+                    if (!controller.isMultiblockController()) continue;
+                    if (controller.getMultiblockSize().getSize() >= size) return false; // Don't mess with large stuff
                     conflicts.add(controllerPos);
                 }
             }
@@ -206,9 +209,8 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
 
         // Handle conflicts/overlaps
         for (BlockPos pos : conflicts) {
-            if (!level.isLoaded(pos)) return false;
-            if (!isValidBlock(level, pos)) return false;
-            if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity controller)) return false;
+            AbstractMultiblockEntity controller = getMultiblockEntity(level, pos);
+            if (controller == null) return false;
             if (!controller.isLoadedMultiblockController()) return false;
         }
         for (BlockPos pos : conflicts) {
@@ -219,10 +221,10 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
         for (AbstractMultiblockEntity be : members) {
             boolean controller = be.getBlockPos().equals(originPos);
             boolean changed =
-                    be.getMultiblockSize().getSize() != size ||
-                            !be.getControllerPos().equals(originPos) ||
-                            be.getBlockState().getValue(AbstractMultiblockBlock.CONTROLLER) != controller ||
-                            be.getBlockState().getValue(AbstractMultiblockBlock.MULTIBLOCK_SIZE) != size;
+                be.getMultiblockSize().getSize() != size ||
+                !be.getControllerPos().equals(originPos) ||
+                be.getBlockState().getValue(AbstractMultiblockBlock.CONTROLLER) != controller ||
+                be.getBlockState().getValue(AbstractMultiblockBlock.MULTIBLOCK_SIZE) != size;
 
             // Only update if something actually changed
             if (!changed) continue;
@@ -235,19 +237,17 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     }
 
     private static void disassemble(ServerLevel level, BlockPos controllerPos) {
-        if (!level.isLoaded(controllerPos)) return;
-        if (!isValidBlock(level, controllerPos)) return;
-        if (!(level.getBlockEntity(controllerPos) instanceof AbstractMultiblockEntity controller)) return;
-        if (!controller.isMultiblockController()) return;
+        AbstractMultiblockEntity controller = getMultiblockEntity(level, controllerPos);
+        if (controller == null) return;
         if (!controller.isLoadedMultiblockController()) return;
         int size = controller.getMultiblockSize().getSize();
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = controllerPos.offset(x, y, z);
-                    if (!level.isLoaded(pos)) continue;
-                    if (!isValidBlock(level, pos)) continue;
-                    if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) continue;
+                    AbstractMultiblockEntity be = getMultiblockEntity(level, pos);
+                    if (be == null) continue;
+                    if (!controller.isCompatibleWith(be)) continue;
                     if (!be.getControllerPos().equals(controllerPos)) continue;
                     be.reset();
                 }
@@ -257,8 +257,8 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
 
 
     // CUSTOM TICKS
-    protected abstract void serverTick(ServerLevel level);
-    protected abstract void clientTick(Level level);
+    protected void serverTick(ServerLevel level) {}
+    protected void clientTick(Level level) {}
 
 
     // SYNCING
@@ -296,9 +296,16 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
 
         if (tag.contains("isController") && tag.getBoolean("isController"))
             this.controllerPos = null;
-        else if (tag.contains("controllerPos", Tag.TAG_LONG))
+        else if (tag.contains("controllerPos", Tag.TAG_LONG)) {
             this.controllerPos = BlockPos.of(tag.getLong("controllerPos"));
-        else reset();
+            if (this.worldPosition.equals(this.controllerPos))
+                this.controllerPos = null;
+        }
+        else {
+            this.controllerPos = null;
+            this.multiblockSize = Size.SINGLE;
+            this.multiblockUpdate = true;
+        }
     }
 
 
@@ -306,7 +313,6 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     public boolean isController() {
         return this.controllerPos == null;
     }
-    @SuppressWarnings("unused")
     public boolean isSingleController() {
         return isController() && !isMultiblock();
     }
@@ -324,9 +330,9 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = this.worldPosition.offset(x, y, z);
-                    if (!level.isLoaded(pos)) return false;
-                    if (!isValidBlock(level, pos)) return false;
-                    if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return false;
+                    AbstractMultiblockEntity be = getMultiblockEntity(level, pos);
+                    if (be == null) return false;
+                    if (!isCompatibleWith(be)) return false;
                     if (!be.getControllerPos().equals(this.worldPosition)) return false;
                     if (be.getMultiblockSize() != this.multiblockSize) return false;
                 }
@@ -351,7 +357,6 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     public boolean isMultiblockMember() {
         return !isController() && isMultiblock();
     }
-    @SuppressWarnings("unused")
     public boolean isValidMultiblockMember() {
         if (level == null || level.isClientSide) return false;
         if (!isMultiblockMember()) return false;
@@ -367,11 +372,11 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
         if (controller == null || controller == this) return false;
         return controller.isLoadedMultiblockController();
     }
-    @SuppressWarnings("unused")
     public boolean isConnected(AbstractMultiblockEntity other) {
         if (level == null || level.isClientSide) return false;
         if (other == null) return false;
         if (level != other.getLevel()) return false;
+        if (!isCompatibleWith(other)) return false;
         BlockPos controllerPos = getControllerPos();
         if (!controllerPos.equals(other.getControllerPos())) return false;
         int size = getMultiblockSize().getSize();
@@ -381,8 +386,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     }
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValidBlock(Level level, BlockPos pos) {
-        if (level == null || level.isClientSide) return false;
-        return level.getBlockState(pos).getBlock() instanceof AbstractMultiblockBlock;
+        return getMultiblockEntity(level, pos) != null;
     }
     public static boolean inMultiblockRange(BlockPos pos, BlockPos controllerPos, int size) {
         int dx = pos.getX() - controllerPos.getX();
@@ -422,9 +426,9 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
         if (level == null || level.isClientSide) return null;
         if (isController()) return this; // Current block is a controller
         if (!isMultiblock()) return null;
-        if (!level.isLoaded(controllerPos)) return null;
-        if (!isValidBlock(level, controllerPos)) return null;
-        if (!(level.getBlockEntity(controllerPos) instanceof AbstractMultiblockEntity controller)) return null;
+        AbstractMultiblockEntity controller = getMultiblockEntity(level, controllerPos);
+        if (controller == null) return null;
+        if (!isCompatibleWith(controller)) return null;
         if (!controller.isController()) return null;
         if (!inMultiblockRange(worldPosition, controllerPos, multiblockSize.getSize())) return null;
         return controller;
@@ -434,7 +438,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
         if (level == null || level.isClientSide) return Collections.emptyList();
         AbstractMultiblockEntity controller = getControllerReference();
         if (controller == null) return Collections.emptyList();
-        if (!isValidMultiblockController()) return Collections.emptyList();
+        if (!controller.isValidMultiblockController()) return Collections.emptyList();
         List<BlockPos> frontier = new ArrayList<>();
         int size = controller.getMultiblockSize().getSize();
         BlockPos origin = controller.getControllerPos();
@@ -478,9 +482,8 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = controllerPos.offset(x, y, z);
-                    if (!level.isLoaded(pos)) continue;
-                    if (!isValidBlock(level, pos)) continue;
-                    if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) continue;
+                    AbstractMultiblockEntity be = getMultiblockEntity(level, pos);
+                    if (be == null) continue;
                     be.setMultiblockUpdate();
                 }
             }
@@ -491,5 +494,31 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
         if (level == null || level.isClientSide) return;
         BlockState state = getBlockState();
         level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+    }
+
+    private AbstractMultiblockBlock<?> getMultiblockBlock() {
+        if (getBlockState().getBlock() instanceof AbstractMultiblockBlock<?> block) return block;
+        return null;
+    }
+    public static AbstractMultiblockEntity getMultiblockEntity(Level level, BlockPos pos) {
+        if (level == null || level.isClientSide) return null;
+        if (!level.isLoaded(pos)) return null;
+        if (!(level.getBlockState(pos).getBlock() instanceof AbstractMultiblockBlock<?> block)) return null;
+        if (!(level.getBlockEntity(pos) instanceof AbstractMultiblockEntity be)) return null;
+
+        // Verify the concrete entity type matches its block
+        if (!block.getBlockEntityClass().isInstance(be)) return null;
+        if (be.getType() != block.getBlockEntityType()) return null;
+        return be;
+    }
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public final boolean isCompatibleWith(AbstractMultiblockEntity other) {
+        if (level == null || level.isClientSide) return false;
+        if (other == null) return false;
+        if (level != other.getLevel()) return false;
+        AbstractMultiblockBlock<?> thisBlock = getMultiblockBlock();
+        AbstractMultiblockBlock<?> otherBlock = other.getMultiblockBlock();
+        if (thisBlock == null || otherBlock == null) return false;
+        return thisBlock.getMultiblockType().equals(otherBlock.getMultiblockType());
     }
 }

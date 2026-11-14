@@ -1,13 +1,10 @@
-package com.nasilk.createcrystallized.block.dummy.imp;
+package com.nasilk.createcrystallized.block.multiblock.imp;
 
-import com.nasilk.createcrystallized.block.dummy.AbstractMultiblockBlock;
-import com.nasilk.createcrystallized.block.dummy.MultiblockRegistry;
+import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
+import com.nasilk.createcrystallized.block.multiblock.MultiblockTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -16,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblock2Entity> {
     public DummyMultiblock2Block(Properties properties) {
-        super(properties);
+        super(properties, MultiblockTypes.DUMMY_MULTIBLOCK_2);
     }
 
     // ENTITIES
@@ -27,17 +24,7 @@ public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblo
 
     @Override
     public BlockEntityType<? extends DummyMultiblock2Entity> getBlockEntityType() {
-        return MultiblockRegistry.DUMMY_MULTIBLOCK_2_ENTITY.get();
-    }
-
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        //formating is a lie told to you by big forma to sell more spaces
-        //if (level.isClientSide || type != getBlockEntityType()) return null;
-        if (type != getBlockEntityType()) return null;
-        return (lvl, bp, bs, be) -> {
-            if (be instanceof DummyMultiblock2Entity dummy) dummy.tick();
-        };
+        return DummyRegistry.DUMMY_MULTIBLOCK_2_ENTITY.get();
     }
 
     // TRANSPARENCY

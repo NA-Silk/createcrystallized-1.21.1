@@ -36,7 +36,6 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     private int power = 0;
     private double fieldStrength = 0.0d;
     private double fieldRadius = 0.0d;
-    private double fieldRadiusSquared = 0.0d;
 
     // Tick variables (unsaved)
     private final List<ServerSubLevel> contactTargets = new ArrayList<>();
@@ -47,7 +46,6 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double CONTACT_RADIUS = 0.5 * DummyMultiblock2Block.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
     private static final double DAMPEN_RADIUS = 2.0d;
-    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
     private static final double DAMPEN_SCALE = 0.2d;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
@@ -58,7 +56,6 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     // Tick constants (config)
     private static final double[] FIELD_STRENGTH_CURVE = new double[16];
     private static final double[] FIELD_RADIUS_CURVE = new double[16];
-    private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
 
     // Particle constants (config)
     private static double PULL_PARTICLE_TRAVEL_TICKS;
@@ -70,11 +67,9 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
         double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
         FIELD_STRENGTH_CURVE[0] = 0.0d;
         FIELD_RADIUS_CURVE[0] = 0.0d;
-        FIELD_RADIUS_SQUARED_CURVE[0] = 0.0d;
         for (int i = 1; i < 16; i++) {
             FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i;
-            FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
         }
         PULL_PARTICLE_TRAVEL_TICKS = (double) ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
     }
@@ -99,7 +94,9 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     // CUSTOM TICKS
     @Override
     protected void serverTick(ServerLevel level) {
+        // Only controllers tick
         if (!isController()) return;
+
         // Get block power
         BlockState state = getBlockState();
         int newPower = Math.clamp(state.getValue(DummyMultiblock2Block.POWER), 0, 15);
@@ -150,6 +147,8 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
     /// CONTACT
     private void updateContactTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        double contactRadiusScaled = CONTACT_RADIUS * getMultiblockSize().getSize();
+
         // Reset the target list
         contactTargets.clear();
 
@@ -159,8 +158,8 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
         // Set the bounding box
         cache.searchBox.setUnchecked(
-            cache.wellPosition.x - CONTACT_RADIUS, cache.wellPosition.y - CONTACT_RADIUS, cache.wellPosition.z - CONTACT_RADIUS,
-            cache.wellPosition.x + CONTACT_RADIUS, cache.wellPosition.y + CONTACT_RADIUS, cache.wellPosition.z + CONTACT_RADIUS
+            cache.wellPosition.x - contactRadiusScaled, cache.wellPosition.y - contactRadiusScaled, cache.wellPosition.z - contactRadiusScaled,
+            cache.wellPosition.x + contactRadiusScaled, cache.wellPosition.y + contactRadiusScaled, cache.wellPosition.z + contactRadiusScaled
         );
 
         // Populate the target list
@@ -201,6 +200,8 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
     /// FIELD
     private void updateFieldTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
+
         // Reset the target list
         fieldTargets.clear();
 
@@ -210,8 +211,8 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
         // Set the bounding box
         cache.searchBox.setUnchecked(
-            cache.wellPosition.x - fieldRadius, cache.wellPosition.y - fieldRadius, cache.wellPosition.z - fieldRadius,
-            cache.wellPosition.x + fieldRadius, cache.wellPosition.y + fieldRadius, cache.wellPosition.z + fieldRadius
+            cache.wellPosition.x - fieldRadiusScaled, cache.wellPosition.y - fieldRadiusScaled, cache.wellPosition.z - fieldRadiusScaled,
+            cache.wellPosition.x + fieldRadiusScaled, cache.wellPosition.y + fieldRadiusScaled, cache.wellPosition.z + fieldRadiusScaled
         );
 
         // Populate the target list
@@ -222,6 +223,12 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     }
 
     private void applyFieldGravity(Cache cache) {
+        double fieldStrengthScaled = fieldStrength * getMultiblockSize().getSize() * getMultiblockSize().getSize();
+        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
+        double fieldRadiusScaledSquared = fieldRadiusScaled * fieldRadiusScaled;
+        double dampenRadiusScaled = DAMPEN_RADIUS * getMultiblockSize().getSize();
+        double dampenRadiusScaledSquared = dampenRadiusScaled * dampenRadiusScaled;
+
         // Iterate backwards for safe removals
         for (int i = fieldTargets.size() - 1; i >= 0; i--) {
             ServerSubLevel targetSubLevel = fieldTargets.get(i);
@@ -245,23 +252,23 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
             double distanceSquared = cache.impulseVelocity.lengthSquared();
 
             // Handle out of range sublevels
-            if (distanceSquared > fieldRadiusSquared) {
+            if (distanceSquared > fieldRadiusScaledSquared) {
                 fieldTargets.remove(i);
                 continue;
             }
 
             // Handle dampened and standard linear impulse (inverse square impulse feels choppy)
-            if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
+            if (distanceSquared < dampenRadiusScaledSquared) {
                 // Apply dampening when within well radius
                 handle.getLinearVelocity(cache.currentLinearVelocity);
                 cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
                 handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, ZERO_VECTOR);
 
                 // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^2
-                cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_SQUARED);
+                cache.impulseVelocity.mul(fieldStrengthScaled / dampenRadiusScaledSquared);
             } else {
                 // Handle standard pull impulse: F = fieldStrength * distance / distance^2 = fieldStrength / distance
-                cache.impulseVelocity.mul(fieldStrength / distanceSquared);
+                cache.impulseVelocity.mul(fieldStrengthScaled / distanceSquared);
             }
 
             // Apply rotation transformed impulse
@@ -273,6 +280,8 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
     // PARTICLES
     private void addPullParticles(ServerLevel level, Cache cache) {
+        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
+
         // Compute each particle
         for (int i = 0; i < PULL_PARTICLE_COUNT[power]; i++) {
             // Uniformly sample a direction on a sphere.
@@ -283,7 +292,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
             double zUnit = xzComp * Math.sin(azimuth);
 
             // Spawn within the outer 45% of the field radius
-            double distance = fieldRadius * (0.55d + 0.45d * level.random.nextDouble()); // distance = fieldRadius * s : s ∈ [0.55, 1.0)
+            double distance = fieldRadiusScaled * (0.55d + 0.45d * level.random.nextDouble()); // distance = fieldRadius * s : s ∈ [0.55, 1.0)
             double x = cache.wellPosition.x + xUnit * distance;
             double y = cache.wellPosition.y + yUnit * distance;
             double z = cache.wellPosition.z + zUnit * distance;
@@ -307,10 +316,13 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         if (!isController()) return false;
+        double fieldStrengthScaled = fieldStrength * getMultiblockSize().getSize() * getMultiblockSize().getSize();
+        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
+
         CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentFieldStrength = CCLangHelper
-            .pixelNewton(fieldStrength)
+            .pixelNewton(fieldStrengthScaled)
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.field_strength", currentFieldStrength)
@@ -318,7 +330,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
             .forGoggles(tooltip, 1);
 
         final MutableComponent currentFieldRadius = CCLangHelper
-            .meter(fieldRadius)
+            .meter(fieldRadiusScaled)
             .style(ChatFormatting.AQUA)
             .component();
         CCLangHelper.translate("goggles.field_radius", currentFieldRadius)
@@ -377,12 +389,11 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
         }
         fieldStrength = FIELD_STRENGTH_CURVE[power];
         fieldRadius = FIELD_RADIUS_CURVE[power];
-        fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
     }
 
 
     // GETTERS
-    public boolean isPowered()     { return power > 0;   }
-    public int getPower()          { return power;       }
-    public double getFieldRadius() { return fieldRadius; }
+    public boolean isPowered()     { return power > 0;                                   }
+    public int getPower()          { return power;                                       }
+    public double getFieldRadius() { return fieldRadius * getMultiblockSize().getSize(); }
 }

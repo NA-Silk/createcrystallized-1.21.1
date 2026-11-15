@@ -436,6 +436,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     @SuppressWarnings("unused")
     public List<BlockPos> getFrontier() {
         if (level == null || level.isClientSide) return Collections.emptyList();
+        if (isSingleController()) return List.of(getBlockPos());
         AbstractMultiblockEntity controller = getControllerReference();
         if (controller == null) return Collections.emptyList();
         if (!controller.isValidMultiblockController()) return Collections.emptyList();

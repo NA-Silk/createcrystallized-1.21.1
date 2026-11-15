@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.block.multiblock.imp;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
+import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import com.nasilk.createcrystallized.block.multiblock.MultiblockTypes;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -45,10 +46,21 @@ public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblo
     // POWER LEVELS
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         if (level.isClientSide) return;
-        int currentPower = state.getValue(BlockStateProperties.POWER);
-        int newPower = level.getBestNeighborSignal(pos);
-        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
+
+        // Validate controller
+        AbstractMultiblockEntity be = AbstractMultiblockEntity.getMultiblockEntity(level, pos);
+        if (be == null) return;
+        BlockPos controllerPos = be.getControllerPos();
+        if (!level.isLoaded(controllerPos)) return;
+
+        // Compare controller state and apply max power across frontier to controller
+        BlockState controllerState = level.getBlockState(controllerPos);
+        int currentPower = controllerState.getValue(BlockStateProperties.POWER);
+        int newPower = 0;
+        for (BlockPos frontierPos : be.getFrontier()) newPower = Math.max(newPower, level.getBestNeighborSignal(frontierPos));
+        if (currentPower != newPower) level.setBlockAndUpdate(controllerPos, controllerState.setValue(BlockStateProperties.POWER, newPower));
     }
 
     // ENTITIES
@@ -65,8 +77,8 @@ public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblo
     // PARTICLES
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !isMoving) addParticles(level, pos);
         super.onRemove(state, level, pos, newState, isMoving);
+        if (!state.is(newState.getBlock()) && !isMoving) addParticles(level, pos);
     }
 
     private void addParticles(Level level, BlockPos pos) {

@@ -32,7 +32,7 @@ import java.util.List;
 
 // They grow up so fast!
 public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements IHaveGoggleInformation {
-    // Tick variables (saved)
+    // Tick variables (saved) TODO Move scaled versions to class level
     private int power = 0;
     private double fieldStrength = 0.0d;
     private double fieldRadius = 0.0d;
@@ -84,7 +84,6 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
         final Vector3d currentAngularVelocity = new Vector3d();
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
-
 
     public DummyMultiblock2Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);

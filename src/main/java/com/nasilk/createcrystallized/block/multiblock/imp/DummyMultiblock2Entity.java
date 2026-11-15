@@ -1,19 +1,95 @@
 package com.nasilk.createcrystallized.block.multiblock.imp;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
+import com.nasilk.createcrystallized.common.ModParticleTypes;
+import com.nasilk.createcrystallized.config.ModConfigs;
+import com.nasilk.createcrystallized.config.server.block.WellConfig;
+import com.nasilk.createcrystallized.util.helper.CCLangHelper;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Vector3d;
+import org.joml.Vector3dc;
+import java.util.ArrayList;
+import java.util.List;
 
-// He's not very smart, but he's got spirit
-public class DummyMultiblock2Entity extends AbstractMultiblockEntity {
-    // Constants
+// They grow up so fast!
+public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements IHaveGoggleInformation {
+    // Tick variables (saved)
+    private int power = 0;
+    private double fieldStrength = 0.0d;
+    private double fieldRadius = 0.0d;
+    private double fieldRadiusSquared = 0.0d;
+
+    // Tick variables (unsaved)
+    private final List<ServerSubLevel> contactTargets = new ArrayList<>();
+    private final List<ServerSubLevel> fieldTargets = new ArrayList<>();
+
+    // Tick constants
+    private static final int RANDOM_TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
+    private static final double CONTACT_RADIUS = 0.5 * DummyMultiblock2Block.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
+    private static final double DAMPEN_RADIUS = 2.0d;
+    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
+    private static final double DAMPEN_SCALE = 0.2d;
+    private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
+
+    // Particle constants
+    private static final int PULL_PARTICLE_TICK_RATE = 30;
+    private static final int[] PULL_PARTICLE_COUNT = {0, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5};
+
+    // Tick constants (config)
+    private static final double[] FIELD_STRENGTH_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_CURVE = new double[16];
+    private static final double[] FIELD_RADIUS_SQUARED_CURVE = new double[16];
+
+    // Particle constants (config)
+    private static double PULL_PARTICLE_TRAVEL_TICKS;
+
+    // Config constants
+    public static void updateConstants() {
+        WellConfig wellConfig = ModConfigs.server().blockConfig.wellConfig;
+        double STRENGTH_SCALE = wellConfig.wellStrengthScale.get();
+        double RADIUS_SCALE = wellConfig.wellRadiusScale.get();
+        FIELD_STRENGTH_CURVE[0] = 0.0d;
+        FIELD_RADIUS_CURVE[0] = 0.0d;
+        FIELD_RADIUS_SQUARED_CURVE[0] = 0.0d;
+        for (int i = 1; i < 16; i++) {
+            FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i;
+            FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i;
+            FIELD_RADIUS_SQUARED_CURVE[i] = FIELD_RADIUS_CURVE[i] * FIELD_RADIUS_CURVE[i];
+        }
+        PULL_PARTICLE_TRAVEL_TICKS = (double) ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
+    }
+
+    // Cache
+    private static class Cache {
+        final BoundingBox3d searchBox = new BoundingBox3d();
+        final Vector3d wellPosition = new Vector3d();
+        final Vector3d targetPosition = new Vector3d();
+        final Vector3d impulseVelocity = new Vector3d();
+        final Vector3d currentLinearVelocity = new Vector3d();
+        final Vector3d currentAngularVelocity = new Vector3d();
+    }
+    private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
+
 
     public DummyMultiblock2Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -24,20 +100,289 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity {
     @Override
     protected void serverTick(ServerLevel level) {
         if (!isController()) return;
-        if (level.getRandom().nextDouble() < AMBIENT_RATE) level.sendParticles(
-            ParticleTypes.LARGE_SMOKE,
-            worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d,
-            5, 0.5d, 0.5d, 0.5d, 1.0d
+        // Get block power
+        BlockState state = getBlockState();
+        int newPower = Math.clamp(state.getValue(DummyMultiblock2Block.POWER), 0, 15);
+        boolean powerChanged = power != newPower;
+        if (powerChanged) {
+            updateFieldVariables(newPower);
+            level.sendBlockUpdated(worldPosition, state, state, 2);
+            this.setChanged();
+        }
+
+        // Have a little ambiance
+        if (level.getRandom().nextDouble() < AMBIENT_RATE) level.playSound(
+            null, worldPosition,
+            SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS, SoundSource.BLOCKS,
+            1.0f,0.8f
         );
+
+        // Exit if unpowered
+        if (power == 0) {
+            contactTargets.clear();
+            fieldTargets.clear();
+            return;
+        }
+
+        // Get global position
+        Cache cache = CACHE.get();
+        double center = 0.5d * (double) getMultiblockSize().getSize();
+        cache.wellPosition.set(worldPosition.getX() + center, worldPosition.getY() + center, worldPosition.getZ() + center);
+        ServerSubLevel wellSubLevel = null;
+        if (Sable.HELPER.getContaining(level, worldPosition) instanceof ServerSubLevel subLevel) {
+            wellSubLevel = subLevel;
+            subLevel.logicalPose().transformPosition(cache.wellPosition);
+        }
+
+        // Run effects
+        int randomTickModulo = Math.floorMod(level.getGameTime() + worldPositionHash, RANDOM_TICK_RATE);
+        if (powerChanged) {
+            updateContactTargets(level, wellSubLevel, cache);
+            updateFieldTargets(level, wellSubLevel, cache);
+        }
+        else if (randomTickModulo == 0) updateContactTargets(level, wellSubLevel, cache);
+        else if (randomTickModulo == 1) updateFieldTargets(level, wellSubLevel, cache);
+        if (!contactTargets.isEmpty()) applyContactGravity(cache);
+        if (!fieldTargets.isEmpty()) applyFieldGravity(cache);
+        if ((level.getGameTime() + worldPositionHash) % PULL_PARTICLE_TICK_RATE == 0) addPullParticles(level, cache);
+    }
+
+
+    /// CONTACT
+    private void updateContactTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        // Reset the target list
+        contactTargets.clear();
+
+        // Get Sable's SubLevel container for this dimension
+        ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
+        if (container == null) return;
+
+        // Set the bounding box
+        cache.searchBox.setUnchecked(
+            cache.wellPosition.x - CONTACT_RADIUS, cache.wellPosition.y - CONTACT_RADIUS, cache.wellPosition.z - CONTACT_RADIUS,
+            cache.wellPosition.x + CONTACT_RADIUS, cache.wellPosition.y + CONTACT_RADIUS, cache.wellPosition.z + CONTACT_RADIUS
+        );
+
+        // Populate the target list
+        container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel) contactTargets.add(targetSubLevel);
+        });
+    }
+
+    private void applyContactGravity(Cache cache) {
+        // Iterate backwards for safe removals
+        for (int i = contactTargets.size() - 1; i >= 0; i--) {
+            ServerSubLevel targetSubLevel = contactTargets.get(i);
+
+            // If the sublevel was destroyed or unloaded, remove it from the list
+            if (targetSubLevel.isRemoved()) {
+                contactTargets.remove(i);
+                continue;
+            }
+
+            // Get the physics handle
+            RigidBodyHandle handle = RigidBodyHandle.of(targetSubLevel);
+            if (!handle.isValid()) {
+                contactTargets.remove(i);
+                continue;
+            }
+
+            // Get current linear and angular velocity
+            handle.getLinearVelocity(cache.currentLinearVelocity);
+            handle.getAngularVelocity(cache.currentAngularVelocity);
+
+            // Apply opposite vectors to negate current motion
+            cache.currentLinearVelocity.negate();
+            cache.currentAngularVelocity.mul(-DAMPEN_SCALE);
+            handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, cache.currentAngularVelocity);
+        }
+    }
+
+
+    /// FIELD
+    private void updateFieldTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
+        // Reset the target list
+        fieldTargets.clear();
+
+        // Get Sable's SubLevel container for this dimension
+        ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
+        if (container == null) return;
+
+        // Set the bounding box
+        cache.searchBox.setUnchecked(
+            cache.wellPosition.x - fieldRadius, cache.wellPosition.y - fieldRadius, cache.wellPosition.z - fieldRadius,
+            cache.wellPosition.x + fieldRadius, cache.wellPosition.y + fieldRadius, cache.wellPosition.z + fieldRadius
+        );
+
+        // Populate the target list
+        container.queryIntersecting(cache.searchBox).forEach(subLevel -> {
+            if (subLevel instanceof ServerSubLevel targetSubLevel && targetSubLevel != wellSubLevel && !contactTargets.contains(targetSubLevel))
+                fieldTargets.add(targetSubLevel);
+        });
+    }
+
+    private void applyFieldGravity(Cache cache) {
+        // Iterate backwards for safe removals
+        for (int i = fieldTargets.size() - 1; i >= 0; i--) {
+            ServerSubLevel targetSubLevel = fieldTargets.get(i);
+
+            // If the sublevel was destroyed or unloaded, remove it from the list
+            if (targetSubLevel.isRemoved()) {
+                fieldTargets.remove(i);
+                continue;
+            }
+
+            // Get the physics handle
+            RigidBodyHandle handle = RigidBodyHandle.of(targetSubLevel);
+            if (!handle.isValid()) {
+                fieldTargets.remove(i);
+                continue;
+            }
+
+            // Get sublevel position, impulse velocity, and current distance^2
+            cache.targetPosition.set(targetSubLevel.logicalPose().position());
+            cache.impulseVelocity.set(cache.wellPosition).sub(cache.targetPosition);
+            double distanceSquared = cache.impulseVelocity.lengthSquared();
+
+            // Handle out of range sublevels
+            if (distanceSquared > fieldRadiusSquared) {
+                fieldTargets.remove(i);
+                continue;
+            }
+
+            // Handle dampened and standard linear impulse (inverse square impulse feels choppy)
+            if (distanceSquared < DAMPEN_RADIUS_SQUARED) {
+                // Apply dampening when within well radius
+                handle.getLinearVelocity(cache.currentLinearVelocity);
+                cache.currentLinearVelocity.mul(-DAMPEN_SCALE);
+                handle.addLinearAndAngularVelocity(cache.currentLinearVelocity, ZERO_VECTOR);
+
+                // Handle reduced pull impulse: F = fieldStrength * distance / RADIUS^2
+                cache.impulseVelocity.mul(fieldStrength / DAMPEN_RADIUS_SQUARED);
+            } else {
+                // Handle standard pull impulse: F = fieldStrength * distance / distance^2 = fieldStrength / distance
+                cache.impulseVelocity.mul(fieldStrength / distanceSquared);
+            }
+
+            // Apply rotation transformed impulse
+            targetSubLevel.logicalPose().orientation().transformInverse(cache.impulseVelocity);
+            handle.applyLinearImpulse(cache.impulseVelocity);
+        }
+    }
+
+
+    // PARTICLES
+    private void addPullParticles(ServerLevel level, Cache cache) {
+        // Compute each particle
+        for (int i = 0; i < PULL_PARTICLE_COUNT[power]; i++) {
+            // Uniformly sample a direction on a sphere.
+            double yUnit = level.random.nextDouble() * 2.0d - 1.0d; // yUnit ∈ [-1.0, 1.0)
+            double azimuth = level.random.nextDouble() * (Math.PI * 2.0d); // Ooh, vocab! So this is the circumferential angle, cool name right? azimuth ∈ [0.0, 2.0*PI)
+            double xzComp = Math.sqrt(Math.max(0.0d, 1.0d - yUnit * yUnit)); // Get x & z component along the azimuth, basically a partial radius
+            double xUnit = xzComp * Math.cos(azimuth);
+            double zUnit = xzComp * Math.sin(azimuth);
+
+            // Spawn within the outer 45% of the field radius
+            double distance = fieldRadius * (0.55d + 0.45d * level.random.nextDouble()); // distance = fieldRadius * s : s ∈ [0.55, 1.0)
+            double x = cache.wellPosition.x + xUnit * distance;
+            double y = cache.wellPosition.y + yUnit * distance;
+            double z = cache.wellPosition.z + zUnit * distance;
+
+            // Scale speed with the distance from the well
+            double speed = distance / PULL_PARTICLE_TRAVEL_TICKS;
+
+            // By setting particleCount to 0, xOffset, yOffset, and zOffset act as speed
+            level.sendParticles(
+                ModParticleTypes.DENSITE_WELL_PULL_PARTICLES.get(),
+                x, y, z,
+                0,
+                -xUnit * speed, -yUnit * speed, -zUnit * speed,
+                1.0d
+            );
+        }
+    }
+
+
+    // GOGGLE TOOLTIPS
+    @Override
+    public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
+        if (!isController()) return false;
+        CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
+
+        final MutableComponent currentFieldStrength = CCLangHelper
+            .pixelNewton(fieldStrength)
+            .style(ChatFormatting.AQUA)
+            .component();
+        CCLangHelper.translate("goggles.field_strength", currentFieldStrength)
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
+
+        final MutableComponent currentFieldRadius = CCLangHelper
+            .meter(fieldRadius)
+            .style(ChatFormatting.AQUA)
+            .component();
+        CCLangHelper.translate("goggles.field_radius", currentFieldRadius)
+            .style(ChatFormatting.GRAY)
+            .forGoggles(tooltip, 1);
+
+        return true;
+    }
+
+
+    // SYNCING
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("Power", this.power);
+        return tag;
     }
 
     @Override
-    protected void clientTick(Level level) {
-        if (!isController()) return;
-        if (level.getRandom().nextDouble() < AMBIENT_RATE) level.playLocalSound(
-            worldPosition,
-            SoundEvents.ANVIL_LAND, SoundSource.BLOCKS,
-            1.0f, 0.8f, false
-        );
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
+        CompoundTag tag = pkt.getTag();
+        this.power = tag.getInt("Power");
+        updateFieldVariables(this.power);
     }
+
+
+    // DATA PERSISTENCE
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("Power", this.power);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.power = tag.getInt("Power");
+        updateFieldVariables(this.power);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        this.contactTargets.clear();
+        this.fieldTargets.clear();
+    }
+
+
+    // HELPERS
+    private void updateFieldVariables(int newPower) {
+        power = newPower;
+        if (power == 0) {
+            contactTargets.clear();
+            fieldTargets.clear();
+        }
+        fieldStrength = FIELD_STRENGTH_CURVE[power];
+        fieldRadius = FIELD_RADIUS_CURVE[power];
+        fieldRadiusSquared = FIELD_RADIUS_SQUARED_CURVE[power];
+    }
+
+
+    // GETTERS
+    public boolean isPowered()     { return power > 0;   }
+    public int getPower()          { return power;       }
+    public double getFieldRadius() { return fieldRadius; }
 }

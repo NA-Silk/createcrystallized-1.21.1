@@ -98,7 +98,6 @@ public abstract class AbstractMultiblockBlock<E extends AbstractMultiblockEntity
         addBlockstateProperties(builder);
     }
 
-    @SuppressWarnings("unused")
     protected void addBlockstateProperties(StateDefinition.Builder<Block, BlockState> builder) {}
 
     @Override

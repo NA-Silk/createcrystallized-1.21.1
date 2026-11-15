@@ -63,11 +63,6 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
         return ModBlockEntities.DENSITE_WELL.get();
     }
 
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return IBE.super.newBlockEntity(pos, state);
-    }
-
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         //formating is a lie told to you by big forma to sell more spaces
         if (level.isClientSide || type != getBlockEntityType()) return null;

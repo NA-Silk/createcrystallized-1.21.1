@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.config.server.block;
 
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
+import com.nasilk.createcrystallized.block.multiblock.imp.DummyMultiblock2Entity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class WellConfig extends ConfigBase {
@@ -13,12 +14,14 @@ public class WellConfig extends ConfigBase {
     public void onLoad() {
         super.onLoad();
         DensiteWellEntity.updateConstants();
+        DummyMultiblock2Entity.updateConstants();
     }
 
     @Override
     public void onReload() {
         super.onReload();
         DensiteWellEntity.updateConstants();
+        DummyMultiblock2Entity.updateConstants();
     }
 
     @Override

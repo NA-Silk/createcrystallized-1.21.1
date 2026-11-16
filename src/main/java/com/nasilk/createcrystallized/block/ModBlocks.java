@@ -1,6 +1,7 @@
 package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockBlock;
 import com.nasilk.createcrystallized.client.behavior.*;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
@@ -222,6 +223,31 @@ public class ModBlocks {
     public static final BlockEntry<Block> DENSITE_WELL = registerBlock(
         "densite_well",
         (properties) -> new DensiteWellBlock(properties
+            .mapColor(MapColor.COLOR_PURPLE)
+            .strength(3.0f, 6.0f)
+            .noOcclusion()
+            .lightLevel(state -> state.getValue(DensiteWellBlock.POWER))
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .hasPostProcess((state, pos, level) -> true)
+            .emissiveRendering((state, pos, level) -> true)
+            .sound(
+                new DeferredSoundType(1.0f, 0.1f,
+                    ModSounds.DENSITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.DENSITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_BLOCK_FALL
+                )
+            )
+        )
+    );
+
+    public static final BlockEntry<Block> DENSITE_WELL_MULTIBLOCK = registerBlock(
+        "densite_well_multiblock",
+        (properties) -> new DensiteWellMultiblockBlock(properties
             .mapColor(MapColor.COLOR_PURPLE)
             .strength(3.0f, 6.0f)
             .noOcclusion()

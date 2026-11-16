@@ -2,8 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.block.multiblock.imp.DummyMultiblock2EntityRenderer;
-import com.nasilk.createcrystallized.block.multiblock.imp.DummyRegistry;
+import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockEntityRenderer;
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.nasilk.createcrystallized.client.renderer.DensiteWellEntityRenderer;
 import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
@@ -115,9 +114,9 @@ public class CreateCrystallizedClient {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) { // Spin
+        event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL_MULTIBLOCK.get(), DensiteWellMultiblockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
         event.registerEntityRenderer(ModItemEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
-        event.registerBlockEntityRenderer(DummyRegistry.DUMMY_MULTIBLOCK_2_ENTITY.get(), DummyMultiblock2EntityRenderer::new);
     }
 
     @SubscribeEvent

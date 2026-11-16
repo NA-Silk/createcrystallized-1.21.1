@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.multiblock.imp;
+package com.nasilk.createcrystallized.dummy;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import net.minecraft.core.BlockPos;
@@ -11,16 +11,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 // He's not very smart, but he's got spirit
-public class DummyMultiblock1Entity extends AbstractMultiblockEntity {
+public class DummyMultiblockEntity extends AbstractMultiblockEntity {
     // Constants
     private static final double AMBIENT_RATE = 8e-5d;
 
-    public DummyMultiblock1Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public DummyMultiblockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
 
     // CUSTOM TICKS
+    @SuppressWarnings("unused")
     @Override
     protected void serverTick(ServerLevel level) {
         if (!isController()) return;
@@ -31,6 +32,7 @@ public class DummyMultiblock1Entity extends AbstractMultiblockEntity {
         );
     }
 
+    @SuppressWarnings("unused")
     @Override
     protected void clientTick(Level level) {
         if (!isController()) return;

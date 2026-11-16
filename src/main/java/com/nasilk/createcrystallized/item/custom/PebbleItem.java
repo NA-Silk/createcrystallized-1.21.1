@@ -3,10 +3,7 @@ package com.nasilk.createcrystallized.item.custom;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -20,8 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
-
-import java.util.*;
 
 public class PebbleItem extends BlockItem implements Equipable {
     private static final double AMBIENT_RATE = 8e-4d;

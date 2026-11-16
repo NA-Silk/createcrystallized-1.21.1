@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // They grow up so fast!
-public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements IHaveGoggleInformation {
+public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implements IHaveGoggleInformation {
     // Tick variables (saved) TODO Move scaled versions to class level
     private int power = 0;
     private double fieldStrength = 0.0d;
@@ -44,7 +44,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     // Tick constants
     private static final int RANDOM_TICK_RATE = 20;
     private static final double AMBIENT_RATE = 8e-5d;
-    private static final double CONTACT_RADIUS = 0.5 * DummyMultiblock2Block.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
+    private static final double CONTACT_RADIUS = 0.5 * DensiteWellMultiblockBlock.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
     private static final double DAMPEN_RADIUS = 2.0d;
     private static final double DAMPEN_SCALE = 0.2d;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
@@ -85,7 +85,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
     }
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);
 
-    public DummyMultiblock2Entity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public DensiteWellMultiblockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
@@ -98,7 +98,7 @@ public class DummyMultiblock2Entity extends AbstractMultiblockEntity implements 
 
         // Get block power
         BlockState state = getBlockState();
-        int newPower = Math.clamp(state.getValue(DummyMultiblock2Block.POWER), 0, 15);
+        int newPower = Math.clamp(state.getValue(DensiteWellMultiblockBlock.POWER), 0, 15);
         boolean powerChanged = power != newPower;
         if (powerChanged) {
             updateFieldVariables(newPower);

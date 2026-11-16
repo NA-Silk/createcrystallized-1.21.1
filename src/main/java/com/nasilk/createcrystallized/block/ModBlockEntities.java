@@ -5,6 +5,7 @@ import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
 import com.nasilk.createcrystallized.block.entity.OscilliteBlockEntity;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
+import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockEntity;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
@@ -15,6 +16,11 @@ public class ModBlockEntities {
         "densite_well",
         DensiteWellEntity::new
     ).validBlock(ModBlocks.DENSITE_WELL).register();
+
+    public static final BlockEntityEntry<DensiteWellMultiblockEntity> DENSITE_WELL_MULTIBLOCK = REGISTRATE.blockEntity(
+        "densite_well_multiblock",
+        DensiteWellMultiblockEntity::new
+    ).validBlock(ModBlocks.DENSITE_WELL_MULTIBLOCK).register();
 
     public static final BlockEntityEntry<PropulsiteThrusterEntity> PROPULSITE_THRUSTER = REGISTRATE.blockEntity(
         "propulsite_thruster",

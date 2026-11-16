@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<DummyMultiblock2Entity> {
+public class DensiteWellMultiblockEntityRenderer implements BlockEntityRenderer<DensiteWellMultiblockEntity> {
     private static final ResourceLocation TEXTURE_0 = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
     private static final ResourceLocation TEXTURE_1 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_1.png");
     private static final ResourceLocation TEXTURE_2 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_2.png");
@@ -24,7 +24,7 @@ public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<Dummy
     private static final ResourceLocation TEXTURE_4 = CreateCrystallized.getRL("textures/block/densite_cube_activated/densite_well_cube_4.png");
     private final DensiteWellCubeModel cube;
 
-    public DummyMultiblock2EntityRenderer(BlockEntityRendererProvider.Context context) {
+    public DensiteWellMultiblockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.cube = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
     }
 
@@ -37,7 +37,7 @@ public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<Dummy
     }
 
     @Override
-    public void render(DummyMultiblock2Entity be, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(DensiteWellMultiblockEntity be, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         Level level = be.getLevel();
         if (level == null) return;
         if (!be.isController()) return;
@@ -78,7 +78,7 @@ public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<Dummy
     }
 
     @Override
-    public AABB getRenderBoundingBox(DummyMultiblock2Entity be) {
+    public AABB getRenderBoundingBox(DensiteWellMultiblockEntity be) {
         double radius = be.getFieldRadius();
         int offset = Math.max(0, be.getMultiblockSize().getSize() - 1);
         if (isWellDisabled(be, radius)) return BlockEntityRenderer.super.getRenderBoundingBox(be).expandTowards(offset, offset, offset);
@@ -86,7 +86,7 @@ public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<Dummy
     }
 
     @Override
-    public boolean shouldRender(DummyMultiblock2Entity be, Vec3 cameraPos) {
+    public boolean shouldRender(DensiteWellMultiblockEntity be, Vec3 cameraPos) {
         double radius = be.getFieldRadius();
         double offset = Math.max(0.0d, 0.5d * ((double) be.getMultiblockSize().getSize() - 1));
         if (isWellDisabled(be, radius)) return BlockEntityRenderer.super.shouldRender(be, cameraPos);
@@ -94,7 +94,7 @@ public class DummyMultiblock2EntityRenderer implements BlockEntityRenderer<Dummy
 
     }
 
-    private static boolean isWellDisabled(DummyMultiblock2Entity be, double radius) {
+    private static boolean isWellDisabled(DensiteWellMultiblockEntity be, double radius) {
         return !be.isPowered() || !Double.isFinite(radius) || radius <= 0.0d;
     }
 

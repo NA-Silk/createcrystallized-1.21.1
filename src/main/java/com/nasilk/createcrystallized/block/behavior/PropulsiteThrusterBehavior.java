@@ -53,7 +53,7 @@ public class PropulsiteThrusterBehavior {
     public static double CLUSTER_BONUS_SCALE;
 
     // Entity pushing constants
-    public static double MAX_ENTITY_KNOCKBACK = 6.0d; // Maximum acceleration allowed in blocks per tick
+    public static final double MAX_ENTITY_KNOCKBACK = 6.0d; // Maximum acceleration allowed in blocks per tick
     public static final Predicate<Entity> PUSH_PREDICATE = entity ->
         !(entity instanceof AbstractContraptionEntity) &&
         !AirCurrent.isPlayerCreativeFlying(entity) &&

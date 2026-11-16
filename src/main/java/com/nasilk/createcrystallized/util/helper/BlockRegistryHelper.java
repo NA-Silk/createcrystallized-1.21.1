@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /// BLOCK REGISTRY HELPERS, please thank them before you go, they are very nice.
+@SuppressWarnings("unused")
 public class BlockRegistryHelper {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 

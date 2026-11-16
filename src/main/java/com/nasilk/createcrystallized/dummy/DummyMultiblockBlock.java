@@ -1,7 +1,7 @@
-package com.nasilk.createcrystallized.block.multiblock.imp;
+package com.nasilk.createcrystallized.dummy;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
-import com.nasilk.createcrystallized.block.multiblock.MultiblockTypes;
+import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -11,20 +11,20 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DummyMultiblock1Block extends AbstractMultiblockBlock<DummyMultiblock1Entity> {
-    public DummyMultiblock1Block(Properties properties) {
-        super(properties, MultiblockTypes.DUMMY_MULTIBLOCK_1);
+public class DummyMultiblockBlock extends AbstractMultiblockBlock<DummyMultiblockEntity> {
+    public DummyMultiblockBlock(Properties properties) {
+        super(properties, ModMultiblockTypes.DUMMY);
     }
 
     // ENTITIES
     @Override
-    public Class<DummyMultiblock1Entity> getBlockEntityClass() {
-        return DummyMultiblock1Entity.class;
+    public Class<DummyMultiblockEntity> getBlockEntityClass() {
+        return DummyMultiblockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends DummyMultiblock1Entity> getBlockEntityType() {
-        return DummyRegistry.DUMMY_MULTIBLOCK_1_ENTITY.get();
+    public BlockEntityType<? extends DummyMultiblockEntity> getBlockEntityType() {
+        return DummyRegistry.DUMMY_MULTIBLOCK_ENTITY.get();
     }
 
     // TRANSPARENCY

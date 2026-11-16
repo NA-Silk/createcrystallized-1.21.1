@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
+@SuppressWarnings("unused")
 @Mixin(CreativeModeTab.class)
 public class CreativeModeTabMixin {
     @Shadow private Collection<ItemStack> displayItems;

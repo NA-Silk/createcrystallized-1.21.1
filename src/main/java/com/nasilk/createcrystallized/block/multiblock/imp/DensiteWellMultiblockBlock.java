@@ -1,8 +1,9 @@
 package com.nasilk.createcrystallized.block.multiblock.imp;
 
+import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
-import com.nasilk.createcrystallized.block.multiblock.MultiblockTypes;
+import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,12 +20,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblock2Entity> {
+public class DensiteWellMultiblockBlock extends AbstractMultiblockBlock<DensiteWellMultiblockEntity> {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
     private static final VoxelShape BASE_SHAPE = Block.box(1.0d, 1.0d, 1.0d, 15.0d, 15.0d, 15.0d);
 
-    public DummyMultiblock2Block(Properties properties) {
-        super(properties, MultiblockTypes.DUMMY_MULTIBLOCK_2);
+    public DensiteWellMultiblockBlock(Properties properties) {
+        super(properties, ModMultiblockTypes.DENSITE_WELL);
         this.registerDefaultState(this.stateDefinition.any().setValue(POWER, 0));
     }
 
@@ -65,13 +66,13 @@ public class DummyMultiblock2Block extends AbstractMultiblockBlock<DummyMultiblo
 
     // ENTITIES
     @Override
-    public Class<DummyMultiblock2Entity> getBlockEntityClass() {
-        return DummyMultiblock2Entity.class;
+    public Class<DensiteWellMultiblockEntity> getBlockEntityClass() {
+        return DensiteWellMultiblockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends DummyMultiblock2Entity> getBlockEntityType() {
-        return DummyRegistry.DUMMY_MULTIBLOCK_2_ENTITY.get();
+    public BlockEntityType<? extends DensiteWellMultiblockEntity> getBlockEntityType() {
+        return ModBlockEntities.DENSITE_WELL_MULTIBLOCK.get();
     }
 
     // PARTICLES

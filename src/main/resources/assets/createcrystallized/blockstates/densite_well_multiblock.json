@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "controller=true,multiblock_size=1": {
+      "model": "createcrystallized:block/densite_well"
+    },
+    "controller=true,multiblock_size=2": {
+      "model": "createcrystallized:block/densite_well"
+    },
+    "controller=true,multiblock_size=3": {
+      "model": "createcrystallized:block/densite_well"
+    },
+    "controller=false": {
+      "model": "createcrystallized:block/densite_well_multiblock_member"
+    }
+  }
+}

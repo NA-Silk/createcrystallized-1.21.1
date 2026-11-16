@@ -2,7 +2,8 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.block.multiblock.imp.DummyRegistry;
+import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
+import com.nasilk.createcrystallized.dummy.DummyRegistry;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
 import com.nasilk.createcrystallized.common.behavior.ModFluidInteractions;
@@ -39,6 +40,7 @@ public class CreateCrystallized {
         // Static initializations
         ModTags.init();
         ModTiers.init();
+        ModMultiblockTypes.init();
 
         // REGISTRATE initializations
         DummyRegistry.init(); // Testing area
@@ -67,6 +69,7 @@ public class CreateCrystallized {
         //LOGGER.info("HELLO from common setup");
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static CreateRegistrate getRegistrate() {
         return REGISTRATE;
     }

@@ -1,5 +1,6 @@
 package com.nasilk.createcrystallized.block.entity;
 
+import com.nasilk.createcrystallized.CreateCrystallized;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -14,12 +15,14 @@ import org.joml.Vector3dc;
 public class OscilliteBlockEntity extends BlockEntity {
     // Constants
     private static final double TORQUE_SCALE = 0.76d; // This value PERFECTLY holds 4kpg on a swivel without tipping
-    private static final double DAMPING_SCALE = -0.96d;
+    private static final double DAMPING_SCALE = 0.96d;
+    private static final double THRESHOLD = 5e-2d;
+    private static final double THRESHOLD_SQUARED = THRESHOLD * THRESHOLD;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
     // Cache
     private static class Cache {
-        final Vector3d blockPosition = new Vector3d();
+        //final Vector3d blockPosition = new Vector3d();
         final Vector3d angularVelocity = new Vector3d();
         final Vector3d rotation = new Vector3d();
         final Vector3d temp = new Vector3d();
@@ -46,20 +49,18 @@ public class OscilliteBlockEntity extends BlockEntity {
 
     // TICK BEHAVIOR
     public void tick() {
-        if (level instanceof ServerLevel serverLevel
-            && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel
-        ) {
+        if (level instanceof ServerLevel serverLevel && Sable.HELPER.getContaining(serverLevel, worldPosition) instanceof ServerSubLevel subLevel) {
             // Get global position
             Cache cache = CACHE.get();
-            cache.blockPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
-            subLevel.logicalPose().transformPosition(cache.blockPosition);
+            //cache.blockPosition.set(worldPosition.getX() + 0.5d, worldPosition.getY() + 0.5d, worldPosition.getZ() + 0.5d);
+            //subLevel.logicalPose().transformPosition(cache.blockPosition);
 
             // Run gyroscope effect
-            gyroscope(subLevel, cache);
+            gyroscope1(subLevel, cache);
         }
     }
 
-    private void gyroscope(ServerSubLevel subLevel, Cache cache) {
+    private void gyroscope1(ServerSubLevel subLevel, Cache cache) {
         // Get the physics handle
         RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
         if (!handle.isValid()) return;
@@ -76,13 +77,22 @@ public class OscilliteBlockEntity extends BlockEntity {
             }
         }
         cache.rotation.cross(UnitDir.UP.getNormal()); // Cross to get target rotation
+        if (cache.rotation.lengthSquared() < THRESHOLD_SQUARED) return;
+        CreateCrystallized.LOGGER.warn("Rotation threshold exceeded: {}", cache.rotation);
 
         // Handle damping and scale
         handle.getAngularVelocity(cache.angularVelocity);
+        cache.angularVelocity.y = 0.0d; // No yaw damping
         cache.rotation.mul(TORQUE_SCALE);
-        cache.rotation.fma(DAMPING_SCALE, cache.angularVelocity);
+        cache.rotation.fma(-DAMPING_SCALE, cache.angularVelocity);
 
         // Apply rotation
         handle.addLinearAndAngularVelocity(ZERO_VECTOR, cache.rotation);
+    }
+
+    private void gyroscope2(ServerSubLevel subLevel, Cache cache) {
+        RigidBodyHandle handle = RigidBodyHandle.of(subLevel);
+        if (!handle.isValid()) return;
+
     }
 }

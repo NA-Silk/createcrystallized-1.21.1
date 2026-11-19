@@ -8,6 +8,7 @@ import com.nasilk.createcrystallized.common.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -46,11 +47,26 @@ public class DensiteWellMultiblockBlock extends AbstractMultiblockBlock<DensiteW
 
     // POWER LEVELS
     @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (level.isClientSide || state.is(oldState.getBlock())) return;
+        level.scheduleTick(pos, this, 2);
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         if (level.isClientSide) return;
+        level.scheduleTick(pos, this, 2);
+    }
 
+    // t = current tick
+    // t + 0 : registers the update
+    // t + 1 : processes multiblock shape
+    // t + 2 : processes multiblock power
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // Validate controller
+        if (level.isClientSide) return;
         AbstractMultiblockEntity be = AbstractMultiblockEntity.getMultiblockEntity(level, pos);
         if (be == null) return;
         BlockPos controllerPos = be.getControllerPos();

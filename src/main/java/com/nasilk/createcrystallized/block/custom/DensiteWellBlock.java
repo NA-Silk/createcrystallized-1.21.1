@@ -45,6 +45,14 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
 
     // POWER LEVELS
     @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (level.isClientSide || state.is(oldState.getBlock())) return;
+        int currentPower = state.getValue(BlockStateProperties.POWER);
+        int newPower = level.getBestNeighborSignal(pos);
+        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (level.isClientSide) return;
         int currentPower = state.getValue(BlockStateProperties.POWER);

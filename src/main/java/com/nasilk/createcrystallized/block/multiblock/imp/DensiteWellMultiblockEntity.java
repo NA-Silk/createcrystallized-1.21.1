@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
@@ -32,10 +33,16 @@ import java.util.List;
 
 // They grow up so fast!
 public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implements IHaveGoggleInformation {
-    // Tick variables (saved) TODO Move scaled versions to class level
+    // Tick variables (saved)
     private int power = 0;
+    private int size = getMultiblockSize().getSize();
     private double fieldStrength = 0.0d;
     private double fieldRadius = 0.0d;
+    private double contactRadiusScaled = CONTACT_RADIUS * size;
+    private double fieldRadiusScaled = fieldRadius * size;
+    private double fieldStrengthScaled = fieldStrength * size * size;
+    private double fieldRadiusScaledSquared = fieldRadiusScaled * fieldRadiusScaled;
+    private double dampenRadiusScaledSquared = DAMPEN_RADIUS_SQUARED * size * size;
 
     // Tick variables (unsaved)
     private final List<ServerSubLevel> contactTargets = new ArrayList<>();
@@ -46,6 +53,7 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
     private static final double AMBIENT_RATE = 8e-5d;
     private static final double CONTACT_RADIUS = 0.5 * DensiteWellMultiblockBlock.getBaseShape().bounds().inflate(2.0d/16.0d).getSize();
     private static final double DAMPEN_RADIUS = 2.0d;
+    private static final double DAMPEN_RADIUS_SQUARED = DAMPEN_RADIUS * DAMPEN_RADIUS;
     private static final double DAMPEN_SCALE = 0.2d;
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference
 
@@ -71,7 +79,7 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
             FIELD_STRENGTH_CURVE[i] = STRENGTH_SCALE * i;
             FIELD_RADIUS_CURVE[i] = RADIUS_SCALE * i;
         }
-        PULL_PARTICLE_TRAVEL_TICKS = (double) ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
+        PULL_PARTICLE_TRAVEL_TICKS = ModConfigs.client().particleConfig.wellParticleTravelTicks.get();
     }
 
     // Cache
@@ -100,11 +108,7 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
         BlockState state = getBlockState();
         int newPower = Math.clamp(state.getValue(DensiteWellMultiblockBlock.POWER), 0, 15);
         boolean powerChanged = power != newPower;
-        if (powerChanged) {
-            updateFieldVariables(newPower);
-            level.sendBlockUpdated(worldPosition, state, state, 2);
-            this.setChanged();
-        }
+        if (powerChanged) updateFieldVariablesPower(newPower);
 
         // Have a little ambiance
         if (level.getRandom().nextDouble() < AMBIENT_RATE) level.playSound(
@@ -130,11 +134,18 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
             subLevel.logicalPose().transformPosition(cache.wellPosition);
         }
 
+        // Get size-dependent constants
+        int newSize = getMultiblockSize().getSize();
+        boolean sizeChanged = size != newSize;
+        if (sizeChanged) updateFieldVariablesSize(newSize);
+
         // Run effects
         int randomTickModulo = Math.floorMod(level.getGameTime() + worldPositionHash, RANDOM_TICK_RATE);
-        if (powerChanged) {
+        if (powerChanged || sizeChanged) {
             updateContactTargets(level, wellSubLevel, cache);
             updateFieldTargets(level, wellSubLevel, cache);
+            level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+            this.setChanged();
         }
         else if (randomTickModulo == 0) updateContactTargets(level, wellSubLevel, cache);
         else if (randomTickModulo == 1) updateFieldTargets(level, wellSubLevel, cache);
@@ -146,8 +157,6 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
 
     /// CONTACT
     private void updateContactTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
-        double contactRadiusScaled = CONTACT_RADIUS * getMultiblockSize().getSize();
-
         // Reset the target list
         contactTargets.clear();
 
@@ -199,8 +208,6 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
 
     /// FIELD
     private void updateFieldTargets(ServerLevel level, ServerSubLevel wellSubLevel, Cache cache) {
-        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
-
         // Reset the target list
         fieldTargets.clear();
 
@@ -222,12 +229,6 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
     }
 
     private void applyFieldGravity(Cache cache) {
-        double fieldStrengthScaled = fieldStrength * getMultiblockSize().getSize() * getMultiblockSize().getSize();
-        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
-        double fieldRadiusScaledSquared = fieldRadiusScaled * fieldRadiusScaled;
-        double dampenRadiusScaled = DAMPEN_RADIUS * getMultiblockSize().getSize();
-        double dampenRadiusScaledSquared = dampenRadiusScaled * dampenRadiusScaled;
-
         // Iterate backwards for safe removals
         for (int i = fieldTargets.size() - 1; i >= 0; i--) {
             ServerSubLevel targetSubLevel = fieldTargets.get(i);
@@ -279,8 +280,6 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
 
     // PARTICLES
     private void addPullParticles(ServerLevel level, Cache cache) {
-        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
-
         // Compute each particle
         for (int i = 0; i < PULL_PARTICLE_COUNT[power]; i++) {
             // Uniformly sample a direction on a sphere.
@@ -315,9 +314,6 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         if (!isController()) return false;
-        double fieldStrengthScaled = fieldStrength * getMultiblockSize().getSize() * getMultiblockSize().getSize();
-        double fieldRadiusScaled = fieldRadius * getMultiblockSize().getSize();
-
         CCLangHelper.blockName(this.getBlockState()).text(":").forGoggles(tooltip);
 
         final MutableComponent currentFieldStrength = CCLangHelper
@@ -345,6 +341,7 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Power", this.power);
+        tag.putInt("Size", this.size);
         return tag;
     }
 
@@ -353,7 +350,9 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
         super.onDataPacket(net, pkt, lookupProvider);
         CompoundTag tag = pkt.getTag();
         this.power = tag.getInt("Power");
-        updateFieldVariables(this.power);
+        this.size = tag.getInt("Size");
+        updateFieldVariablesPower(this.power);
+        updateFieldVariablesSize(this.size);
     }
 
 
@@ -362,13 +361,16 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Power", this.power);
+        tag.putInt("Size", this.size);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.power = tag.getInt("Power");
-        updateFieldVariables(this.power);
+        this.size = tag.getInt("Size");
+        updateFieldVariablesPower(this.power);
+        updateFieldVariablesSize(this.size);
     }
 
     @Override
@@ -380,7 +382,7 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
 
 
     // HELPERS
-    private void updateFieldVariables(int newPower) {
+    private void updateFieldVariablesPower(int newPower) {
         power = newPower;
         if (power == 0) {
             contactTargets.clear();
@@ -388,6 +390,19 @@ public class DensiteWellMultiblockEntity extends AbstractMultiblockEntity implem
         }
         fieldStrength = FIELD_STRENGTH_CURVE[power];
         fieldRadius = FIELD_RADIUS_CURVE[power];
+        updateScaledVariables();
+    }
+    private void updateFieldVariablesSize(int newSize) {
+        size = newSize;
+        updateScaledVariables();
+    }
+    private void updateScaledVariables() {
+        int sizeSquared = size * size;
+        contactRadiusScaled = CONTACT_RADIUS * size;
+        fieldRadiusScaled = fieldRadius * size;
+        fieldStrengthScaled = fieldStrength * sizeSquared;
+        fieldRadiusScaledSquared = fieldRadiusScaled * fieldRadiusScaled;
+        dampenRadiusScaledSquared = DAMPEN_RADIUS_SQUARED * sizeSquared;
     }
 
 

@@ -27,6 +27,7 @@ public abstract class AbstractMultiblockEntity extends BlockEntity implements Tr
     public enum Size {
         SINGLE(1), DOUBLE(2), TRIPLE(3);
         private final int size;
+
         Size(int size) { this.size = size; }
         public int getSize() { return size; }
         public static Size of(int size) {

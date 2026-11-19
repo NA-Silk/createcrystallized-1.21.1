@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.block.custom.OscilliteCannonBlock;
 import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.server.block.CannonConfig;
+import com.nasilk.createcrystallized.config.view.server.block.CannonConfig;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;

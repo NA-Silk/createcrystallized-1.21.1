@@ -1,9 +1,9 @@
-package com.nasilk.createcrystallized.config.server;
+package com.nasilk.createcrystallized.config.view.server;
 
-import com.nasilk.createcrystallized.config.server.block.CannonConfig;
-import com.nasilk.createcrystallized.config.server.block.OscilliteConfig;
-import com.nasilk.createcrystallized.config.server.block.ThrusterConfig;
-import com.nasilk.createcrystallized.config.server.block.WellConfig;
+import com.nasilk.createcrystallized.config.view.server.block.CannonConfig;
+import com.nasilk.createcrystallized.config.view.server.block.OscilliteConfig;
+import com.nasilk.createcrystallized.config.view.server.block.ThrusterConfig;
+import com.nasilk.createcrystallized.config.view.server.block.WellConfig;
 import net.createmod.catnip.config.ConfigBase;
 
 public class BlockConfig extends ConfigBase {

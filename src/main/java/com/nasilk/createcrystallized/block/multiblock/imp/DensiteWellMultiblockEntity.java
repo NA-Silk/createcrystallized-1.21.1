@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.multiblock.imp;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.server.block.WellConfig;
+import com.nasilk.createcrystallized.config.view.server.block.WellConfig;
 import com.nasilk.createcrystallized.util.helper.CCLangHelper;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import dev.ryanhcode.sable.Sable;

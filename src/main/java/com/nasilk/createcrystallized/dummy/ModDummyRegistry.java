@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 
 import static com.nasilk.createcrystallized.util.helper.BlockRegistryHelper.registerBlock;
 
-public class DummyRegistry {
+public final class ModDummyRegistry {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final BlockEntry<Block> DUMMY_MULTIBLOCK_BLOCK = registerBlock(

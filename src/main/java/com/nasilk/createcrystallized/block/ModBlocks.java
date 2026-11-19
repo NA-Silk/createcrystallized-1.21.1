@@ -2,7 +2,7 @@ package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockBlock;
-import com.nasilk.createcrystallized.client.behavior.*;
+import com.nasilk.createcrystallized.client.ModCTBehavior;
 import com.nasilk.createcrystallized.block.custom.*;
 import com.nasilk.createcrystallized.item.custom.PebbleItem;
 import com.nasilk.createcrystallized.common.ModSounds;
@@ -27,7 +27,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import static com.nasilk.createcrystallized.util.helper.BlockRegistryHelper.registerBlock;
 
-public class ModBlocks {
+public final class ModBlocks {
     /// RAW FORMS
     public static final BlockEntry<Block> DENSITE_BLOCK = registerBlock(
         "densite_block",
@@ -50,7 +50,7 @@ public class ModBlocks {
                 )
             )
         ),
-        DensiteCTBehavior::new
+        ModCTBehavior.DensiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> PROPULSITE_BLOCK = registerBlock(
@@ -74,7 +74,7 @@ public class ModBlocks {
                     )
                 )
         ),
-        PropulsiteCTBehavior::new
+        ModCTBehavior.PropulsiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> OSCILLITE_BLOCK = registerBlock(
@@ -98,7 +98,7 @@ public class ModBlocks {
                 )
             )
         ),
-        OscilliteCTBehavior::new
+        ModCTBehavior.OscilliteCTBehavior::new
     );
 
     /// ENCASED FORMS
@@ -126,7 +126,7 @@ public class ModBlocks {
             ModParticleTypes.DENSITE_PARTICLES,
             8,0.3d,0.2d,0.3d,0.05d
         ),
-        EncasedDensiteCTBehavior::new
+        ModCTBehavior.EncasedDensiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_PROPULSITE_BLOCK = registerBlock(
@@ -155,7 +155,7 @@ public class ModBlocks {
             ModParticleTypes.PROPULSITE_PARTICLES,
             16,0.5d,0.5d,0.5d,0.25d
         ),
-        EncasedPropulsiteCTBehavior::new
+        ModCTBehavior.EncasedPropulsiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_OSCILLITE_BLOCK = registerBlock(
@@ -184,7 +184,7 @@ public class ModBlocks {
             () -> ParticleTypes.SCULK_SOUL,
             8,0.5d,0.5d,0.5d,0.5d
         ),
-        EncasedOscilliteCTBehavior::new
+        ModCTBehavior.EncasedOscilliteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_LEVITITE_BLOCK = registerBlock(
@@ -216,7 +216,7 @@ public class ModBlocks {
             ),
             0,0.0d,0.0d,0.0d,0.0d
         ),
-        EncasedLevititeCTBehavior::new
+        ModCTBehavior.EncasedLevititeCTBehavior::new
     );
 
     /// MACHINED FORMS
@@ -330,7 +330,7 @@ public class ModBlocks {
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
-        ChoraCasingCTBehavior::new
+        ModCTBehavior.ChoraCasingCTBehavior::new
     );
 
     public static final BlockEntry<Block> DENSE_CHORA_CASING = registerBlock(
@@ -344,7 +344,7 @@ public class ModBlocks {
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
-        DenseChoraCasingCTBehavior::new
+        ModCTBehavior.DenseChoraCasingCTBehavior::new
     );
 
     public static final BlockEntry<Block> PROPULSED_CHORA_CASING = registerBlock(
@@ -358,7 +358,7 @@ public class ModBlocks {
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
-        PropulsedChoraCasingCTBehavior::new
+        ModCTBehavior.PropulsedChoraCasingCTBehavior::new
     );
 
     public static final BlockEntry<Block> OSCILLATING_CHORA_CASING = registerBlock(
@@ -372,7 +372,7 @@ public class ModBlocks {
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
-        OscillatingChoraCasingCTBehavior::new
+        ModCTBehavior.OscillatingChoraCasingCTBehavior::new
     );
 
     public static final BlockEntry<Block> LEVITATING_CHORA_CASING = registerBlock(
@@ -386,7 +386,7 @@ public class ModBlocks {
             .requiresCorrectToolForDrops()
             .sound(SoundType.GLASS)
         ),
-        LevitatingChoraCasingCTBehavior::new
+        ModCTBehavior.LevitatingChoraCasingCTBehavior::new
     );
 
     /// ECHO BLOCKS - Copied Amethyst registries in {@link Blocks}
@@ -617,7 +617,7 @@ public class ModBlocks {
         )
     );
 
-    ///Exists to occupy the creative tab icon, unobtainable.
+    /// Exists to occupy the creative tab icon, unobtainable
     public static final BlockEntry<Block> CREATIVE_TAB_ICON = registerBlock(
             "creative_tab_icon", Block::new
     );

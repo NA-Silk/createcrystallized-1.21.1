@@ -1,6 +1,9 @@
 package com.nasilk.createcrystallized.config;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
+import com.nasilk.createcrystallized.config.view.ClientConfig;
+import com.nasilk.createcrystallized.config.view.CommonConfig;
+import com.nasilk.createcrystallized.config.view.ServerConfig;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -14,7 +17,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID)
-public class ModConfigs {
+public final class ModConfigs {
     private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
     private static ClientConfig client;

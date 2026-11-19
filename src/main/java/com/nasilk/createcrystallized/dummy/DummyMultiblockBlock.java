@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.dummy;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
-import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
+import com.nasilk.createcrystallized.block.ModMultiblockTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -24,7 +24,7 @@ public class DummyMultiblockBlock extends AbstractMultiblockBlock<DummyMultibloc
 
     @Override
     public BlockEntityType<? extends DummyMultiblockEntity> getBlockEntityType() {
-        return DummyRegistry.DUMMY_MULTIBLOCK_ENTITY.get();
+        return ModDummyRegistry.DUMMY_MULTIBLOCK_ENTITY.get();
     }
 
     // TRANSPARENCY

@@ -9,7 +9,7 @@ import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockE
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
-public class ModBlockEntities {
+public final class ModBlockEntities {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final BlockEntityEntry<DensiteWellEntity> DENSITE_WELL = REGISTRATE.blockEntity(

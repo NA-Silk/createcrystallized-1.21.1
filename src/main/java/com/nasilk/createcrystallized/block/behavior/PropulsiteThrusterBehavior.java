@@ -5,7 +5,7 @@ import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModSounds;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.server.block.ThrusterConfig;
+import com.nasilk.createcrystallized.config.view.server.block.ThrusterConfig;
 import com.nasilk.createcrystallized.util.type.TickState;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;

@@ -1,7 +1,7 @@
-package com.nasilk.createcrystallized.config;
+package com.nasilk.createcrystallized.config.view;
 
-import com.nasilk.createcrystallized.config.client.ParticleConfig;
-import com.nasilk.createcrystallized.config.client.PonderConfig;
+import com.nasilk.createcrystallized.config.view.client.ParticleConfig;
+import com.nasilk.createcrystallized.config.view.client.PonderConfig;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ClientConfig extends ConfigBase {

@@ -2,15 +2,15 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
-import com.nasilk.createcrystallized.dummy.DummyRegistry;
+import com.nasilk.createcrystallized.block.ModMultiblockTypes;
+import com.nasilk.createcrystallized.dummy.ModDummyRegistry;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.common.behavior.ModFluidInteractions;
+import com.nasilk.createcrystallized.common.ModFluidInteractions;
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
-import com.nasilk.createcrystallized.common.behavior.ModDispenserBehaviors;
+import com.nasilk.createcrystallized.common.ModDispenserBehaviors;
 import com.nasilk.createcrystallized.item.ModTiers;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.common.ModCreativeModeTabs;
@@ -43,7 +43,7 @@ public class CreateCrystallized {
         ModMultiblockTypes.init();
 
         // REGISTRATE initializations
-        DummyRegistry.init(); // Testing area
+        ModDummyRegistry.init(); // Testing area
         ModBlocks.init();
         ModBlockEntities.init();
         ModItemEntities.init();

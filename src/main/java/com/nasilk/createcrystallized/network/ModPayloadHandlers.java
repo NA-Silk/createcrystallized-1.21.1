@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID)
-public class ModPayloadHandlers {
+public final class ModPayloadHandlers {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(CreateCrystallized.MOD_ID);

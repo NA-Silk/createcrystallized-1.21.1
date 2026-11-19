@@ -1,14 +1,14 @@
-package com.nasilk.createcrystallized.config.server.block;
+package com.nasilk.createcrystallized.config.view.server.block;
 
 import com.nasilk.createcrystallized.block.entity.OscilliteBlockEntity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class OscilliteConfig extends ConfigBase {
     public final ConfigInt   gyroFunction     = this.i(Constants.gyroFunction, 1, 2, "gyro_function", Comments.gyroFunction);
-    /// G1
+    /// gyroscope1
     public final ConfigFloat torqueScale      = this.f(Constants.torqueScale, 0.0f, 1.0f, "torque_scale", Comments.torqueScale);
     public final ConfigFloat dampingScale     = this.f(Constants.dampingScale, 0.0f, 1.0f, "damping_scale", Comments.dampingScale);
-    /// G2
+    /// gyroscope2
     public final ConfigFloat massCapacity     = this.f(Constants.massCapacity, 4.0f, 16.0f, "mass_capacity", Comments.massCapacity);
     public final ConfigFloat naturalFrequency = this.f(Constants.naturalFrequency, 0.0f, 10.0f, "natural_frequency", Comments.naturalFrequency);
     public final ConfigFloat dampingRatio     = this.f(Constants.dampingRatio, 0.0f, 2.0f, "damping_ratio", Comments.dampingRatio);
@@ -42,11 +42,11 @@ public class OscilliteConfig extends ConfigBase {
     }
 
     private static class Comments {
-        private static final String gyroFunction = "...";
-        private static final String torqueScale = "...";
-        private static final String dampingScale = "...";
+        private static final String gyroFunction = "Select between gyroscope1 and gyroscope2 correction functions.";
+        private static final String torqueScale = "[gyroscope1]";
+        private static final String dampingScale = "[gyroscope1]";
         private static final String massCapacity = "Maximum mass corrected per Oscillite Block, in kpg.";
-        private static final String naturalFrequency = "...";
-        private static final String dampingRatio = "...";
+        private static final String naturalFrequency = "[gyroscope2]";
+        private static final String dampingRatio = "[gyroscope2]";
     }
 }

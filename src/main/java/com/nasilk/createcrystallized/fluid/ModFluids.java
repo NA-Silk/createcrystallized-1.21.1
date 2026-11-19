@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class ModFluids {
+public final class ModFluids {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     /// VOID SEA SLURRY

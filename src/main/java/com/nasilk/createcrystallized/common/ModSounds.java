@@ -6,7 +6,7 @@ import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 
-public class ModSounds {
+public final class ModSounds {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final RegistryEntry<SoundEvent, SoundEvent> PEBBLE_PLACE = registerSound(

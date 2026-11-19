@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.common;
 import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.block.ModBlocks;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.common.CreativeConfig;
+import com.nasilk.createcrystallized.config.view.common.CreativeConfig;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ModCreativeModeTabs {
+public final class ModCreativeModeTabs {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final RegistryEntry<CreativeModeTab, CreativeModeTab> CREATE_CRYSTALLIZED_TAB = REGISTRATE.simple(

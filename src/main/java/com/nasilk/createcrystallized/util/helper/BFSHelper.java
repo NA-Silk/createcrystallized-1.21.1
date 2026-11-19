@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-public class BFSHelper {
+public final class BFSHelper {
     private static final Direction[] DIRECTIONS = Direction.values();
     public record BFSResult(int tail, boolean overflow) {}
 

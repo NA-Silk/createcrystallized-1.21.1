@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.config.common;
+package com.nasilk.createcrystallized.config.view.common;
 
 import net.createmod.catnip.config.ConfigBase;
 

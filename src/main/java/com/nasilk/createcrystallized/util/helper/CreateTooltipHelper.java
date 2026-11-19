@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-public class CreateTooltipHelper {
+public final class CreateTooltipHelper {
     public static void registerSimpleTooltip(ItemProviderEntry<?, ?> itemProvider) {
         Item item = itemProvider.asItem();
         TooltipModifier.REGISTRY.register(

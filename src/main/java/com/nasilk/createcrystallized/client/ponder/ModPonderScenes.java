@@ -6,7 +6,7 @@ import com.nasilk.createcrystallized.client.ponder.scene.*;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
-public class ModPonderScenes {
+public final class ModPonderScenes {
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> registry) {
         /// FLUIDS
         /* V2

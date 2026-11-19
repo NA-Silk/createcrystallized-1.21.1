@@ -6,7 +6,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.EntityEntry;
 import net.minecraft.world.entity.MobCategory;
 
-public class ModItemEntities {
+public final class ModItemEntities {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final EntityEntry<DensiteCoreItemEntity> THROWN_DENSITE_CORE = REGISTRATE.<DensiteCoreItemEntity>entity(

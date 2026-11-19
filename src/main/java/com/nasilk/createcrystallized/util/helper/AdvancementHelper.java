@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3d;
 
-public class AdvancementHelper {
+public final class AdvancementHelper {
     private static final String CRITERION_KEY = "impossible";
     private static final int RADIUS = 16;
     private static final int RADIUS_SQUARED = RADIUS * RADIUS;

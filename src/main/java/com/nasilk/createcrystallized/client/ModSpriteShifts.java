@@ -5,7 +5,7 @@ import com.simibubi.create.foundation.block.connected.AllCTTypes;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.CTSpriteShifter;
 
-public class ModSpriteShifts {
+public final class ModSpriteShifts {
     public static final CTSpriteShiftEntry PROPULSITE = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/propulsite_block"),

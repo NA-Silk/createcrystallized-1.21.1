@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 @JeiPlugin
-public class ModJeiPlugin implements IModPlugin {
+public final class ModJeiPlugin implements IModPlugin {
     private static final ResourceLocation PLUGIN_ID = CreateCrystallized.getRL("jei_plugin");
 
     @Override

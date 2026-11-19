@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.config.server;
+package com.nasilk.createcrystallized.config.view.server;
 
 import com.nasilk.createcrystallized.item.entity.DensiteCoreItemEntity;
 import net.createmod.catnip.config.ConfigBase;

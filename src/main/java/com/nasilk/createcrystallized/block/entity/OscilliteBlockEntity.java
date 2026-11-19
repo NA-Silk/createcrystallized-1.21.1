@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.block.entity;
 
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.server.block.OscilliteConfig;
+import com.nasilk.createcrystallized.config.view.server.block.OscilliteConfig;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.mass.MassData;
@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
+// TODO Tune gyroscope2 variables, then remove gyroscope1
 public class OscilliteBlockEntity extends BlockEntity {
     // Constants
     private static final Vector3dc ZERO_VECTOR = new Vector3d(0.0d, 0.0d, 0.0d); // Read-only reference

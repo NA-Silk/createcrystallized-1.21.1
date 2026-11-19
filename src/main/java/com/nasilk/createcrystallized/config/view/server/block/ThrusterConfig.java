@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.config.server.block;
+package com.nasilk.createcrystallized.config.view.server.block;
 
 import com.nasilk.createcrystallized.block.behavior.PropulsiteThrusterBehavior;
 import net.createmod.catnip.config.ConfigBase;

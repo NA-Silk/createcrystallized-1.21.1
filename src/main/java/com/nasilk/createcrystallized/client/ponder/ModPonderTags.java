@@ -8,7 +8,7 @@ import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
-public class ModPonderTags {
+public final class ModPonderTags {
     public static final ResourceLocation CRYSTAL_FLUIDS = CreateCrystallized.getRL("crystal_fluids");
     public static final ResourceLocation CRYSTAL_BLOCKS = CreateCrystallized.getRL("crystal_blocks");
     public static final ResourceLocation MACHINED_CRYSTAL_BLOCKS = CreateCrystallized.getRL("machined_crystal_blocks");

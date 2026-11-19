@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.item.entity;
 
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.config.server.ItemConfig;
+import com.nasilk.createcrystallized.config.view.server.ItemConfig;
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.common.ModParticleTypes;

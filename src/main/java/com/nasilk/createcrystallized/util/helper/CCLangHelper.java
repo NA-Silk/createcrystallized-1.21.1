@@ -6,7 +6,7 @@ import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CCLangHelper {
+public final class CCLangHelper {
     public static LangBuilder builder() {
         return Lang.builder(CreateCrystallized.MOD_ID);
     }

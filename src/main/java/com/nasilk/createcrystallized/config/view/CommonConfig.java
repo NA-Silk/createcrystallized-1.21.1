@@ -1,6 +1,6 @@
-package com.nasilk.createcrystallized.config;
+package com.nasilk.createcrystallized.config.view;
 
-import com.nasilk.createcrystallized.config.common.CreativeConfig;
+import com.nasilk.createcrystallized.config.view.common.CreativeConfig;
 import net.createmod.catnip.config.ConfigBase;
 
 public class CommonConfig extends ConfigBase {

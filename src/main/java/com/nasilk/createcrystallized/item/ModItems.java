@@ -7,7 +7,7 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShovelItem;
 
-public class ModItems {
+public final class ModItems {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     /// ADVANCED ITEMS

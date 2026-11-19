@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /// See {@link dev.simulated_team.simulated.index.ponder.SimPonderPlugin}
-public class ModPonderPlugin extends CreatePonderPlugin {
+public final class ModPonderPlugin extends CreatePonderPlugin {
     public ModPonderPlugin() {}
 
     @Override

@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Block;
  * </ol>
  */
 @SuppressWarnings("unused")
-public class ModTags {
+public final class ModTags {
     public static class Blocks {
         public static final TagKey<Block> NEEDS_AEROLITE_TOOL = createTag("needs_aerolite_tool");
         public static final TagKey<Block> INCORRECT_FOR_AEROLITE_TOOL = createTag("incorrect_for_aerolite_tool");

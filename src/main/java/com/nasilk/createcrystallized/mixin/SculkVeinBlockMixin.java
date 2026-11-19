@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SculkSpreader;
 import net.minecraft.world.level.block.SculkVeinBlock;
@@ -38,7 +39,7 @@ public class SculkVeinBlockMixin {
             // Convert a full block and nearby clusters
             BlockState targetState = SculkVeinBlockMixinHelper.getConvertedBlockState(level.getBlockState(targetPos));
             if (targetState != null) {
-                level.setBlock(targetPos, targetState, 3);
+                level.setBlock(targetPos, targetState, Block.UPDATE_ALL);
                 level.playSound(null, targetPos, SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.BLOCKS, 1.0F, 1.0F);
                 SculkVeinBlockMixinHelper.convertAdjacentClusters(level, targetPos);
                 cir.setReturnValue(true);

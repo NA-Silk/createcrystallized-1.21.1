@@ -7,7 +7,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.Level;
 
-public class ModDamageTypes {
+public final class ModDamageTypes {
     public static final ResourceKey<DamageType> PROPULSITE_THRUSTER = create("propulsite_thruster");
     public static final ResourceKey<DamageType> OSCILLITE_CANNON = create("oscillite_cannon");
 

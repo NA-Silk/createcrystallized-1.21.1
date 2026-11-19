@@ -159,6 +159,7 @@ repositories {
     // Default
     exclusiveContent {
         forRepository {
+            //noinspection ForeignDelegate
             maven {
                 name = "Modrinth"
                 url = "https://api.modrinth.com/maven"

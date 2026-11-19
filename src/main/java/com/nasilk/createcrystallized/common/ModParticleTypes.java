@@ -7,7 +7,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 
-public class ModParticleTypes {
+public final class ModParticleTypes {
     private static final CreateRegistrate REGISTRATE = CreateCrystallized.getRegistrate();
 
     public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_PARTICLES = registerParticle(

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SculkVeinBlockMixinHelper {
+public final class SculkVeinBlockMixinHelper {
     public static BlockState getConvertedBlockState(BlockState blockState) {
         // Set default null target state
         BlockState targetState = null;

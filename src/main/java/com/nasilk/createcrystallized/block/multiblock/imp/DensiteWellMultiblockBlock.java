@@ -3,7 +3,7 @@ package com.nasilk.createcrystallized.block.multiblock.imp;
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
-import com.nasilk.createcrystallized.block.multiblock.ModMultiblockTypes;
+import com.nasilk.createcrystallized.block.ModMultiblockTypes;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

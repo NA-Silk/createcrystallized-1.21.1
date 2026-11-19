@@ -1,7 +1,7 @@
-package com.nasilk.createcrystallized.config;
+package com.nasilk.createcrystallized.config.view;
 
-import com.nasilk.createcrystallized.config.server.BlockConfig;
-import com.nasilk.createcrystallized.config.server.ItemConfig;
+import com.nasilk.createcrystallized.config.view.server.BlockConfig;
+import com.nasilk.createcrystallized.config.view.server.ItemConfig;
 import net.createmod.catnip.config.ConfigBase;
 
 public class ServerConfig extends ConfigBase {

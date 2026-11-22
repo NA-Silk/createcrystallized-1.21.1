@@ -13,7 +13,9 @@ import org.joml.Vector3dc;
 import java.util.Objects;
 
 public final class ServerSubLevelPunchHelper {
-    // IMPORTANT: position and direction are must be in the sublevel's local plot coordinate frame
+    private static final double ADDITIONAL_STRENGTH_MULTIPLIER = 2.5d;
+
+    // IMPORTANT: position and direction must be in the sublevel's local plot coordinate frame
     public static void serverTryAirPunch(ServerLevel level, ServerSubLevel standingSubLevel, Player player, Vector3d localPosition, Vector3d localDirection) {
         // Input validation
         if (level == null || player == null || standingSubLevel == null) return;
@@ -26,8 +28,9 @@ public final class ServerSubLevelPunchHelper {
         SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
 
         // Sable's physics system handles the punch cooldown
-        int customCooldown = SableAttributes.getPushCooldownTicks(player);
-        if (!physicsSystem.tryPunch(player.getGameProfile().getId(), customCooldown)) return;
+        // This makes it really inconsistent, who cares about tick operation counts from player inputs anyway?
+        //int customCooldown = SableAttributes.getPushCooldownTicks(player);
+        //if (!physicsSystem.tryPunch(player.getGameProfile().getId(), customCooldown)) return;
 
         // Air punching pushes the standing sublevel backwards
         localDirection.negate();
@@ -56,6 +59,6 @@ public final class ServerSubLevelPunchHelper {
         double punchCurve = mass < 1.0d ?
             0.55d * mass * mass * mass - 1.3d * mass * mass + 1.75d * mass :
             2.0d * Math.pow(mass + 0.5625d, 0.5d) - 1.5d;
-        return punchCurve * SableConfig.SUB_LEVEL_PUNCH_STRENGTH_MULTIPLIER.getAsDouble();
+        return punchCurve * SableConfig.SUB_LEVEL_PUNCH_STRENGTH_MULTIPLIER.getAsDouble() * ADDITIONAL_STRENGTH_MULTIPLIER;
     }
 }

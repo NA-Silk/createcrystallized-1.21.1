@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SkyPaddlePayloadHandler {
-    public static void handleDataOnMain(SkyPaddlePayload ignored, IPayloadContext context) {
+    public static void handleDataOnMain(final SkyPaddlePayload ignored, final IPayloadContext context) {
         // Push code to the main server thread
         context.enqueueWork(() -> {
             // Validate context

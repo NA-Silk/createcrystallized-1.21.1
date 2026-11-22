@@ -4,9 +4,11 @@ import com.nasilk.createcrystallized.CreateCrystallized;
 import com.nasilk.createcrystallized.network.handler.DensiteBlockOverloadPayloadHandler;
 import com.nasilk.createcrystallized.network.handler.OscilliteCannonBeamPayloadHandler;
 import com.nasilk.createcrystallized.network.handler.SkyPaddlePayloadHandler;
+import com.nasilk.createcrystallized.network.handler.SubLevelAirPunchPayloadHandler;
 import com.nasilk.createcrystallized.network.payload.DensiteBlockOverloadPayload;
 import com.nasilk.createcrystallized.network.payload.OscilliteCannonBeamPayload;
 import com.nasilk.createcrystallized.network.payload.SkyPaddlePayload;
+import com.nasilk.createcrystallized.network.payload.SubLevelAirPunchPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -34,6 +36,12 @@ public final class ModPayloadHandlers {
             SkyPaddlePayload.TYPE,
             SkyPaddlePayload.STREAM_CODEC,
             SkyPaddlePayloadHandler::handleDataOnMain
+        );
+
+        registrar.playToServer(
+            SubLevelAirPunchPayload.TYPE,
+            SubLevelAirPunchPayload.STREAM_CODEC,
+            SubLevelAirPunchPayloadHandler::handleDataOnMain
         );
     }
 }

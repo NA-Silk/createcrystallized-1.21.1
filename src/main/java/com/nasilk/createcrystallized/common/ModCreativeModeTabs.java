@@ -59,7 +59,11 @@ public final class ModCreativeModeTabs {
             registerItem(ModItems.AEROLITE_SHEET);
         }
         registerBlock(ModBlocks.AEROLITE_BLOCK);
+        registerItem(ModItems.AEROLITE_SWORD);
+        registerItem(ModItems.AEROLITE_PICKAXE);
+        registerItem(ModItems.AEROLITE_AXE);
         registerItem(ModItems.AEROLITE_SHOVEL);
+        registerItem(ModItems.AEROLITE_HOE);
 
         // Chora Items and Blocks
         registerItem(ModItems.CHORA_INGOT);

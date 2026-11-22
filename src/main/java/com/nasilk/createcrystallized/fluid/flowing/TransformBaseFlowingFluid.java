@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.fluid.flowingfluid;
+package com.nasilk.createcrystallized.fluid.flowing;
 
 import com.nasilk.createcrystallized.event.TaskEventScheduler;
 import com.nasilk.createcrystallized.util.helper.AdvancementHelper;

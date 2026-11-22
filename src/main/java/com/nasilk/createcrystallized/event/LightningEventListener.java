@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.event;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.fluid.flowingfluid.TransformBaseFlowingFluid;
+import com.nasilk.createcrystallized.fluid.flowing.TransformBaseFlowingFluid;
 import com.nasilk.createcrystallized.util.setting.FluidTransformSettings;
 import com.nasilk.createcrystallized.util.type.FluidTransformTriggerType;
 import net.minecraft.core.BlockPos;

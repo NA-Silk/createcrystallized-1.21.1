@@ -3,6 +3,7 @@
   "package": "com.nasilk.createcrystallized.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AeroliteShovelDeployerMixin",
     "ComparatorBlockMixin",
     "CreativeModeTabMixin",
     "FluidDrainingBehaviourMixin",
@@ -15,7 +16,7 @@
   },
   "client": [
     "CreativeModeInventoryScreenMixin",
-    "SimulatedCreativeTabMixin",
-    "FloatingTooltipMixin"
+    "FloatingTooltipMixin",
+    "SimulatedCreativeTabMixin"
   ]
 }

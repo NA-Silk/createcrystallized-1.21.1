@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.fluid.flowingfluid;
+package com.nasilk.createcrystallized.fluid.flowing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

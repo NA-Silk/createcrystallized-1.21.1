@@ -15,10 +15,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
 
 public class DensiteCoreItem extends Item implements ProjectileItem {
     public DensiteCoreItem(Properties properties) {
         super(properties);
+        DispenserBlock.registerProjectileBehavior(this); // I thought this would be funny
     }
 
     @Override

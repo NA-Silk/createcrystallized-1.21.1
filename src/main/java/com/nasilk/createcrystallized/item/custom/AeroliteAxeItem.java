@@ -5,6 +5,6 @@ import net.minecraft.world.item.Tier;
 
 public class AeroliteAxeItem extends AxeItem {
     public AeroliteAxeItem(Tier tier, Properties properties) {
-    super(tier, properties);
-}
+        super(tier, properties);
+    }
 }

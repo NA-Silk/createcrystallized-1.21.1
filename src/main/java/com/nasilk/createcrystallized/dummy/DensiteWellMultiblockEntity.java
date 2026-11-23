@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.multiblock.imp;
+package com.nasilk.createcrystallized.dummy;
 
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import com.nasilk.createcrystallized.common.ModParticleTypes;

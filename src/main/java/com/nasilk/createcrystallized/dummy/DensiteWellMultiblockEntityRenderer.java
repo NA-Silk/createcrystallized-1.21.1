@@ -1,4 +1,4 @@
-package com.nasilk.createcrystallized.block.multiblock.imp;
+package com.nasilk.createcrystallized.dummy;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

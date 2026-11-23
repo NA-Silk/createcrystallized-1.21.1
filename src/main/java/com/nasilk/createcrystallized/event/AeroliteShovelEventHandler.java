@@ -32,7 +32,7 @@ public class AeroliteShovelEventHandler {
         Player player = minecraft.player;
         if (player == null || !ModItems.AEROLITE_SHOVEL.isIn(player.getMainHandItem())) return;
 
-        // Check hitResult
+        // Check hitResult (only run on miss)
         HitResult hitResult = Minecraft.getInstance().hitResult;
         if (hitResult == null || hitResult.getType() != HitResult.Type.MISS) return;
 

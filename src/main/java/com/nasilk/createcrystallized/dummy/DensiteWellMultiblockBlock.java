@@ -1,6 +1,5 @@
-package com.nasilk.createcrystallized.block.multiblock.imp;
+package com.nasilk.createcrystallized.dummy;
 
-import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockBlock;
 import com.nasilk.createcrystallized.block.multiblock.AbstractMultiblockEntity;
 import com.nasilk.createcrystallized.block.ModMultiblockTypes;
@@ -88,7 +87,7 @@ public class DensiteWellMultiblockBlock extends AbstractMultiblockBlock<DensiteW
 
     @Override
     public BlockEntityType<? extends DensiteWellMultiblockEntity> getBlockEntityType() {
-        return ModBlockEntities.DENSITE_WELL_MULTIBLOCK.get();
+        return ModDummyRegistry.DENSITE_WELL_MULTIBLOCK_ENTITY.get();
     }
 
     // PARTICLES

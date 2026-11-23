@@ -1,7 +1,7 @@
 package com.nasilk.createcrystallized.config.view.server.block;
 
 import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
-import com.nasilk.createcrystallized.block.multiblock.imp.DensiteWellMultiblockEntity;
+import com.nasilk.createcrystallized.dummy.DensiteWellMultiblockEntity;
 import net.createmod.catnip.config.ConfigBase;
 
 public class WellConfig extends ConfigBase {

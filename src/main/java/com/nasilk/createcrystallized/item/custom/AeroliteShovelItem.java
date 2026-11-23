@@ -47,7 +47,7 @@ public class AeroliteShovelItem extends ShovelItem {
     public static void doSkyPaddleEffects(Player player) {
         // Durability loss on use
         player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-        player.getCooldowns().addCooldown(ModItems.AEROLITE_SHOVEL.get(), 1);
+        player.getCooldowns().addCooldown(ModItems.AEROLITE_SHOVEL.get(), 2);
 
         // Particles and sound
         ServerLevel level = (ServerLevel) player.level();

@@ -85,7 +85,7 @@ public class AeroliteOreBlock extends Block {
         SimAssemblyHelper.AssemblyResult result;
         try {
             result = SimAssemblyHelper.assembleFromSingleBlock(level, pos, pos, true, true);
-        } catch (final AssemblyException ignoredError) {
+        } catch (final AssemblyException ignoredException) {
             return;
         }
         if (!(result.subLevel() instanceof ServerSubLevel subLevel)) return;

@@ -54,7 +54,7 @@ public class AeroliteAxeEventHandler {
         blocks.addAll(accessibleTree.getAttachments());
         if (blocks.isEmpty()) return;
 
-        // Convert to sublevel
+        // Convert to sublevel and play effects
         if (SubLevelAssemblyHelper.assembleBlocks(level, breakingPos.above(), blocks, new BoundingBox3i()) != null) {
             AeroliteAxeItem.doAssemblyAxeEffects(level, breakingPos);
         }

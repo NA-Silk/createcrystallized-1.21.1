@@ -26,11 +26,11 @@ public class CreativeBagOfLongsItem extends Item {
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResultHolder.pass(itemStack);
 
         // Only use on BLOCK action
-        BlockHitResult blockhitresult = getPlayerPOVHitResult(serverLevel, player, ClipContext.Fluid.ANY);
-        if (blockhitresult.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(itemStack);
+        BlockHitResult blockHitResult = getPlayerPOVHitResult(serverLevel, player, ClipContext.Fluid.ANY);
+        if (blockHitResult.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(itemStack);
 
         // Get BlockState at blockPos
-        BlockPos blockPos = blockhitresult.getBlockPos();
+        BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState blockState = level.getBlockState(blockPos);
         if (blockState.isEmpty()) return InteractionResultHolder.pass(itemStack);
 

@@ -1,0 +1,28 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "createcrystallized:deepslate_aerolite_ore"
+    }
+  ],
+  "processing_time": 350,
+  "results": [
+    {
+      "count": 2,
+      "id": "createcrystallized:crushed_raw_aerolite"
+    },
+    {
+      "chance": 0.25,
+      "id": "createcrystallized:crushed_raw_aerolite"
+    },
+    {
+      "count": 5,
+      "chance": 0.75,
+      "id": "create:experience_nugget"
+    },
+    {
+      "chance": 0.125,
+      "id": "minecraft:cobbled_deepslate"
+    }
+  ]
+}

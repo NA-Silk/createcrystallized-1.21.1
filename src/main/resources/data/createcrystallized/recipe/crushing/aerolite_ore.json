@@ -1,0 +1,27 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "createcrystallized:aerolite_ore"
+    }
+  ],
+  "processing_time": 250,
+  "results": [
+    {
+      "id": "createcrystallized:crushed_raw_aerolite"
+    },
+    {
+      "chance": 0.75,
+      "id": "createcrystallized:crushed_raw_aerolite"
+    },
+    {
+      "count": 3,
+      "chance": 0.75,
+      "id": "create:experience_nugget"
+    },
+    {
+      "chance": 0.125,
+      "id": "minecraft:cobblestone"
+    }
+  ]
+}

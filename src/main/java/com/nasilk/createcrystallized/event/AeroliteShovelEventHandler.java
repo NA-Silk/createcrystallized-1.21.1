@@ -6,7 +6,6 @@ import com.nasilk.createcrystallized.network.payload.SkyPaddlePayload;
 import com.nasilk.createcrystallized.network.payload.SubLevelAirPunchPayload;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import dev.ryanhcode.sable.mixinterface.entity.entity_sublevel_collision.EntityMovementExtension;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -57,8 +56,7 @@ public class AeroliteShovelEventHandler {
 
         // Get sublevels
         SubLevel targetSubLevel = Sable.HELPER.getContaining(level, hitPosition);
-        @SuppressWarnings("UnstableApiUsage")
-        SubLevel trackingSubLevel = ((EntityMovementExtension)player).sable$getTrackingSubLevel();
+        SubLevel trackingSubLevel = Sable.HELPER.getTrackingSubLevel(player);
         if (targetSubLevel == trackingSubLevel || trackingSubLevel == null) return;
         trackingSubLevel.lastPose().transformNormalInverse(hitDirection); // Global -> Local
 

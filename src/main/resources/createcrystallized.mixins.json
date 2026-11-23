@@ -9,7 +9,8 @@
     "FluidDrainingBehaviourMixin",
     "ItemApplicationAdvancementsMixin",
     "OpenEndedPipeMixin",
-    "SculkVeinBlockMixin"
+    "SculkVeinBlockMixin",
+    "TreeGetterAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -54,6 +54,7 @@ public final class ModCreativeModeTabs {
         registerBlock(ModBlocks.DEEPSLATE_AEROLITE_ORE);
         registerItem(ModItems.RAW_AEROLITE);
         registerItem(ModItems.CRUSHED_RAW_AEROLITE);
+        registerItem(ModItems.AEROLITE_NUGGET);
         registerItem(ModItems.AEROLITE_INGOT);
         if (creativeConfig.enableUnusedItems.get().equals(true)) {
             registerItem(ModItems.AEROLITE_SHEET);

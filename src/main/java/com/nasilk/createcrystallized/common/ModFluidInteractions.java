@@ -8,19 +8,14 @@ import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.fluids.FluidType;
 
 public final class ModFluidInteractions {
-    // TODO Register actual interactions
+    // TODO Register actual interactions V2
     public static void register() {
         // Lava -> Void Sea Slurry: source VSS -> End Stone, flowing VSS -> Air
-        registerFluidInteraction(
+      /*  registerFluidInteraction(
             Fluids.LAVA.getFluidType(), ModFluids.VOID_SEA_SLURRY.getType(),
             Blocks.END_STONE.defaultBlockState(), Blocks.AIR.defaultBlockState()
         );
-
-        // Water -> Propulsite Flurry: source PF -> Copper Blocks, flowing PF -> Copper Ore
-        registerFluidInteraction(
-            Fluids.WATER.getFluidType(), ModFluids.PROPULSITE_FLURRY.getType(),
-            Blocks.COPPER_BLOCK.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState()
-        );
+      */
     }
 
     public static void registerFluidInteraction(FluidType catalystFluid, FluidType convertFluid, BlockState sourceBlock, BlockState flowingBlock) {

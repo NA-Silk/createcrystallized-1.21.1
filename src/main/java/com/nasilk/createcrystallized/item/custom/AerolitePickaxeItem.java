@@ -1,8 +1,11 @@
 package com.nasilk.createcrystallized.item.custom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import dev.ryanhcode.sable.Sable;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -10,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +23,15 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-// TODO Animation effects
+import java.util.function.Consumer;
+
+// TODO Entire new idea, functionality moved to the aerolite hoe. Leaving room for another idea here.
 public class AerolitePickaxeItem extends PickaxeItem {
     public static final int MAX_CHARGE_TICKS = 40;
 
-    public AerolitePickaxeItem(Tier tier, Properties properties) {
-        super(tier, properties);
+    public AerolitePickaxeItem(Tier tier, Properties properties) {super(tier, properties);
     }
 
     @Override
@@ -41,7 +47,38 @@ public class AerolitePickaxeItem extends PickaxeItem {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BOW;
+        return UseAnim.SPEAR;
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {consumer.accept(new IClientItemExtensions() {
+
+            @Override
+            //First Person Animation
+            public boolean applyForgeHandTransform(
+                PoseStack poseStack,
+                LocalPlayer player,
+                HumanoidArm arm,
+                ItemStack itemInHand,
+                float partialTick,
+                float equipProcess,
+                float swingProcess
+            ) {
+                if (arm != player.getMainArm()) return false;
+
+                if (player.isUsingItem()) {
+                    //Charging animation posestack, actual spaghetti I will not be labeling
+                    float FroggyAppleCrumbleThumpkin = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f);
+
+                    poseStack.translate(0.4f, -0.34, -0.64f);
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggyAppleCrumbleThumpkin));
+                    poseStack.translate(0.0f, 0.1f * FroggyAppleCrumbleThumpkin, 0.1f * FroggyAppleCrumbleThumpkin);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -58,18 +95,26 @@ public class AerolitePickaxeItem extends PickaxeItem {
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         int ticksHeld = getUseDuration(stack, entity) - timeLeft + 1;
+
+        if (entity instanceof Player player) {
+            player.swing(InteractionHand.MAIN_HAND);
+        }
+
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
             player.getCooldowns().addCooldown(this, ticksHeld / 2);
-            player.sweepAttack();
             if (ticksHeld >= 30) doAssembly(serverLevel, player);
         }
     }
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+
+        if (entity instanceof Player player) {
+            player.swing(InteractionHand.MAIN_HAND);
+        }
+
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
             player.getCooldowns().addCooldown(this, MAX_CHARGE_TICKS / 2);
-            player.sweepAttack();
             doAssembly(serverLevel, player);
         }
         return stack;
@@ -79,10 +124,10 @@ public class AerolitePickaxeItem extends PickaxeItem {
         BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
         BlockPos blockPos = hitResult.getBlockPos();
 
-        // Don't process already existing sublevels
+        // Don't process already existing sububbi
         if (Sable.HELPER.getContaining(level, blockPos) != null) return;
 
-        // Convert to sublevel
+        // Convert to sub                                                                          level
         SimAssemblyHelper.AssemblyResult result = null;
         try {
             result = SimAssemblyHelper.assembleFromSingleBlock(level, blockPos, blockPos, true, true);
@@ -90,7 +135,7 @@ public class AerolitePickaxeItem extends PickaxeItem {
             return;
         }
 
-        // Play effects
+        // Play rare non-dust based effect
         if (result == null) return;
         player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         level.sendParticles(

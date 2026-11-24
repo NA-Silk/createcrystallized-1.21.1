@@ -1,5 +1,8 @@
 package com.nasilk.createcrystallized.item.custom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -9,6 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,9 +20,13 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
+import java.util.function.Consumer;
+
+//TODO Make the charge only release when R-Click is released, otherwise hold charge. removing charge gui
 public class AeroliteSwordItem  extends SwordItem {
-    public static final int MAX_CHARGE_TICKS = 40;
+    public static final int MAX_CHARGE_TICKS = 30;
 
     public AeroliteSwordItem(Tier tier, Properties properties) {
         super(tier, properties);
@@ -41,6 +49,42 @@ public class AeroliteSwordItem  extends SwordItem {
     }
 
     @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {consumer.accept(new IClientItemExtensions() {
+
+            @Override
+            //First Person Animation
+            public boolean applyForgeHandTransform(
+                PoseStack poseStack,
+                LocalPlayer player,
+                HumanoidArm arm,
+                ItemStack itemInHand,
+                float partialTick,
+                float equipProcess,
+                float swingProcess
+            ) {
+                if (arm != player.getMainArm()) return false;
+
+                if (player.isUsingItem()) {
+
+                    //Charging animation posestack, actual spaghetti I will not be labeling
+                    poseStack.translate(-0.55f, -1.2f, 0.3f);
+                    poseStack.rotateAround(Axis.XP.rotationDegrees(-90.0F), 0.0F, -0.1F, -1.0F);
+                    poseStack.translate(1.0f, 0.0f, 0.05f);
+                    poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-25.0F));
+                    poseStack.translate(
+                        0.0f,
+                        -0.2f * Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f),
+                        0.0f
+                    );
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
         if (!level.isClientSide && entity instanceof Player player) {
@@ -48,6 +92,16 @@ public class AeroliteSwordItem  extends SwordItem {
                     Component.literal("Charging: " + ticksHeld + " ticks"),
                     true
             );
+
+            if (level.random.nextFloat() < 0.5f) {
+                ((ServerLevel) level).sendParticles(
+                        ParticleTypes.DUST_PLUME,
+                        player.getX(), player.getY(), player.getZ(),
+                        1,
+                        0.1, 0.1, 0.1,
+                        0.02
+                );
+            }
         }
     }
 
@@ -58,7 +112,7 @@ public class AeroliteSwordItem  extends SwordItem {
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
             player.getCooldowns().addCooldown(this, ticksHeld / 2);
             player.sweepAttack();
-            if (ticksHeld >= 20) doDash(serverLevel, player, scale);
+            if (ticksHeld >= 10) doDash(serverLevel, player, scale);
         }
     }
 
@@ -91,10 +145,10 @@ public class AeroliteSwordItem  extends SwordItem {
             0.5d, 0.5d, 0.5d, 0.5d
         );
         level.playSound(
-            player,
+            null,
             pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d,
             SoundEvents.BREEZE_DEFLECT, SoundSource.PLAYERS,
-            0.2f, 1.0f
+            0.6f, 1.0f
         );
     }
 }

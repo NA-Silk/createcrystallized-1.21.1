@@ -1,0 +1,19 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "id": "minecraft:smooth_basalt"
+    }
+  ],
+  "processing_time": 350,
+  "results": [
+    {
+      "chance": 0.10,
+      "id": "createcrystallized:crushed_raw_aerolite"
+    },
+    {
+      "chance": 0.10,
+      "id": "createcrystallized:aerolite_nugget"
+    }
+  ]
+}

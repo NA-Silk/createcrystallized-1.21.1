@@ -21,17 +21,24 @@
   "item.createcrystallized.creative_fluid_eraser": "Creative Fluid Eraser™",
   "item.createcrystallized.creative_bag_of_longs": "Creative Bag of Longs",
   "item.createcrystallized.chora_ingot": "Chora Ingot",
-  "item.createcrystallized.aerolite_ingot": "Aerolite Ingot",
-  "item.createcrystallized.raw_aerolite": "Raw Aerolite",
-  "item.createcrystallized.crushed_raw_aerolite": "Crushed Raw Aerolite",
-  "item.createcrystallized.aerolite_sheet": "_UNUSED ITEM_ Aerolite Sheet",
   "item.createcrystallized.densite_core": "Densite Core",
   "item.createcrystallized.oscillite_resonator": "Oscillite Cannon Resonator",
-  "item.createcrystallized.aerolite_shovel": "Aerolite Shovel",
 
-  "block.createcrystallized.pebble": "Pebbles",
+  "item.createcrystallized.aerolite_shovel": "Aerolite Shovel",
+  "item.createcrystallized.aerolite_pickaxe": "Aerolite Pickaxe",
+  "item.createcrystallized.aerolite_axe": "Aerolite Axe",
+  "item.createcrystallized.aerolite_hoe": "Aerolite Hoe",
+  "item.createcrystallized.aerolite_sword": "Aerolite Sword",
+  "item.createcrystallized.aerolite_ingot": "Aerolite Ingot",
+  "item.createcrystallized.aerolite_nugget": "Aerolite Nugget",
+  "item.createcrystallized.raw_aerolite": "Raw Aerolite",
+  "item.createcrystallized.crushed_raw_aerolite": "Crushed Raw Aerolite",
+  "item.createcrystallized.aerolite_sheet": "UNUSED ITEM Aerolite Sheet",
   "block.createcrystallized.aerolite_ore": "Aerolite Ore",
   "block.createcrystallized.deepslate_aerolite_ore": "Deepslate Aerolite Ore",
+
+
+  "block.createcrystallized.pebble": "Pebbles",
 
   "block.createcrystallized.propulsite_crystal": "Propulsite Crystal",
   "block.createcrystallized.densite_crystal": "Densite Crystal",
@@ -86,6 +93,22 @@
   "death.attack.propulsite_thruster": "%1$s was killed combining biology and physics",
   "death.attack.oscillite_cannon": "%1$s exceeded their resonant frequency",
 
+  "item.createcrystallized.aerolite_sword.tooltip.summary": "Allows a _charged dash_ in any direction.",
+  "item.createcrystallized.aerolite_sword.tooltip.condition1": "Release R-Click after holding for a short time",
+  "item.createcrystallized.aerolite_sword.tooltip.behaviour1": "_Dash_ in the direction you're looking, the dash inflicts _no damage_.",
+
+  "item.createcrystallized.aerolite_hoe.tooltip.summary": "Charge up a mighty _Simulated Contraption assembling_ slam!",
+  "item.createcrystallized.aerolite_hoe.tooltip.condition1": "Release R-Click after holding for a short time",
+  "item.createcrystallized.aerolite_hoe.tooltip.behaviour1": "Bonk the block you're looking at into a _Simulated Contraption_, accounting for _Honey Glue_",
+
+  "item.createcrystallized.aerolite_axe.tooltip.summary": "Allows you to fell _entire trees_ in one go!... sorta.",
+  "item.createcrystallized.aerolite_axe.tooltip.condition1": "When chopping trees",
+  "item.createcrystallized.aerolite_axe.tooltip.behaviour1": "Converts the _entire tree_ into a Simulated Contraption.",
+
+  "item.createcrystallized.aerolite_pickaxe.tooltip.summary": "yep",
+  "item.createcrystallized.aerolite_pickaxe.tooltip.condition1": "yeah",
+  "item.createcrystallized.aerolite_pickaxe.tooltip.behaviour1": "it do",
+
   "item.createcrystallized.aerolite_shovel.tooltip.summary": "Allows you to _Paddle_ through the air while aboard your Simulated Contraptions.",
   "item.createcrystallized.aerolite_shovel.tooltip.condition1": "L-Click while on Simulated Contraption",
   "item.createcrystallized.aerolite_shovel.tooltip.behaviour1": "_Pushes_ Contraption in the _opposite direction_.",
@@ -107,7 +130,7 @@
 
   "block.createcrystallized.oscillite_block.tooltip.summary": "Ponders WIP! this description is temporary.",
   "block.createcrystallized.oscillite_block.tooltip.condition1": "When Placed on Simulated Contraptions",
-  "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by normalizing them to _90° rotations_.",
+  "block.createcrystallized.oscillite_block.tooltip.behaviour1": "_stabilizes_ contraptions by trying to normalize them to _90° rotations_.",
   "createcrystallized.oscillite_block.goggles_tooltip.0": "§3 Normalizing §8(90°)",
 
   "item.createcrystallized.densite_core.tooltip.summary": "A heavily compressed cube of Densite.",

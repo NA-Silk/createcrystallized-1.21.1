@@ -1,0 +1,13 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "createcrystallized:chora_casing_propulsite"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:chora_casing"
+    }
+  ]
+}

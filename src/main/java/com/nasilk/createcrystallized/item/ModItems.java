@@ -92,6 +92,11 @@ public final class ModItems {
         (properties) -> new Item(properties.stacksTo(64))
     ).register();
 
+    public static final ItemEntry<Item> AEROLITE_NUGGET = REGISTRATE.item(
+            "aerolite_nugget",
+            (properties) -> new Item(properties.stacksTo(64))
+    ).register();
+
     public static final ItemEntry<Item> AEROLITE_SHEET = REGISTRATE.item(
         "aerolite_sheet",
         (properties) -> new Item(properties.stacksTo(64))

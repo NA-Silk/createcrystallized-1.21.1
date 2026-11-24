@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "ingredient": {
+    "item": "createcrystallized:deepslate_aerolite_ore"
+  },
+  "result": {
+    "id": "createcrystallized:aerolite_ingot"
+  }
+}

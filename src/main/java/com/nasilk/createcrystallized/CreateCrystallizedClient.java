@@ -22,6 +22,7 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,6 +56,13 @@ public class CreateCrystallizedClient {
             // Static initializations
             ModSpriteShifts.init();
 
+            // Aerolite Sword model switching properties, used for the third person charging anim
+            ItemProperties.register(ModItems.AEROLITE_SWORD.get(),
+                CreateCrystallized.getRL("charging"),
+                (stack, level, entity, seed) ->
+                    entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F
+            );
+
             // Custom Fluid Renders
             for (FluidEntry<?> fluid : FLUIDS) {
                 ItemBlockRenderTypes.setRenderLayer(fluid.getSource(), RenderType.translucent());
@@ -63,6 +71,10 @@ public class CreateCrystallizedClient {
 
             // Custom Tooltips, add them in the lang file
             CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_SHOVEL);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_PICKAXE);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_AXE);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_HOE);
+            CreateTooltipHelper.registerSimpleTooltip(ModItems.AEROLITE_SWORD);
             CreateTooltipHelper.registerSimpleTooltip(ModItems.DENSITE_CORE);
             CreateTooltipHelper.registerSimpleTooltip(ModItems.CREATIVE_FLUID_ERASER);
             CreateTooltipHelper.registerSimpleTooltip(ModItems.CREATIVE_BAG_OF_LONGS);

@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import dev.ryanhcode.sable.Sable;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
@@ -25,13 +26,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import java.util.function.Consumer;
-
 // TODO Entire new idea, functionality moved to the aerolite hoe. Leaving room for another idea here.
-public class AerolitePickaxeItem extends PickaxeItem {
+// Charge with right click -> release right click -> embed as an entity into a block -> if on sublevel -> apply drag at pos
+// Make embeddable item abstract
+// Right click with empty hand to pick up, return to inventory directly
+public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemExtensions {
     public static final int MAX_CHARGE_TICKS = 40;
 
-    public AerolitePickaxeItem(Tier tier, Properties properties) {super(tier, properties);
+    public AerolitePickaxeItem(Tier tier, Properties properties) {
+        super(tier, properties);
     }
 
     @Override
@@ -50,26 +53,22 @@ public class AerolitePickaxeItem extends PickaxeItem {
         return UseAnim.SPEAR;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {consumer.accept(new IClientItemExtensions() {
-
+    // First Person Animation
+    public IClientItemExtensions getClientExtensions() {
+        return new IClientItemExtensions() {
             @Override
-            //First Person Animation
             public boolean applyForgeHandTransform(
-                PoseStack poseStack,
-                LocalPlayer player,
-                HumanoidArm arm,
-                ItemStack itemInHand,
-                float partialTick,
-                float equipProcess,
-                float swingProcess
+                    PoseStack poseStack,
+                    LocalPlayer player,
+                    HumanoidArm arm,
+                    ItemStack itemInHand,
+                    float partialTick,
+                    float equipProcess,
+                    float swingProcess
             ) {
-                if (arm != player.getMainArm()) return false;
-
-                if (player.isUsingItem()) {
-                    //Charging animation posestack, actual spaghetti I will not be labeling
+                // Charging animation poseStack, actual spaghetti I will not be labeling
+                if (arm == player.getMainArm() && player.isUsingItem()) {
                     float FroggyAppleCrumbleThumpkin = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f);
-
                     poseStack.translate(0.4f, -0.34, -0.64f);
                     poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
                     poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggyAppleCrumbleThumpkin));
@@ -78,12 +77,13 @@ public class AerolitePickaxeItem extends PickaxeItem {
                 }
                 return false;
             }
-        });
+        };
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
+
         if (!level.isClientSide && entity instanceof Player player) {
             player.displayClientMessage(
                 Component.literal("Charging: " + ticksHeld + " ticks"),
@@ -108,7 +108,6 @@ public class AerolitePickaxeItem extends PickaxeItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
         }
@@ -128,7 +127,7 @@ public class AerolitePickaxeItem extends PickaxeItem {
         if (Sable.HELPER.getContaining(level, blockPos) != null) return;
 
         // Convert to sub                                                                          level
-        SimAssemblyHelper.AssemblyResult result = null;
+        SimAssemblyHelper.AssemblyResult result;
         try {
             result = SimAssemblyHelper.assembleFromSingleBlock(level, blockPos, blockPos, true, true);
         } catch (final AssemblyException ignoredException) {

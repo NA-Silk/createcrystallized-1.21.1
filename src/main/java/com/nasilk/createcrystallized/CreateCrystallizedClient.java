@@ -14,9 +14,11 @@ import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.common.ModParticleTypes;
 import com.nasilk.createcrystallized.client.particle.*;
 import com.nasilk.createcrystallized.client.ponder.ModPonderPlugin;
+import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import com.tterrag.registrate.util.entry.FluidEntry;
+import com.tterrag.registrate.util.entry.ItemEntry;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.particle.ParticleEngine;
@@ -38,6 +40,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import static com.nasilk.createcrystallized.fluid.ModFluids.FLUIDS;
+import static com.nasilk.createcrystallized.item.ModItems.ANIMATED_ITEMS;
 
 @Mod(value = CreateCrystallized.MOD_ID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = CreateCrystallized.MOD_ID, value = Dist.CLIENT)
@@ -60,7 +63,7 @@ public class CreateCrystallizedClient {
             ItemProperties.register(ModItems.AEROLITE_SWORD.get(),
                 CreateCrystallized.getRL("charging"),
                 (stack, level, entity, seed) ->
-                    entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F
+                    entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0f : 0.0f
             );
 
             // Custom Fluid Renders
@@ -111,7 +114,8 @@ public class CreateCrystallizedClient {
                 return true; // Cancel default particles
             }
         };
-        event.registerBlock(noDefaultParticles,
+        event.registerBlock(
+            noDefaultParticles,
             ModBlocks.DENSITE_BLOCK.get(),
             ModBlocks.ENCASED_DENSITE_BLOCK.get(),
             ModBlocks.DENSITE_WELL.get(),
@@ -123,6 +127,12 @@ public class CreateCrystallizedClient {
             ModBlocks.OSCILLITE_CANNON.get(),
             ModBlocks.ENCASED_LEVITITE_BLOCK.get()
         );
+
+        // Register Item Animations
+        for (ItemEntry<?> item : ANIMATED_ITEMS) {
+            IHaveClientItemExtensions type = (IHaveClientItemExtensions) item.asItem();
+            event.registerItem(type.getClientExtensions(), item.asItem());
+        }
     }
 
     @SubscribeEvent
@@ -151,5 +161,5 @@ public class CreateCrystallizedClient {
 
     // @SubscribeEvent lets the Event Bus discover methods to call
     // @EventBusSubscriber automatically registers all static methods in the class annotated with @SubscribeEvent
-    // @4amPeanutButterSandwhich makes me not wanna eat my monitor
+    // @4amPeanutButterSandwich makes me not wanna eat my monitor
 }

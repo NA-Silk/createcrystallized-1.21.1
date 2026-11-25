@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,10 +23,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import java.util.function.Consumer;
-
-//TODO Make the charge only release when R-Click is released, otherwise hold charge. removing charge gui
-public class AeroliteSwordItem  extends SwordItem {
+// TODO Make the charge only release when R-Click is released, otherwise hold charge. removing charge gui
+public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExtensions {
     public static final int MAX_CHARGE_TICKS = 30;
 
     public AeroliteSwordItem(Tier tier, Properties properties) {
@@ -48,11 +47,10 @@ public class AeroliteSwordItem  extends SwordItem {
         return UseAnim.BOW;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {consumer.accept(new IClientItemExtensions() {
-
+    // First Person Animation
+    public IClientItemExtensions getClientExtensions() {
+        return new IClientItemExtensions() {
             @Override
-            //First Person Animation
             public boolean applyForgeHandTransform(
                 PoseStack poseStack,
                 LocalPlayer player,
@@ -62,44 +60,42 @@ public class AeroliteSwordItem  extends SwordItem {
                 float equipProcess,
                 float swingProcess
             ) {
-                if (arm != player.getMainArm()) return false;
-
-                if (player.isUsingItem()) {
-
-                    //Charging animation posestack, actual spaghetti I will not be labeling
+                // Charging animation poseStack, actual spaghetti I will not be labeling
+                if (arm == player.getMainArm() && player.isUsingItem()) {
                     poseStack.translate(-0.55f, -1.2f, 0.3f);
-                    poseStack.rotateAround(Axis.XP.rotationDegrees(-90.0F), 0.0F, -0.1F, -1.0F);
+                    poseStack.rotateAround(Axis.XP.rotationDegrees(-90.0f), 0.0f, -0.1f, -1.0f);
                     poseStack.translate(1.0f, 0.0f, 0.05f);
-                    poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-                    poseStack.mulPose(Axis.XP.rotationDegrees(-25.0F));
+                    poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-25.0f));
                     poseStack.translate(
-                        0.0f,
-                        -0.2f * Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f),
-                        0.0f
+                            0.0f,
+                            -0.2f * Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f),
+                            0.0f
                     );
                     return true;
                 }
                 return false;
             }
-        });
+        };
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
+
         if (!level.isClientSide && entity instanceof Player player) {
             player.displayClientMessage(
-                    Component.literal("Charging: " + ticksHeld + " ticks"),
-                    true
+                Component.literal("Charging: " + ticksHeld + " ticks"),
+                true
             );
 
             if (level.random.nextFloat() < 0.5f) {
                 ((ServerLevel) level).sendParticles(
-                        ParticleTypes.DUST_PLUME,
-                        player.getX(), player.getY(), player.getZ(),
-                        1,
-                        0.1, 0.1, 0.1,
-                        0.02
+                    ParticleTypes.DUST_PLUME,
+                    player.getX(), player.getY(), player.getZ(),
+                    1,
+                    0.1d, 0.1d, 0.1d,
+                    0.02d
                 );
             }
         }

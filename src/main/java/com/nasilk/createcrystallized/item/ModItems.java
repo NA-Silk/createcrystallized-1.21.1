@@ -102,6 +102,13 @@ public final class ModItems {
         (properties) -> new Item(properties.stacksTo(64))
     ).register();
 
+    /// ANIMATED ITEMS
+    public static final ItemEntry<?>[] ANIMATED_ITEMS = {
+        AEROLITE_HOE,
+        AEROLITE_PICKAXE,
+        AEROLITE_SWORD
+    };
+
     public static void init() {
         CreateCrystallized.LOGGER.info("Items initialized");
     }

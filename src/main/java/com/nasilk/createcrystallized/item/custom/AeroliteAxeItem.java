@@ -19,7 +19,8 @@ public class AeroliteAxeItem extends AxeItem {
             pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d, 8,
             0.5d, 0.5d, 0.5d, 1.0d
         );
-        level.playSound(null, pos,
+        level.playSound(
+            null, pos,
             SimSoundEvents.SIMULATED_CONTRAPTION_MOVES.event(), SoundSource.BLOCKS,
             1.0f, 1.0f
         );

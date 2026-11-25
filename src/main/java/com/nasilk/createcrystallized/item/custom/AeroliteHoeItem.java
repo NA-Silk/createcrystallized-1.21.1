@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import dev.ryanhcode.sable.Sable;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
@@ -25,10 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import java.util.function.Consumer;
-
-//TODO Make the charge only release when R-Click is released, otherwise hold charge. remove charge gui
-public class AeroliteHoeItem extends HoeItem {
+// TODO Make the charge only release when R-Click is released, otherwise hold charge. remove charge gui
+public class AeroliteHoeItem extends HoeItem implements IHaveClientItemExtensions {
     public static final int MAX_CHARGE_TICKS = 40;
 
     public AeroliteHoeItem(Tier tier, Properties properties) {
@@ -51,12 +50,11 @@ public class AeroliteHoeItem extends HoeItem {
         return UseAnim.SPEAR;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {consumer.accept(new IClientItemExtensions() {
-
-        @Override
-        //First Person Animation
-        public boolean applyForgeHandTransform(
+    // First Person Animation
+    public IClientItemExtensions getClientExtensions() {
+        return new IClientItemExtensions() {
+            @Override
+            public boolean applyForgeHandTransform(
                 PoseStack poseStack,
                 LocalPlayer player,
                 HumanoidArm arm,
@@ -64,31 +62,29 @@ public class AeroliteHoeItem extends HoeItem {
                 float partialTick,
                 float equipProcess,
                 float swingProcess
-        ) {
-            if (arm != player.getMainArm()) return false;
-
-            if (player.isUsingItem()) {
-                //Charging animation posestack, actual spaghetti I will not be labeling
-                float FroggYApplECrumblEThumpkiN = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f);
-
-                poseStack.translate(0.4f, -0.34, -0.64f);
-                poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
-                poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggYApplECrumblEThumpkiN));
-                poseStack.translate(0.0f, 0.1f * FroggYApplECrumblEThumpkiN, 0.1f * FroggYApplECrumblEThumpkiN);
-                return true;
+            ) {
+                // Charging animation poseStack, actual spaghetti I will not be labeling
+                if (arm == player.getMainArm() && player.isUsingItem()) {
+                    @SuppressWarnings("SpellCheckingInspection") float FroggYApplECrumblEThumpkiN = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f);
+                    poseStack.translate(0.4f, -0.34, -0.64f);
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggYApplECrumblEThumpkiN));
+                    poseStack.translate(0.0f, 0.1f * FroggYApplECrumblEThumpkiN, 0.1f * FroggYApplECrumblEThumpkiN);
+                    return true;
+                }
+                return false;
             }
-            return false;
-        }
-    });
+        };
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
+
         if (!level.isClientSide && entity instanceof Player player) {
             player.displayClientMessage(
-                    Component.literal("Charging: " + ticksHeld + " ticks"),
-                    true
+                Component.literal("Charging: " + ticksHeld + " ticks"),
+                true
             );
         }
     }
@@ -109,7 +105,6 @@ public class AeroliteHoeItem extends HoeItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
         }
@@ -129,7 +124,7 @@ public class AeroliteHoeItem extends HoeItem {
         if (Sable.HELPER.getContaining(level, blockPos) != null) return;
 
         // Convert to sub                                                                          level
-        SimAssemblyHelper.AssemblyResult result = null;
+        SimAssemblyHelper.AssemblyResult result;
         try {
             result = SimAssemblyHelper.assembleFromSingleBlock(level, blockPos, blockPos, true, true);
         } catch (final AssemblyException ignoredException) {
@@ -140,14 +135,9 @@ public class AeroliteHoeItem extends HoeItem {
         if (result == null) return;
         player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         level.sendParticles(
-                ParticleTypes.CLOUD,
-                blockPos.getX() + 0.5d, blockPos.getY() + 0.5d, blockPos.getZ() + 0.5d, 8,
-                0.5d, 0.5d, 0.5d, 0.2d
+            ParticleTypes.CLOUD,
+            blockPos.getX() + 0.5d, blockPos.getY() + 0.5d, blockPos.getZ() + 0.5d, 8,
+            0.5d, 0.5d, 0.5d, 0.2d
         );
     }
-
-
-
-
-
 }

@@ -6,7 +6,6 @@ import com.nasilk.createcrystallized.block.ModMultiblockTypes;
 import com.nasilk.createcrystallized.dummy.ModDummyRegistry;
 import com.nasilk.createcrystallized.common.ModTags;
 import com.nasilk.createcrystallized.config.ModConfigs;
-import com.nasilk.createcrystallized.common.ModFluidInteractions;
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.fluid.ModFluids;
 import com.nasilk.createcrystallized.item.ModItems;
@@ -64,7 +63,7 @@ public class CreateCrystallized {
         event.enqueueWork(() -> {
             ModCreativeModeTabs.register();
             ModDispenserBehaviors.register();
-            ModFluidInteractions.register();
+            //ModFluidInteractions.register();
         });
         //LOGGER.info("HELLO from common setup");
     }

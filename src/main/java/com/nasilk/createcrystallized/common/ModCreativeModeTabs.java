@@ -71,9 +71,13 @@ public final class ModCreativeModeTabs {
         registerBlock(ModBlocks.CHORA_BLOCK);
         registerBlock(ModBlocks.CHORA_CASING);
         registerBlock(ModBlocks.DENSE_CHORA_CASING);
+        registerBlock(ModBlocks.UMBER_DENSE_CHORA_CASING);
         registerBlock(ModBlocks.PROPULSED_CHORA_CASING);
+        registerBlock(ModBlocks.LAVENDER_PROPULSED_CHORA_CASING);
         registerBlock(ModBlocks.OSCILLATING_CHORA_CASING);
+        registerBlock(ModBlocks.AMBER_OSCILLATING_CHORA_CASING);
         registerBlock(ModBlocks.LEVITATING_CHORA_CASING);
+        registerBlock(ModBlocks.PEARLESCENT_LEVITATING_CHORA_CASING);
 
         // Crystals and Echo Shard Blocks
         registerBlock(ModBlocks.DENSITE_CRYSTAL);
@@ -92,21 +96,29 @@ public final class ModCreativeModeTabs {
 
         // Crystal Blocks
         registerBlock(ModBlocks.DENSITE_BLOCK);
+        registerBlock(ModBlocks.UMBER_DENSITE_BLOCK);
         registerBlock(ModBlocks.PROPULSITE_BLOCK);
+        registerBlock(ModBlocks.LAVENDER_PROPULSITE_BLOCK);
         registerBlock(ModBlocks.OSCILLITE_BLOCK);
+        registerBlock(ModBlocks.AMBER_OSCILLITE_BLOCK);
+
 
         // Encased Crystal Blocks
         registerBlock(ModBlocks.ENCASED_DENSITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_UMBER_DENSITE_BLOCK);
         registerBlock(ModBlocks.ENCASED_PROPULSITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_LAVENDER_PROPULSITE_BLOCK);
         registerBlock(ModBlocks.ENCASED_OSCILLITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_AMBER_OSCILLITE_BLOCK);
         registerBlock(ModBlocks.ENCASED_LEVITITE_BLOCK);
+        registerBlock(ModBlocks.ENCASED_PEARLESCENT_LEVITITE_BLOCK);
 
         // Machined Crystal Blocks
         registerBlock(ModBlocks.DENSITE_WELL);
         registerBlock(ModBlocks.PROPULSITE_THRUSTER);
         registerBlock(ModBlocks.OSCILLITE_CANNON);
 
-        // Special Blocks
+        // Special Blocks ლ(⸌ᨓ⸍ლ) ᵐʸ ˢᵒⁿ
         registerBlock(ModBlocks.PEBBLE);
 
         // Development Items

@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createcrystallized:lavender_propulsite_block"
+    },
+    {
+      "item": "createcrystallized:chora_casing"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:encased_lavender_propulsite_block"
+    }
+  ]
+}

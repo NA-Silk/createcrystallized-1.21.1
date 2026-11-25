@@ -1,6 +1,10 @@
 {
   "values": [
     "createcrystallized:aerolite_shovel",
+    "createcrystallized:aerolite_axe",
+    "createcrystallized:aerolite_sword",
+    "createcrystallized:aerolite_pickaxe",
+    "createcrystallized:aerolite_hoe",
     "createcrystallized:raw_aerolite",
     "createcrystallized:crushed_raw_aerolite",
     "createcrystallized:aerolite_ingot",

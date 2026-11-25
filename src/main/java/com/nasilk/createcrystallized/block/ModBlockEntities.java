@@ -16,8 +16,6 @@ public final class ModBlockEntities {
         DensiteWellEntity::new
     ).validBlock(ModBlocks.DENSITE_WELL).register();
 
-
-
     public static final BlockEntityEntry<PropulsiteThrusterEntity> PROPULSITE_THRUSTER = REGISTRATE.blockEntity(
         "propulsite_thruster",
         PropulsiteThrusterEntity::new

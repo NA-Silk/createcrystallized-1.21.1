@@ -5,11 +5,11 @@
       "id": "createcrystallized:aerolite_shovel"
     },
     "title": {
-      "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.title"
+      "translate": "advancement.createcrystallized.high_velocity_equipment.title"
     },
     "description": {
       "color": "#DBA213",
-      "translate": "advancement.createcrystallized.your_own_breeze_to_sail_on.description"
+      "translate": "advancement.createcrystallized.high_velocity_equipment.description"
     },
     "frame": "goal",
     "show_toast": true,
@@ -22,7 +22,13 @@
       "conditions": {
         "items": [
           {
-            "items": "createcrystallized:aerolite_shovel"
+            "items": [
+              "createcrystallized:aerolite_shovel",
+              "createcrystallized:aerolite_axe",
+              "createcrystallized:aerolite_pickaxe",
+              "createcrystallized:aerolite_sword",
+              "createcrystallized:aerolite_hoe"
+            ]
           }
         ]
       }

@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "aeronautics:pearlescent_levitite"
+    },
+    {
+      "item": "createcrystallized:chora_casing"
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:encased_pearlescent_levitite_block"
+    }
+  ]
+}

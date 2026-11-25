@@ -2,7 +2,7 @@
   "type": "create:splashing",
   "ingredients": [
     {
-      "item": "createcrystallized:chora_casing_oscillite"
+      "tag": "createcrystallized:empty_casings"
     }
   ],
   "results": [

@@ -131,8 +131,8 @@ public class PropulsiteThrusterEntity extends BlockEntity implements IHaveGoggle
                 BlockState neighborState = level.getBlockState(neighborPos);
                 if (!level.isLoaded(neighborPos)) return false;
 
-                // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster
-                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState)) counts[0] = Math.min(counts[0] + 1, MAX_CLUSTER_SIZE - 1); // Don't add 16th Propulsite
+                // Update counts, cluster, and queue if Propulsite Block or Propulsite Thruster ╭∩╮(◕⍊◕)╭∩╮ 
+                if (ModBlocks.PROPULSITE_BLOCK.has(neighborState) || ModBlocks.LAVENDER_PROPULSITE_BLOCK.has(neighborState)) counts[0] = Math.min(counts[0] + 1, MAX_CLUSTER_SIZE - 1); // Don't add 16th Propulsite
                 else if (ModBlocks.PROPULSITE_THRUSTER.has(neighborState)) counts[1]++;
                 else return false;
                 return true;

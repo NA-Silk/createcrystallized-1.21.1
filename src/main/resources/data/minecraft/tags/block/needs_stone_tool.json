@@ -4,13 +4,22 @@
     "createcrystallized:chora_block",
     "createcrystallized:chora_casing",
     "createcrystallized:chora_casing_densite",
+    "createcrystallized:chora_casing_umber_densite",
     "createcrystallized:chora_casing_propulsite",
+    "createcrystallized:chora_casing_lavender_propulsite",
     "createcrystallized:chora_casing_oscillite",
+    "createcrystallized:chora_casing_amber_oscillite",
     "createcrystallized:chora_casing_levitite",
+    "createcrystallized:chora_casing_pearlescent_levitite",
 
     "createcrystallized:encased_densite_block",
+    "createcrystallized:encased_umber_densite_block",
     "createcrystallized:encased_propulsite_block",
+    "createcrystallized:encased_lavender_propulsite_block",
     "createcrystallized:encased_oscillite_block",
+    "createcrystallized:encased_amber_oscillite_block",
+    "createcrystallized:encased_levitite_block",
+    "createcrystallized:encased_pearlescent_levitite_block",
 
     "createcrystallized:aerolite_block",
 

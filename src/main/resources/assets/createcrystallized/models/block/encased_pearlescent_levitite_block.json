@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "createcrystallized:block/encased_pearlescent_levitite_block"
+  }
+}

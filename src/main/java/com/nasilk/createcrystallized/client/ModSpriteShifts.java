@@ -12,10 +12,21 @@ public final class ModSpriteShifts {
         CreateCrystallized.getRL("block/propulsite_block_connected")
     );
 
+    public static final CTSpriteShiftEntry LAVENDER_PROPULSITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/lavender_propulsite_block"),
+        CreateCrystallized.getRL("block/lavender_propulsite_block_connected")
+    );
+
     public static final CTSpriteShiftEntry OSCILLITE = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/oscillite_block"),
         CreateCrystallized.getRL("block/oscillite_block_connected")
+    );
+    public static final CTSpriteShiftEntry AMBER_OSCILLITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/amber_oscillite_block"),
+        CreateCrystallized.getRL("block/amber_oscillite_block_connected")
     );
 
     public static final CTSpriteShiftEntry DENSITE = CTSpriteShifter.getCT(
@@ -48,10 +59,46 @@ public final class ModSpriteShifts {
         CreateCrystallized.getRL("block/densite_connected_activated/densite_block_connected_4")
     );
 
+    public static final CTSpriteShiftEntry UMBER_DENSITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/umber_densite_block"),
+        CreateCrystallized.getRL("block/umber_densite_block_connected")
+    );
+
+    public static final CTSpriteShiftEntry UMBER_DENSITE_1 = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/umber_densite_block"),
+        CreateCrystallized.getRL("block/densite_connected_activated/umber_densite_block_connected_1")
+    );
+
+    public static final CTSpriteShiftEntry UMBER_DENSITE_2 = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/umber_densite_block"),
+        CreateCrystallized.getRL("block/densite_connected_activated/umber_densite_block_connected_2")
+    );
+
+    public static final CTSpriteShiftEntry UMBER_DENSITE_3 = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/umber_densite_block"),
+        CreateCrystallized.getRL("block/densite_connected_activated/umber_densite_block_connected_3")
+    );
+
+    public static final CTSpriteShiftEntry UMBER_DENSITE_4 = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/umber_densite_block"),
+        CreateCrystallized.getRL("block/densite_connected_activated/umber_densite_block_connected_4")
+    );
+
     public static final CTSpriteShiftEntry ENCASED_PROPULSITE = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/encased_propulsite_block"),
         CreateCrystallized.getRL("block/encased_propulsite_block_connected")
+    );
+
+    public static final CTSpriteShiftEntry ENCASED_LAVENDER_PROPULSITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/encased_lavender_propulsite_block"),
+        CreateCrystallized.getRL("block/encased_lavender_propulsite_block_connected")
     );
 
     public static final CTSpriteShiftEntry ENCASED_OSCILLITE = CTSpriteShifter.getCT(
@@ -60,16 +107,34 @@ public final class ModSpriteShifts {
         CreateCrystallized.getRL("block/encased_oscillite_block_connected")
     );
 
+    public static final CTSpriteShiftEntry ENCASED_AMBER_OSCILLITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/encased_amber_oscillite_block"),
+        CreateCrystallized.getRL("block/encased_amber_oscillite_block_connected")
+    );
+
     public static final CTSpriteShiftEntry ENCASED_DENSITE = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/encased_densite_block"),
         CreateCrystallized.getRL("block/encased_densite_block_connected")
     );
 
+    public static final CTSpriteShiftEntry ENCASED_UMBER_DENSITE = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/encased_umber_densite_block"),
+        CreateCrystallized.getRL("block/encased_umber_densite_block_connected")
+    );
+
     public static final CTSpriteShiftEntry ENCASED_LEVITITE = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/encased_levitite_block"),
         CreateCrystallized.getRL("block/encased_levitite_block_connected")
+    );
+
+    public static final CTSpriteShiftEntry ENCASED_PEARLESCENT_LEVITITE = CTSpriteShifter.getCT(
+            AllCTTypes.OMNIDIRECTIONAL,
+            CreateCrystallized.getRL("block/encased_pearlescent_levitite_block"),
+            CreateCrystallized.getRL("block/encased_pearlescent_levitite_block_connected")
     );
 
     public static final CTSpriteShiftEntry CHORA_CASING = CTSpriteShifter.getCT(
@@ -84,10 +149,22 @@ public final class ModSpriteShifts {
         CreateCrystallized.getRL("block/chora_casing_densite_connected")
     );
 
+    public static final CTSpriteShiftEntry UMBER_DENSE_CHORA_CASING = CTSpriteShifter.getCT(
+            AllCTTypes.OMNIDIRECTIONAL,
+            CreateCrystallized.getRL("block/chora_casing_umber_densite"),
+            CreateCrystallized.getRL("block/chora_casing_umber_densite_connected")
+    );
+
     public static final CTSpriteShiftEntry PROPULSED_CHORA_CASING = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/chora_casing_propulsite"),
         CreateCrystallized.getRL("block/chora_casing_propulsite_connected")
+    );
+
+    public static final CTSpriteShiftEntry LAVENDER_PROPULSED_CHORA_CASING = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/chora_casing_lavender_propulsite"),
+        CreateCrystallized.getRL("block/chora_casing_lavender_propulsite_connected")
     );
 
     public static final CTSpriteShiftEntry OSCILLATING_CHORA_CASING = CTSpriteShifter.getCT(
@@ -96,10 +173,22 @@ public final class ModSpriteShifts {
         CreateCrystallized.getRL("block/chora_casing_oscillite_connected")
     );
 
+    public static final CTSpriteShiftEntry AMBER_OSCILLATING_CHORA_CASING = CTSpriteShifter.getCT(
+        AllCTTypes.OMNIDIRECTIONAL,
+        CreateCrystallized.getRL("block/chora_casing_amber_oscillite"),
+        CreateCrystallized.getRL("block/chora_casing_amber_oscillite_connected")
+    );
+
     public static final CTSpriteShiftEntry LEVITATING_CHORA_CASING = CTSpriteShifter.getCT(
         AllCTTypes.OMNIDIRECTIONAL,
         CreateCrystallized.getRL("block/chora_casing_levitite"),
         CreateCrystallized.getRL("block/chora_casing_levitite_connected")
+    );
+
+    public static final CTSpriteShiftEntry PEARLESCENT_LEVITATING_CHORA_CASING = CTSpriteShifter.getCT(
+            AllCTTypes.OMNIDIRECTIONAL,
+            CreateCrystallized.getRL("block/chora_casing_pearlescent_levitite"),
+            CreateCrystallized.getRL("block/chora_casing_pearlescent_levitite_connected")
     );
 
     public static void init() {

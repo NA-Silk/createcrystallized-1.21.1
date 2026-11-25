@@ -53,21 +53,36 @@
   "block.createcrystallized.chora_block": "Block of Chora",
 
   "block.createcrystallized.chora_casing": "Chora Casing",
-  "block.createcrystallized.chora_casing_propulsite": "Propulsed Chora Casing",
   "block.createcrystallized.chora_casing_densite": "Dense Chora Casing",
+  "block.createcrystallized.chora_casing_umber_densite": "Umber Dense Chora Casing",
   "block.createcrystallized.chora_casing_oscillite": "Oscillating Chora Casing",
+  "block.createcrystallized.chora_casing_amber_oscillite": "Amber Oscillating Chora Casing",
   "block.createcrystallized.chora_casing_levitite": "Levitating Chora Casing",
+  "block.createcrystallized.chora_casing_pearlescent_levitite": "Pearlescent Levitating Chora Casing",
 
   "block.createcrystallized.densite_block": "Densite",
+  "block.createcrystallized.umber_densite_block": "Umber Densite",
   "block.createcrystallized.encased_densite_block": "Encased Densite",
+  "block.createcrystallized.encased_umber_densite_block": "Encased Umber Densite",
   "block.createcrystallized.densite_well": "Densite Well",
+
   "block.createcrystallized.propulsite_block": "Propulsite",
+  "block.createcrystallized.lavender_propulsite_block": "Lavender Propulsite",
+  "block.createcrystallized.chora_casing_propulsite": "Propulsed Chora Casing",
+  "block.createcrystallized.chora_casing_lavender_propulsite": "Lavender Propulsed Chora Casing",
   "block.createcrystallized.encased_propulsite_block": "Encased Propulsite",
+  "block.createcrystallized.encased_lavender_propulsite_block": "Encased Lavender Propulsite",
+
   "block.createcrystallized.propulsite_thruster": "Propulsite Thruster",
+
   "block.createcrystallized.oscillite_block": "Oscillite",
+  "block.createcrystallized.amber_oscillite_block": "Amber Oscillite",
   "block.createcrystallized.encased_oscillite_block": "Encased Oscillite",
+  "block.createcrystallized.encased_amber_oscillite_block": "Encased Amber Oscillite",
   "block.createcrystallized.oscillite_cannon": "Oscillite Cannon",
+
   "block.createcrystallized.encased_levitite_block": "Encased Levitite",
+  "block.createcrystallized.encased_pearlescent_levitite_block": "Encased Pearlescent Levitite",
 
   "createcrystallized.goggles.field_strength": "Field Strength: %s",
   "createcrystallized.goggles.field_radius": "Field Radius: %s",
@@ -104,9 +119,9 @@
   "item.createcrystallized.aerolite_axe.tooltip.condition1": "When chopping trees",
   "item.createcrystallized.aerolite_axe.tooltip.behaviour1": "Converts the _entire tree_ into a Simulated Contraption.",
 
-  "item.createcrystallized.aerolite_pickaxe.tooltip.summary": "yep",
-  "item.createcrystallized.aerolite_pickaxe.tooltip.condition1": "yeah",
-  "item.createcrystallized.aerolite_pickaxe.tooltip.behaviour1": "it do",
+  "item.createcrystallized.aerolite_pickaxe.tooltip.summary": "Charge up a slam that _heavily impaires_ the movement of Simulated Contraptions.",
+  "item.createcrystallized.aerolite_pickaxe.tooltip.condition1": "Release R-Click after holding for a short time",
+  "item.createcrystallized.aerolite_pickaxe.tooltip.behaviour1": "Embed the pickaxe into a Simulated Contraption and apply _heavy drag_ until manually removed with a right click.",
 
   "item.createcrystallized.aerolite_shovel.tooltip.summary": "Allows you to _Paddle_ through the air while aboard your Simulated Contraptions.",
   "item.createcrystallized.aerolite_shovel.tooltip.condition1": "L-Click while on Simulated Contraption",
@@ -192,8 +207,8 @@
   "advancement.createcrystallized.high_velocity_metals.description": "Mine Aerolite and survive the associated Kinetics",
   "advancement.createcrystallized.crystalline_alloys.title": "Crystalline Alloys",
   "advancement.createcrystallized.crystalline_alloys.description": "Obtain a Chora Ingot, A unique alloy with unusual applications",
-  "advancement.createcrystallized.your_own_breeze_to_sail_on.title": "Your Own Breeze to Sail On",
-  "advancement.createcrystallized.your_own_breeze_to_sail_on.description": "Fwoosh! Create an Aerolite Shovel, capable of paddling your Simulated Contraptions through the air",
+  "advancement.createcrystallized.high_velocity_equipment.title": "High Velocity Equipment",
+  "advancement.createcrystallized.high_velocity_equipment.description": "Fwoosh! Create any Aerolite Tool, capable of all sorts of powerful physics feats.\n§7(Dont tell anyone but the shovel is our favorite.) ",
   "advancement.createcrystallized.sonic_shards.title": "Sonic Shards",
   "advancement.createcrystallized.sonic_shards.description": "Harvest a fully grown Echo Cluster, a strange crystal that grows on Sculk-infected Budding Amethyst",
   "advancement.createcrystallized.the_chora_age.title": "The Chora Age",

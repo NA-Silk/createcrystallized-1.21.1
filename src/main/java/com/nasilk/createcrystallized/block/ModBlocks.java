@@ -52,6 +52,30 @@ public final class ModBlocks {
         ModCTBehavior.DensiteCTBehavior::new
     );
 
+    public static final BlockEntry<Block> UMBER_DENSITE_BLOCK = registerBlock(
+        "umber_densite_block",
+        (properties) -> new UmberDensiteBlock(properties
+            .mapColor(MapColor.COLOR_BROWN)
+            .isRedstoneConductor((state, level, pos) -> true)
+            .strength(7.0f, 20.0f)
+            .jumpFactor(0.5f)
+            .friction(0.8f)
+            .lightLevel(state -> state.getValue(DensiteBlock.POWER))
+            .hasPostProcess((state, pos, level) -> true)
+            .emissiveRendering((state, pos, level) -> true)
+            .sound(
+                new DeferredSoundType(1.0f, 0.1f,
+                    ModSounds.DENSITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.DENSITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_BLOCK_FALL
+                )
+            )
+        ),
+        ModCTBehavior.UmberDensiteCTBehavior::new
+    );
+
     public static final BlockEntry<Block> PROPULSITE_BLOCK = registerBlock(
         "propulsite_block",
         (properties) -> new PropulsiteBlock(properties
@@ -76,6 +100,30 @@ public final class ModBlocks {
         ModCTBehavior.PropulsiteCTBehavior::new
     );
 
+    public static final BlockEntry<Block> LAVENDER_PROPULSITE_BLOCK = registerBlock(
+        "lavender_propulsite_block",
+        (properties) -> new LavenderPropulsiteBlock(properties
+            .mapColor(MapColor.COLOR_PURPLE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(7.0f, 20.0f)
+            .lightLevel(state -> 10)
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+                .sound(
+                    new DeferredSoundType(1.0f, 1.0f,
+                        ModSounds.PROPULSITE_BREAK,
+                        () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                        ModSounds.PROPULSITE_PLACE,
+                        () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                        () -> SoundEvents.AMETHYST_BLOCK_FALL
+                    )
+                )
+        ),
+        ModCTBehavior.LavenderPropulsiteCTBehavior::new
+    );
+
     public static final BlockEntry<Block> OSCILLITE_BLOCK = registerBlock(
         "oscillite_block",
         (properties) -> new OscilliteBlock(properties
@@ -98,6 +146,30 @@ public final class ModBlocks {
             )
         ),
         ModCTBehavior.OscilliteCTBehavior::new
+    );
+
+    public static final BlockEntry<Block> AMBER_OSCILLITE_BLOCK = registerBlock(
+        "amber_oscillite_block",
+        (properties) -> new AmberOscilliteBlock(properties
+            .mapColor(MapColor.COLOR_BLUE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(7.0f, 20.0f)
+            .lightLevel(state -> 10)
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new DeferredSoundType(1.0f, 1.0f,
+                    ModSounds.OSCILLITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.OSCILLITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_CLUSTER_FALL
+                )
+            )
+        ),
+        ModCTBehavior.AmberOscilliteCTBehavior::new
     );
 
     /// ENCASED FORMS
@@ -126,6 +198,33 @@ public final class ModBlocks {
             8,0.3d,0.2d,0.3d,0.05d
         ),
         ModCTBehavior.EncasedDensiteCTBehavior::new
+    );
+
+    public static final BlockEntry<Block> ENCASED_UMBER_DENSITE_BLOCK = registerBlock(
+        "encased_umber_densite_block",
+        (properties) -> new EncasedBlock(properties
+            .mapColor(MapColor.COLOR_BROWN)
+            .isRedstoneConductor((state, level, pos) -> true)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 4)
+            .requiresCorrectToolForDrops()
+            .hasPostProcess((state, pos, level) -> true)
+            .emissiveRendering((state, pos, level) -> true)
+            .sound(
+                new DeferredSoundType(1.0f, 0.1f,
+                    ModSounds.DENSITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.DENSITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_BLOCK_FALL
+                )
+            ),
+            ModBlocks.UMBER_DENSE_CHORA_CASING::asItem,
+            ModBlocks.UMBER_DENSITE_BLOCK,
+            ModParticleTypes.DENSITE_PARTICLES,
+            8,0.3d,0.2d,0.3d,0.05d
+        ),
+        ModCTBehavior.EncasedUmberDensiteCTBehavior::new
     );
 
     public static final BlockEntry<Block> ENCASED_PROPULSITE_BLOCK = registerBlock(
@@ -157,6 +256,35 @@ public final class ModBlocks {
         ModCTBehavior.EncasedPropulsiteCTBehavior::new
     );
 
+    public static final BlockEntry<Block> ENCASED_LAVENDER_PROPULSITE_BLOCK = registerBlock(
+        "encased_lavender_propulsite_block",
+        (properties) -> new EncasedBlock(properties
+            .mapColor(MapColor.COLOR_PURPLE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
+            .requiresCorrectToolForDrops()
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new DeferredSoundType(1.0f, 1.0f,
+                    ModSounds.PROPULSITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.PROPULSITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_BLOCK_FALL
+                )
+            ),
+            ModBlocks.LAVENDER_PROPULSED_CHORA_CASING::asItem,
+            ModBlocks.LAVENDER_PROPULSITE_BLOCK,
+            ModParticleTypes.PROPULSITE_PARTICLES,
+            16,0.5d,0.5d,0.5d,0.25d
+        ),
+        ModCTBehavior.EncasedLavenderPropulsiteCTBehavior::new
+    );
+
     public static final BlockEntry<Block> ENCASED_OSCILLITE_BLOCK = registerBlock(
         "encased_oscillite_block",
         (properties) -> new EncasedBlock(properties
@@ -186,10 +314,39 @@ public final class ModBlocks {
         ModCTBehavior.EncasedOscilliteCTBehavior::new
     );
 
+    public static final BlockEntry<Block> ENCASED_AMBER_OSCILLITE_BLOCK = registerBlock(
+        "encased_amber_oscillite_block",
+        (properties) -> new EncasedBlock(properties
+            .mapColor(MapColor.COLOR_ORANGE)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
+            .requiresCorrectToolForDrops()
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new DeferredSoundType(1.0f, 1.0f,
+                    ModSounds.OSCILLITE_BREAK,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    ModSounds.OSCILLITE_PLACE,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_CLUSTER_FALL
+                )
+            ),
+            ModBlocks.AMBER_OSCILLATING_CHORA_CASING::asItem,
+            ModBlocks.AMBER_OSCILLITE_BLOCK,
+            () -> ParticleTypes.SCULK_SOUL,
+            8,0.5d,0.5d,0.5d,0.5d
+        ),
+        ModCTBehavior.EncasedAmberOscilliteCTBehavior::new
+    );
+
     public static final BlockEntry<Block> ENCASED_LEVITITE_BLOCK = registerBlock(
         "encased_levitite_block",
         (properties) -> new EncasedBlock(properties
-            .mapColor(MapColor.COLOR_BLUE)
+            .mapColor(MapColor.COLOR_GREEN)
             .instrument(NoteBlockInstrument.HAT)
             .strength(5.0f, 20.0f)
             .lightLevel(state -> 6)
@@ -216,6 +373,38 @@ public final class ModBlocks {
             0,0.0d,0.0d,0.0d,0.0d
         ),
         ModCTBehavior.EncasedLevititeCTBehavior::new
+    );
+
+    public static final BlockEntry<Block> ENCASED_PEARLESCENT_LEVITITE_BLOCK = registerBlock(
+        "encased_pearlescent_levitite_block",
+        (properties) -> new EncasedBlock(properties
+            .mapColor(MapColor.COLOR_PINK)
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(5.0f, 20.0f)
+            .lightLevel(state -> 6)
+            .requiresCorrectToolForDrops()
+            .isValidSpawn((state, level, pos, value) -> false)
+            .isRedstoneConductor((state, level, pos) -> false)
+            .isSuffocating((state, level, pos) -> false)
+            .isViewBlocking((state, level, pos) -> false)
+            .sound(
+                new DeferredSoundType(1.0f, 1.0f,
+                    AeroSoundEvents.LEVITITE_BREAK::event,
+                    () -> SoundEvents.AMETHYST_BLOCK_STEP,
+                    AeroSoundEvents.LEVITITE_PLACE::event,
+                    () -> SoundEvents.AMETHYST_BLOCK_HIT,
+                    () -> SoundEvents.AMETHYST_CLUSTER_FALL
+                )
+            ),
+            ModBlocks.PEARLESCENT_LEVITATING_CHORA_CASING::asItem,
+            AeroBlocks.PEARLESCENT_LEVITITE,
+            () -> new BlockParticleOption(
+                ParticleTypes.BLOCK,
+                AeroBlocks.PEARLESCENT_LEVITITE.get().defaultBlockState()
+            ),
+            0,0.0d,0.0d,0.0d,0.0d
+        ),
+        ModCTBehavior.EncasedPearlescentLevititeCTBehavior::new
     );
 
     /// MACHINED FORMS
@@ -321,6 +510,20 @@ public final class ModBlocks {
         ModCTBehavior.DenseChoraCasingCTBehavior::new
     );
 
+    public static final BlockEntry<Block> UMBER_DENSE_CHORA_CASING = registerBlock(
+        "chora_casing_umber_densite",
+        (properties) -> new ChoraCasingBlock(properties
+            .mapColor(MapColor.COLOR_BROWN) //im gonna BROWN - NoteBlockIntrument.𝓑𝓐𝓝𝓙𝓞.wav
+            .instrument(NoteBlockInstrument.BANJO)
+            .noOcclusion()
+            .isViewBlocking((s,l,p) -> false)
+            .strength(2.0f, 6.0f)
+            .requiresCorrectToolForDrops()
+            .sound(SoundType.GLASS)
+        ),
+        ModCTBehavior.UmberDenseChoraCasingCTBehavior::new
+    );
+
     public static final BlockEntry<Block> PROPULSED_CHORA_CASING = registerBlock(
         "chora_casing_propulsite",
         (properties) -> new ChoraCasingBlock(properties
@@ -333,6 +536,20 @@ public final class ModBlocks {
             .sound(SoundType.GLASS)
         ),
         ModCTBehavior.PropulsedChoraCasingCTBehavior::new
+    );
+
+    public static final BlockEntry<Block> LAVENDER_PROPULSED_CHORA_CASING = registerBlock(
+        "chora_casing_lavender_propulsite",
+        (properties) -> new ChoraCasingBlock(properties
+                .mapColor(MapColor.COLOR_PURPLE)
+                .instrument(NoteBlockInstrument.BANJO)
+                .noOcclusion()
+                .isViewBlocking((s,l,p) -> false)
+                .strength(2.0f, 6.0f)
+                .requiresCorrectToolForDrops()
+                .sound(SoundType.GLASS)
+        ),
+        ModCTBehavior.LavenderPropulsedChoraCasingCTBehavior::new
     );
 
     public static final BlockEntry<Block> OSCILLATING_CHORA_CASING = registerBlock(
@@ -349,6 +566,20 @@ public final class ModBlocks {
         ModCTBehavior.OscillatingChoraCasingCTBehavior::new
     );
 
+    public static final BlockEntry<Block> AMBER_OSCILLATING_CHORA_CASING = registerBlock(
+        "chora_casing_amber_oscillite",
+        (properties) -> new ChoraCasingBlock(properties
+            .mapColor(MapColor.COLOR_BLUE)
+            .instrument(NoteBlockInstrument.BANJO)
+            .noOcclusion()
+            .isViewBlocking((s,l,p) -> false)
+            .strength(2.0f, 6.0f)
+            .requiresCorrectToolForDrops()
+            .sound(SoundType.GLASS)
+        ),
+        ModCTBehavior.AmberOscillatingChoraCasingCTBehavior::new
+    );
+
     public static final BlockEntry<Block> LEVITATING_CHORA_CASING = registerBlock(
         "chora_casing_levitite",
         (properties) -> new ChoraCasingBlock(properties
@@ -361,6 +592,20 @@ public final class ModBlocks {
             .sound(SoundType.GLASS)
         ),
         ModCTBehavior.LevitatingChoraCasingCTBehavior::new
+    );
+
+    public static final BlockEntry<Block> PEARLESCENT_LEVITATING_CHORA_CASING = registerBlock(
+            "chora_casing_pearlescent_levitite",
+            (properties) -> new ChoraCasingBlock(properties
+                    .mapColor(MapColor.COLOR_PINK)
+                    .instrument(NoteBlockInstrument.BANJO)
+                    .noOcclusion()
+                    .isViewBlocking((s,l,p) -> false)
+                    .strength(2.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.GLASS)
+            ),
+            ModCTBehavior.PearlescentLevitatingChoraCasingCTBehavior::new
     );
 
     /// ECHO BLOCKS - Copied Amethyst registries in {@link Blocks}

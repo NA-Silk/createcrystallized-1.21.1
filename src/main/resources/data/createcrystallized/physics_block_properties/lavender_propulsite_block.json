@@ -1,0 +1,7 @@
+{
+  "selector": "createcrystallized:lavender_propulsite_block",
+  "properties": {
+    "sable:mass": 1.0,
+    "sable:floating_material": "createcrystallized:lavender_propulsite_block"
+  }
+}

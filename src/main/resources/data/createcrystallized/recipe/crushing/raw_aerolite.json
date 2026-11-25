@@ -2,7 +2,7 @@
   "type": "create:crushing",
   "ingredients": [
     {
-      "id": "createcrystallized:raw_aerolite"
+      "item": "createcrystallized:raw_aerolite"
     }
   ],
   "processing_time": 400,

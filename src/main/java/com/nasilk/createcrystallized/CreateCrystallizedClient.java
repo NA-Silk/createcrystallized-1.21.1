@@ -2,6 +2,7 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
+import com.nasilk.createcrystallized.client.renderer.AerolitePickaxeRenderer;
 import com.nasilk.createcrystallized.dummy.DensiteWellMultiblockEntityRenderer;
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.nasilk.createcrystallized.client.renderer.DensiteWellEntityRenderer;
@@ -16,6 +17,7 @@ import com.nasilk.createcrystallized.client.particle.*;
 import com.nasilk.createcrystallized.client.ponder.ModPonderPlugin;
 import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import com.nasilk.createcrystallized.util.helper.CreateTooltipHelper;
+import com.simibubi.create.compat.Mods;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -26,6 +28,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -39,6 +42,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import static com.nasilk.createcrystallized.fluid.ModFluids.FLUIDS;
 import static com.nasilk.createcrystallized.item.ModItems.ANIMATED_ITEMS;
 
@@ -100,6 +104,17 @@ public class CreateCrystallizedClient {
     }
 
     @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (Mods.DYNAMICTREES.isLoaded()) {
+            event.getEntity().sendSystemMessage(Component.translatable(
+                "§b<Create Crystallized> §f" +
+                "Dynamic Trees detected:\n" +
+                "Aerolite Axe will not behave as intended on modded trees."
+            ));
+        }
+    }
+
+    @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
         // Register Fluid Textures
         for (FluidEntry<?> fluid : FLUIDS) {
@@ -140,6 +155,7 @@ public class CreateCrystallizedClient {
         event.registerBlockEntityRenderer(ModDummyRegistry.DENSITE_WELL_MULTIBLOCK_ENTITY.get(), DensiteWellMultiblockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
         event.registerEntityRenderer(ModItemEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
+        event.registerEntityRenderer(ModItemEntities.AEROLITE_PICKAXE.get(), AerolitePickaxeRenderer::new);
     }
 
     @SubscribeEvent

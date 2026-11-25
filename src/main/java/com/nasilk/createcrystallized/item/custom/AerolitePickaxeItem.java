@@ -2,36 +2,28 @@ package com.nasilk.createcrystallized.item.custom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.nasilk.createcrystallized.item.entity.AerolitePickaxeItemEntity;
 import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
-import com.simibubi.create.content.contraptions.AssemblyException;
-import dev.ryanhcode.sable.Sable;
-import dev.simulated_team.simulated.util.SimAssemblyHelper;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 // TODO Entire new idea, functionality moved to the aerolite hoe. Leaving room for another idea here.
 // Charge with right click -> release right click -> embed as an entity into a block -> if on sublevel -> apply drag at pos
 // Make embeddable item abstract
 // Right click with empty hand to pick up, return to inventory directly
-public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemExtensions {
-    public static final int MAX_CHARGE_TICKS = 40;
+public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, IHaveClientItemExtensions {
+    private static final int MAX_CHARGE = 40;
 
     public AerolitePickaxeItem(Tier tier, Properties properties) {
         super(tier, properties);
@@ -45,7 +37,7 @@ public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemE
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return MAX_CHARGE_TICKS;
+        return 72000;
     }
 
     @Override
@@ -68,7 +60,7 @@ public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemE
             ) {
                 // Charging animation poseStack, actual spaghetti I will not be labeling
                 if (arm == player.getMainArm() && player.isUsingItem()) {
-                    float FroggyAppleCrumbleThumpkin = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f);
+                    float FroggyAppleCrumbleThumpkin = Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE, 1.0f);
                     poseStack.translate(0.4f, -0.34, -0.64f);
                     poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
                     poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggyAppleCrumbleThumpkin));
@@ -81,28 +73,19 @@ public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemE
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
-
-        if (!level.isClientSide && entity instanceof Player player) {
-            player.displayClientMessage(
-                Component.literal("Charging: " + ticksHeld + " ticks"),
-                true
-            );
-        }
-    }
-
-    @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int ticksHeld = getUseDuration(stack, entity) - timeLeft + 1;
-
+        int ticksHeld = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
-        }
-
-        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            player.getCooldowns().addCooldown(this, ticksHeld / 2);
-            if (ticksHeld >= 30) doAssembly(serverLevel, player);
+            if (!level.isClientSide) {
+                player.getCooldowns().addCooldown(this, ticksHeld / 2);
+                if (ticksHeld >= 30) {
+                    AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, player, stack);
+                    pickaxeEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
+                    pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
+                    level.addFreshEntity(pickaxeEntity);
+                }
+            }
         }
     }
 
@@ -110,37 +93,21 @@ public class AerolitePickaxeItem extends PickaxeItem implements IHaveClientItemE
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
-        }
-
-        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            player.getCooldowns().addCooldown(this, MAX_CHARGE_TICKS / 2);
-            doAssembly(serverLevel, player);
+            if (!level.isClientSide) {
+                player.getCooldowns().addCooldown(this, MAX_CHARGE / 2);
+                AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, player, stack);
+                pickaxeEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
+                pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
+                level.addFreshEntity(pickaxeEntity);
+            }
         }
         return stack;
     }
 
-    private static void doAssembly(ServerLevel level, Player player) {
-        BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
-        BlockPos blockPos = hitResult.getBlockPos();
-
-        // Don't process already existing sububbi
-        if (Sable.HELPER.getContaining(level, blockPos) != null) return;
-
-        // Convert to sub                                                                          level
-        SimAssemblyHelper.AssemblyResult result;
-        try {
-            result = SimAssemblyHelper.assembleFromSingleBlock(level, blockPos, blockPos, true, true);
-        } catch (final AssemblyException ignoredException) {
-            return;
-        }
-
-        // Play rare non-dust based effect
-        if (result == null) return;
-        player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-        level.sendParticles(
-            ParticleTypes.CLOUD,
-            blockPos.getX() + 0.5d, blockPos.getY() + 0.5d, blockPos.getZ() + 0.5d, 8,
-            0.5d, 0.5d, 0.5d, 0.2d
-        );
+    @Override
+    public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
+        AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, pos.x(), pos.y(), pos.z(), stack.copyWithCount(1));
+        pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
+        return pickaxeEntity;
     }
 }

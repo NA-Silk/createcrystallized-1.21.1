@@ -6,7 +6,6 @@ import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,9 +22,9 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-// TODO Make the charge only release when R-Click is released, otherwise hold charge. removing charge gui
 public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExtensions {
-    public static final int MAX_CHARGE_TICKS = 30;
+    private static final int MAX_CHARGE = 30;
+    private static final double MAX_DASH = 2.5d;
 
     public AeroliteSwordItem(Tier tier, Properties properties) {
         super(tier, properties);
@@ -39,7 +38,7 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return MAX_CHARGE_TICKS;
+        return 72000;
     }
 
     @Override
@@ -68,9 +67,9 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
                     poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
                     poseStack.mulPose(Axis.XP.rotationDegrees(-25.0f));
                     poseStack.translate(
-                            0.0f,
-                            -0.2f * Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE_TICKS, 1.0f),
-                            0.0f
+                        0.0f,
+                        -0.2f * Math.min((player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick) / MAX_CHARGE, 1.0f),
+                        0.0f
                     );
                     return true;
                 }
@@ -81,30 +80,21 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        int ticksHeld = getUseDuration(stack, entity) - remainingUseDuration + 1;
-
-        if (!level.isClientSide && entity instanceof Player player) {
-            player.displayClientMessage(
-                Component.literal("Charging: " + ticksHeld + " ticks"),
-                true
+        if (level instanceof ServerLevel serverLevel && entity instanceof Player player && level.random.nextFloat() < 0.5f) {
+            serverLevel.sendParticles(
+                ParticleTypes.DUST_PLUME,
+                player.getX(), player.getY(), player.getZ(),
+                1,
+                0.1d, 0.1d, 0.1d,
+                0.02d
             );
-
-            if (level.random.nextFloat() < 0.5f) {
-                ((ServerLevel) level).sendParticles(
-                    ParticleTypes.DUST_PLUME,
-                    player.getX(), player.getY(), player.getZ(),
-                    1,
-                    0.1d, 0.1d, 0.1d,
-                    0.02d
-                );
-            }
         }
     }
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int ticksHeld = getUseDuration(stack, entity) - timeLeft + 1;
-        double scale = (double) ticksHeld / (double) MAX_CHARGE_TICKS;
+        int ticksHeld = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+        double scale = (double) ticksHeld / (double) MAX_CHARGE;
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
             player.getCooldowns().addCooldown(this, ticksHeld / 2);
             player.sweepAttack();
@@ -115,20 +105,19 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            player.getCooldowns().addCooldown(this, MAX_CHARGE_TICKS / 2);
+            player.getCooldowns().addCooldown(this, MAX_CHARGE / 2);
             player.sweepAttack();
             doDash(serverLevel, player, 1.0d);
         }
         return stack;
     }
 
-    private static final double DASH = 2.5d;
     private static void doDash(ServerLevel level, Player player, double scale) {
         // Get start position
         BlockPos pos = player.blockPosition();
 
         // Apply dash
-        double dashScale = DASH * scale;
+        double dashScale = MAX_DASH * scale;
         player.push(player.getLookAngle().multiply(dashScale, dashScale, dashScale));
         player.hurtMarked = true;
         player.fallDistance = 0.0f;

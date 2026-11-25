@@ -7,15 +7,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.fluids.FluidType;
 
+// TODO Register actual interactions V2
 public final class ModFluidInteractions {
-    // TODO Register actual interactions V2
     public static void register() {
         // Lava -> Void Sea Slurry: source VSS -> End Stone, flowing VSS -> Air
-      /*  registerFluidInteraction(
+        registerFluidInteraction(
             Fluids.LAVA.getFluidType(), ModFluids.VOID_SEA_SLURRY.getType(),
             Blocks.END_STONE.defaultBlockState(), Blocks.AIR.defaultBlockState()
         );
-      */
     }
 
     public static void registerFluidInteraction(FluidType catalystFluid, FluidType convertFluid, BlockState sourceBlock, BlockState flowingBlock) {

@@ -1,5 +1,5 @@
 {
-  "feature": "createcrystallized:aerolite_ore",
+  "feature": "createcrystallized:aerolite_ore_upper",
   "placement": [
     {
       "type": "minecraft:count",

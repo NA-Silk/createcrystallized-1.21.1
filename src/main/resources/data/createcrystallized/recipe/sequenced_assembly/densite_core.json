@@ -24,7 +24,6 @@
         }
       ]
     },
-
     {
       "type": "create:cutting",
       "ingredients": [
@@ -38,7 +37,6 @@
         }
       ]
     },
-
     {
       "type": "create:cutting",
       "ingredients": [
@@ -53,12 +51,9 @@
       ]
     }
   ],
-
   "transitional_item": {
     "id": "createcrystallized:encased_densite_block"
   },
-
-  "loops": 1,
   "results": [
     {
       "id": "createcrystallized:densite_core",

@@ -123,6 +123,9 @@ public final class ModCreativeModeTabs {
         registerBlock(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
         registerBlock(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
 
+        // Shimmerglass Items
+        registerItem(ModItems.SHIMMERGLASS_ROD);
+
         // Special Blocks ლ(⸌ᨓ⸍ლ) ᵐʸ ˢᵒⁿ
         registerBlock(ModBlocks.PEBBLE);
 

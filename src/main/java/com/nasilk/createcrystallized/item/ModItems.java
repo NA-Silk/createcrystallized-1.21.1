@@ -102,6 +102,17 @@ public final class ModItems {
         (properties) -> new Item(properties.stacksTo(64))
     ).register();
 
+    public static final ItemEntry<Item> SHIMMERGLASS_ROD = REGISTRATE.item(
+        "shimmerglass_rod",
+        (properties) -> new Item(properties.stacksTo(64))
+    ).register();
+
+    // Transitional items (for sequenced assembly not gender affirmation)
+    public static final ItemEntry<Item> SHIMMERGLASS_ROD_TRANS = REGISTRATE.item(
+        "shimmerglass_rod_trans",
+        (properties) -> new Item(properties.stacksTo(64))
+    ).register();
+
     /// ANIMATED ITEMS
     public static final ItemEntry<?>[] ANIMATED_ITEMS = {
         AEROLITE_HOE,

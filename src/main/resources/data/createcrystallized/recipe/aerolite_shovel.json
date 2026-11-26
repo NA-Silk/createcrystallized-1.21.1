@@ -3,19 +3,16 @@
   "category": "tools",
   "key": {
     "A": {
-      "item": "minecraft:stick"
+      "item": "createcrystallized:shimmerglass_rod"
     },
     "B": {
       "item": "createcrystallized:aerolite_ingot"
-    },
-    "C": {
-      "item": "create:iron_sheet"
     }
   },
   "pattern": [
     " B ",
-    "CAC",
-    "CAC"
+    " A ",
+    " A "
   ],
   "result": {
     "count": 1,

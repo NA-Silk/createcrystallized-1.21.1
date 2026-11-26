@@ -56,13 +56,13 @@ public class AeroliteHoeItem extends HoeItem implements IHaveClientItemExtension
         return new IClientItemExtensions() {
             @Override
             public boolean applyForgeHandTransform(
-                    PoseStack poseStack,
-                    LocalPlayer player,
-                    HumanoidArm arm,
-                    ItemStack itemInHand,
-                    float partialTick,
-                    float equipProcess,
-                    float swingProcess
+                PoseStack poseStack,
+                LocalPlayer player,
+                HumanoidArm arm,
+                ItemStack itemInHand,
+                float partialTick,
+                float equipProcess,
+                float swingProcess
             ) {
                 // Charging animation poseStack, actual spaghetti I will not be labeling
                 if (arm == player.getMainArm() && player.isUsingItem()) {
@@ -70,8 +70,7 @@ public class AeroliteHoeItem extends HoeItem implements IHaveClientItemExtension
                     poseStack.translate(0.4f, -0.38, -0.64f);
                     poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
                     poseStack.mulPose(Axis.XP.rotationDegrees(35.0F * FroggYApplECrumblEThumpkiN));
-                    poseStack.rotateAround(Axis.XP.rotationDegrees(720.0F * FroggYApplECrumblEThumpkiN), 0.05f, 0.15f, 0.05f
-                    );
+                    poseStack.rotateAround(Axis.XP.rotationDegrees(720.0F * FroggYApplECrumblEThumpkiN), 0.05f, 0.15f, 0.05f);
                     poseStack.translate(0.0f, 0.1f * FroggYApplECrumblEThumpkiN, 0.1f * FroggYApplECrumblEThumpkiN);
 
                     // When charged, shake a lil
@@ -88,14 +87,15 @@ public class AeroliteHoeItem extends HoeItem implements IHaveClientItemExtension
             }
         };
     }
+
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int ticksHeld = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
             if (level instanceof ServerLevel serverLevel) {
-                player.getCooldowns().addCooldown(this, ticksHeld / 2);
-                if (ticksHeld == 30) doAssembly(serverLevel, player);
+                player.getCooldowns().addCooldown(this, charge / 2);
+                if (charge == 30) doAssembly(serverLevel, player);
             }
         }
     }

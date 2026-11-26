@@ -60,11 +60,9 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
                 float equipProcess,
                 float swingProcess
             ) {
-                // Animation poseStack
-                float GaggleLandMassacre = player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick;
-
-                // Actual spaghetti I will not be labeling, basically the origin point of swords are fucked when overriding the default animation
+                // Animation poseStack, actual spaghetti I will not be labeling, basically the origin point of swords are fucked when overriding the default animation
                 if (arm == player.getMainArm() && player.isUsingItem()) {
+                    float GaggleLandMassacre = player.getUseItem().getUseDuration(player) - player.getUseItemRemainingTicks() + partialTick;
                     poseStack.translate(-0.55f, -1.2f, 0.3f);
                     poseStack.rotateAround(Axis.XP.rotationDegrees(-90.0f), 0.0f, -0.1f, -1.0f);
                     poseStack.translate(1.0f, 0.0f, 0.05f);
@@ -73,13 +71,15 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
                     poseStack.translate(
                         0.0f,
                         -0.2f * Math.min((GaggleLandMassacre) / MAX_CHARGE, 1.0f),
-                        0.0f);
+                        0.0f
+                    );
 
                     // When charged, shake a lil
-                    if (GaggleLandMassacre >= MAX_CHARGE) {poseStack.translate(
-                        Mth.sin((player.tickCount + partialTick) * 0.85f) * 0.005f,
-                        Mth.sin((player.tickCount + partialTick) * 0.55f) * 0.009f,
-                        0.000f
+                    if (GaggleLandMassacre >= MAX_CHARGE) {
+                        poseStack.translate(
+                            Mth.sin((player.tickCount + partialTick) * 0.85f) * 0.005f,
+                            Mth.sin((player.tickCount + partialTick) * 0.55f) * 0.009f,
+                            0.000f
                         );
                     }
                     return true;
@@ -88,6 +88,7 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
             }
         };
     }
+
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingTicks) {
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player && level.random.nextFloat() < 0.5f) {
@@ -114,12 +115,12 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int ticksHeld = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
-        double scale = (double) ticksHeld / (double) MAX_CHARGE;
+        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+        double scale = (double) charge / (double) MAX_CHARGE;
         if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            player.getCooldowns().addCooldown(this, ticksHeld / 2);
+            player.getCooldowns().addCooldown(this, charge / 2);
             player.sweepAttack();
-            if (ticksHeld >= 10) doDash(serverLevel, player, scale);
+            if (charge >= 10) doDash(serverLevel, player, scale);
         }
     }
 

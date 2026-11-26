@@ -14,6 +14,10 @@ public final class ModParticleTypes {
         "densite_particles"
     );
 
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> UMBER_DENSITE_PARTICLES = registerParticle(
+        "umber_densite_particles"
+    );
+
     public static final RegistryEntry<ParticleType<?>, SimpleParticleType> DENSITE_WELL_PULL_PARTICLES = registerParticle(
         "densite_well_pull_particles"
     );
@@ -24,6 +28,10 @@ public final class ModParticleTypes {
 
     public static final RegistryEntry<ParticleType<?>, SimpleParticleType> PROPULSITE_PARTICLES = registerParticle(
         "propulsite_particles"
+    );
+
+    public static final RegistryEntry<ParticleType<?>, SimpleParticleType> LAVENDER_PROPULSITE_PARTICLES = registerParticle(
+        "lavender_propulsite_particles"
     );
 
     public static final RegistryEntry<ParticleType<?>, SimpleParticleType> PROPULSITE_THRUSTER_FIRING_PARTICLES = registerParticle(

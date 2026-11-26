@@ -100,7 +100,9 @@ public final class ModCreativeModeTabs {
         registerItem(ModItems.CRUSHED_RAW_AEROLITE);
         registerItem(ModItems.AEROLITE_NUGGET);
         registerItem(ModItems.AEROLITE_INGOT);
-        if (creativeConfig.enableUnusedItems.get().equals(true)) {registerItem(ModItems.AEROLITE_SHEET);}
+        if (creativeConfig.enableUnusedItems.get().equals(true)) {
+            registerItem(ModItems.AEROLITE_SHEET);
+        }
         registerBlock(ModBlocks.AEROLITE_BLOCK);
         registerItem(ModItems.AEROLITE_SWORD);
         registerItem(ModItems.AEROLITE_PICKAXE);
@@ -134,91 +136,7 @@ public final class ModCreativeModeTabs {
             registerItem(ModItems.CREATIVE_FLUID_ERASER);
             registerItem(ModItems.CREATIVE_BAG_OF_LONGS);
         }
-        /*Old list kept for reference, //TODO double check for missing items before removing, im pretty sure i got everthing but knowing me id miss one.
-        // Fluid Buckets
-        registerFluid(ModFluids.VOID_SEA_SLURRY);
-        registerFluid(ModFluids.DENSITE_EMULSION);
-        registerFluid(ModFluids.DRIFT_CONDENSATE);
-        registerFluid(ModFluids.PROPULSITE_FLURRY);
-        registerFluid(ModFluids.OSCILLITE_SUSPENSION);
 
-        // Aerolite Items and Blocks
-        registerBlock(ModBlocks.AEROLITE_ORE);
-        registerBlock(ModBlocks.DEEPSLATE_AEROLITE_ORE);
-        registerItem(ModItems.RAW_AEROLITE);
-        registerItem(ModItems.CRUSHED_RAW_AEROLITE);
-        registerItem(ModItems.AEROLITE_NUGGET);
-        registerItem(ModItems.AEROLITE_INGOT);
-        if (creativeConfig.enableUnusedItems.get().equals(true)) {
-            registerItem(ModItems.AEROLITE_SHEET);
-        }
-        registerBlock(ModBlocks.AEROLITE_BLOCK);
-        registerItem(ModItems.AEROLITE_SWORD);
-        registerItem(ModItems.AEROLITE_PICKAXE);
-        registerItem(ModItems.AEROLITE_AXE);
-        registerItem(ModItems.AEROLITE_SHOVEL);
-        registerItem(ModItems.AEROLITE_HOE);
-
-        // Chora Items and Blocks
-        registerItem(ModItems.CHORA_INGOT);
-        registerBlock(ModBlocks.CHORA_BLOCK);
-        registerBlock(ModBlocks.CHORA_CASING);
-        registerBlock(ModBlocks.DENSE_CHORA_CASING);
-        registerBlock(ModBlocks.UMBER_DENSE_CHORA_CASING);
-        registerBlock(ModBlocks.PROPULSED_CHORA_CASING);
-        registerBlock(ModBlocks.LAVENDER_PROPULSED_CHORA_CASING);
-        registerBlock(ModBlocks.OSCILLATING_CHORA_CASING);
-        registerBlock(ModBlocks.AMBER_OSCILLATING_CHORA_CASING);
-        registerBlock(ModBlocks.LEVITATING_CHORA_CASING);
-        registerBlock(ModBlocks.PEARLESCENT_LEVITATING_CHORA_CASING);
-
-        // Crystals and Echo Shard Blocks
-        registerBlock(ModBlocks.DENSITE_CRYSTAL);
-        registerBlock(ModBlocks.PROPULSITE_CRYSTAL);
-        registerBlock(ModBlocks.ECHO_CRYSTAL_BLOCK);
-        registerBlock(ModBlocks.BUDDING_ECHO_CRYSTAL);
-        registerBlock(ModBlocks.ECHO_CRYSTAL_CLUSTER);
-        registerBlock(ModBlocks.LARGE_ECHO_CRYSTAL_BUD);
-        registerBlock(ModBlocks.MEDIUM_ECHO_CRYSTAL_BUD);
-        registerBlock(ModBlocks.SMALL_ECHO_CRYSTAL_BUD);
-        registerBlock(ModBlocks.LEVITITE_CRYSTAL);
-
-        // Crystal Crafting Items
-        registerItem(ModItems.DENSITE_CORE);
-        registerItem(ModItems.OSCILLITE_RESONATOR);
-
-        // Crystal Blocks
-        registerBlock(ModBlocks.DENSITE_BLOCK);
-        registerBlock(ModBlocks.UMBER_DENSITE_BLOCK);
-        registerBlock(ModBlocks.PROPULSITE_BLOCK);
-        registerBlock(ModBlocks.LAVENDER_PROPULSITE_BLOCK);
-        registerBlock(ModBlocks.OSCILLITE_BLOCK);
-        registerBlock(ModBlocks.AMBER_OSCILLITE_BLOCK);
-
-
-        // Encased Crystal Blocks
-        registerBlock(ModBlocks.ENCASED_DENSITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_UMBER_DENSITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_PROPULSITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_LAVENDER_PROPULSITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_OSCILLITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_AMBER_OSCILLITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_LEVITITE_BLOCK);
-        registerBlock(ModBlocks.ENCASED_PEARLESCENT_LEVITITE_BLOCK);
-
-        // Machined Crystal Blocks
-        registerBlock(ModBlocks.DENSITE_WELL);
-        registerBlock(ModBlocks.PROPULSITE_THRUSTER);
-        registerBlock(ModBlocks.OSCILLITE_CANNON);
-
-        // Special Blocks ლ(⸌ᨓ⸍ლ) ᵐʸ ˢᵒⁿ
-        registerBlock(ModBlocks.PEBBLE);
-
-        // Development Items
-        if (creativeConfig.enableDevItems.get().equals(true)) {
-            registerItem(ModItems.CREATIVE_FLUID_ERASER);
-            registerItem(ModItems.CREATIVE_BAG_OF_LONGS);
-       }*/
         sectionsInitialized = true;
     }
 

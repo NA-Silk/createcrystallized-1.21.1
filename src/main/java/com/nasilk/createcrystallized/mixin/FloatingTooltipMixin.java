@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FloatingTooltipMixin {
     @Inject(method = "getFloatingComponent", at = @At("HEAD"), cancellable = true)
     private static void getFloatingComponentMixin(BlockStateExtension properties, BlockItem item, boolean showNumbers, CallbackInfoReturnable<Component> cir) {
-        if (ModBlocks.PROPULSITE_BLOCK.is(item)) cir.setReturnValue(null);
+        if (ModBlocks.PROPULSITE_BLOCK.is(item) ||
+            ModBlocks.LAVENDER_PROPULSITE_BLOCK.is(item)
+        ) cir.setReturnValue(null);
     }
 }

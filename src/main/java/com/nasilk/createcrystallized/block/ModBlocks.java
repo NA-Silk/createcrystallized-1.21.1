@@ -221,7 +221,7 @@ public final class ModBlocks {
             ),
             ModBlocks.UMBER_DENSE_CHORA_CASING::asItem,
             ModBlocks.UMBER_DENSITE_BLOCK,
-            ModParticleTypes.DENSITE_PARTICLES,
+            ModParticleTypes.UMBER_DENSITE_PARTICLES,
             8,0.3d,0.2d,0.3d,0.05d
         ),
         ModCTBehavior.EncasedUmberDensiteCTBehavior::new
@@ -279,7 +279,7 @@ public final class ModBlocks {
             ),
             ModBlocks.LAVENDER_PROPULSED_CHORA_CASING::asItem,
             ModBlocks.LAVENDER_PROPULSITE_BLOCK,
-            ModParticleTypes.PROPULSITE_PARTICLES,
+            ModParticleTypes.LAVENDER_PROPULSITE_PARTICLES,
             16,0.5d,0.5d,0.5d,0.25d
         ),
         ModCTBehavior.EncasedLavenderPropulsiteCTBehavior::new

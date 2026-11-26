@@ -50,13 +50,13 @@ public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, 
         return new IClientItemExtensions() {
             @Override
             public boolean applyForgeHandTransform(
-                    PoseStack poseStack,
-                    LocalPlayer player,
-                    HumanoidArm arm,
-                    ItemStack itemInHand,
-                    float partialTick,
-                    float equipProcess,
-                    float swingProcess
+                PoseStack poseStack,
+                LocalPlayer player,
+                HumanoidArm arm,
+                ItemStack itemInHand,
+                float partialTick,
+                float equipProcess,
+                float swingProcess
             ) {
                 // Charging animation poseStack, actual spaghetti I will not be labeling
                 if (arm == player.getMainArm() && player.isUsingItem()) {
@@ -74,12 +74,12 @@ public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, 
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int ticksHeld = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
         if (entity instanceof Player player) {
             player.swing(InteractionHand.MAIN_HAND);
             if (!level.isClientSide) {
-                player.getCooldowns().addCooldown(this, ticksHeld / 2);
-                if (ticksHeld >= 30) {
+                player.getCooldowns().addCooldown(this, charge / 2);
+                if (charge >= 30) {
                     AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, player, stack);
                     pickaxeEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
                     pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;

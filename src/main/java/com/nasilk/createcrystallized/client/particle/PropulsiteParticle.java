@@ -1,9 +1,10 @@
 package com.nasilk.createcrystallized.client.particle;
 
-import com.nasilk.createcrystallized.block.ModBlocks;
+import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +60,10 @@ public class PropulsiteParticle extends TerrainParticle {
 
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
-        public Provider(SpriteSet ignored) {}
+        BlockEntry<Block> blockEntry;
+        public Provider(SpriteSet ignored, BlockEntry<Block> blockEntry) {
+            this.blockEntry = blockEntry;
+        }
 
         @Nullable
         @Override
@@ -71,7 +75,7 @@ public class PropulsiteParticle extends TerrainParticle {
         ) {
             return new PropulsiteParticle(
                 clientLevel,
-                ModBlocks.PROPULSITE_BLOCK.getDefaultState(),
+                blockEntry.getDefaultState(),
                 x, y, z,
                 xSpeed, ySpeed, zSpeed
             );

@@ -92,6 +92,9 @@ public class CreateCrystallizedClient {
             CreateTooltipHelper.registerGoggleTooltip(ModBlocks.DENSITE_BLOCK, 1);
             CreateTooltipHelper.registerGoggleTooltip(ModBlocks.PROPULSITE_BLOCK, 2);
             CreateTooltipHelper.registerGoggleTooltip(ModBlocks.OSCILLITE_BLOCK, 1);
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.UMBER_DENSITE_BLOCK, 1); // Omg copy-paste
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.LAVENDER_PROPULSITE_BLOCK, 2); // tool
+            CreateTooltipHelper.registerGoggleTooltip(ModBlocks.AMBER_OSCILLITE_BLOCK, 1); // tip
 
             // CREATE PLS DON'T ROTATE (currently broken, probably won't fix ever)
             RadialWrenchMenu.registerBlacklistedBlock(ModBlocks.PROPULSITE_THRUSTER.getId());
@@ -122,6 +125,12 @@ public class CreateCrystallizedClient {
             event.registerFluidType(type.getClientExtensions(), type);
         }
 
+        // Register Item Animations
+        for (ItemEntry<?> item : ANIMATED_ITEMS) {
+            IHaveClientItemExtensions type = (IHaveClientItemExtensions) item.asItem();
+            event.registerItem(type.getClientExtensions(), item.asItem());
+        }
+
         // Disable Default Destroy Particles
         IClientBlockExtensions noDefaultParticles = new IClientBlockExtensions() {
             @Override
@@ -133,21 +142,21 @@ public class CreateCrystallizedClient {
             noDefaultParticles,
             ModBlocks.DENSITE_BLOCK.get(),
             ModBlocks.ENCASED_DENSITE_BLOCK.get(),
+            ModBlocks.UMBER_DENSITE_BLOCK.get(),
+            ModBlocks.ENCASED_UMBER_DENSITE_BLOCK.get(),
             ModBlocks.DENSITE_WELL.get(),
             ModBlocks.PROPULSITE_BLOCK.get(),
             ModBlocks.ENCASED_PROPULSITE_BLOCK.get(),
+            ModBlocks.LAVENDER_PROPULSITE_BLOCK.get(),
+            ModBlocks.ENCASED_LAVENDER_PROPULSITE_BLOCK.get(),
             ModBlocks.PROPULSITE_THRUSTER.get(),
             ModBlocks.OSCILLITE_BLOCK.get(),
             ModBlocks.ENCASED_OSCILLITE_BLOCK.get(),
+            ModBlocks.AMBER_OSCILLITE_BLOCK.get(),
+            ModBlocks.ENCASED_AMBER_OSCILLITE_BLOCK.get(),
             ModBlocks.OSCILLITE_CANNON.get(),
             ModBlocks.ENCASED_LEVITITE_BLOCK.get()
         );
-
-        // Register Item Animations
-        for (ItemEntry<?> item : ANIMATED_ITEMS) {
-            IHaveClientItemExtensions type = (IHaveClientItemExtensions) item.asItem();
-            event.registerItem(type.getClientExtensions(), item.asItem());
-        }
     }
 
     @SubscribeEvent
@@ -165,10 +174,12 @@ public class CreateCrystallizedClient {
 
     @SubscribeEvent
     public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(ModParticleTypes.DENSITE_PARTICLES.get(), DensiteParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.DENSITE_PARTICLES.get(), (spriteSet) -> new DensiteParticle.Provider(spriteSet, ModBlocks.DENSITE_BLOCK));
+        event.registerSpriteSet(ModParticleTypes.UMBER_DENSITE_PARTICLES.get(), (spriteSet) -> new DensiteParticle.Provider(spriteSet, ModBlocks.UMBER_DENSITE_BLOCK));
         event.registerSpriteSet(ModParticleTypes.DENSITE_WELL_PULL_PARTICLES.get(), DensiteWellPullParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.DENSITE_CORE_PARTICLES.get(), DensiteCoreParticle.Provider::new);
-        event.registerSpriteSet(ModParticleTypes.PROPULSITE_PARTICLES.get(), PropulsiteParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.PROPULSITE_PARTICLES.get(), (spriteSet) -> new PropulsiteParticle.Provider(spriteSet, ModBlocks.PROPULSITE_BLOCK));
+        event.registerSpriteSet(ModParticleTypes.LAVENDER_PROPULSITE_PARTICLES.get(), (spriteSet) -> new PropulsiteParticle.Provider(spriteSet, ModBlocks.LAVENDER_PROPULSITE_BLOCK));
         event.registerSpriteSet(ModParticleTypes.PROPULSITE_THRUSTER_FIRING_PARTICLES.get(), PropulsiteThrusterFiringParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.PROPULSITE_THRUSTER_CHARGING_PARTICLES.get(), PropulsiteThrusterChargingParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.OSCILLITE_CANNON_CHARGING_PARTICLES.get(), OscilliteCannonChargingParticle.Provider::new);

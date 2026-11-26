@@ -19,7 +19,7 @@ public class PropulsiteBlock extends Block {
         super.onRemove(state, level, pos, newState, isMoving);
     }
 
-    private void addParticles(Level level, BlockPos pos) {
+    protected void addParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) serverLevel.sendParticles(
             ModParticleTypes.PROPULSITE_PARTICLES.get(),
             pos.getX() + 0.5d,

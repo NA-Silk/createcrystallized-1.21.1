@@ -50,13 +50,13 @@ public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, 
         return new IClientItemExtensions() {
             @Override
             public boolean applyForgeHandTransform(
-                    PoseStack poseStack,
-                    LocalPlayer player,
-                    HumanoidArm arm,
-                    ItemStack itemInHand,
-                    float partialTick,
-                    float equipProcess,
-                    float swingProcess
+                PoseStack poseStack,
+                LocalPlayer player,
+                HumanoidArm arm,
+                ItemStack itemInHand,
+                float partialTick,
+                float equipProcess,
+                float swingProcess
             ) {
                 // Charging animation poseStack, actual spaghetti I will not be labeling
                 if (arm == player.getMainArm() && player.isUsingItem()) {

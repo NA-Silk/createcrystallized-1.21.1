@@ -24,7 +24,7 @@ public final class ModBlockEntities {
     public static final BlockEntityEntry<OscilliteBlockEntity> OSCILLITE_BLOCK = REGISTRATE.blockEntity(
         "oscillite_block",
         OscilliteBlockEntity::new
-    ).validBlock(ModBlocks.OSCILLITE_BLOCK).register();
+    ).validBlocks(ModBlocks.OSCILLITE_BLOCK, ModBlocks.AMBER_OSCILLITE_BLOCK).register();
 
     public static final BlockEntityEntry<OscilliteCannonEntity> OSCILLITE_CANNON = REGISTRATE.blockEntity(
         "oscillite_cannon",

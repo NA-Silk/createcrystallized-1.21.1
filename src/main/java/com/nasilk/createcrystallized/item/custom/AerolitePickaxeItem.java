@@ -23,7 +23,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 // Make embeddable item abstract
 // Right click with empty hand to pick up, return to inventory directly
 public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, IHaveClientItemExtensions {
-    private static final int MAX_CHARGE = 40;
+    public static final int MAX_CHARGE = 40;
 
     public AerolitePickaxeItem(Tier tier, Properties properties) {
         super(tier, properties);

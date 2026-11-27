@@ -2,13 +2,18 @@ package com.nasilk.createcrystallized.item.entity;
 
 import com.nasilk.createcrystallized.item.ModItemEntities;
 import com.nasilk.createcrystallized.item.ModItems;
+import com.nasilk.createcrystallized.item.custom.AerolitePickaxeItem;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.joml.Vector3f;
@@ -50,14 +55,32 @@ public class AerolitePickaxeItemEntity extends AbstractArrow {
         super.onHit(result);
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.broadcastEntityEvent(this, (byte) 3); // Triggers handleEntityEvent() on client
-
-            // Run hit effects TODO
         }
+    }
+
+    @Override
+    protected void onHitBlock(BlockHitResult result) {
+        super.onHitBlock(result);
+        this.setSoundEvent(this.getDefaultHitGroundSoundEvent()); // Don't use the arrow noise that the superclass forces here
+
+        // Run hit effects TODO
     }
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide) result.getEntity().hurt(this.damageSources().thrown(this, this.getOwner()), 5.0f);
+        if (this.getOwner() instanceof Player player) {
+            player.getInventory().add(this.getPickupItem());
+            player.getCooldowns().addCooldown(this.getPickupItem().getItem(), AerolitePickaxeItem.MAX_CHARGE / 2);
+            this.discard();
+        }
+    }
+
+
+    // SOUNDS
+    @Override
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
+        return SoundEvents.ANVIL_HIT; // TODO Change this to return a pickaxe hit SoundEvent
     }
 
 

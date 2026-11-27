@@ -172,15 +172,17 @@ public final class ModCreativeModeTabs {
                 continue; // Skip search only
             }
 
-            // Add item and print log
+            // Add item
             displayItems.add(stack);
             searchItems.add(stack.copy());
-            CreateCrystallized.LOGGER.info(
-                "Built Create Crystallized creative tab with {} display stacks and {} search stacks",
-                displayItems.size(),
-                searchItems.size()
-            );
         }
+
+        // Print log
+        CreateCrystallized.LOGGER.info(
+            "Built Create Crystallized creative tab with {} display stacks and {} search stacks",
+            displayItems.size(),
+            searchItems.size()
+        );
     }
 
     public static void init() {

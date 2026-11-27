@@ -64,7 +64,8 @@ public class CreateCrystallizedClient {
             ModSpriteShifts.init();
 
             // Aerolite Sword model switching properties, used for the third person charging anim
-            ItemProperties.register(ModItems.AEROLITE_SWORD.get(),
+            ItemProperties.register(
+                ModItems.AEROLITE_SWORD.get(),
                 CreateCrystallized.getRL("charging"),
                 (stack, level, entity, seed) ->
                     entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0f : 0.0f
@@ -155,7 +156,8 @@ public class CreateCrystallizedClient {
             ModBlocks.AMBER_OSCILLITE_BLOCK.get(),
             ModBlocks.ENCASED_AMBER_OSCILLITE_BLOCK.get(),
             ModBlocks.OSCILLITE_CANNON.get(),
-            ModBlocks.ENCASED_LEVITITE_BLOCK.get()
+            ModBlocks.ENCASED_LEVITITE_BLOCK.get(),
+            ModBlocks.ENCASED_PEARLESCENT_LEVITITE_BLOCK.get()
         );
     }
 

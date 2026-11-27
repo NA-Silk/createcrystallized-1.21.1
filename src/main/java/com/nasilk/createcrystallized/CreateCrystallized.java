@@ -55,7 +55,6 @@ public class CreateCrystallized {
         // ModBus registrations
         REGISTRATE.registerEventListeners(modEventBus);
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for mod loading
-        //modEventBus.addListener(this::addCreative); // Register the items to a creative tab (retained for reference)
         //NeoForge.EVENT_BUS.register(this); // Register ourselves for server and other game events (retained for reference)
     }
 

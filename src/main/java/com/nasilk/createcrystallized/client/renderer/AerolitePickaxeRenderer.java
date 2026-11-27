@@ -1,46 +1,50 @@
 package com.nasilk.createcrystallized.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.client.model.DensiteWellCubeModel;
+import com.nasilk.createcrystallized.item.ModItems;
 import com.nasilk.createcrystallized.item.entity.AerolitePickaxeItemEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 
-// TODO 
+    // TODO
 public class AerolitePickaxeRenderer extends EntityRenderer<AerolitePickaxeItemEntity> {
-    private static final ResourceLocation TEXTURE = CreateCrystallized.getRL("textures/block/densite_well_cube.png");
-    private final DensiteWellCubeModel model;
-
-    public AerolitePickaxeRenderer(EntityRendererProvider.Context context) {
-        super(context);
-        this.model = new DensiteWellCubeModel(context.bakeLayer(DensiteWellCubeModel.LAYER_LOCATION));
-    }
+    private final ItemRenderer itemRenderer;
 
     @Override
-    public ResourceLocation getTextureLocation(AerolitePickaxeItemEntity entity) {
-        return TEXTURE;
+    public ResourceLocation getTextureLocation(AerolitePickaxeItemEntity aerolitePickaxeItemEntity) {return null;
     }
 
-    @Override
-    public void render(AerolitePickaxeItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
-        poseStack.translate(0.0d, 0.15d, 0.0d); // uh he go
-        poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTicks) * 20.0f)); // s  p  i  n
-        poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTicks) * 10.0f)); // s  p  i  n  but sauced
-        VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(getTextureLocation(entity)));
-        this.model.renderToBuffer(
-            poseStack,
-            vertexConsumer,
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            0xFFFFFFFF
-        );
-        poseStack.popPose();
+    public AerolitePickaxeRenderer(EntityRendererProvider.Context context) {super(context); this.itemRenderer = context.getItemRenderer();
+    }
+
+        @Override
+        public void render(AerolitePickaxeItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+
+            poseStack.pushPose();
+
+            poseStack.scale(2.0f, 2.0f, 2.0f);
+
+            poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) - 90.0f));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
+
+            itemRenderer.renderStatic(
+                ModItems.AEROLITE_PICKAXE.get().getDefaultInstance(),
+                ItemDisplayContext.GROUND,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                poseStack,
+                buffer,
+                entity.level(),
+                entity.getId()
+             );
+
+            poseStack.popPose();
     }
 }

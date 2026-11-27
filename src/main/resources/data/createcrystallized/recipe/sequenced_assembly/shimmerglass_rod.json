@@ -1,0 +1,65 @@
+
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "minecraft:blaze_rod"
+  },
+  "transitional_item": {
+    "id": "createcrystallized:shimmerglass_rod_trans"
+  },
+  "sequence": [
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "createcrystallized:shimmerglass_rod_trans"
+        },
+        {
+          "type": "neoforge:single",
+          "amount": 250,
+          "fluid": "minecraft:water"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:shimmerglass_rod_trans"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "createcrystallized:shimmerglass_rod_trans"
+        },
+        {
+          "item": "minecraft:amethyst_shard"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:shimmerglass_rod_trans"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "createcrystallized:shimmerglass_rod_trans"
+        }
+      ],
+      "results": [
+        {
+          "id": "createcrystallized:shimmerglass_rod_trans"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "createcrystallized:shimmerglass_rod",
+      "count": 1
+    }
+  ]
+}

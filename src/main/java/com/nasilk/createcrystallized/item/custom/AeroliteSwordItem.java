@@ -115,23 +115,14 @@ public class AeroliteSwordItem  extends SwordItem implements IHaveClientItemExte
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
-        double scale = (double) charge / (double) MAX_CHARGE;
-        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
+        if (entity instanceof Player player) {
+            int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+            double scale = (double) charge / (double) MAX_CHARGE;
             player.getCooldowns().addCooldown(this, charge / 2);
             player.sweepAttack();
-            if (charge >= 10) doDash(serverLevel, player, scale);
+            if (level instanceof ServerLevel serverLevel && charge >= 10)
+                doDash(serverLevel, player, scale);
         }
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            player.getCooldowns().addCooldown(this, MAX_CHARGE / 2);
-            player.sweepAttack();
-            doDash(serverLevel, player, 1.0d);
-        }
-        return stack;
     }
 
     private static void doDash(ServerLevel level, Player player, double scale) {

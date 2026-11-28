@@ -49,15 +49,16 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
         if (level.isClientSide || state.is(oldState.getBlock())) return;
         int currentPower = state.getValue(BlockStateProperties.POWER);
         int newPower = level.getBestNeighborSignal(pos);
-        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
+        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), Block.UPDATE_ALL);
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        //super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
         if (level.isClientSide) return;
         int currentPower = state.getValue(BlockStateProperties.POWER);
         int newPower = level.getBestNeighborSignal(pos);
-        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), 3);
+        if (currentPower != newPower) level.setBlock(pos, state.setValue(BlockStateProperties.POWER, newPower), Block.UPDATE_ALL);
     }
 
     // ENTITIES
@@ -81,7 +82,7 @@ public class DensiteWellBlock extends Block implements IBE<DensiteWellEntity> {
 
     // PARTICLES
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock()) && !isMoving) addParticles(level, pos);
         super.onRemove(state, level, pos, newState, isMoving);
     }

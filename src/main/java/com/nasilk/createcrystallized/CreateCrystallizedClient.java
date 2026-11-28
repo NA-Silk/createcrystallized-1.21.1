@@ -2,7 +2,8 @@ package com.nasilk.createcrystallized;
 
 import com.nasilk.createcrystallized.block.ModBlockEntities;
 import com.nasilk.createcrystallized.block.ModBlocks;
-import com.nasilk.createcrystallized.client.renderer.AerolitePickaxeRenderer;
+import com.nasilk.createcrystallized.client.renderer.AerolitePickaxeBlockEntityRenderer;
+import com.nasilk.createcrystallized.client.renderer.AerolitePickaxeItemEntityRenderer;
 import com.nasilk.createcrystallized.dummy.DensiteWellMultiblockEntityRenderer;
 import com.nasilk.createcrystallized.client.ModSpriteShifts;
 import com.nasilk.createcrystallized.client.renderer.DensiteWellEntityRenderer;
@@ -166,7 +167,8 @@ public class CreateCrystallizedClient {
         event.registerBlockEntityRenderer(ModDummyRegistry.DENSITE_WELL_MULTIBLOCK_ENTITY.get(), DensiteWellMultiblockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DENSITE_WELL.get(), DensiteWellEntityRenderer::new);
         event.registerEntityRenderer(ModItemEntities.THROWN_DENSITE_CORE.get(), ThrownDensiteCoreRenderer::new);
-        event.registerEntityRenderer(ModItemEntities.AEROLITE_PICKAXE.get(), AerolitePickaxeRenderer::new);
+        event.registerEntityRenderer(ModItemEntities.AEROLITE_PICKAXE.get(), AerolitePickaxeItemEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.AEROLITE_PICKAXE.get(), AerolitePickaxeBlockEntityRenderer::new);
     }
 
     @SubscribeEvent

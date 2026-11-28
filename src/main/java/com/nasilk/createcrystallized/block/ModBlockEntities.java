@@ -1,10 +1,7 @@
 package com.nasilk.createcrystallized.block;
 
 import com.nasilk.createcrystallized.CreateCrystallized;
-import com.nasilk.createcrystallized.block.entity.DensiteWellEntity;
-import com.nasilk.createcrystallized.block.entity.OscilliteBlockEntity;
-import com.nasilk.createcrystallized.block.entity.OscilliteCannonEntity;
-import com.nasilk.createcrystallized.block.entity.PropulsiteThrusterEntity;
+import com.nasilk.createcrystallized.block.entity.*;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
@@ -30,6 +27,11 @@ public final class ModBlockEntities {
         "oscillite_cannon",
         OscilliteCannonEntity::new
     ).validBlock(ModBlocks.OSCILLITE_CANNON).register();
+
+    public static final BlockEntityEntry<AerolitePickaxeBlockEntity> AEROLITE_PICKAXE = REGISTRATE.blockEntity(
+        "aerolite_pickaxe_block",
+        AerolitePickaxeBlockEntity::new
+    ).validBlock(ModBlocks.AEROLITE_PICKAXE).register();
 
     public static void init() {
         CreateCrystallized.LOGGER.info("Block Entities initialized");

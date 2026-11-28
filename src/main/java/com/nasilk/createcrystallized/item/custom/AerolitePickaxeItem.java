@@ -7,6 +7,7 @@ import com.nasilk.createcrystallized.util.api.IHaveClientItemExtensions;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.HumanoidArm;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import org.joml.Vector3f;
 
 // TODO Entire new idea, functionality moved to the aerolite hoe. Leaving room for another idea here.
 // Charge with right click -> release right click -> embed as an entity into a block -> if on sublevel -> apply drag at pos
@@ -24,6 +26,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 // Right click with empty hand to pick up, return to inventory directly
 public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, IHaveClientItemExtensions {
     public static final int MAX_CHARGE = 40;
+    public static final DustParticleOptions DUST = new DustParticleOptions(new Vector3f(0.55f, 0.65f, 0.85f),1.2f);
 
     public AerolitePickaxeItem(Tier tier, Properties properties) {
         super(tier, properties);
@@ -74,40 +77,30 @@ public class AerolitePickaxeItem extends PickaxeItem implements ProjectileItem, 
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
         if (entity instanceof Player player) {
-            player.swing(InteractionHand.MAIN_HAND);
-            if (!level.isClientSide) {
-                player.getCooldowns().addCooldown(this, charge / 2);
-                if (charge >= 30) {
-                    AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, player, stack);
-                    pickaxeEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
-                    pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
-                    level.addFreshEntity(pickaxeEntity);
-                }
-            }
-        }
-    }
+            int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+            if (level.isClientSide || charge < 30) return;
 
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (entity instanceof Player player) {
-            player.swing(InteractionHand.MAIN_HAND);
-            if (!level.isClientSide) {
-                player.getCooldowns().addCooldown(this, MAX_CHARGE / 2);
-                AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, player, stack);
-                pickaxeEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
-                pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
-                level.addFreshEntity(pickaxeEntity);
+            InteractionHand hand = player.getUsedItemHand();
+            ItemStack heldStack = player.getItemInHand(hand);
+            if (heldStack.isEmpty()) return;
+
+            AerolitePickaxeItemEntity pickaxe = new AerolitePickaxeItemEntity(level, player, heldStack.copyWithCount(1));
+            pickaxe.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5f, 1.0f);
+            pickaxe.pickup = AbstractArrow.Pickup.ALLOWED;
+
+            if (level.addFreshEntity(pickaxe)) {
+                player.getCooldowns().addCooldown(this, charge / 2);
+                player.swing(InteractionHand.MAIN_HAND);
+                heldStack.shrink(1);
             }
         }
-        return stack;
     }
 
     @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
-        AerolitePickaxeItemEntity pickaxeEntity = new AerolitePickaxeItemEntity(level, pos.x(), pos.y(), pos.z(), stack.copyWithCount(1));
-        pickaxeEntity.pickup = AbstractArrow.Pickup.ALLOWED;
-        return pickaxeEntity;
+        AerolitePickaxeItemEntity pickaxe = new AerolitePickaxeItemEntity(level, pos.x(), pos.y(), pos.z(), stack.copyWithCount(1));
+        pickaxe.pickup = AbstractArrow.Pickup.ALLOWED;
+        return pickaxe;
     }
 }

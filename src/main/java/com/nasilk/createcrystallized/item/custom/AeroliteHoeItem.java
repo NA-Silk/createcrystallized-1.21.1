@@ -90,26 +90,13 @@ public class AeroliteHoeItem extends HoeItem implements IHaveClientItemExtension
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
         if (entity instanceof Player player) {
+            int charge = Math.min(MAX_CHARGE, getUseDuration(stack, entity) - timeLeft);
+            player.getCooldowns().addCooldown(this, charge / 2);
             player.swing(InteractionHand.MAIN_HAND);
-            if (level instanceof ServerLevel serverLevel) {
-                player.getCooldowns().addCooldown(this, charge / 2);
-                if (charge == 30) doAssembly(serverLevel, player);
-            }
-        }
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (entity instanceof Player player) {
-            player.swing(InteractionHand.MAIN_HAND);
-            if (level instanceof ServerLevel serverLevel) {
-                player.getCooldowns().addCooldown(this, MAX_CHARGE / 2);
+            if (level instanceof ServerLevel serverLevel && charge == 30)
                 doAssembly(serverLevel, player);
-            }
         }
-        return stack;
     }
 
     private static void doAssembly(ServerLevel level, Player player) {

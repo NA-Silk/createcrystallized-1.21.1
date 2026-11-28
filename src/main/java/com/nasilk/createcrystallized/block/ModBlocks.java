@@ -515,7 +515,7 @@ public final class ModBlocks {
     public static final BlockEntry<Block> UMBER_DENSE_CHORA_CASING = registerBlock(
         "chora_casing_umber_densite",
         (properties) -> new ChoraCasingBlock(properties
-            .mapColor(MapColor.COLOR_BROWN) //im gonna BROWN - NoteBlockIntrument.𝓑𝓐𝓝𝓙𝓞.wav
+            .mapColor(MapColor.COLOR_BROWN) // I'm gonna BROWN - NoteBlockInstrument.𝓑𝓐𝓝𝓙𝓞.wav
             .instrument(NoteBlockInstrument.BANJO)
             .noOcclusion()
             .isViewBlocking((s,l,p) -> false)
@@ -840,7 +840,12 @@ public final class ModBlocks {
 
     /// Exists to occupy the creative tab icon, unobtainable
     public static final BlockEntry<Block> CREATIVE_TAB_ICON = registerBlock(
-            "creative_tab_icon", Block::new
+        "creative_tab_icon", Block::new
+    );
+
+    /// What are we even doing anymore?
+    public static final BlockEntry<Block> AEROLITE_PICKAXE = registerBlock(
+        "aerolite_pickaxe_block", AerolitePickaxeBlock::new
     );
 
     public static void init() {

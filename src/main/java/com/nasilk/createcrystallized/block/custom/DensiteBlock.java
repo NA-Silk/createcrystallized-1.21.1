@@ -58,7 +58,7 @@ public class DensiteBlock extends Block {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block oldNeighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block oldNeighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         // Make sure the new neighbor is not Densite (the new one will check for updates)
         if (level instanceof ServerLevel serverLevel && !level.getBlockState(neighborPos).is(this)) {
             if (oldNeighborBlock == this && state.is(this)) clearTriggers(serverLevel, pos);
